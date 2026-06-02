@@ -1,0 +1,91 @@
+import { Groq } from 'groq-sdk';
+
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
+// Função auxiliar para chamar o Llama-3 com JSON puro
+async function runAgent(systemPrompt: string, userPrompt: string): Promise<any> {
+  const completion = await groq.chat.completions.create({
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt }
+    ],
+    model: "llama-3.1-8b-instant", // Modelo atualizado e ativo na Groq
+    response_format: { type: "json_object" },
+  });
+  
+  return JSON.parse(completion.choices[0]?.message?.content || "{}");
+}
+
+export class GroqService {
+  /**
+   * Pipeline Multi-Agente para descobrir e projetar SaaS
+   */
+  static async generateOpportunity(book: any, trendsData: any, redditData: any, country: string) {
+    try {
+      // ---------------------------------------------------------
+      // AGENTE 1: O ANALISTA DE NEGÓCIOS & CONCORRÊNCIA
+      // Objetivo: Entender a dor, avaliar concorrência e achar o diferencial.
+      // ---------------------------------------------------------
+      const systemAnalyst = `You are a brilliant Business Analyst. Return a valid JSON.
+Output language MUST be in the native language of ${country}.
+Analyze the book metadata, Google Trends data, and Reddit pain points to extract the core problem.
+Then, use your own knowledge to identify 2-3 potential competitors in the market.
+Based on the competitors, define a Unique Competitive Advantage (differentiation angle).
+JSON Schema: { "core_problem": "string", "target_audience": "string", "competitors": "string", "competitive_advantage": "string" }`;
+
+      const userAnalyst = `Book: ${book.title} (${book.categories?.join(', ')}). Description: ${book.description?.substring(0, 500)}
+Trends: ${trendsData.monthlyGrowth}% growth. Reddit: ${redditData.mentions} mentions.`;
+      
+      const analystResult = await runAgent(systemAnalyst, userAnalyst);
+
+      // ---------------------------------------------------------
+      // AGENTE 2: O ARQUITETO TÉCNICO
+      // Objetivo: Criar a solução SaaS e os prompts de código.
+      // ---------------------------------------------------------
+      const systemArchitect = `You are a brilliant SaaS Technical Architect. Return a valid JSON.
+Output language MUST be in the native language of ${country}.
+Based on the business analyst's findings, design a Micro-SaaS.
+Provide a catchy SaaS Name, MVP Features (buildable in 30 days), Development Time estimation, Implementation Difficulty (Low/Medium/High).
+Also write highly detailed, step-by-step technical prompts for an AI code generator like Lovable and Bolt.new to build the MVP.
+JSON Schema: { "saas_name": "string", "mvp_features": "string", "development_time": "string", "implementation_difficulty": "string", "prompt_lovable": "string", "prompt_bolt": "string" }`;
+
+      const userArchitect = `Problem: ${analystResult.core_problem}. Audience: ${analystResult.target_audience}. Advantage: ${analystResult.competitive_advantage}`;
+
+      const architectResult = await runAgent(systemArchitect, userArchitect);
+
+      // ---------------------------------------------------------
+      // AGENTE 3: O DIRETOR DE GROWTH & MONETIZAÇÃO
+      // Objetivo: Definir preço e estimativa de MRR.
+      // ---------------------------------------------------------
+      const systemGrowth = `You are a brilliant SaaS Growth Marketer. Return a valid JSON.
+Output language MUST be in the native language of ${country}.
+Based on the SaaS designed, define the monetization model, suggested price, and an AI confidence score for this opportunity.
+JSON Schema: { "monetization_model": "string", "suggested_price": "string", "potential_revenue": "string", "aiOpportunityScore": number (0-100) }`;
+
+      const userGrowth = `SaaS Name: ${architectResult.saas_name}. Audience: ${analystResult.target_audience}. Features: ${architectResult.mvp_features}`;
+
+      const growthResult = await runAgent(systemGrowth, userGrowth);
+
+      // Consolida e retorna o objeto inteiro
+      return {
+        saasName: architectResult.saas_name,
+        problemSolved: analystResult.core_problem,
+        targetAudience: analystResult.target_audience,
+        competitiveAdvantage: `${analystResult.competitive_advantage} (Concorrentes Mapeados: ${analystResult.competitors})`,
+        mvpFeatures: architectResult.mvp_features,
+        monetizationModel: growthResult.monetization_model,
+        suggestedPrice: growthResult.suggested_price,
+        potentialRevenue: growthResult.potential_revenue,
+        implementationDifficulty: architectResult.implementation_difficulty,
+        developmentTime: architectResult.development_time,
+        aiOpportunityScore: growthResult.aiOpportunityScore,
+        promptLovable: architectResult.prompt_lovable,
+        promptBolt: architectResult.prompt_bolt,
+      };
+
+    } catch (error) {
+      console.error("Erro no Groq Multi-Agente:", error);
+      return null;
+    }
+  }
+}

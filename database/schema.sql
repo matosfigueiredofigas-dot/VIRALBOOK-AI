@@ -1,0 +1,52 @@
+-- Tabela principal de Oportunidades (SaaS / Apps gerados a partir de Ebooks)
+CREATE TABLE IF NOT EXISTS public.opportunities (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    
+    -- Dados do Ebook Original
+    book_title TEXT NOT NULL,
+    book_author TEXT,
+    book_category TEXT,
+    book_description TEXT,
+    country TEXT NOT NULL,
+    
+    -- Métricas de Crescimento e Score
+    trends_growth_weekly DECIMAL(5,2),
+    trends_growth_monthly DECIMAL(5,2),
+    reddit_mentions INTEGER,
+    viral_opportunity_score INTEGER NOT NULL DEFAULT 0, -- 0 a 100
+    
+    -- Insights da IA (Motor Ebook -> Startup)
+    saas_name TEXT NOT NULL,
+    problem_solved TEXT,
+    target_audience TEXT,
+    competitive_advantage TEXT,
+    mvp_features TEXT,
+    monetization_model TEXT,
+    suggested_price TEXT,
+    potential_revenue TEXT,
+    implementation_difficulty TEXT, -- Baixa, Média, Alta
+    development_time TEXT,
+    
+    -- Prompts Gerados
+    prompt_lovable TEXT,
+    prompt_bolt TEXT,
+    prompt_cursor TEXT,
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Habilitar Row Level Security (RLS)
+ALTER TABLE public.opportunities ENABLE ROW LEVEL SECURITY;
+
+-- Criar política de leitura pública (todos podem ler as oportunidades detectadas)
+CREATE POLICY "Enable read access for all users" ON public.opportunities
+    FOR SELECT USING (true);
+
+-- Criar política de escrita apenas para usuários autenticados (ou sistema)
+-- Por enquanto, permitindo tudo para facilitar o MVP local
+CREATE POLICY "Enable insert for anonymous/service role" ON public.opportunities
+    FOR INSERT WITH CHECK (true);
+    
+CREATE POLICY "Enable update for anonymous/service role" ON public.opportunities
+    FOR UPDATE USING (true);

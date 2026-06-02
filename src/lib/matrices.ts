@@ -1,0 +1,154 @@
+export type Item = { name: string; tier: number };
+
+export const audiences: Item[] = [
+  // Tier 1
+  { name: "Restaurantes Locais", tier: 1 }, { name: "Personal Trainers", tier: 1 }, { name: "Pousadas e Hostels", tier: 1 },
+  { name: "Motoristas de Aplicativo", tier: 1 }, { name: "Manicures e Salões de Beleza", tier: 1 }, { name: "Vendedores de E-commerce", tier: 1 },
+  { name: "Padeiros Artesanais", tier: 1 }, { name: "Floriculturas", tier: 1 }, { name: "Pet Walkers", tier: 1 }, { name: "Fotógrafos de Casamento", tier: 1 },
+  { name: "Bares e Lanchonetes", tier: 1 }, { name: "Entregadores", tier: 1 }, { name: "Professores Particulares", tier: 1 }, { name: "Costureiras", tier: 1 },
+  { name: "Padarias", tier: 1 }, { name: "Mercadinhos de Bairro", tier: 1 }, { name: "Lava-Rápidos", tier: 1 }, { name: "Academias de Musculação", tier: 1 },
+  { name: "Pet Shops", tier: 1 }, { name: "Lojas de Roupas", tier: 1 }, { name: "Autoescolas", tier: 1 }, { name: "Farmácias de Bairro", tier: 1 },
+  { name: "Barbearias", tier: 1 }, { name: "Vidraçarias", tier: 1 }, { name: "Serralherias", tier: 1 }, { name: "Pintores e Pedreiros", tier: 1 },
+  
+  // Tier 2
+  { name: "Corretores de Imóveis", tier: 2 }, { name: "Advogados Autônomos", tier: 2 }, { name: "Empresas de Limpeza", tier: 2 },
+  { name: "Guias Turísticos", tier: 2 }, { name: "Encanadores e Eletricistas", tier: 2 }, { name: "Borracharias", tier: 2 },
+  { name: "Gráficas e Copiadoras", tier: 2 }, { name: "Lojas de Suplementos", tier: 2 }, { name: "Auto Peças", tier: 2 },
+  { name: "Distribuidoras de Bebidas", tier: 2 }, { name: "Transportadoras Locais", tier: 2 }, { name: "Oficinas de Costura", tier: 2 },
+  { name: "Agências de Turismo", tier: 2 }, { name: "Concessionárias de Seminovos", tier: 2 }, { name: "Casas de Festas", tier: 2 },
+  { name: "Buffets Infantis", tier: 2 }, { name: "Empreiteiras", tier: 2 }, { name: "Clínicas Odontológicas Populares", tier: 2 },
+  { name: "Despachantes", tier: 2 }, { name: "Escolas de Trânsito", tier: 2 }, { name: "Estúdios Fotográficos", tier: 2 },
+  { name: "Clínicas de Fisioterapia", tier: 2 }, { name: "Agências de Intercâmbio", tier: 2 },
+  
+  // Tier 3
+  { name: "Nutricionistas Esportivos", tier: 3 }, { name: "Escolas de Idiomas Bilingues", tier: 3 }, { name: "Arquitetos", tier: 3 },
+  { name: "Contadores", tier: 3 }, { name: "Consultores Financeiros", tier: 3 }, { name: "Produtores de Cerveja Artesanal", tier: 3 },
+  { name: "Coworkings e Espaços Compartilhados", tier: 3 }, { name: "Escritórios de Engenharia", tier: 3 }, { name: "Oficinas de Funilaria Premium", tier: 3 },
+  { name: "Produtores de Alimentos Orgânicos", tier: 3 }, { name: "Consultores de RH", tier: 3 }, { name: "Síndicos Profissionais", tier: 3 },
+  { name: "Clínicas de Estética Avançada", tier: 3 }, { name: "Escolas de Música e Artes", tier: 3 }, { name: "Assessorias de Imprensa", tier: 3 },
+  { name: "Corretoras de Seguros", tier: 3 }, { name: "Escritórios de Design de Interiores", tier: 3 }, { name: "Psicólogos Clínicos", tier: 3 },
+  { name: "Terapeutas Holísticos", tier: 3 }, { name: "Clínicas de Acupuntura", tier: 3 }, { name: "Acampamentos de Férias", tier: 3 },
+  { name: "Galerias de Arte Locais", tier: 3 },
+  
+  // Tier 4
+  { name: "Especialistas em Implantes Dentários", tier: 4 }, { name: "Clínicas de Cirurgia Plástica", tier: 4 }, { name: "Fábricas de Software Bootstrapped", tier: 4 },
+  { name: "Agências de Viagem de Luxo", tier: 4 }, { name: "Hospitais Veterinários 24h", tier: 4 }, { name: "Construtoras de Alto Padrão", tier: 4 },
+  { name: "Joalherias Customizadas", tier: 4 }, { name: "Estúdios de Yoga e Mindfulness", tier: 4 }, { name: "Produtoras Audiovisuais e de Cinema", tier: 4 },
+  { name: "Hospitais e Maternidades Particulares", tier: 4 }, { name: "Gestores de Patrimônio (Family Offices)", tier: 4 },
+  { name: "Concessionárias de Veículos de Luxo", tier: 4 }, { name: "Consultorias Tributárias Especializadas", tier: 4 },
+  { name: "Clínicas de Dermatologia Estética", tier: 4 }, { name: "Escritórios de Advocacia Corporativa", tier: 4 },
+  { name: "Importadoras de Vinhos Premium", tier: 4 }, { name: "Clubes de Golfe e Tiro", tier: 4 }, { name: "Clínicas de Reprodução Humana", tier: 4 },
+  
+  // Tier 5
+  { name: "Criadores de Conteúdo (Influencers)", tier: 5 }, { name: "Agências de Marketing de Performance", tier: 5 }, { name: "Produtores de Festivais de Música", tier: 5 },
+  { name: "Youtubers e Streamers Profissionais", tier: 5 }, { name: "Infoprodutores High-Ticket", tier: 5 }, { name: "Startups em Early Stage", tier: 5 },
+  { name: "Redes de Podcasts", tier: 5 }, { name: "Agências de Lançamento de Infoprodutos", tier: 5 }, { name: "Consultores de Inteligência Artificial", tier: 5 },
+  { name: "E-commerces DNVB (Direct-to-Consumer)", tier: 5 }, { name: "Especialistas em SEO e Growth Hacking", tier: 5 },
+  { name: "Gestores de Comunidades Onlines", tier: 5 }, { name: "Copywriters de Resposta Direta", tier: 5 }, { name: "Editores de Vídeo de Alta Retenção", tier: 5 },
+  { name: "Plataformas de SaaS B2B Básico", tier: 5 }, { name: "Fintechs em Estágio de Crescimento", tier: 5 }, { name: "EdTechs (Plataformas Educacionais)", tier: 5 },
+  
+  // Tier 6
+  { name: "Clínicas Psiquiátricas com Psicodélicos", tier: 6 }, { name: "Estúdios de Tatuagem Realista", tier: 6 }, { name: "Mecânicos Especializados em Porsches", tier: 6 },
+  { name: "Criadores de Gado de Elite", tier: 6 }, { name: "Mergulhadores Profissionais de Alto Mar", tier: 6 }, { name: "Produtores de Cogumelos Exóticos", tier: 6 },
+  { name: "Estúdios de Animação 3D para Games", tier: 6 }, { name: "Empresas de Instalação de Energia Solar", tier: 6 }, { name: "Fabricantes de Drones Agrícolas", tier: 6 },
+  { name: "Laboratórios de Genética Pessoal", tier: 6 }, { name: "Cervejarias Ciganas (Sem Fábrica)", tier: 6 }, { name: "Apicultores de Mel Medicinal", tier: 6 },
+  { name: "Fazendas de Mineração de Criptomoedas", tier: 6 }, { name: "Empresas de Desinfecção Hospitalar", tier: 6 }, { name: "Laboratórios de Biotecnologia", tier: 6 },
+  { name: "Restauradores de Obras de Arte Clássicas", tier: 6 }, { name: "Investigadores Particulares Cibernéticos", tier: 6 },
+  { name: "Produtores de Cannabis Medicinal Legalizada", tier: 6 }, { name: "Criadores de Avestruz e Carnes Exóticas", tier: 6 },
+  { name: "Operadores de Usinas Eólicas", tier: 6 }, { name: "Cultivadores de Trufas Brancas", tier: 6 }, { name: "Pilotos de Balão Turístico", tier: 6 }
+];
+
+export const problems: Item[] = [
+  // Tier 1
+  { name: "Criação de Conteúdo para Redes", tier: 1 }, { name: "Organização de Estoque Físico", tier: 1 }, { name: "Controle de Ponto de Funcionários", tier: 1 },
+  { name: "Emissão de Recibos em Papel", tier: 1 }, { name: "Agendamento Manual via Telefone", tier: 1 }, { name: "Perda de Clientes Frequentes", tier: 1 },
+  { name: "Dificuldade de Controle de Caixa Diário", tier: 1 }, { name: "Fila de Espera Demorada e Desorganizada", tier: 1 }, { name: "Falta de Orçamentos Claros para o Cliente", tier: 1 },
+  { name: "Controle de 'Fiados' e Cadernetas", tier: 1 }, { name: "Má Gestão de Entregas (Delivery)", tier: 1 },
+  
+  // Tier 2
+  { name: "Agendamento e No-Shows (Faltas)", tier: 2 }, { name: "Gestão Financeira e Cobranças de Boletos", tier: 2 }, { name: "Emissão de Notas Fiscais Eletrônicas", tier: 2 },
+  { name: "Atraso Constante em Pagamentos Mensais", tier: 2 }, { name: "Gestão de Frota de Veículos", tier: 2 }, { name: "Falta de Histórico Unificado de Clientes", tier: 2 },
+  { name: "Dificuldade em Delegar Tarefas Simples", tier: 2 }, { name: "Compras de Insumos Desorganizadas", tier: 2 }, { name: "Cotação Lenta com Múltiplos Fornecedores", tier: 2 },
+  { name: "Acompanhamento Cego de Pedidos", tier: 2 }, { name: "Logística Reversa e Gestão de Devoluções", tier: 2 },
+  
+  // Tier 3
+  { name: "Recrutamento e Seleção de Talentos Base", tier: 3 }, { name: "Otimização de SEO Local (Google Maps)", tier: 3 }, { name: "Treinamento de Equipe Operacional", tier: 3 },
+  { name: "Organização de Documentos na Nuvem", tier: 3 }, { name: "Gestão de Tarefas Complexas em Equipe", tier: 3 }, { name: "Controle de Prazos de Entregas B2B", tier: 3 },
+  { name: "Conformidade Trabalhista e Ponto Digital", tier: 3 }, { name: "Criação Rápida de Propostas Comerciais Visuais", tier: 3 }, { name: "Onboarding Confuso de Novos Funcionários", tier: 3 },
+  
+  // Tier 4
+  { name: "Retenção de Clientes Premium VIPs", tier: 4 }, { name: "Gestão de Contratos e Assinaturas Digitais", tier: 4 }, { name: "Coleta Automática de Feedbacks e Avaliações", tier: 4 },
+  { name: "Controle de Garantias de Produtos Caros", tier: 4 }, { name: "Previsão de Demanda de Estoque para o Trimestre", tier: 4 }, { name: "Cálculo Preciso de Margem de Lucro por Projeto", tier: 4 },
+  { name: "Automação de Marketing B2B Omnichannel", tier: 4 }, { name: "Integração Pobre com Sistemas Legados Antigos", tier: 4 }, { name: "Gestão de Riscos Operacionais em Escala", tier: 4 },
+  { name: "Compliance Fiscal e Tributário Dinâmico", tier: 4 },
+  
+  // Tier 5
+  { name: "Aquisição Cara de Leads Frios via Anúncios", tier: 5 }, { name: "Baixo Engajamento e Cultura de Funcionários Remotos", tier: 5 }, { name: "Onboarding Dinâmico e Gamificado de Clientes", tier: 5 },
+  { name: "Personalização em Massa de Emails (Cold Emailing)", tier: 5 }, { name: "Automação Inteligente de Funil de Vendas", tier: 5 }, { name: "Monitoramento Cego de Métricas SaaS (LTV/CAC)", tier: 5 },
+  { name: "Gestão Descentralizada de Afiliados e Parceiros", tier: 5 }, { name: "Otimização Contínua de Conversão (CRO) de LPs", tier: 5 }, { name: "Segmentação de Audiência Super Avançada", tier: 5 },
+  { name: "Qualificação Automática de Leads via Comportamento", tier: 5 },
+  
+  // Tier 6
+  { name: "Prevenção Avançada de Fraudes com Cartão Clonado", tier: 6 }, { name: "Monitoramento Deep Web de Reputação Online", tier: 6 }, { name: "Tradução e Localização Contextual em Tempo Real", tier: 6 },
+  { name: "Logística e Otimização de Rotas de Múltiplos Veículos", tier: 6 }, { name: "Automação de Respostas de Suporte de Alta Complexidade", tier: 6 }, { name: "Rastreio Global de Ativos Extremamente Valiosos", tier: 6 },
+  { name: "Análise Preditiva de Churn (Cancelamento) de Contas Key", tier: 6 }, { name: "Detecção de Anomalias Financeiras e Lavagem de Dinheiro", tier: 6 }, { name: "Simulação de Cenários de Crise em Realidade Virtual", tier: 6 },
+  { name: "Auditoria Imutável de Contratos e Acordos em Blockchain", tier: 6 }, { name: "Gestão Automatizada de Créditos de Carbono ESG", tier: 6 }
+];
+
+export const technologies: Item[] = [
+  // Tier 1
+  { name: "Painéis de Business Intelligence Básicos", tier: 1 }, { name: "CRM Simplificado", tier: 1 }, { name: "Aplicativo Mobile Responsivo PWA", tier: 1 },
+  { name: "Construtor de Landing Pages Dinâmicas", tier: 1 }, { name: "Sistema PDV Operando na Nuvem", tier: 1 }, { name: "Gestor de Tarefas estilo Kanban", tier: 1 },
+  { name: "Extensão Utilitária para Google Chrome", tier: 1 }, { name: "Sincronização com Planilhas Automatizadas", tier: 1 }, { name: "Criador de Formulários com Condicionais", tier: 1 },
+  
+  // Tier 2
+  { name: "Integração Transparente via APIs REST", tier: 2 }, { name: "Portais de Cliente Totalmente White-label", tier: 2 }, { name: "Motor de Disparo de SMS/Emails Transacionais", tier: 2 },
+  { name: "Gestor Granular de Permissões de Usuários", tier: 2 }, { name: "Sistema de Agendamento Online Self-Service", tier: 2 }, { name: "App de Delivery Whitelabel com Rastreio", tier: 2 },
+  { name: "Catálogo Digital Interativo Escaneável", tier: 2 }, { name: "Sistema de Tickets de Suporte e Helpdesk", tier: 2 },
+  
+  // Tier 3
+  { name: "Automações No-Code Complexas (Make/Zapier)", tier: 3 }, { name: "Dashboards Interativos Consolidados em Tempo Real", tier: 3 }, { name: "Reconhecimento de Voz Básico (Speech-to-Text)", tier: 3 },
+  { name: "Web Scraping Automatizado Extraindo Dados Concorrentes", tier: 3 }, { name: "Integração Nativa com Múltiplos ERPs (SAP/Totvs)", tier: 3 }, { name: "Motores de Busca Internos Inteligentes (Elasticsearch)", tier: 3 },
+  { name: "Sistema de Assinatura Eletrônica e Criptografia", tier: 3 }, { name: "Gerador de Relatórios Dinâmicos Exportáveis (PDF/CSV)", tier: 3 },
+  
+  // Tier 4
+  { name: "Chatbots de WhatsApp com Processamento Natural", tier: 4 }, { name: "Assistentes de Voz Especializados (Voice AI)", tier: 4 }, { name: "Integração Bidirecional com IoT (Internet das Coisas)", tier: 4 },
+  { name: "Motor de Regras de Negócio Personalizável", tier: 4 }, { name: "Automação Gráfica de Fluxo de Trabalho (Workflow Engine)", tier: 4 }, { name: "Reconhecimento Ótico de Caracteres Avançado (OCR)", tier: 4 },
+  { name: "Motor de Recomendação Algorítmica de Produtos", tier: 4 },
+  
+  // Tier 5
+  { name: "Análise Precisa de Sentimentos em Grandes Textos", tier: 5 }, { name: "Processamento de Linguagem Natural Avançado (NLP)", tier: 5 }, { name: "Machine Learning Preditivo Adaptável", tier: 5 },
+  { name: "Classificação Automática Massiva de Imagens", tier: 5 }, { name: "Plataforma de Dados Unificados do Cliente (CDP)", tier: 5 }, { name: "Geração Dinâmica de Áudio Sob Demanda", tier: 5 },
+  { name: "Chatbots Treinados com Base Privada Própria (RAG)", tier: 5 }, { name: "Segmentação Comportamental com Hiperpersonalização AI", tier: 5 },
+  
+  // Tier 6
+  { name: "Visão Computacional de Alta Precisão (Análise de Vídeo)", tier: 6 }, { name: "Ecossistema de Agentes Autônomos de IA Colaborativos", tier: 6 }, { name: "Geração Renderizada de Vídeos e Avatares por IA", tier: 6 },
+  { name: "Reconhecimento Facial Biométrico em Tempo Real", tier: 6 }, { name: "Análise Estruturadora de Dados Desordenados/Não-Estruturados", tier: 6 }, { name: "Clonagem de Voz de Alta Fidelidade (Deepfake de Áudio)", tier: 6 },
+  { name: "Execução Autônoma de Smart Contracts (Web3/Blockchain)", tier: 6 }, { name: "Interfaces Nativas para Computação Espacial (AR/VR/Vision Pro)", tier: 6 }, { name: "Diagnóstico Clínico ou Mecânico Automatizado por Deep Learning", tier: 6 }
+];
+
+export const monetizations: Item[] = [
+  // Tier 1
+  { name: "Venda de Licença Única (Lifetime Deal)", tier: 1 }, { name: "Sistema Mantido por Doações/Patrocínios", tier: 1 },
+  { name: "Pagamento Unitário por Módulo Liberado", tier: 1 },
+  
+  // Tier 2
+  { name: "Modelo de Agência (Você Vende Software + Serviço Acoplado)", tier: 2 }, { name: "Taxa de Manutenção Anual Simples", tier: 2 },
+  { name: "Cobrança de Setup Inicial Fixo + Mensalidade Muito Baixa", tier: 2 },
+  
+  // Tier 3
+  { name: "Plano Anual com Forte Desconto de Retenção", tier: 3 }, { name: "Assinatura Semestral Bloqueada", tier: 3 },
+  { name: "Pacote de Créditos Pré-pagos que Expiram Mensalmente", tier: 3 },
+  
+  // Tier 4
+  { name: "Assinatura Mensal Recorrente (O Padrão SaaS Clássico)", tier: 4 }, { name: "Plano Freemium com Upsell In-App Agressivo", tier: 4 },
+  { name: "Tiered Pricing Psicológico (Planos Bronze/Prata/Ouro)", tier: 4 }, { name: "Cobrança Escalonável Baseada no Número de Usuários (Seats)", tier: 4 },
+  
+  // Tier 5
+  { name: "Pay-per-use Direto (O Cliente Só Paga Exatamente o que Consome)", tier: 5 }, { name: "Cobrança Transparente por Volume Processado de Dados/APIs", tier: 5 },
+  { name: "Plano de Sucesso Baseado Exclusivamente no Crescimento da Empresa", tier: 5 }, { name: "Cobrança de Alta Performance por Lead (Contato) Gerado", tier: 5 },
+  
+  // Tier 6
+  { name: "Taxa Percentual Invisível sobre Transações (Efeito Marketplace)", tier: 6 }, { name: "Participação Genuína no Faturamento Adicional Gerado (Revenue Share)", tier: 6 },
+  { name: "Cobrança Atrelada ao ROI Direto Comprovado Pelo Software", tier: 6 }, { name: "Economia Baseada em Tokenomics ou Rewards Criptografados", tier: 6 }
+];

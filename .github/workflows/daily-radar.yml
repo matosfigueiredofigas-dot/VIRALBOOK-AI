@@ -1,0 +1,21 @@
+name: ViralBook AI Daily Radar
+
+on:
+  schedule:
+    # Roda todos os dias às 08:00 UTC (05:00 Horário de Brasília)
+    - cron: '0 8 * * *'
+  # Permite rodar o robô manualmente clicando em um botão no GitHub
+  workflow_dispatch:
+
+jobs:
+  run-radar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Acionar o Radar da IA
+        env:
+          # A URL de produção da sua API e a senha secreta do Cron
+          API_URL: ${{ secrets.PRODUCTION_API_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -X GET "$API_URL/api/cron" \
+          -H "Authorization: Bearer $CRON_SECRET"
