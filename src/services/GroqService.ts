@@ -2,18 +2,35 @@ import { Groq } from 'groq-sdk';
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-// Função auxiliar para chamar o Llama-3 com JSON puro
 async function runAgent(systemPrompt: string, userPrompt: string): Promise<any> {
-  const completion = await groq.chat.completions.create({
-    messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: userPrompt }
-    ],
-    model: "llama-3.1-8b-instant", // Modelo atualizado e ativo na Groq
-    response_format: { type: "json_object" },
-  });
-  
-  return JSON.parse(completion.choices[0]?.message?.content || "{}");
+  // Lista de modelos: 1º mais barato, 2º mais robusto, 3º contingência extrema (Mixtral)
+  const models = ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "mixtral-8x7b-32768"];
+  let lastError: any = null;
+
+  for (const model of models) {
+    try {
+      console.log(`[Groq Agent] Tentando executar com o modelo: ${model}`);
+      const completion = await groq.chat.completions.create({
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt }
+        ],
+        model: model,
+        response_format: { type: "json_object" },
+        temperature: 0.3, // Menor temperatura garante maior precisão no formato JSON
+      });
+      
+      const content = completion.choices[0]?.message?.content || "{}";
+      const parsed = JSON.parse(content);
+      console.log(`[Groq Agent] Sucesso total usando: ${model}`);
+      return parsed;
+    } catch (error: any) {
+      console.warn(`[Groq Agent] Falha ou erro de JSON com ${model}. Tentando contingência... Erro:`, error.message || error);
+      lastError = error;
+    }
+  }
+
+  throw new Error(`Falha crítica: Todos os agentes da IA falharam. Último erro: ${lastError?.message || lastError}`);
 }
 
 export class GroqService {

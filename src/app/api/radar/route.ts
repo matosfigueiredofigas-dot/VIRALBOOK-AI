@@ -83,6 +83,7 @@ export async function POST(request: Request) {
 
     if (dbError) {
       console.error("Supabase Error:", dbError);
+      return NextResponse.json({ error: 'Erro de banco de dados', details: dbError }, { status: 500 });
     }
 
     return NextResponse.json({

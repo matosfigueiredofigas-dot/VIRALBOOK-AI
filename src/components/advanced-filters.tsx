@@ -43,16 +43,6 @@ export function AdvancedFilters() {
     })
   }
 
-  const toggleView = (mode: "grid" | "list") => {
-    const params = new URLSearchParams(searchParams.toString())
-    if (mode === "list") params.set("view", "list")
-    else params.delete("view")
-
-    startTransition(() => {
-      router.push(`?${params.toString()}`)
-    })
-  }
-
   return (
     <div className="flex flex-col sm:flex-row gap-4 p-4 bg-muted/30 border border-border/50 rounded-xl mb-6 items-center">
       <div className="flex items-center gap-2 w-full sm:w-auto flex-1 relative">
@@ -82,21 +72,6 @@ export function AdvancedFilters() {
             <SelectItem value="95">🦄 Acima de 95 (Raro)</SelectItem>
           </SelectContent>
         </Select>
-      </div>
-
-      <div className="flex items-center gap-1 bg-background/50 p-1 rounded-lg border border-border/50">
-        <button 
-          onClick={() => toggleView("grid")}
-          className={`p-2 rounded-md transition-colors ${view === "grid" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}
-        >
-          <LayoutGrid className="h-4 w-4" />
-        </button>
-        <button 
-          onClick={() => toggleView("list")}
-          className={`p-2 rounded-md transition-colors ${view === "list" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}
-        >
-          <List className="h-4 w-4" />
-        </button>
       </div>
     </div>
   )

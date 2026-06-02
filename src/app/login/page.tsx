@@ -31,7 +31,7 @@ export default async function LoginPage(props: { searchParams: Promise<{ message
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="flex-1 flex flex-col w-full justify-center gap-4 text-foreground">
+          <form method="post" className="flex-1 flex flex-col w-full justify-center gap-4 text-foreground">
             <div className="space-y-2">
               <Label htmlFor="email">E-mail</Label>
               <Input
@@ -54,10 +54,10 @@ export default async function LoginPage(props: { searchParams: Promise<{ message
             </div>
             
             <div className="flex flex-col gap-2 mt-4">
-              <Button formAction="/api/auth/login" variant="default" className="w-full">
+              <Button type="submit" formAction="/api/auth/login" formMethod="post" variant="default" className="w-full">
                 Entrar
               </Button>
-              <Button formAction="/api/auth/signup" variant="outline" className="w-full bg-transparent">
+              <Button type="submit" formAction="/api/auth/signup" formMethod="post" variant="outline" className="w-full bg-transparent">
                 Criar conta
               </Button>
             </div>
@@ -72,7 +72,7 @@ export default async function LoginPage(props: { searchParams: Promise<{ message
               </div>
             </div>
             
-            <Button formAction="/api/auth/google" variant="secondary" className="w-full">
+            <Button type="submit" formAction="/api/auth/google" formMethod="post" variant="secondary" className="w-full">
               Continuar com Google
             </Button>
             

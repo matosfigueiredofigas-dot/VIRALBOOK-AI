@@ -18,19 +18,22 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cou
   }
 
   const searchParams = await props.searchParams;
-  const country = searchParams.country || "US";
+  const country = searchParams.country || null; // Opcional
   const time = searchParams.time || "all";
   const search = searchParams.search || "";
   const minScore = searchParams.minScore ? parseInt(searchParams.minScore) : 0;
   
   const filterDate = getFilterDate(time);
 
-  // Busca os dados filtrando pelo país e tempo
+  // Busca os dados filtrando pelo país apenas se fornecido
   let query = supabase
     .from('opportunities')
     .select('*')
-    .eq('country', country)
     .order('created_at', { ascending: false });
+
+  if (country) {
+    query = query.eq('country', country);
+  }
 
   if (filterDate) {
     query = query.gte('created_at', filterDate);

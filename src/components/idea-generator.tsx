@@ -1,18 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shuffle, Users, Target, Cpu, Banknote, Copy, CheckCircle2, Star } from "lucide-react";
+import { Shuffle, Users, Target, Cpu, Banknote, Copy, CheckCircle2, Star, Loader2, Zap, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Item, audiences, problems, technologies, monetizations } from "@/lib/matrices";
 
 export function IdeaGenerator() {
+  const router = useRouter();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [copied, setCopied] = useState(false);
   const [targetStars, setTargetStars] = useState<string>("random");
+  const [country, setCountry] = useState<string>("BR");
   
   const [idea, setIdea] = useState({
     audience: "",
@@ -95,32 +99,82 @@ export function IdeaGenerator() {
   }, []);
 
   const handleCopy = () => {
-    const text = `Nicho: SaaS para ${idea.audience}\nProblema: ${idea.problem}\nSolução Tecnológica: ${idea.technology}\nMonetização: ${idea.monetization}`;
+    const text = `SaaS B2B para ${idea.audience} resolvendo ${idea.problem} com ${idea.technology}`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleAnalyze = async () => {
+    setIsAnalyzing(true);
+    try {
+      const text = `SaaS B2B para ${idea.audience} focado em resolver problemas de ${idea.problem} utilizando ${idea.technology} e monetizado via ${idea.monetization}`;
+      const response = await fetch("/api/radar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ keyword: text, country }), 
+      });
+
+      if (response.ok) {
+        // Limpar o cache do Next.js e forçar o redirecionamento com o país correto
+        router.refresh();
+        window.location.href = `/dashboard?country=${country}`;
+      } else {
+        alert("Erro ao analisar nicho. Tente novamente.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Erro de conexão ao analisar nicho.");
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Controles de Geração */}
       <div className="flex flex-col items-center gap-4">
-        <div className="flex items-center gap-4 bg-muted/50 p-2 rounded-xl border border-white/5 w-full max-w-md shadow-inner">
-          <Star className="h-5 w-5 text-yellow-500 ml-2" />
-          <Select value={targetStars} onValueChange={setTargetStars}>
-            <SelectTrigger className="border-0 bg-transparent text-lg focus:ring-0">
-              <SelectValue placeholder="Qualquer nível (Aleatório)" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="random">Qualquer Nível (Aleatório)</SelectItem>
-              <SelectItem value="6">&gt;5 Estrelas (Oceano Azul Total)</SelectItem>
-              <SelectItem value="5">5 Estrelas (Inovador)</SelectItem>
-              <SelectItem value="4">4 Estrelas (Avançado)</SelectItem>
-              <SelectItem value="3">3 Estrelas (Mediano)</SelectItem>
-              <SelectItem value="2">2 Estrelas (Comum)</SelectItem>
-              <SelectItem value="1">1 Estrela (Saturado)</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-2xl">
+          {/* Seletor de Qualidade (Estrelas) */}
+          <div className="flex items-center gap-2 bg-muted/50 p-2 rounded-xl border border-white/5 w-full shadow-inner">
+            <Star className="h-5 w-5 text-yellow-500 ml-2 shrink-0" />
+            <Select value={targetStars} onValueChange={setTargetStars}>
+              <SelectTrigger className="border-0 bg-transparent text-sm md:text-base focus:ring-0">
+                <SelectValue placeholder="Nível da Ideia" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="random">Qualquer Nível</SelectItem>
+                <SelectItem value="6">&gt;5 Estrelas (Oceano Azul)</SelectItem>
+                <SelectItem value="5">5 Estrelas (Inovador)</SelectItem>
+                <SelectItem value="4">4 Estrelas (Avançado)</SelectItem>
+                <SelectItem value="3">3 Estrelas (Mediano)</SelectItem>
+                <SelectItem value="2">2 Estrelas (Comum)</SelectItem>
+                <SelectItem value="1">1 Estrela (Saturado)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Seletor de País */}
+          <div className="flex items-center gap-2 bg-muted/50 p-2 rounded-xl border border-white/5 w-full shadow-inner">
+            <Globe className="h-5 w-5 text-blue-500 ml-2 shrink-0" />
+            <Select value={country} onValueChange={setCountry}>
+              <SelectTrigger className="border-0 bg-transparent text-sm md:text-base focus:ring-0">
+                <SelectValue placeholder="País Alvo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="BR">🇧🇷 Brasil (BR)</SelectItem>
+                <SelectItem value="US">🇺🇸 Estados Unidos (US)</SelectItem>
+                <SelectItem value="PT">🇵🇹 Portugal (PT)</SelectItem>
+                <SelectItem value="GB">🇬🇧 Reino Unido (GB)</SelectItem>
+                <SelectItem value="CA">🇨🇦 Canadá (CA)</SelectItem>
+                <SelectItem value="AU">🇦🇺 Austrália (AU)</SelectItem>
+                <SelectItem value="DE">🇩🇪 Alemanha (DE)</SelectItem>
+                <SelectItem value="FR">🇫🇷 França (FR)</SelectItem>
+                <SelectItem value="ES">🇪🇸 Espanha (ES)</SelectItem>
+                <SelectItem value="IN">🇮🇳 Índia (IN)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <Button 
@@ -216,24 +270,45 @@ export function IdeaGenerator() {
                 Um SaaS B2B para <span className="text-purple-400 font-bold underline decoration-purple-500/30 underline-offset-4">{idea.audience}</span> focado em resolver problemas de <span className="text-red-400 font-bold underline decoration-red-500/30 underline-offset-4">{idea.problem}</span> utilizando <span className="text-blue-400 font-bold underline decoration-blue-500/30 underline-offset-4">{idea.technology}</span> e monetizado via <span className="text-green-400 font-bold underline decoration-green-500/30 underline-offset-4">{idea.monetization}</span>.
               </p>
             </div>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="shrink-0 h-14 rounded-xl border-white/10 hover:bg-white/5"
-              onClick={handleCopy}
-            >
-              {copied ? (
-                <>
-                  <CheckCircle2 className="mr-2 h-5 w-5 text-green-500" />
-                  <span className="text-green-500 font-semibold">Copiado!</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="mr-2 h-5 w-5 text-muted-foreground" />
-                  Copiar Ideia
-                </>
-              )}
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2 shrink-0 mt-4 md:mt-0">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="h-14 rounded-xl border-white/10 hover:bg-white/5"
+                onClick={handleCopy}
+              >
+                {copied ? (
+                  <>
+                    <CheckCircle2 className="mr-2 h-5 w-5 text-green-500" />
+                    <span className="text-green-500 font-semibold">Copiado!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="mr-2 h-5 w-5 text-muted-foreground" />
+                    Copiar Ideia
+                  </>
+                )}
+              </Button>
+              <Button 
+                variant="default" 
+                size="lg" 
+                className="h-14 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold shadow-lg shadow-blue-500/20"
+                onClick={handleAnalyze}
+                disabled={isAnalyzing || isGenerating}
+              >
+                {isAnalyzing ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Analisando e Criando SaaS...
+                  </>
+                ) : (
+                  <>
+                    <Zap className="mr-2 h-5 w-5 text-yellow-300 fill-yellow-300" />
+                    Analisar Nicho no Radar
+                  </>
+                )}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

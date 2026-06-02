@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, Zap, Target, BookOpen, Lock, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ContactModal } from "@/components/contact-modal";
 
 export default function LandingPage() {
   const [isUSD, setIsUSD] = useState(false);
@@ -18,9 +19,19 @@ export default function LandingPage() {
           </div>
           <span className="font-bold text-xl tracking-tight text-white">ViralBook AI</span>
         </div>
-        <nav className="flex gap-4 sm:gap-6">
-          <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-white transition-colors flex items-center px-4 py-2 rounded-full hover:bg-white/5">
-            Login Interno
+        <nav className="flex items-center gap-4 sm:gap-6">
+          <Link href="#features" className="text-sm font-medium text-muted-foreground hover:text-white transition-colors hidden sm:block">
+            Funcionalidades
+          </Link>
+          <Link href="#pricing" className="text-sm font-medium text-muted-foreground hover:text-white transition-colors hidden sm:block">
+            Preços
+          </Link>
+          <Link href="/docs" className="text-sm font-medium text-muted-foreground hover:text-white transition-colors hidden sm:block">
+            Documentação
+          </Link>
+          <div className="h-4 w-px bg-white/10 hidden sm:block" />
+          <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-white transition-colors flex items-center px-4 py-2 rounded-full hover:bg-white/5 border border-white/5">
+            Acesso Restrito
           </Link>
         </nav>
       </header>
@@ -50,11 +61,21 @@ export default function LandingPage() {
                 </Link>
               </Button>
             </div>
+            
+            {/* Trust Badges */}
+            <div className="mt-16 pt-8 border-t border-white/5 flex flex-col items-center">
+              <p className="text-sm font-medium text-muted-foreground mb-6 uppercase tracking-widest">Tecnologia de ponta alimentada por</p>
+              <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+                <div className="flex items-center gap-2 font-bold text-xl"><Zap className="h-6 w-6"/> Groq AI</div>
+                <div className="flex items-center gap-2 font-bold text-xl"><BookOpen className="h-6 w-6"/> Google Books</div>
+                <div className="flex items-center gap-2 font-bold text-xl"><Lock className="h-6 w-6"/> Supabase</div>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* Features Section */}
-        <section className="w-full py-24 bg-black/40 border-y border-white/5 px-4 md:px-6">
+        <section id="features" className="w-full py-24 bg-black/40 border-y border-white/5 px-4 md:px-6">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16 space-y-4">
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">Tudo que você precisa para dominar o mercado</h2>
@@ -95,7 +116,41 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Pricing Section (Lemon Squeezy) */}
+        {/* Testimonials Section */}
+        <section className="w-full py-24 px-4 md:px-6 relative overflow-hidden">
+          <div className="absolute top-1/2 right-0 w-[400px] h-[400px] bg-purple-500/10 blur-[100px] rounded-full pointer-events-none" />
+          <div className="max-w-6xl mx-auto relative z-10">
+            <div className="text-center mb-16 space-y-4">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">O que dizem os Fundadores</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Quem parou de adivinhar nichos já está construindo negócios de verdade.</p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-6">
+              {[
+                { name: "Lucas M.", role: "Indie Hacker", text: "Eu perdia semanas tentando validar ideias. O ViralBook encontrou uma dor latente em livros de 'Foco' e eu construí um micro-SaaS em 4 dias. Já tenho meus primeiros 10 clientes pagantes!" },
+                { name: "Sofia T.", role: "Desenvolvedora Web", text: "A integração com o Groq é absurdamente rápida. O Lean Canvas que ele gera é tão detalhado que a Vantagem Injusta sugerida virou o slogan da minha nova startup." },
+                { name: "Rafael C.", role: "Empreendedor", text: "O melhor investimento do ano. Usar a base do Google Books para achar dores pelas quais as pessoas já pagam para resolver mudou completamente a minha visão de negócios." }
+              ].map((testimonial, i) => (
+                <div key={i} className="p-8 rounded-3xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.05] transition-colors relative">
+                  <div className="flex gap-1 mb-6 text-yellow-500">
+                    {[...Array(5)].map((_, j) => <svg key={j} className="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>)}
+                  </div>
+                  <p className="text-muted-foreground leading-relaxed italic mb-6">"{testimonial.text}"</p>
+                  <div className="flex items-center gap-3 mt-auto">
+                    <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-lg">
+                      {testimonial.name[0]}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white text-sm">{testimonial.name}</h4>
+                      <p className="text-xs text-muted-foreground">{testimonial.role}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+        {/* Pricing Section */}
         <section id="pricing" className="w-full py-24 md:py-32 px-4 md:px-6 relative">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
 
@@ -144,11 +199,13 @@ export default function LandingPage() {
                     <div className="text-6xl font-extrabold text-white mb-3">
                       {isUSD ? "$ 39" : "R$ 197"}
                     </div>
-                    <p className="text-sm text-primary font-medium mb-8">Pagamento único. Acesso para sempre.</p>
+                    <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-full mb-8 flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4" /> Garantia Incondicional de 7 Dias
+                    </div>
                     
                     <Button size="lg" className="w-full md:w-auto h-14 px-8 text-lg font-bold shadow-xl rounded-xl transition-transform hover:-translate-y-1" asChild>
-                      {/* O LINK DO LEMON SQUEEZY DEPENDE DA MOEDA ESCOLHIDA */}
-                      <a href={isUSD ? "https://app.lemonsqueezy.com/checkout/buy/LINK_USD_AQUI" : "https://app.lemonsqueezy.com/checkout/buy/LINK_BRL_AQUI"}>
+                      {/* O LINK DO SEU CHECKOUT (KIWIFY, STRIPE, ETC) VAI AQUI */}
+                      <a href="#checkout-url-futura">
                         Comprar Acesso Agora
                       </a>
                     </Button>
@@ -159,18 +216,91 @@ export default function LandingPage() {
             
             <div className="mt-10 flex items-center justify-center gap-2 text-sm text-muted-foreground font-medium">
               <Lock className="h-4 w-4" />
-              <span>Pagamento 100% seguro processado por Lemon Squeezy</span>
+              <span>Pagamento 100% seguro processado pela plataforma oficial</span>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="w-full py-24 border-t border-white/5 px-4 md:px-6 bg-black/40">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-16 space-y-4">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">Perguntas Frequentes</h2>
+              <p className="text-muted-foreground text-lg">Tudo que você precisa saber antes de adquirir o ViralBook AI.</p>
+            </div>
+            
+            <div className="space-y-4">
+              {[
+                { q: "Eu preciso saber programar para usar o ViralBook?", a: "Não para encontrar a ideia! O ViralBook vai te dar a ideia de negócio estruturada (O Lean Canvas). Se você não sabe programar, as ideias classificadas como 'Custo de Construção: Baixo' podem ser criadas com ferramentas No-Code (Bubble, FlutterFlow) sem escrever uma linha de código." },
+                { q: "O pagamento é mensal ou anual?", a: "Nenhum dos dois. O pagamento é ÚNICO. Você paga uma vez e tem acesso vitalício ao Radar, ao Cofre de Favoritos e a todas as futuras atualizações da plataforma." },
+                { q: "Quantas ideias eu posso gerar por dia?", a: "O seu acesso permite a geração ILIMITADA de ideias. Pesquise quantos nichos quiser, leia centenas de livros virtuais e gere infinitos planos de negócios." },
+                { q: "E se eu não gostar da ferramenta?", a: "Você está coberto pela nossa Garantia Incondicional de 7 Dias. Se você entrar, rodar o radar e achar que o software não vai colocar dinheiro no seu bolso, basta nos enviar um único e-mail e devolveremos 100% do seu dinheiro, sem perguntas." }
+              ].map((faq, i) => (
+                <details key={i} className="group p-6 rounded-2xl bg-white/[0.02] border border-white/5 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-colors hover:bg-white/[0.04]">
+                  <summary className="flex items-center justify-between font-bold text-lg text-white outline-none">
+                    {faq.q}
+                    <span className="transition group-open:rotate-180">
+                      <svg fill="none" height="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                    </span>
+                  </summary>
+                  <p className="text-muted-foreground mt-4 leading-relaxed group-open:animate-in group-open:fade-in group-open:slide-in-from-top-1">
+                    {faq.a}
+                  </p>
+                </details>
+              ))}
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-white/5 bg-black/20 py-12 text-center text-muted-foreground">
-        <div className="flex items-center justify-center gap-2 mb-4 opacity-50">
-          <Zap className="h-5 w-5" />
-          <span className="font-bold text-lg tracking-tight">ViralBook AI</span>
+      <footer className="border-t border-white/5 bg-background pt-20 pb-12 px-6 lg:px-14">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-16">
+          <div className="md:col-span-1 space-y-4">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
+                <Zap className="h-4 w-4 text-white" />
+              </div>
+              <span className="font-bold text-xl tracking-tight text-white">ViralBook AI</span>
+            </div>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              Descubra os oceanos azuis do mercado de software antes que eles fiquem saturados.
+            </p>
+          </div>
+          
+          <div>
+            <h4 className="font-bold text-white mb-6 uppercase text-sm tracking-wider">Produto</h4>
+            <ul className="space-y-4 text-sm text-muted-foreground">
+              <li><Link href="#features" className="hover:text-primary transition-colors">Funcionalidades</Link></li>
+              <li><Link href="#pricing" className="hover:text-primary transition-colors">Preços & Planos</Link></li>
+              <li><Link href="/docs" className="hover:text-primary transition-colors">Documentação (Docs)</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-white mb-6 uppercase text-sm tracking-wider">Empresa</h4>
+            <ul className="space-y-4 text-sm text-muted-foreground">
+              <li><Link href="/terms" className="hover:text-primary transition-colors">Termos de Uso</Link></li>
+              <li><Link href="/privacy" className="hover:text-primary transition-colors">Política de Privacidade</Link></li>
+              <li><Link href="/login" className="hover:text-primary transition-colors">Área de Membros</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-white mb-6 uppercase text-sm tracking-wider">Contato</h4>
+            <ul className="space-y-4 text-sm text-muted-foreground">
+              <li><ContactModal /></li>
+              <li><a href="mailto:suporte@viralbook.ai" className="hover:text-primary transition-colors font-medium text-white">suporte@viralbook.ai</a></li>
+              <li className="pt-2 text-xs">Atendimento de Seg a Sex, das 09h às 18h.</li>
+            </ul>
+          </div>
         </div>
-        <p className="text-sm">© 2026 ViralBook AI. Construindo o futuro dos micro-SaaS.</p>
+
+        <div className="max-w-7xl mx-auto pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+          <p>© {new Date().getFullYear()} ViralBook AI. Todos os direitos reservados.</p>
+          <div className="flex gap-4">
+            <span>Desenvolvido por Indie Hackers para Indie Hackers.</span>
+          </div>
+        </div>
       </footer>
     </div>
   );

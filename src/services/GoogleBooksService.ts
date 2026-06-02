@@ -4,9 +4,11 @@ export class GoogleBooksService {
    */
   static async searchTrendingBooks(query: string, maxResults = 10) {
     try {
-      // Usando API pública do Google Books (sem necessidade de chave para leituras simples)
+      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY;
+      const keyParam = apiKey ? `&key=${apiKey}` : '';
+      
       const res = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&orderBy=relevance&maxResults=${maxResults}`
+        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&orderBy=relevance&maxResults=${maxResults}${keyParam}`
       );
       
       const data = await res.json();

@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { BookOpen } from "lucide-react"
 
 import { getFilterDate } from "@/lib/utils"
+import { BookSearcher } from "@/components/book-searcher"
 
 export const dynamic = 'force-dynamic';
 
@@ -34,6 +35,14 @@ export default async function RadarPage(props: { searchParams: Promise<{ country
         <p className="text-muted-foreground mt-2">
           Base literária de {country} escaneada.
         </p>
+      </div>
+
+      <BookSearcher />
+
+      <div className="mt-12 mb-4">
+        <h2 className="text-xl font-bold flex items-center gap-2">
+          Últimos Livros Processados pelo Sistema
+        </h2>
       </div>
 
       <div className="rounded-xl border border-border/50 bg-card/40 backdrop-blur-md overflow-hidden">
