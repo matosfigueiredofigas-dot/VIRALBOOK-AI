@@ -89,11 +89,12 @@ export async function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="h-12 bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary transition-all rounded-lg group border border-primary/20 mb-4 shadow-sm shadow-primary/5">
-                  <a href="/welcome" className="flex items-center gap-3 px-3">
-                    <PlayCircle className="h-5 w-5" />
-                    <span className="font-bold text-sm">Comece por Aqui</span>
-                  </a>
+                <SidebarMenuButton
+                  render={<a href="/welcome" className="flex items-center gap-3 px-3" />}
+                  className="h-12 bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary transition-all rounded-lg group border border-primary/20 mb-4 shadow-sm shadow-primary/5"
+                >
+                  <PlayCircle className="h-5 w-5" />
+                  <span className="font-bold text-sm">Comece por Aqui</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -106,11 +107,12 @@ export async function AppSidebar() {
             <SidebarMenu className="gap-2">
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="h-11 hover:bg-primary/10 hover:text-primary transition-all rounded-lg group">
-                    <a href={item.url} className="flex items-center gap-3 px-3">
-                      <item.icon className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                      <span className="font-medium text-sm">{item.title}</span>
-                    </a>
+                  <SidebarMenuButton
+                    render={<a href={item.url} className="flex items-center gap-3 px-3" />}
+                    className="h-11 hover:bg-primary/10 hover:text-primary transition-all rounded-lg group"
+                  >
+                    <item.icon className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <span className="font-medium text-sm">{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -123,11 +125,12 @@ export async function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu className="gap-2">
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="h-11 hover:bg-red-500/10 hover:text-red-500 transition-all rounded-lg group">
-                  <a href="/favorites" className="flex items-center gap-3 px-3">
-                    <Heart className="h-5 w-5 text-muted-foreground group-hover:text-red-500 transition-colors" />
-                    <span className="font-medium text-sm">Favoritos Salvos</span>
-                  </a>
+                <SidebarMenuButton
+                  render={<a href="/favorites" className="flex items-center gap-3 px-3" />}
+                  className="h-11 hover:bg-red-500/10 hover:text-red-500 transition-all rounded-lg group"
+                >
+                  <Heart className="h-5 w-5 text-muted-foreground group-hover:text-red-500 transition-colors" />
+                  <span className="font-medium text-sm">Favoritos Salvos</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -140,11 +143,12 @@ export async function AppSidebar() {
             <SidebarGroupContent>
               <SidebarMenu className="gap-2">
                 <SidebarMenuItem>
-                  <SidebarMenuButton asChild className="h-11 hover:bg-amber-500/10 hover:text-amber-500 transition-all rounded-lg group">
-                    <a href="/admin" className="flex items-center gap-3 px-3">
-                      <Shield className="h-5 w-5 text-muted-foreground group-hover:text-amber-500 transition-colors" />
-                      <span className="font-medium text-sm">Painel Admin</span>
-                    </a>
+                  <SidebarMenuButton
+                    render={<a href="/admin" className="flex items-center gap-3 px-3" />}
+                    className="h-11 hover:bg-amber-500/10 hover:text-amber-500 transition-all rounded-lg group"
+                  >
+                    <Shield className="h-5 w-5 text-muted-foreground group-hover:text-amber-500 transition-colors" />
+                    <span className="font-medium text-sm">Painel Admin</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
@@ -158,11 +162,12 @@ export async function AppSidebar() {
               {user ? (
                 <>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild className="h-11 bg-primary/5 hover:bg-primary/10 transition-all rounded-lg group mb-1">
-                      <div className="flex items-center gap-3 px-3">
-                        <User className="h-5 w-5 text-primary" />
-                        <span className="font-medium text-sm text-foreground truncate" title={user.email}>{user.email}</span>
-                      </div>
+                    <SidebarMenuButton
+                      render={<div className="flex items-center gap-3 px-3" />}
+                      className="h-11 bg-primary/5 hover:bg-primary/10 transition-all rounded-lg group mb-1"
+                    >
+                      <User className="h-5 w-5 text-primary" />
+                      <span className="font-medium text-sm text-foreground truncate" title={user.email}>{user.email}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
@@ -176,20 +181,22 @@ export async function AppSidebar() {
                 </>
               ) : (
                 <SidebarMenuItem>
-                  <SidebarMenuButton asChild className="h-11 hover:bg-muted transition-all rounded-lg group">
-                    <a href="/login" className="flex items-center gap-3 px-3">
-                      <LogIn className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-                      <span className="font-medium text-sm">Login / Autenticação</span>
-                    </a>
+                  <SidebarMenuButton
+                    render={<a href="/login" className="flex items-center gap-3 px-3" />}
+                    className="h-11 hover:bg-muted transition-all rounded-lg group"
+                  >
+                    <LogIn className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    <span className="font-medium text-sm">Login / Autenticação</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )}
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="h-11 hover:bg-muted transition-all rounded-lg group">
-                  <a href="/settings" className="flex items-center gap-3 px-3">
-                    <Settings className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-                    <span className="font-medium text-sm">Configurações</span>
-                  </a>
+                <SidebarMenuButton
+                  render={<a href="/settings" className="flex items-center gap-3 px-3" />}
+                  className="h-11 hover:bg-muted transition-all rounded-lg group"
+                >
+                  <Settings className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                  <span className="font-medium text-sm">Configurações</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

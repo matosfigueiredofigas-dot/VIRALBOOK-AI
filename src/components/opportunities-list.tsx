@@ -119,10 +119,8 @@ function OpportunityCard({ item }: { item: any }) {
       
       <CardFooter className="pt-4 border-t border-border/50 flex gap-2">
         <Sheet>
-          <SheetTrigger asChild>
-            <Button className="flex-1 bg-primary/10 text-primary hover:bg-primary/20">
-              Detalhes & Prompts <Sparkles className="ml-2 h-4 w-4" />
-            </Button>
+          <SheetTrigger render={<Button className="flex-1 bg-primary/10 text-primary hover:bg-primary/20" />}>
+            Detalhes & Prompts <Sparkles className="ml-2 h-4 w-4" />
           </SheetTrigger>
           <SheetContent className={`w-full overflow-y-auto transition-all duration-300 ${isExpanded ? "!max-w-[90vw]" : "!max-w-xl"}`}>
             <SheetHeader className="mb-6 relative pr-12">

@@ -34,9 +34,9 @@ export default function WelcomePage() {
             <p className="text-muted-foreground">
               Vá ao Radar de E-books e procure por tópicos em alta. Se existem livros best-sellers sobre um problema, existe gente pagando por soluções.
             </p>
-            <Button variant="link" className="text-indigo-500 mt-auto" asChild>
-              <Link href="/radar">Explorar Radar &rarr;</Link>
-            </Button>
+            <Link href="/radar" className="text-indigo-500 mt-auto text-sm font-semibold underline-offset-4 hover:underline">
+              Explorar Radar &rarr;
+            </Link>
           </CardContent>
         </Card>
 
@@ -50,9 +50,9 @@ export default function WelcomePage() {
             <p className="text-muted-foreground">
               Acesse a Biblioteca de Ideias, gire a roleta e misture públicos, problemas e tecnologias em mercados de Oceano Azul.
             </p>
-            <Button variant="link" className="text-primary mt-auto" asChild>
-              <Link href="/library">Gerar Combinações &rarr;</Link>
-            </Button>
+            <Link href="/library" className="text-primary mt-auto text-sm font-semibold underline-offset-4 hover:underline">
+              Gerar Combinações &rarr;
+            </Link>
           </CardContent>
         </Card>
 
@@ -65,25 +65,27 @@ export default function WelcomePage() {
             <p className="text-muted-foreground">
               No Dashboard, veja o Score Viral da sua ideia, extraia o Lean Canvas completo e copie os Prompts para a IA programar para você.
             </p>
-            <Button variant="link" className="text-green-500 mt-auto" asChild>
-              <Link href="/dashboard">Ver Oportunidades &rarr;</Link>
-            </Button>
+            <Link href="/dashboard" className="text-green-500 mt-auto text-sm font-semibold underline-offset-4 hover:underline">
+              Ver Oportunidades &rarr;
+            </Link>
           </CardContent>
         </Card>
       </div>
 
       {/* Call to Action */}
       <div className="flex flex-col sm:flex-row gap-4 pt-12 items-center justify-center">
-        <Button size="lg" className="h-14 px-8 text-lg font-bold shadow-xl shadow-primary/20 rounded-xl hover:scale-105 transition-transform" asChild>
-          <Link href="/library">
-            <Sparkles className="mr-2 h-5 w-5" /> Começar a Gerar Agora
-          </Link>
-        </Button>
-        <Button size="lg" variant="outline" className="h-14 px-8 text-lg rounded-xl glass-card hover:bg-white/5" asChild>
-          <Link href="/radar">
-            <BookOpen className="mr-2 h-5 w-5" /> Vasculhar a Amazon
-          </Link>
-        </Button>
+        <Link 
+          href="/library" 
+          className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/80 h-14 px-8 text-lg font-bold shadow-xl shadow-primary/20 rounded-xl hover:scale-105 transition-transform"
+        >
+          <Sparkles className="mr-2 h-5 w-5" /> Começar a Gerar Agora
+        </Link>
+        <Link 
+          href="/radar" 
+          className="group/button inline-flex shrink-0 items-center justify-center border border-border bg-background hover:bg-muted hover:text-foreground h-14 px-8 text-lg rounded-xl glass-card hover:bg-white/5"
+        >
+          <BookOpen className="mr-2 h-5 w-5" /> Vasculhar a Amazon
+        </Link>
       </div>
     </div>
   )

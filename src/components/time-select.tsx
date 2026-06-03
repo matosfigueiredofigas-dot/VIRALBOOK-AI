@@ -17,9 +17,10 @@ export function TimeSelect() {
   
   const currentTime = searchParams.get("time") || "all";
 
-  const handleTimeChange = (time: string) => {
+  const handleTimeChange = (time: string | null) => {
+    const val = time || "all";
     const params = new URLSearchParams(searchParams);
-    params.set("time", time);
+    params.set("time", val);
     router.push(`${pathname}?${params.toString()}`);
   };
 

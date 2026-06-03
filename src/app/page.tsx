@@ -55,11 +55,12 @@ export default function LandingPage() {
               A inteligência artificial que varre a internet para encontrar os micro-nichos mais lucrativos, inexplorados e com maior potencial de viralização. Pare de adivinhar. Comece a construir.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
-              <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-full shadow-[0_0_40px_-10px_rgba(59,130,246,0.6)] transition-all hover:scale-105 hover:shadow-[0_0_60px_-15px_rgba(59,130,246,0.8)]" asChild>
-                <Link href="#pricing">
-                  Garantir Meu Acesso Agora <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
+              <Link 
+                href="#pricing" 
+                className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/80 h-14 px-8 text-lg font-bold rounded-full shadow-[0_0_40px_-10px_rgba(59,130,246,0.6)] transition-all hover:scale-105 hover:shadow-[0_0_60px_-15px_rgba(59,130,246,0.8)]"
+              >
+                Garantir Meu Acesso Agora <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
             </div>
             
             {/* Trust Badges */}
@@ -203,12 +204,12 @@ export default function LandingPage() {
                       <CheckCircle2 className="h-4 w-4" /> Garantia Incondicional de 7 Dias
                     </div>
                     
-                    <Button size="lg" className="w-full md:w-auto h-14 px-8 text-lg font-bold shadow-xl rounded-xl transition-transform hover:-translate-y-1" asChild>
-                      {/* O LINK DO SEU CHECKOUT (KIWIFY, STRIPE, ETC) VAI AQUI */}
-                      <a href="#checkout-url-futura">
-                        Comprar Acesso Agora
-                      </a>
-                    </Button>
+                    <a 
+                      href="#checkout-url-futura" 
+                      className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/80 w-full md:w-auto h-14 px-8 text-lg font-bold shadow-xl rounded-xl transition-transform hover:-translate-y-1"
+                    >
+                      Comprar Acesso Agora
+                    </a>
                   </div>
                 </div>
               </div>

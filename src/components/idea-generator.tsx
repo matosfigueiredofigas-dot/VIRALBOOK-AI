@@ -98,6 +98,14 @@ export function IdeaGenerator() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleTargetStarsChange = (value: string | null) => {
+    setTargetStars(value || "random");
+  };
+
+  const handleCountryChange = (value: string | null) => {
+    setCountry(value || "BR");
+  };
+
   const handleCopy = () => {
     const text = `SaaS B2B para ${idea.audience} resolvendo ${idea.problem} com ${idea.technology}`;
     navigator.clipboard.writeText(text);
@@ -138,7 +146,7 @@ export function IdeaGenerator() {
           {/* Seletor de Qualidade (Estrelas) */}
           <div className="flex items-center gap-2 bg-muted/50 p-2 rounded-xl border border-white/5 w-full shadow-inner">
             <Star className="h-5 w-5 text-yellow-500 ml-2 shrink-0" />
-            <Select value={targetStars} onValueChange={setTargetStars}>
+            <Select value={targetStars} onValueChange={handleTargetStarsChange}>
               <SelectTrigger className="border-0 bg-transparent text-sm md:text-base focus:ring-0">
                 <SelectValue placeholder="Nível da Ideia" />
               </SelectTrigger>
@@ -157,7 +165,7 @@ export function IdeaGenerator() {
           {/* Seletor de País */}
           <div className="flex items-center gap-2 bg-muted/50 p-2 rounded-xl border border-white/5 w-full shadow-inner">
             <Globe className="h-5 w-5 text-blue-500 ml-2 shrink-0" />
-            <Select value={country} onValueChange={setCountry}>
+            <Select value={country} onValueChange={handleCountryChange}>
               <SelectTrigger className="border-0 bg-transparent text-sm md:text-base focus:ring-0">
                 <SelectValue placeholder="País Alvo" />
               </SelectTrigger>

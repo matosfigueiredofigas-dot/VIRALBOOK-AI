@@ -21,9 +21,10 @@ export function CountrySelect() {
   
   const currentCountry = searchParams.get("country") || "US";
 
-  const handleCountryChange = (code: string) => {
+  const handleCountryChange = (code: string | null) => {
+    const val = code || "US";
     const params = new URLSearchParams(searchParams.toString());
-    params.set("country", code);
+    params.set("country", val);
     router.push(`${pathname}?${params.toString()}`);
   };
 

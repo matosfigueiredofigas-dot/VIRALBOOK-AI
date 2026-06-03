@@ -47,10 +47,8 @@ export function ContactModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <button className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5 cursor-pointer">
-          <Mail className="h-4 w-4" /> Enviar Mensagem de Suporte
-        </button>
+      <DialogTrigger render={<button className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5 cursor-pointer" />}>
+        <Mail className="h-4 w-4" /> Enviar Mensagem de Suporte
       </DialogTrigger>
       <DialogContent className="max-w-md bg-background border-border/50 text-foreground">
         <DialogHeader>

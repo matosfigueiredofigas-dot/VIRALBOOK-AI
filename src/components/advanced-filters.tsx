@@ -31,11 +31,12 @@ export function AdvancedFilters() {
     return () => clearTimeout(timeoutId)
   }, [search, router, searchParams])
 
-  const handleScoreChange = (value: string) => {
-    setMinScore(value)
+  const handleScoreChange = (value: string | null) => {
+    const val = value || "0"
+    setMinScore(val)
     const params = new URLSearchParams(searchParams.toString())
     
-    if (value !== "0") params.set("minScore", value)
+    if (val !== "0") params.set("minScore", val)
     else params.delete("minScore")
 
     startTransition(() => {

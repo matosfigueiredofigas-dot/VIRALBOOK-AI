@@ -57,7 +57,7 @@ export async function GET(request: Request) {
         const book = books[0];
         const trendsData = await TrendsService.getKeywordGrowth(randomNiche, country);
         const redditData = await RedditService.getSocialValidation(randomNiche);
-        const aiInsight = await GroqService.generateOpportunity(book, trendsData, redditData);
+        const aiInsight = await GroqService.generateOpportunity(book, trendsData, redditData, country);
         
         if (!aiInsight) continue;
 
