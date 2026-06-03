@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { PwaRegister } from "@/components/pwa-register";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,6 +17,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ViralBook AI | Radar Global de Oportunidades",
   description: "Detectando tendências de mercado a partir de ebooks e transformando-as em oportunidades de SaaS.",
+  appleWebApp: {
+    capable: true,
+    title: "ViralBook AI",
+    statusBarStyle: "default",
+  },
 };
 
 export default function RootLayout({
@@ -38,6 +44,7 @@ export default function RootLayout({
         >
           {children}
         </ThemeProvider>
+        <PwaRegister />
       </body>
     </html>
   );
