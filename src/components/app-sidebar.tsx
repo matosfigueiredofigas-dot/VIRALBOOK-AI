@@ -1,4 +1,4 @@
-import { BookOpen, TrendingUp, Lightbulb, Activity, BarChart3, Settings, Heart, LogIn, Sparkles, LayoutDashboard, PlayCircle, User, LogOut } from "lucide-react"
+import { BookOpen, TrendingUp, Lightbulb, Activity, BarChart3, Settings, Heart, LogIn, Sparkles, LayoutDashboard, PlayCircle, User, LogOut, Shield } from "lucide-react"
 import { createClient } from "@/utils/supabase/server"
 import {
   Sidebar,
@@ -50,6 +50,26 @@ const items = [
 export async function AppSidebar() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+
+  let isAdmin = false
+  if (user) {
+    if (user.email === 'moisesdematos@gmail.com') {
+      isAdmin = true
+    } else {
+      try {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single()
+        if (profile?.role === 'admin') {
+          isAdmin = true
+        }
+      } catch (e) {
+        // Silently catch error if database table doesn't exist
+      }
+    }
+  }
 
   return (
     <Sidebar className="border-r border-border/50 bg-background/50 backdrop-blur-xl">
@@ -113,6 +133,24 @@ export async function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {isAdmin && (
+          <SidebarGroup className="mt-4">
+            <SidebarGroupLabel className="text-xs font-semibold tracking-wider text-muted-foreground/70 uppercase mb-2">Administração</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu className="gap-2">
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild className="h-11 hover:bg-amber-500/10 hover:text-amber-500 transition-all rounded-lg group">
+                    <a href="/admin" className="flex items-center gap-3 px-3">
+                      <Shield className="h-5 w-5 text-muted-foreground group-hover:text-amber-500 transition-colors" />
+                      <span className="font-medium text-sm">Painel Admin</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
 
         <SidebarGroup className="mt-auto">
           <SidebarGroupContent>
