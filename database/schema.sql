@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS public.opportunities (
     trends_growth_weekly DECIMAL(5,2),
     trends_growth_monthly DECIMAL(5,2),
     reddit_mentions INTEGER,
+    facebook_ads_count INTEGER DEFAULT 0,
+    facebook_groups_count INTEGER DEFAULT 0,
     viral_opportunity_score INTEGER NOT NULL DEFAULT 0, -- 0 a 100
     
     -- Insights da IA (Motor Ebook -> Startup)

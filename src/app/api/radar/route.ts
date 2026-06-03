@@ -2,18 +2,20 @@ import { NextResponse } from 'next/server';
 import { GoogleBooksService } from '@/services/GoogleBooksService';
 import { TrendsService } from '@/services/TrendsService';
 import { RedditService } from '@/services/RedditService';
+import { FacebookService } from '@/services/FacebookService';
 import { GroqService } from '@/services/GroqService';
 import { supabase } from '@/lib/supabase';
 
 // Lógica de cálculo do Viral Opportunity Score (0-100)
-// 35% Trends, 25% Popularidade Livro (mocked), 25% Reddit, 15% IA
-function calculateViralScore(trendsGrowth: number, mentions: number, aiScore: number = 70) {
-  const trendsWeight = Math.min((trendsGrowth / 100) * 35, 35); // Máx 35 pts se cresceu 100%+
-  const redditWeight = Math.min((mentions / 50) * 25, 25);      // Máx 25 pts se tiver >= 50 menções
+// 25% Trends, 20% Reddit, 20% Facebook (Ads + Groups), 20% Livro, 15% IA
+function calculateViralScore(trendsGrowth: number, redditMentions: number, facebookAds: number, facebookGroups: number, aiScore: number = 70) {
+  const trendsWeight = Math.min((trendsGrowth / 100) * 25, 25); // Máx 25 pts se cresceu 100%+
+  const redditWeight = Math.min((redditMentions / 50) * 20, 20); // Máx 20 pts se tiver >= 50 menções
+  const facebookWeight = Math.min(((facebookAds * 3 + facebookGroups) / 30) * 20, 20); // Máx 20 pts para Ads/Groups no FB
   const bookWeight = 20; // Fixo para MVP simplificado
   const aiWeight = (aiScore / 100) * 15;
   
-  return Math.round(trendsWeight + redditWeight + bookWeight + aiWeight);
+  return Math.round(trendsWeight + redditWeight + facebookWeight + bookWeight + aiWeight);
 }
 
 export async function POST(request: Request) {
@@ -40,9 +42,14 @@ export async function POST(request: Request) {
     const redditData = await RedditService.getSocialValidation(keyword);
     console.log("[Radar] Reddit Data:", redditData);
 
+    // 3.5 Buscar Validação Social (Facebook)
+    console.log("[Radar] Buscando Facebook...");
+    const facebookData = await FacebookService.getSocialValidation(keyword);
+    console.log("[Radar] Facebook Data:", facebookData);
+
     // 4. Processamento via IA (Groq/Llama3)
     console.log("[Radar] Iniciando Groq Pipeline Multi-Agente...");
-    const aiInsight = await GroqService.generateOpportunity(book, trendsData, redditData, country);
+    const aiInsight = await GroqService.generateOpportunity(book, trendsData, redditData, facebookData, country);
     if (!aiInsight) {
       console.log("[Radar] Falha na IA. aiInsight é null.");
       return NextResponse.json({ error: 'Falha na geração de IA' }, { status: 500 });
@@ -50,7 +57,13 @@ export async function POST(request: Request) {
     console.log("[Radar] IA concluída com sucesso!");
 
     // 5. Motor de Pontuação
-    const viralScore = calculateViralScore(trendsData.monthlyGrowth, redditData.mentions, aiInsight.aiOpportunityScore);
+    const viralScore = calculateViralScore(
+      trendsData.monthlyGrowth, 
+      redditData.mentions, 
+      facebookData.adsCount, 
+      facebookData.groupsCount, 
+      aiInsight.aiOpportunityScore
+    );
 
     // 6. Salvar no Supabase
     const { data: insertedData, error: dbError } = await supabase
@@ -64,6 +77,8 @@ export async function POST(request: Request) {
           country: country,
           trends_growth_monthly: trendsData.monthlyGrowth,
           reddit_mentions: redditData.mentions,
+          facebook_ads_count: facebookData.adsCount,
+          facebook_groups_count: facebookData.groupsCount,
           viral_opportunity_score: viralScore,
           saas_name: aiInsight.saasName,
           problem_solved: aiInsight.problemSolved,

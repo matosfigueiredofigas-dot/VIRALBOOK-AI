@@ -7,8 +7,27 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import { Search, Loader2, Sparkles, Copy, CheckCircle2, TrendingUp, Heart, Share2, FileText, Bell, LayoutGrid, List, MessageSquare } from "lucide-react";
+import { Search, Loader2, Sparkles, Copy, CheckCircle2, TrendingUp, Heart, Share2, FileText, Bell, LayoutGrid, List, MessageSquare, Users } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+
+// Ícone personalizado do Facebook para evitar incompatibilidade de versão do lucide-react
+function FacebookIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={props.className}
+      width="24"
+      height="24"
+    >
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+    </svg>
+  );
+}
 import { AIChatModal } from "@/components/ai-chat-modal";
 
 // Sub-componente para isolar os estados individuais (como expandir a sheet)
@@ -100,7 +119,7 @@ function OpportunityCard({ item }: { item: any }) {
       </CardHeader>
       
       <CardContent className="flex-1">
-        <div className="flex gap-4 text-sm text-muted-foreground mb-4">
+        <div className="flex flex-wrap gap-4 text-xs sm:text-sm text-muted-foreground mb-4">
           <div className="flex items-center gap-1" title="Crescimento Mensal (Trends)">
             <TrendingUp className="h-4 w-4 text-green-500" />
             <span className="font-semibold text-green-500">+{item.trends_growth_monthly}%</span>
@@ -108,6 +127,14 @@ function OpportunityCard({ item }: { item: any }) {
           <div className="flex items-center gap-1" title="Menções no Reddit">
             <Search className="h-4 w-4 text-orange-500" />
             <span className="font-semibold text-orange-500">{item.reddit_mentions} refs</span>
+          </div>
+          <div className="flex items-center gap-1" title="Anúncios no Facebook">
+            <FacebookIcon className="h-4 w-4 text-blue-600" />
+            <span className="font-semibold text-blue-600">{item.facebook_ads_count || 0} ads</span>
+          </div>
+          <div className="flex items-center gap-1" title="Grupos no Facebook">
+            <Users className="h-4 w-4 text-indigo-400" />
+            <span className="font-semibold text-indigo-400">{item.facebook_groups_count || 0} grps</span>
           </div>
         </div>
 
@@ -181,6 +208,43 @@ function OpportunityCard({ item }: { item: any }) {
                   <div className="flex gap-2 mt-4 text-xs">
                     <Badge variant="outline" className="bg-background">⏱️ {item.development_time}</Badge>
                     <Badge variant="outline" className="bg-background">🧠 {item.implementation_difficulty}</Badge>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Validação Social & Canais</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="bg-orange-500/5 p-4 rounded-lg border border-orange-500/10">
+                    <div className="flex items-center gap-2 text-orange-500 font-bold mb-2">
+                      <Search className="h-5 w-5" />
+                      Validação Reddit
+                    </div>
+                    <div className="text-2xl font-extrabold text-foreground mb-1">
+                      {item.reddit_mentions || 0}
+                      <span className="text-xs font-normal text-muted-foreground ml-1">menções</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      Representa a quantidade de discussões ativas e manifestações de dores de usuários em subreddits relevantes.
+                    </p>
+                  </div>
+
+                  <div className="bg-blue-600/5 p-4 rounded-lg border border-blue-600/10">
+                    <div className="flex items-center gap-2 text-blue-500 font-bold mb-2">
+                      <FacebookIcon className="h-5 w-5" />
+                      Validação Facebook
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <div className="text-base font-bold text-foreground">
+                        Anúncios Ativos: <span className="text-blue-500">{item.facebook_ads_count || 0} campanhas</span>
+                      </div>
+                      <div className="text-base font-bold text-foreground">
+                        Grupos do Nicho: <span className="text-indigo-400">{item.facebook_groups_count || 0} ativos</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+                      Presença comercial de anúncios concorrentes e grupos ativos ideais para tráfego orgânico e prospecção.
+                    </p>
                   </div>
                 </div>
               </div>

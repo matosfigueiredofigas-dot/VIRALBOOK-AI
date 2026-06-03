@@ -37,7 +37,8 @@ export async function GET(request: Request) {
   // Define os headers do CSV
   const csvHeaders = [
     'SaaS Name', 'Score', 'Country', 'Book Category', 'Problem Solved',
-    'Target Audience', 'Monetization', 'MRR Potential', 'Difficulty'
+    'Target Audience', 'Monetization', 'MRR Potential', 'Difficulty',
+    'Reddit Mentions', 'Facebook Ads Count', 'Facebook Groups Count'
   ].join(',')
 
   // Mapeia os dados escapando aspas e vírgulas para evitar quebra do CSV
@@ -51,7 +52,10 @@ export async function GET(request: Request) {
       `"${(row.target_audience || '').replace(/"/g, '""')}"`,
       `"${(row.monetization_model || '').replace(/"/g, '""')}"`,
       `"${(row.potential_revenue || '').replace(/"/g, '""')}"`,
-      row.implementation_difficulty
+      row.implementation_difficulty,
+      row.reddit_mentions || 0,
+      row.facebook_ads_count || 0,
+      row.facebook_groups_count || 0
     ].join(',')
   })
 

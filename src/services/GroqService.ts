@@ -37,7 +37,7 @@ export class GroqService {
   /**
    * Pipeline Multi-Agente para descobrir e projetar SaaS
    */
-  static async generateOpportunity(book: any, trendsData: any, redditData: any, country: string) {
+  static async generateOpportunity(book: any, trendsData: any, redditData: any, facebookData: any, country: string) {
     try {
       // ---------------------------------------------------------
       // AGENTE 1: O ANALISTA DE NEGÓCIOS & CONCORRÊNCIA
@@ -45,13 +45,13 @@ export class GroqService {
       // ---------------------------------------------------------
       const systemAnalyst = `You are a brilliant Business Analyst. Return a valid JSON.
 Output language MUST be in the native language of ${country}.
-Analyze the book metadata, Google Trends data, and Reddit pain points to extract the core problem.
+Analyze the book metadata, Google Trends data, Reddit pain points, and Facebook signals to extract the core problem.
 Then, use your own knowledge to identify 2-3 potential competitors in the market.
 Based on the competitors, define a Unique Competitive Advantage (differentiation angle).
 JSON Schema: { "core_problem": "string", "target_audience": "string", "competitors": "string", "competitive_advantage": "string" }`;
 
       const userAnalyst = `Book: ${book.title} (${book.categories?.join(', ')}). Description: ${book.description?.substring(0, 500)}
-Trends: ${trendsData.monthlyGrowth}% growth. Reddit: ${redditData.mentions} mentions.`;
+Trends: ${trendsData.monthlyGrowth}% growth. Reddit: ${redditData.mentions} mentions. Facebook: ${facebookData.adsCount} active ads, ${facebookData.groupsCount} related groups (examples: ${facebookData.relevantGroups?.join(', ')}).`;
       
       const analystResult = await runAgent(systemAnalyst, userAnalyst);
 
