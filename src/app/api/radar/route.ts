@@ -5,6 +5,7 @@ import { RedditService } from '@/services/RedditService';
 import { FacebookService } from '@/services/FacebookService';
 import { GroqService } from '@/services/GroqService';
 import { supabase } from '@/lib/supabase';
+import { createClient } from '@/utils/supabase/server';
 
 // Lógica de cálculo do Viral Opportunity Score (0-100)
 // 25% Trends, 20% Reddit, 20% Facebook (Ads + Groups), 20% Livro, 15% IA
@@ -20,7 +21,39 @@ function calculateViralScore(trendsGrowth: number, redditMentions: number, faceb
 
 export async function POST(request: Request) {
   try {
+    // 0. Proteger Rota: Apenas usuários logados podem acionar o radar para evitar consumo malicioso de créditos
+    const authSupabase = await createClient();
+    const { data: { user } } = await authSupabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Não autorizado. Faça login para usar o radar.' }, { status: 401 });
+    }
+
     const { keyword, country = 'US' } = await request.json();
+
+    // 0.5 Cache: Se já buscamos esse livro/termo nos últimos 7 dias, retorna do cache para economizar créditos das APIs
+    console.log("[Radar] Checando cache para:", keyword);
+    const { data: cachedOpp } = await supabase
+      .from('opportunities')
+      .select('*')
+      .eq('country', country)
+      .or(`book_title.ilike.%${keyword}%,problem_solved.ilike.%${keyword}%`)
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    if (cachedOpp && cachedOpp.length > 0) {
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      const createdAt = new Date(cachedOpp[0].created_at);
+
+      if (createdAt > oneWeekAgo) {
+        console.log("[Radar] Cache Hit! Retornando dados pré-salvos para economizar APIs.");
+        return NextResponse.json({
+          success: true,
+          score: cachedOpp[0].viral_opportunity_score,
+          data: cachedOpp[0]
+        });
+      }
+    }
 
     // 1. Buscar Livro
     console.log("[Radar] Buscando livro para:", keyword);
