@@ -81,36 +81,44 @@ export class GroqService {
   /**
    * Pipeline Multi-Agente para descobrir e projetar SaaS
    */
-  static async generateOpportunity(book: any, trendsData: any, redditData: any, facebookData: any, country: string) {
+  static async generateOpportunity(book: any, trendsData: any, redditData: any, facebookData: any, country: string, idea?: any) {
     try {
       // ---------------------------------------------------------
       // AGENTE 1: O ANALISTA DE NEGÓCIOS & CONCORRÊNCIA
       // Objetivo: Entender a dor, avaliar concorrência e achar o diferencial.
       // ---------------------------------------------------------
+      const targetAudienceText = idea?.audience ? `specifically for target audience "${idea.audience}" and target problem "${idea.problem}"` : ``;
       const systemAnalyst = `You are a brilliant Business Analyst. Return a valid JSON.
 Output language MUST be in the native language of ${country}.
-Analyze the book metadata, Google Trends data, Reddit pain points, and Facebook signals to extract the core problem.
+Analyze the book metadata, Google Trends data, Reddit pain points, and Facebook signals to validate and enrich the opportunity ${targetAudienceText}.
 Then, use your own knowledge to identify 2-3 potential competitors in the market.
 Based on the competitors, define a Unique Competitive Advantage (differentiation angle).
 JSON Schema: { "core_problem": "string", "target_audience": "string", "competitors": "string", "competitive_advantage": "string" }`;
 
       const userAnalyst = `Book: ${book.title} (${book.categories?.join(', ')}). Description: ${book.description?.substring(0, 500)}
-Trends: ${trendsData.monthlyGrowth}% growth. Reddit: ${redditData.mentions} mentions. Facebook: ${facebookData.adsCount} active ads, ${facebookData.groupsCount} related groups (examples: ${facebookData.relevantGroups?.join(', ')}).`;
+Trends: ${trendsData.monthlyGrowth}% growth. Reddit: ${redditData.mentions} mentions. Facebook: ${facebookData.adsCount} active ads, ${facebookData.groupsCount} related groups (examples: ${facebookData.relevantGroups?.join(', ')}).
+${idea ? `Target Audience (you MUST use this audience): ${idea.audience}\nTarget Problem/Pain (you MUST use this problem): ${idea.problem}` : ''}`;
       
       const analystResult = await runAgent(systemAnalyst, userAnalyst);
+
+      // Garante alinhamento estrito com os valores selecionados pelo usuário
+      const coreProblem = idea?.problem ? idea.problem : analystResult.core_problem;
+      const targetAudience = idea?.audience ? idea.audience : analystResult.target_audience;
 
       // ---------------------------------------------------------
       // AGENTE 2: O ARQUITETO TÉCNICO
       // Objetivo: Criar a solução SaaS e os prompts de código.
       // ---------------------------------------------------------
+      const techText = idea?.technology ? `specifically utilizing the technology/angle: "${idea.technology}"` : ``;
       const systemArchitect = `You are a brilliant SaaS Technical Architect. Return a valid JSON.
 Output language MUST be in the native language of ${country}.
-Based on the business analyst's findings, design a Micro-SaaS.
+Based on the business analyst's findings, design a Micro-SaaS ${techText}.
 Provide a catchy SaaS Name, MVP Features (buildable in 30 days), Development Time estimation, Implementation Difficulty (Low/Medium/High).
 Also write highly detailed, step-by-step technical prompts for an AI code generator like Lovable and Bolt.new to build the MVP.
 JSON Schema: { "saas_name": "string", "mvp_features": "string", "development_time": "string", "implementation_difficulty": "string", "prompt_lovable": "string", "prompt_bolt": "string" }`;
 
-      const userArchitect = `Problem: ${analystResult.core_problem}. Audience: ${analystResult.target_audience}. Advantage: ${analystResult.competitive_advantage}`;
+      const userArchitect = `Problem: ${coreProblem}. Audience: ${targetAudience}. Advantage: ${analystResult.competitive_advantage}.
+${idea ? `Target Technology (you MUST use this technology): ${idea.technology}` : ''}`;
 
       const architectResult = await runAgent(systemArchitect, userArchitect);
 
@@ -118,23 +126,28 @@ JSON Schema: { "saas_name": "string", "mvp_features": "string", "development_tim
       // AGENTE 3: O DIRETOR DE GROWTH & MONETIZAÇÃO
       // Objetivo: Definir preço e estimativa de MRR.
       // ---------------------------------------------------------
+      const monetizationText = idea?.monetization ? `specifically utilizing the monetization model: "${idea.monetization}"` : ``;
       const systemGrowth = `You are a brilliant SaaS Growth Marketer. Return a valid JSON.
 Output language MUST be in the native language of ${country}.
-Based on the SaaS designed, define the monetization model, suggested price, and an AI confidence score for this opportunity.
+Based on the SaaS designed, define the monetization model, suggested price, and an AI confidence score for this opportunity ${monetizationText}.
 JSON Schema: { "monetization_model": "string", "suggested_price": "string", "potential_revenue": "string", "aiOpportunityScore": number (0-100) }`;
 
-      const userGrowth = `SaaS Name: ${architectResult.saas_name}. Audience: ${analystResult.target_audience}. Features: ${architectResult.mvp_features}`;
+      const userGrowth = `SaaS Name: ${architectResult.saas_name}. Audience: ${targetAudience}. Features: ${architectResult.mvp_features}.
+${idea ? `Target Monetization Model (you MUST use this model): ${idea.monetization}` : ''}`;
 
       const growthResult = await runAgent(systemGrowth, userGrowth);
+
+      // Garante alinhamento estrito do modelo de monetização
+      const monetizationModel = idea?.monetization ? idea.monetization : growthResult.monetization_model;
 
       // Consolida e retorna o objeto inteiro
       return {
         saasName: architectResult.saas_name,
-        problemSolved: analystResult.core_problem,
-        targetAudience: analystResult.target_audience,
+        problemSolved: coreProblem,
+        targetAudience: targetAudience,
         competitiveAdvantage: `${analystResult.competitive_advantage} (Concorrentes Mapeados: ${analystResult.competitors})`,
         mvpFeatures: architectResult.mvp_features,
-        monetizationModel: growthResult.monetization_model,
+        monetizationModel: monetizationModel,
         suggestedPrice: growthResult.suggested_price,
         potentialRevenue: growthResult.potential_revenue,
         implementationDifficulty: architectResult.implementation_difficulty,

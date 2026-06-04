@@ -294,7 +294,16 @@ export function IdeaGenerator() {
       const response = await fetch("/api/radar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ keyword: text, country }), 
+        body: JSON.stringify({ 
+          keyword: text, 
+          country,
+          idea: {
+            audience: idea.audience,
+            problem: idea.problem,
+            technology: idea.technology,
+            monetization: idea.monetization
+          }
+        }), 
       });
 
       if (response.ok) {
@@ -591,7 +600,16 @@ export function IdeaGenerator() {
                         const response = await fetch("/api/radar", {
                           method: "POST",
                           headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ keyword: text, country }), 
+                          body: JSON.stringify({ 
+                            keyword: text, 
+                            country,
+                            idea: {
+                              audience: draft.audience,
+                              problem: draft.problem,
+                              technology: draft.technology,
+                              monetization: draft.monetization
+                            }
+                          }), 
                         });
 
                         if (response.ok) {

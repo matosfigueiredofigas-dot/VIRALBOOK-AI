@@ -46,61 +46,72 @@ export async function POST(request: Request) {
       );
     }
 
-    const { keyword, country = 'US' } = await request.json();
+    const { keyword, country = 'US', idea } = await request.json();
 
-    // 0.5 Cache: Se já buscamos esse livro/termo nos últimos 7 dias, retorna do cache para economizar créditos das APIs
-    console.log("[Radar] Checando cache para:", keyword);
-    const { data: cachedOpp } = await supabase
-      .from('opportunities')
-      .select('*')
-      .eq('country', country)
-      .or(`book_title.ilike.%${keyword}%,problem_solved.ilike.%${keyword}%`)
-      .order('created_at', { ascending: false })
-      .limit(1);
+    // 0.5 Cache: Se já buscamos esse livro/termo nos últimos 7 dias, retorna do cache (apenas para pesquisas gerais sem ideia estruturada)
+    if (!idea) {
+      console.log("[Radar] Checando cache para:", keyword);
+      const { data: cachedOpp } = await supabase
+        .from('opportunities')
+        .select('*')
+        .eq('country', country)
+        .or(`book_title.ilike.%${keyword}%,problem_solved.ilike.%${keyword}%`)
+        .order('created_at', { ascending: false })
+        .limit(1);
 
-    if (cachedOpp && cachedOpp.length > 0) {
-      const oneWeekAgo = new Date();
-      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-      const createdAt = new Date(cachedOpp[0].created_at);
+      if (cachedOpp && cachedOpp.length > 0) {
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        const createdAt = new Date(cachedOpp[0].created_at);
 
-      if (createdAt > oneWeekAgo) {
-        console.log("[Radar] Cache Hit! Retornando dados pré-salvos para economizar APIs.");
-        return NextResponse.json({
-          success: true,
-          score: cachedOpp[0].viral_opportunity_score,
-          data: cachedOpp[0]
-        });
+        if (createdAt > oneWeekAgo) {
+          console.log("[Radar] Cache Hit! Retornando dados pré-salvos para economizar APIs.");
+          return NextResponse.json({
+            success: true,
+            score: cachedOpp[0].viral_opportunity_score,
+            data: cachedOpp[0]
+          });
+        }
       }
     }
 
+    // Definição da palavra-chave de pesquisa nas APIs para ser focada na dor real da ideia
+    const apiSearchKeyword = idea?.problem ? idea.problem : keyword;
+
     // 1. Buscar Livro
-    console.log("[Radar] Buscando livro para:", keyword);
-    const books = await GoogleBooksService.searchTrendingBooks(keyword, 1);
+    console.log("[Radar] Buscando livro para:", apiSearchKeyword);
+    let books = await GoogleBooksService.searchTrendingBooks(apiSearchKeyword, 1);
+    
+    if (!books.length && apiSearchKeyword !== keyword) {
+      console.log("[Radar] Nenhum livro para a dor do rascunho, tentando keyword geral...");
+      books = await GoogleBooksService.searchTrendingBooks(keyword, 1);
+    }
+
     if (!books.length) {
       console.log("[Radar] Nenhum livro encontrado!");
-      return NextResponse.json({ error: 'Nenhum livro encontrado' }, { status: 404 });
+      return NextResponse.json({ error: 'Nenhum livro encontrado para este tema.' }, { status: 404 });
     }
     const book = books[0];
     console.log("[Radar] Livro:", book.title);
 
     // 2. Buscar Google Trends
     console.log("[Radar] Buscando Trends...");
-    const trendsData = await TrendsService.getKeywordGrowth(keyword, country);
+    const trendsData = await TrendsService.getKeywordGrowth(apiSearchKeyword, country);
     console.log("[Radar] Trends Data:", trendsData);
 
     // 3. Buscar Validação Social (Reddit)
     console.log("[Radar] Buscando Reddit...");
-    const redditData = await RedditService.getSocialValidation(keyword);
+    const redditData = await RedditService.getSocialValidation(apiSearchKeyword);
     console.log("[Radar] Reddit Data:", redditData);
 
     // 3.5 Buscar Validação Social (Facebook)
     console.log("[Radar] Buscando Facebook...");
-    const facebookData = await FacebookService.getSocialValidation(keyword);
+    const facebookData = await FacebookService.getSocialValidation(apiSearchKeyword);
     console.log("[Radar] Facebook Data:", facebookData);
 
     // 4. Processamento via IA (Groq/Llama3)
     console.log("[Radar] Iniciando Groq Pipeline Multi-Agente...");
-    const aiInsight = await GroqService.generateOpportunity(book, trendsData, redditData, facebookData, country);
+    const aiInsight = await GroqService.generateOpportunity(book, trendsData, redditData, facebookData, country, idea);
     if (!aiInsight) {
       console.log("[Radar] Falha na IA. aiInsight é null.");
       return NextResponse.json({ error: 'Falha na geração de IA' }, { status: 500 });
