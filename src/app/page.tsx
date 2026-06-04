@@ -2,12 +2,46 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight, Zap, Target, BookOpen, Lock, CheckCircle2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowRight, Zap, Target, BookOpen, Lock, CheckCircle2, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContactModal } from "@/components/contact-modal";
+import { supabase } from "@/lib/supabase";
 
 export default function LandingPage() {
+  const router = useRouter();
   const [currency, setCurrency] = useState<'USD' | 'BRL' | 'EUR'>('USD');
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError("");
+    setIsLoggingIn(true);
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        setLoginError("E-mail ou senha incorretos.");
+        setIsLoggingIn(false);
+      } else {
+        router.push("/dashboard");
+        router.refresh();
+      }
+    } catch (err) {
+      console.error(err);
+      setLoginError("Ocorreu um erro ao tentar fazer login.");
+      setIsLoggingIn(false);
+    }
+  };
 
   const getPrice = (plan: 'annual' | 'lifetime', type: 'original' | 'discount') => {
     if (plan === 'annual') {
@@ -54,9 +88,12 @@ export default function LandingPage() {
             Documentação
           </Link>
           <div className="h-4 w-px bg-white/10 hidden sm:block" />
-          <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-white transition-colors flex items-center px-4 py-2 rounded-full hover:bg-white/5 border border-white/5">
+          <button 
+            onClick={() => setIsLoginOpen(true)} 
+            className="text-sm font-medium text-muted-foreground hover:text-white transition-colors flex items-center px-4 py-2 rounded-full hover:bg-white/5 border border-white/5 cursor-pointer bg-transparent"
+          >
             Acesso Restrito
-          </Link>
+          </button>
         </nav>
       </header>
 
@@ -376,7 +413,7 @@ export default function LandingPage() {
             <ul className="space-y-4 text-sm text-muted-foreground">
               <li><Link href="/terms" className="hover:text-primary transition-colors">Termos de Uso</Link></li>
               <li><Link href="/privacy" className="hover:text-primary transition-colors">Política de Privacidade</Link></li>
-              <li><Link href="/login" className="hover:text-primary transition-colors">Área de Membros</Link></li>
+              <li><button onClick={() => setIsLoginOpen(true)} className="hover:text-primary transition-colors bg-transparent border-0 cursor-pointer p-0 text-muted-foreground text-sm block">Área de Membros</button></li>
             </ul>
           </div>
 
@@ -397,6 +434,105 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Login Modal */}
+      {isLoginOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="relative w-full max-w-md bg-card/60 backdrop-blur-2xl border border-border/50 rounded-3xl p-8 shadow-2xl animate-in zoom-in-95 duration-300 text-foreground">
+            
+            {/* Close Button */}
+            <button
+              onClick={() => {
+                setIsLoginOpen(false);
+                setLoginError("");
+                setEmail("");
+                setPassword("");
+              }}
+              className="absolute top-5 right-5 text-muted-foreground hover:text-white transition-colors text-sm px-2.5 py-1.5 rounded-lg hover:bg-white/5 cursor-pointer"
+            >
+              ✕
+            </button>
+
+            {/* Title / Header */}
+            <div className="flex flex-col items-center text-center space-y-2 mb-6">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/20">
+                <Zap className="h-5 w-5 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold tracking-tight text-white mt-2">Entrar na Conta</h2>
+              <p className="text-sm text-muted-foreground">
+                Acesse o painel restrito do ViralBook AI
+              </p>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-muted-foreground block text-left" htmlFor="modal-email">
+                  E-mail
+                </label>
+                <input
+                  id="modal-email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-white"
+                  disabled={isLoggingIn}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <label className="text-sm font-medium text-muted-foreground block text-left" htmlFor="modal-password">
+                    Senha
+                  </label>
+                </div>
+                <div className="relative">
+                  <input
+                    id="modal-password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="flex h-10 w-full rounded-md border border-input bg-background/50 px-3 py-2 pr-10 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-white"
+                    disabled={isLoggingIn}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute top-2.5 right-3 text-muted-foreground hover:text-white transition-colors cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {loginError && (
+                <div className="p-3.5 bg-red-500/10 border border-red-500/25 rounded-xl text-red-500 text-xs font-semibold text-center">
+                  {loginError}
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                disabled={isLoggingIn}
+                className="w-full h-11 bg-primary text-primary-foreground font-bold hover:bg-primary/90 rounded-xl transition-all shadow-md shadow-primary/10 mt-6 cursor-pointer"
+              >
+                {isLoggingIn ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Autenticando...
+                  </>
+                ) : (
+                  "Entrar no Painel"
+                )}
+              </Button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
