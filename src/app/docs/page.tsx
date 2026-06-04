@@ -137,6 +137,37 @@ export default function DocsPage() {
         </p>
       </section>
 
+      <div className="w-full h-px bg-border/50"></div>
+
+      <section id="escala-e-facebook" className="space-y-6 scroll-mt-24">
+        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">4. Validação do Facebook, Biblioteca de Reutilização e Escala</h2>
+        
+        <h3 className="text-2xl font-semibold mt-8 text-foreground/90">Validação Ampliada com Facebook Ads e Grupos</h3>
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          Para enriquecer os sinais de demanda comercial do mercado, estendemos o motor de varredura de validação social para incluir métricas inteligentes do Facebook (Ads Library e Facebook Groups). 
+        </p>
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          Diferente do Reddit, o Facebook não possui endpoints JSON públicos e simples. Criamos um agente inteligente que analisa o nicho e gera estimativas de saturação de campanhas de anúncios ativos e quantidade de grupos de discussão. Esses dados ajudam a identificar se o mercado já compra soluções (anúncios ativos) e onde seu público-alvo se reúne (grupos), facilitando sua estratégia de aquisição orgânica de clientes.
+        </p>
+
+        <h3 className="text-2xl font-semibold mt-8 text-foreground/90">A Biblioteca de Reutilização (Histórico)</h3>
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          Adicionamos uma aba de <strong>Histórico & Biblioteca</strong> em `/library`. Ela funciona como uma estante virtual de livros que permite visualizar e reutilizar todas as análises de e-books e ideias de SaaS pré-calculadas e salvas no banco de dados.
+        </p>
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          Com a nossa camada de <strong>cache de 7 dias</strong>, buscas por termos repetidos carregam instantaneamente a partir do banco de dados, sem realizar novas chamadas para as APIs e IA externas, protegendo e economizando seus créditos.
+        </p>
+
+        <h3 className="text-2xl font-semibold mt-8 text-foreground/90">Proteções de Escopo e Performance (100.000+ Registros)</h3>
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          Para garantir a integridade da aplicação em produção e suportar dezenas de milhares de usuários ativos sem explosão de custos:
+        </p>
+        <ul className="list-disc pl-6 space-y-2 text-muted-foreground text-lg mt-4">
+          <li><strong>Rate Limiting no Servidor:</strong> Cada usuário autenticado tem um limite de até <strong>10 pesquisas de radar a cada 24 horas</strong>. O Next.js gerencia esse controle de forma limpa através de consultas no próprio banco de dados, retornando o status HTTP 429 quando excedido.</li>
+          <li><strong>Resiliência de IA (Failover):</strong> Caso o Groq atinja limites de requisições por minuto (RPM) ou cota de tokens, o sistema detecta a falha e redireciona automaticamente para a API da OpenAI (modelo <code>gpt-4o-mini</code>) se uma chave estiver configurada no ambiente.</li>
+          <li><strong>Otimização de Índices (Postgres):</strong> Foram aplicados índices B-Tree nas colunas de busca (país, data de criação e ID do usuário) e índices <strong>GIN baseados em trigramas (pg_trgm)</strong> nas colunas de texto <code>saas_name</code> e <code>problem_solved</code>, mantendo buscas por texto rápidas e responsivas mesmo com mais de 100 mil registros no banco.</li>
+        </ul>
+      </section>
     </div>
   );
 }
