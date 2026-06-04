@@ -28,7 +28,7 @@ export function BookSearcher() {
     try {
       const apiKey = process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY;
       const keyParam = apiKey ? `&key=${apiKey}` : '';
-      const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=6${keyParam}`)
+      const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=9${keyParam}`)
       const data = await res.json()
       
       if (res.ok && data.items) {
