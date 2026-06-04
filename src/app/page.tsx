@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ContactModal } from "@/components/contact-modal";
 
 export default function LandingPage() {
-  const [isUSD, setIsUSD] = useState(false);
+  const [isUSD, setIsUSD] = useState(true);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
