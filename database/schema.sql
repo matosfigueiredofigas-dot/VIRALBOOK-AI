@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS public.opportunities (
     prompt_bolt TEXT,
     prompt_cursor TEXT,
     
+    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -52,3 +53,12 @@ CREATE POLICY "Enable insert for anonymous/service role" ON public.opportunities
     
 CREATE POLICY "Enable update for anonymous/service role" ON public.opportunities
     FOR UPDATE USING (true);
+
+-- Índices de performance para escala de 100.000+ registros
+CREATE INDEX IF NOT EXISTS idx_opportunities_country ON public.opportunities(country);
+CREATE INDEX IF NOT EXISTS idx_opportunities_created_at ON public.opportunities(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_opportunities_user_id ON public.opportunities(user_id);
+
+-- Extensão de busca rápida por texto (trigrama)
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE INDEX IF NOT EXISTS idx_opportunities_search_trgm ON public.opportunities USING gin (saas_name gin_trgm_ops, problem_solved gin_trgm_ops);

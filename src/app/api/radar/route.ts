@@ -28,6 +28,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Não autorizado. Faça login para usar o radar.' }, { status: 401 });
     }
 
+    // 0.2 Limitador de Créditos: Máximo de 10 pesquisas por usuário a cada 24 horas
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { count: searchCount, error: countError } = await supabase
+      .from('opportunities')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .gte('created_at', oneDayAgo);
+
+    if (countError) {
+      console.error("[Radar] Erro ao checar rate limit:", countError);
+    } else if (searchCount !== null && searchCount >= 10) {
+      console.log(`[Radar] Rate limit atingido pelo usuário: ${user.id} (${searchCount} buscas nas últimas 24h)`);
+      return NextResponse.json(
+        { error: 'Limite diário atingido. Você realizou 10 pesquisas nas últimas 24 horas. Para liberar mais pesquisas, faça upgrade da sua conta.' }, 
+        { status: 429 }
+      );
+    }
+
     const { keyword, country = 'US' } = await request.json();
 
     // 0.5 Cache: Se já buscamos esse livro/termo nos últimos 7 dias, retorna do cache para economizar créditos das APIs
@@ -108,6 +126,7 @@ export async function POST(request: Request) {
           book_category: book.categories[0],
           book_description: book.description,
           country: country,
+          user_id: user.id,
           trends_growth_monthly: trendsData.monthlyGrowth,
           reddit_mentions: redditData.mentions,
           facebook_ads_count: facebookData.adsCount,

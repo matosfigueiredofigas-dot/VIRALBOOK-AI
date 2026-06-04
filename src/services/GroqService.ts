@@ -2,6 +2,40 @@ import { Groq } from 'groq-sdk';
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
+async function runOpenAIFallback(systemPrompt: string, userPrompt: string): Promise<any> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error("Chave OPENAI_API_KEY não configurada para failover.");
+  }
+
+  console.log("[Groq Agent] Acionando failover de contingência para a OpenAI (gpt-4o-mini)...");
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    })
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Erro na API da OpenAI: ${res.status} - ${errText}`);
+  }
+
+  const data = await res.json();
+  const content = data.choices[0]?.message?.content || "{}";
+  return JSON.parse(content);
+}
+
 async function runAgent(systemPrompt: string, userPrompt: string): Promise<any> {
   // Lista de modelos: 1º mais barato, 2º mais robusto, 3º contingência extrema (Mixtral)
   const models = ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "mixtral-8x7b-32768"];
@@ -27,6 +61,16 @@ async function runAgent(systemPrompt: string, userPrompt: string): Promise<any> 
     } catch (error: any) {
       console.warn(`[Groq Agent] Falha ou erro de JSON com ${model}. Tentando contingência... Erro:`, error.message || error);
       lastError = error;
+    }
+  }
+
+  // Tenta failover para a OpenAI caso a chave esteja configurada
+  if (process.env.OPENAI_API_KEY) {
+    try {
+      return await runOpenAIFallback(systemPrompt, userPrompt);
+    } catch (openAiError: any) {
+      console.error("[Groq Agent] Falha também no failover da OpenAI:", openAiError.message || openAiError);
+      lastError = openAiError;
     }
   }
 
