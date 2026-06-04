@@ -47,13 +47,21 @@ interface HealthStatus {
 }
 
 export function AdminPanelClient({ initialOpps }: { initialOpps: Opp[] }) {
-  const [activeTab, setActiveTab] = useState<"overview" | "users" | "contacts" | "opps" | "transactions" | "copilot">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "users" | "contacts" | "opps" | "transactions" | "copilot" | "matrices">("overview");
   const [users, setUsers] = useState<Profile[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [opps, setOpps] = useState<Opp[]>(initialOpps);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   
+  // Estados para matrizes de nichos
+  const [matrices, setMatrices] = useState<Array<{ id: string; type: string; name: string; tier: number }>>([]);
+  const [matricesLoading, setMatricesLoading] = useState(false);
+  const [newMatrixItem, setNewMatrixItem] = useState({ type: "audience", name: "", tier: 3 });
+  const [matrixFilter, setMatrixFilter] = useState("all");
+  const [matrixSearch, setMatrixSearch] = useState("");
+  const [restoringMatrices, setRestoringMatrices] = useState(false);
+
   // Estados para novas funcionalidades premium
   const [health, setHealth] = useState<HealthStatus | null>(null);
   const [healthLoading, setHealthLoading] = useState(false);
@@ -182,9 +190,100 @@ export function AdminPanelClient({ initialOpps }: { initialOpps: Opp[] }) {
     return () => clearInterval(logInterval);
   }, []);
 
+  async function loadMatricesData() {
+    setMatricesLoading(true);
+    try {
+      const res = await fetch("/api/admin/matrices");
+      if (res.ok) {
+        const data = await res.json();
+        setMatrices(data.items || []);
+      }
+    } catch (err) {
+      console.error("Erro ao carregar dados das matrizes:", err);
+    } finally {
+      setMatricesLoading(false);
+    }
+  }
+
+  async function addMatrixItem(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newMatrixItem.name.trim()) return;
+
+    setActionLoading("add-matrix-item");
+    try {
+      const res = await fetch("/api/admin/matrices", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newMatrixItem)
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setMatrices(prev => [...prev, data.item].sort((a, b) => a.type.localeCompare(b.type) || a.name.localeCompare(b.name)));
+        setNewMatrixItem(prev => ({ ...prev, name: "" }));
+      } else {
+        alert(data.error || "Erro ao adicionar item.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao adicionar item.");
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  async function deleteMatrixItem(id: string) {
+    if (!confirm("Tem certeza que deseja remover este termo da matriz?")) return;
+
+    setActionLoading(id);
+    try {
+      const res = await fetch(`/api/admin/matrices?id=${id}`, {
+        method: "DELETE"
+      });
+
+      if (res.ok) {
+        setMatrices(prev => prev.filter(item => item.id !== id));
+      } else {
+        const data = await res.json();
+        alert(data.error || "Erro ao deletar item.");
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  async function restoreMatricesDefault() {
+    if (!confirm("Isso limpará todos os itens cadastrados e restaurará a lista inicial com 150+ combinações padrão do código. Deseja prosseguir?")) return;
+
+    setRestoringMatrices(true);
+    try {
+      const res = await fetch("/api/admin/matrices", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "seed" })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert(`Matrizes padrão restauradas com sucesso! ${data.count} termos semeados.`);
+        loadMatricesData();
+      } else {
+        alert(data.error || "Erro ao restaurar matrizes.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao restaurar.");
+    } finally {
+      setRestoringMatrices(false);
+    }
+  }
+
   useEffect(() => {
     loadAdminData();
     checkSystemHealth();
+    loadMatricesData();
   }, []);
 
   // 1. Alternar Status Premium do Usuário
@@ -360,6 +459,7 @@ export function AdminPanelClient({ initialOpps }: { initialOpps: Opp[] }) {
           { id: "users", label: "Utilizadores", icon: Users },
           { id: "transactions", label: "Aprovação PIX", icon: CreditCard },
           { id: "copilot", label: "AI Admin Copilot", icon: Brain },
+          { id: "matrices", label: "Gerenciar Matrizes", icon: Database },
           { id: "contacts", label: "Suporte", icon: Mail },
           { id: "opps", label: "Moderação", icon: ShieldAlert },
         ].map((tab) => (
@@ -1002,6 +1102,199 @@ export function AdminPanelClient({ initialOpps }: { initialOpps: Opp[] }) {
                       ))}
                     </tbody>
                   </table>
+                </div>
+              </div>
+            )}
+
+            {/* 🗄️ TAB 7: GESTÃO DE MATRIZES */}
+            {activeTab === "matrices" && (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <div>
+                    <h3 className="font-bold text-base text-foreground">Gestão de Matrizes de Nicho</h3>
+                    <p className="text-xxs text-muted-foreground mt-1">Configure os públicos, dores, tecnologias e monetizações disponíveis no gerador.</p>
+                  </div>
+                  <Button
+                    onClick={restoreMatricesDefault}
+                    disabled={restoringMatrices}
+                    variant="outline"
+                    size="sm"
+                    className="border-primary/20 text-primary bg-primary/5 hover:bg-primary/10 font-bold text-xxs h-9 gap-1.5"
+                  >
+                    {restoringMatrices ? (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" /> Restaurando...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="h-3.5 w-3.5" /> Restaurar Matrizes Padrão
+                      </>
+                    )}
+                  </Button>
+                </div>
+
+                <div className="grid gap-6 md:grid-cols-3">
+                  {/* Formulário de Adicionar (1 Coluna) */}
+                  <Card className="glass-card p-6 h-fit">
+                    <h4 className="font-bold text-sm text-foreground mb-4">Adicionar Termo à Matriz</h4>
+                    <form onSubmit={addMatrixItem} className="space-y-4 text-xs">
+                      <div className="space-y-1.5">
+                        <label className="text-muted-foreground font-medium">Categoria</label>
+                        <select
+                          value={newMatrixItem.type}
+                          onChange={(e) => setNewMatrixItem(prev => ({ ...prev, type: e.target.value }))}
+                          className="w-full bg-background/50 border border-border/40 p-2.5 rounded-xl text-foreground focus:ring-1 focus:ring-primary outline-none"
+                        >
+                          <option value="audience">👥 Público-Alvo</option>
+                          <option value="problem">🎯 Problema / Dor</option>
+                          <option value="technology">💻 Tecnologia</option>
+                          <option value="monetization">💰 Monetização</option>
+                        </select>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-muted-foreground font-medium">Nome do Termo</label>
+                        <input
+                          type="text"
+                          required
+                          value={newMatrixItem.name}
+                          onChange={(e) => setNewMatrixItem(prev => ({ ...prev, name: e.target.value }))}
+                          placeholder="Ex: Clínicas Médicas, Agendamento..."
+                          className="w-full bg-background/50 border border-border/40 p-2.5 rounded-xl text-foreground focus:ring-1 focus:ring-primary outline-none"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-muted-foreground font-medium">Tier (Nível de Estrelas / Complexidade)</label>
+                        <select
+                          value={newMatrixItem.tier}
+                          onChange={(e) => setNewMatrixItem(prev => ({ ...prev, tier: parseInt(e.target.value) }))}
+                          className="w-full bg-background/50 border border-border/40 p-2.5 rounded-xl text-foreground focus:ring-1 focus:ring-primary outline-none"
+                        >
+                          <option value="1">⭐ Tier 1 - Saturado / Básico</option>
+                          <option value="2">⭐⭐ Tier 2 - Comum / Simples</option>
+                          <option value="3">⭐⭐⭐ Tier 3 - Médio</option>
+                          <option value="4">⭐⭐⭐⭐ Tier 4 - Avançado</option>
+                          <option value="5">⭐⭐⭐⭐⭐ Tier 5 - Inovador / High-tech</option>
+                          <option value="6">🌟🌟🌟🌟🌟🌟 Tier 6 - Oceano Azul / Complexo</option>
+                        </select>
+                      </div>
+
+                      <Button
+                        type="submit"
+                        disabled={actionLoading === "add-matrix-item"}
+                        className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-bold h-10 rounded-xl mt-2"
+                      >
+                        {actionLoading === "add-matrix-item" ? (
+                          <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                        ) : (
+                          <>
+                            <Plus className="h-4 w-4 mr-1.5 inline" /> Adicionar Termo
+                          </>
+                        )}
+                      </Button>
+                    </form>
+                  </Card>
+
+                  {/* Listagem de Termos (2 Colunas) */}
+                  <div className="md:col-span-2 space-y-4">
+                    {/* Barra de Filtros e Busca */}
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <input
+                        type="text"
+                        placeholder="Buscar termo na matriz..."
+                        value={matrixSearch}
+                        onChange={(e) => setMatrixSearch(e.target.value)}
+                        className="flex-1 bg-card/20 border border-border/40 p-2.5 rounded-xl text-xs text-foreground outline-none focus:ring-1 focus:ring-primary"
+                      />
+                      <select
+                        value={matrixFilter}
+                        onChange={(e) => setMatrixFilter(e.target.value)}
+                        className="bg-card/20 border border-border/40 p-2.5 rounded-xl text-xs text-foreground outline-none focus:ring-1 focus:ring-primary"
+                      >
+                        <option value="all">Todas Categorias</option>
+                        <option value="audience">Público-Alvo</option>
+                        <option value="problem">Problema / Dor</option>
+                        <option value="technology">Tecnologia</option>
+                        <option value="monetization">Monetização</option>
+                      </select>
+                    </div>
+
+                    {/* Tabela de Termos */}
+                    <div className="border border-border/40 rounded-xl overflow-hidden bg-card/20 backdrop-blur-md max-h-[500px] overflow-y-auto">
+                      {matricesLoading ? (
+                        <div className="py-20 text-center text-muted-foreground flex flex-col items-center justify-center gap-2">
+                          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                          <span className="text-xxs font-semibold">Carregando itens da matriz...</span>
+                        </div>
+                      ) : (
+                        <table className="w-full text-xs text-left">
+                          <thead className="bg-muted/40 border-b border-border/40 text-muted-foreground font-semibold sticky top-0 backdrop-blur-md z-10">
+                            <tr>
+                              <th className="p-3">Nome</th>
+                              <th className="p-3">Categoria</th>
+                              <th className="p-3">Tier</th>
+                              <th className="p-3 text-right">Ação</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border/20">
+                            {matrices.filter(item => {
+                              const matchesFilter = matrixFilter === "all" || item.type === matrixFilter;
+                              const matchesSearch = item.name.toLowerCase().includes(matrixSearch.toLowerCase());
+                              return matchesFilter && matchesSearch;
+                            }).length === 0 ? (
+                              <tr>
+                                <td colSpan={4} className="p-8 text-center text-muted-foreground font-medium">
+                                  Nenhum termo encontrado com os filtros atuais.
+                                </td>
+                              </tr>
+                            ) : (
+                              matrices.filter(item => {
+                                const matchesFilter = matrixFilter === "all" || item.type === matrixFilter;
+                                const matchesSearch = item.name.toLowerCase().includes(matrixSearch.toLowerCase());
+                                return matchesFilter && matchesSearch;
+                              }).map((item) => (
+                                <tr key={item.id} className="hover:bg-muted/10 transition-colors">
+                                  <td className="p-3 font-semibold text-foreground">{item.name}</td>
+                                  <td className="p-3">
+                                    <span className={`px-2 py-0.5 rounded-full text-xxs font-bold uppercase tracking-wider ${
+                                      item.type === 'audience' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' :
+                                      item.type === 'problem' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
+                                      item.type === 'technology' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
+                                      'bg-green-500/10 text-green-400 border border-green-500/20'
+                                    }`}>
+                                      {item.type === 'audience' ? '👥 Público' :
+                                       item.type === 'problem' ? '🎯 Dor' :
+                                       item.type === 'technology' ? '💻 Tech' :
+                                       '💰 Monetização'}
+                                    </span>
+                                  </td>
+                                  <td className="p-3 text-yellow-500 font-medium">
+                                    {item.tier >= 6 ? "🌟🌟🌟🌟🌟🌟" : "⭐".repeat(item.tier)}
+                                  </td>
+                                  <td className="p-3 text-right">
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-7 w-7"
+                                      onClick={() => deleteMatrixItem(item.id)}
+                                      disabled={actionLoading === item.id}
+                                    >
+                                      {actionLoading === item.id ? (
+                                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                      ) : (
+                                        <Trash2 className="h-3.5 w-3.5" />
+                                      )}
+                                    </Button>
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

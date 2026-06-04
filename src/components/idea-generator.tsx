@@ -9,6 +9,7 @@ import { Shuffle, Users, Target, Cpu, Banknote, Copy, CheckCircle2, Star, Loader
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Item, audiences, problems, technologies, monetizations } from "@/lib/matrices";
+import { supabase } from "@/lib/supabase";
 
 export function IdeaGenerator() {
   const router = useRouter();
@@ -17,6 +18,12 @@ export function IdeaGenerator() {
   const [copied, setCopied] = useState(false);
   const [targetStars, setTargetStars] = useState<string>("random");
   const [country, setCountry] = useState<string>("BR");
+  
+  // Pools locais com fallback para dados estáticos
+  const [audiencesPool, setAudiencesPool] = useState<Item[]>(audiences);
+  const [problemsPool, setProblemsPool] = useState<Item[]>(problems);
+  const [technologiesPool, setTechnologiesPool] = useState<Item[]>(technologies);
+  const [monetizationsPool, setMonetizationsPool] = useState<Item[]>(monetizations);
   
   const [idea, setIdea] = useState({
     audience: "",
@@ -57,10 +64,10 @@ export function IdeaGenerator() {
     
     let iterations = 0;
     const interval = setInterval(() => {
-      const tA = getRandom(audiences, targetStars, idea.audience);
-      const tP = getRandom(problems, targetStars, idea.problem);
-      const tT = getRandom(technologies, targetStars, idea.technology);
-      const tM = getRandom(monetizations, targetStars, idea.monetization);
+      const tA = getRandom(audiencesPool, targetStars, idea.audience);
+      const tP = getRandom(problemsPool, targetStars, idea.problem);
+      const tT = getRandom(technologiesPool, targetStars, idea.technology);
+      const tM = getRandom(monetizationsPool, targetStars, idea.monetization);
       
       const avgTier = Math.round((tA.tier + tP.tier + tT.tier + tM.tier) / 4);
 
@@ -81,11 +88,49 @@ export function IdeaGenerator() {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const tA = getRandom(audiences, targetStars);
-      const tP = getRandom(problems, targetStars);
-      const tT = getRandom(technologies, targetStars);
-      const tM = getRandom(monetizations, targetStars);
+    async function init() {
+      let currentAudiences = audiences;
+      let currentProblems = problems;
+      let currentTechnologies = technologies;
+      let currentMonetizations = monetizations;
+
+      try {
+        const { data, error } = await supabase
+          .from('matrix_items')
+          .select('type, name, tier');
+          
+        if (!error && data && data.length > 0) {
+          const dbAudiences = data.filter((item: any) => item.type === 'audience').map((item: any) => ({ name: item.name, tier: item.tier }));
+          const dbProblems = data.filter((item: any) => item.type === 'problem').map((item: any) => ({ name: item.name, tier: item.tier }));
+          const dbTechnologies = data.filter((item: any) => item.type === 'technology').map((item: any) => ({ name: item.name, tier: item.tier }));
+          const dbMonetizations = data.filter((item: any) => item.type === 'monetization').map((item: any) => ({ name: item.name, tier: item.tier }));
+
+          if (dbAudiences.length > 0) {
+            setAudiencesPool(dbAudiences);
+            currentAudiences = dbAudiences;
+          }
+          if (dbProblems.length > 0) {
+            setProblemsPool(dbProblems);
+            currentProblems = dbProblems;
+          }
+          if (dbTechnologies.length > 0) {
+            setTechnologiesPool(dbTechnologies);
+            currentTechnologies = dbTechnologies;
+          }
+          if (dbMonetizations.length > 0) {
+            setMonetizationsPool(dbMonetizations);
+            currentMonetizations = dbMonetizations;
+          }
+        }
+      } catch (err) {
+        console.warn("Erro ao buscar matrizes do banco, usando fallback local:", err);
+      }
+
+      // Sorteia ideia inicial com os pools carregados
+      const tA = getRandom(currentAudiences, targetStars);
+      const tP = getRandom(currentProblems, targetStars);
+      const tT = getRandom(currentTechnologies, targetStars);
+      const tM = getRandom(currentMonetizations, targetStars);
       setIdea({
         audience: tA.name,
         problem: tP.name,
@@ -93,8 +138,9 @@ export function IdeaGenerator() {
         monetization: tM.name,
         tier: Math.round((tA.tier + tP.tier + tT.tier + tM.tier) / 4)
       });
-    }, 10);
-    return () => clearTimeout(timer);
+    }
+
+    init();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -324,7 +370,7 @@ export function IdeaGenerator() {
       {/* Estatísticas */}
       <div className="text-center text-sm text-muted-foreground/60 flex items-center justify-center gap-2">
         <Badge variant="outline" className="bg-white/5 border-white/10 text-xs text-muted-foreground">Matemática</Badge>
-        {audiences.length * problems.length * technologies.length * monetizations.length} combinações únicas possíveis.
+        {audiencesPool.length * problemsPool.length * technologiesPool.length * monetizationsPool.length} combinações únicas possíveis.
       </div>
     </div>
   );

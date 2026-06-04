@@ -2,16 +2,20 @@ import { NextResponse } from 'next/server';
 import { GoogleBooksService } from '@/services/GoogleBooksService';
 import { TrendsService } from '@/services/TrendsService';
 import { RedditService } from '@/services/RedditService';
+import { FacebookService } from '@/services/FacebookService';
 import { GroqService } from '@/services/GroqService';
 import { supabase } from '@/lib/supabase';
 
-// Lógica de cálculo replicada ou importada
-function calculateViralScore(trendsGrowth: number, mentions: number, aiScore: number = 70) {
-  const trendsWeight = Math.min((trendsGrowth / 100) * 35, 35);
-  const redditWeight = Math.min((mentions / 50) * 25, 25);
-  const bookWeight = 20;
+// Lógica de cálculo do Viral Opportunity Score (0-100)
+// 25% Trends, 20% Reddit, 20% Facebook (Ads + Groups), 20% Livro, 15% IA
+function calculateViralScore(trendsGrowth: number, redditMentions: number, facebookAds: number, facebookGroups: number, aiScore: number = 70) {
+  const trendsWeight = Math.min((trendsGrowth / 100) * 25, 25); // Máx 25 pts se cresceu 100%+
+  const redditWeight = Math.min((redditMentions / 50) * 20, 20); // Máx 20 pts se tiver >= 50 menções
+  const facebookWeight = Math.min(((facebookAds * 3 + facebookGroups) / 30) * 20, 20); // Máx 20 pts para Ads/Groups no FB
+  const bookWeight = 20; // Fixo para MVP simplificado
   const aiWeight = (aiScore / 100) * 15;
-  return Math.round(trendsWeight + redditWeight + bookWeight + aiWeight);
+  
+  return Math.round(trendsWeight + redditWeight + facebookWeight + bookWeight + aiWeight);
 }
 
 // Permite que a função rode por até 60 segundos na Vercel (ideal para as 3 chamadas da IA)
@@ -57,11 +61,18 @@ export async function GET(request: Request) {
         const book = books[0];
         const trendsData = await TrendsService.getKeywordGrowth(randomNiche, country);
         const redditData = await RedditService.getSocialValidation(randomNiche);
-        const aiInsight = await GroqService.generateOpportunity(book, trendsData, redditData, country);
+        const facebookData = await FacebookService.getSocialValidation(randomNiche);
+        const aiInsight = await GroqService.generateOpportunity(book, trendsData, redditData, facebookData, country);
         
         if (!aiInsight) continue;
 
-        const viralScore = calculateViralScore(trendsData.monthlyGrowth, redditData.mentions, aiInsight.aiOpportunityScore);
+        const viralScore = calculateViralScore(
+          trendsData.monthlyGrowth, 
+          redditData.mentions, 
+          facebookData.adsCount, 
+          facebookData.groupsCount, 
+          aiInsight.aiOpportunityScore
+        );
 
         // Salva no Supabase
         await supabase.from('opportunities').insert([{
@@ -72,6 +83,8 @@ export async function GET(request: Request) {
           country: country,
           trends_growth_monthly: trendsData.monthlyGrowth,
           reddit_mentions: redditData.mentions,
+          facebook_ads_count: facebookData.adsCount,
+          facebook_groups_count: facebookData.groupsCount,
           viral_opportunity_score: viralScore,
           saas_name: aiInsight.saasName,
           problem_solved: aiInsight.problemSolved,
@@ -104,3 +117,4 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+

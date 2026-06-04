@@ -62,3 +62,31 @@ CREATE INDEX IF NOT EXISTS idx_opportunities_user_id ON public.opportunities(use
 -- Extensão de busca rápida por texto (trigrama)
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 CREATE INDEX IF NOT EXISTS idx_opportunities_search_trgm ON public.opportunities USING gin (saas_name gin_trgm_ops, problem_solved gin_trgm_ops);
+
+-- Tabela para armazenar os itens dinâmicos das matrizes de nichos
+CREATE TABLE IF NOT EXISTS public.matrix_items (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    type TEXT NOT NULL CHECK (type IN ('audience', 'problem', 'technology', 'monetization')),
+    name TEXT NOT NULL,
+    tier INTEGER NOT NULL CHECK (tier BETWEEN 1 AND 6),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    CONSTRAINT unique_type_name UNIQUE (type, name)
+);
+
+-- Habilitar RLS
+ALTER TABLE public.matrix_items ENABLE ROW LEVEL SECURITY;
+
+-- Qualquer usuário pode consultar os itens da matriz
+CREATE POLICY "Enable read access for all users" ON public.matrix_items
+    FOR SELECT USING (true);
+
+-- Apenas o administrador moisesdematos@gmail.com ou admins gerais podem gerenciar
+CREATE POLICY "Enable all actions for admin users" ON public.matrix_items
+    FOR ALL USING (
+        auth.jwt() ->> 'email' = 'moisesdematos@gmail.com' 
+        OR EXISTS (
+            SELECT 1 FROM public.profiles 
+            WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
+        )
+    );
+
