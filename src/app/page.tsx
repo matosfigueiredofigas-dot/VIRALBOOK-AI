@@ -153,16 +153,19 @@ export default function LandingPage() {
         </section>
         {/* Pricing Section */}
         <section id="pricing" className="w-full py-24 md:py-32 px-4 md:px-6 relative">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
 
-          <div className="max-w-4xl mx-auto text-center relative z-10">
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">Acesso Vitalício. <br className="md:hidden"/>Pagamento Único.</h2>
+          <div className="max-w-5xl mx-auto text-center relative z-10">
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">
+              Escolha seu plano de acesso. <br className="hidden md:block"/>
+              Gere seus SaaS com dados.
+            </h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Sem mensalidades escondidas. Assuma a vanguarda da criação de produtos de IA hoje mesmo.
+              Selecione o plano ideal para você validar seus projetos. Aproveite nossa oferta especial de lançamento.
             </p>
 
             {/* Toggle USD / BRL */}
-            <div className="flex items-center justify-center gap-3 mb-10">
+            <div className="flex items-center justify-center gap-3 mb-12">
               <span className={`text-sm font-medium ${!isUSD ? 'text-white' : 'text-muted-foreground'}`}>BRL (R$)</span>
               <button 
                 onClick={() => setIsUSD(!isUSD)}
@@ -173,51 +176,107 @@ export default function LandingPage() {
               <span className={`text-sm font-medium ${isUSD ? 'text-white' : 'text-muted-foreground'}`}>USD ($)</span>
             </div>
 
-            <div className="p-[2px] rounded-[32px] bg-gradient-to-b from-primary/50 via-primary/20 to-transparent relative group max-w-3xl mx-auto">
-              <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-[32px] -z-10 group-hover:bg-primary/30 transition-all duration-700"/>
-              <div className="bg-background/90 backdrop-blur-xl rounded-[30px] p-8 md:p-12 border border-white/5">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-10">
-                  <div className="text-left space-y-6 flex-1">
-                    <h3 className="text-3xl font-bold flex items-center gap-3 text-white">
-                      Plano Fundador 
-                      <span className="text-xs font-bold px-3 py-1.5 bg-primary/20 text-primary rounded-full uppercase tracking-wider">
-                        POPULAR
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto text-left">
+              {/* Card 1: Plano Anual */}
+              <div className="glass-card bg-background/50 border border-white/5 rounded-[30px] p-8 md:p-10 flex flex-col justify-between hover:border-white/15 transition-all duration-300">
+                <div className="space-y-6">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="text-2xl font-bold text-white">Plano Anual</h3>
+                      <p className="text-sm text-muted-foreground mt-1">Acesso recorrente e estável</p>
+                    </div>
+                    <span className="text-[10px] font-bold px-2.5 py-1 bg-white/5 border border-white/10 text-muted-foreground rounded-full uppercase tracking-wider">PADRÃO</span>
+                  </div>
+                  
+                  <div className="py-4">
+                    <span className="text-muted-foreground line-through text-lg font-medium block">
+                      {isUSD ? "$ 49/ano" : "R$ 197/ano"}
+                    </span>
+                    <div className="flex items-baseline gap-2 mt-1">
+                      <span className="text-5xl font-extrabold text-white">
+                        {isUSD ? "$ 19" : "R$ 97"}
                       </span>
-                    </h3>
-                    <ul className="space-y-4">
-                      {['Acesso ilimitado ao Radar de Tendências', 'Gerador de Oportunidades Infinito', 'Filtros Globais e Inteligência Groq', 'Exportação de relatórios em CSV', 'Acesso às futuras atualizações'].map((item, i) => (
-                        <li key={i} className="flex items-center gap-3 text-muted-foreground font-medium">
-                          <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                          <span>{item}</span>
+                      <span className="text-muted-foreground text-sm">/ano</span>
+                    </div>
+                  </div>
+
+                  <ul className="space-y-3.5">
+                    {['Acesso ilimitado ao Radar de Tendências', 'Gerador de Oportunidades Infinito', 'Validação no Reddit e Facebook', 'Filtros Globais e Inteligência Groq', 'Exportação de relatórios em CSV', 'Renovação anual recorrente'].map((item, i) => (
+                      <li key={i} className="flex items-center gap-2.5 text-muted-foreground text-sm font-medium">
+                        <CheckCircle2 className="h-4.5 w-4.5 text-primary shrink-0" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="mt-8 pt-6 border-t border-white/5 space-y-4">
+                  <a 
+                    href="#checkout-url-anual" 
+                    className="group/button inline-flex shrink-0 items-center justify-center bg-white/5 hover:bg-white/10 text-white w-full h-12 text-md font-bold rounded-xl transition-all border border-white/10"
+                  >
+                    Assinar Plano Anual
+                  </a>
+                  <div className="text-[11px] text-muted-foreground text-center">Cancele quando quiser. Reembolso em até 7 dias.</div>
+                </div>
+              </div>
+
+              {/* Card 2: Plano Fundador Vitalício */}
+              <div className="p-[2px] rounded-[32px] bg-gradient-to-b from-primary/60 via-primary/30 to-transparent relative group flex flex-col justify-between">
+                <div className="absolute inset-0 bg-primary/10 blur-xl rounded-[32px] -z-10 group-hover:bg-primary/20 transition-all duration-700"/>
+                <div className="bg-background/90 backdrop-blur-xl rounded-[30px] p-8 md:p-10 flex flex-col justify-between h-full border border-white/5">
+                  <div className="space-y-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                          Membro Vitalício
+                        </h3>
+                        <p className="text-sm text-primary mt-1">Oferta especial de lançamento</p>
+                      </div>
+                      <span className="text-[10px] font-bold px-2.5 py-1 bg-primary/20 text-primary rounded-full uppercase tracking-wider">OFERTA LIMITADA</span>
+                    </div>
+                    
+                    <div className="py-4">
+                      <span className="text-muted-foreground line-through text-lg font-medium block">
+                        {isUSD ? "$ 129 único" : "R$ 497 único"}
+                      </span>
+                      <div className="flex items-baseline gap-2 mt-1">
+                        <span className="text-5xl font-extrabold text-white">
+                          {isUSD ? "$ 39" : "R$ 197"}
+                        </span>
+                        <span className="text-muted-foreground text-sm">único</span>
+                      </div>
+                    </div>
+
+                    <ul className="space-y-3.5">
+                      {['Acesso vitalício ilimitado (Sem mensalidades)', 'Gerador de Oportunidades e Biblioteca', 'Validação no Reddit e Facebook', 'Filtros Globais e Inteligência Groq', 'Exportação de relatórios em CSV', 'Suporte prioritário e badge fundador', 'Acesso permanente a todas as atualizações'].map((item, i) => (
+                        <li key={i} className="flex items-center gap-2.5 text-muted-foreground text-sm font-medium">
+                          <CheckCircle2 className="h-4.5 w-4.5 text-primary shrink-0" />
+                          <span className={i === 0 || i === 6 ? "text-white font-bold" : ""}>{item}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
-                  <div className="flex flex-col items-center md:items-end w-full md:w-auto p-8 bg-white/[0.03] rounded-3xl border border-white/10 shrink-0">
-                    <div className="text-muted-foreground line-through text-xl font-medium mb-1">
-                      {isUSD ? "$ 129" : "R$ 497"}
+
+                  <div className="mt-8 pt-6 border-t border-white/5 space-y-4">
+                    <div className="text-xs font-bold text-yellow-500/90 text-center bg-yellow-500/10 py-1.5 px-3 rounded-lg border border-yellow-500/20">
+                      ⚡ Restam apenas 17 vagas com este preço!
                     </div>
-                    <div className="text-6xl font-extrabold text-white mb-3">
-                      {isUSD ? "$ 39" : "R$ 197"}
-                    </div>
-                    <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-full mb-8 flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4" /> Garantia Incondicional de 7 Dias
-                    </div>
-                    
                     <a 
-                      href="#checkout-url-futura" 
-                      className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/80 w-full md:w-auto h-14 px-8 text-lg font-bold shadow-xl rounded-xl transition-transform hover:-translate-y-1"
+                      href="#checkout-url-vitalicio" 
+                      className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/85 w-full h-12 text-md font-bold rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5"
                     >
-                      Comprar Acesso Agora
+                      Garantir Acesso Vitalício
                     </a>
+                    <div className="text-[11px] text-muted-foreground text-center">Pagamento único e permanente. Sem taxas ocultas.</div>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div className="mt-10 flex items-center justify-center gap-2 text-sm text-muted-foreground font-medium">
+            <div className="mt-12 flex items-center justify-center gap-2 text-sm text-muted-foreground font-medium">
               <Lock className="h-4 w-4" />
-              <span>Pagamento 100% seguro processado pela plataforma oficial</span>
+              <span>Pagamento 100% seguro processado via criptografia SSL oficial</span>
             </div>
           </div>
         </section>
