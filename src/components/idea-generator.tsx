@@ -74,7 +74,7 @@ const staticAudienceCategories: Record<string, string> = {
   "Consultores de RH": "carreiras",
   "Síndicos Profissionais": "b2b_geral",
   "Clínicas de Estética Avançada": "moda",
-  "Escolas de Música e Artes": "musica",
+  "Escolas de Música e Artes": "familia",
   "Assessorias de Imprensa": "b2b_geral",
   "Corretoras de Seguros": "carreiras",
   "Escritórios de Design de Interiores": "carreiras",
@@ -118,7 +118,7 @@ const staticAudienceCategories: Record<string, string> = {
   "Plataformas de SaaS B2B Básico": "b2b_geral",
   "Fintechs em Estágio de Crescimento": "carreiras",
   "EdTechs (Plataformas Educacionais)": "carreiras",
-  "Clínicas Psiquiátricas com Psicodélicos": "b2b_geral",
+  "Clínicas Psiquiátricas com Psicodélicos": "saude_esportes",
   "Estúdios de Tatuagem Realista": "moda",
   "Mecânicos Especializados em Porsches": "b2b_geral",
   "Criadores de Gado de Elite": "b2b_geral",
@@ -251,17 +251,17 @@ const staticProblemCategories: Record<string, string> = {
   "Ranking de exploradores": "turismo",
   "Diário de viagens": "turismo",
   "Turismo colaborativo": "turismo",
-  "Descubra sua cidade": "b2b_geral",
+  "Descubra sua cidade": "turismo",
   "Turismo gastronômico": "turismo",
-  "Aventuras locais": "b2b_geral",
-  "Guia feito pelos usuários": "b2b_geral",
+  "Aventuras locais": "turismo",
+  "Guia feito pelos usuários": "turismo",
   "Check-in gamificado": "turismo",
   "Competição entre viajantes": "turismo",
   "Viagens econômicas": "turismo",
   "Mochileiros conectados": "turismo",
   "Turismo histórico": "turismo",
   "Trilhas compartilhadas": "turismo",
-  "Fotos de lugares raros": "b2b_geral",
+  "Fotos de lugares raros": "turismo",
   "Ranking de destinos": "turismo",
   "Viagens em grupo": "turismo",
   "Mapa de experiências": "turismo",
@@ -287,23 +287,23 @@ const staticProblemCategories: Record<string, string> = {
   "Cozinha colaborativa": "alimentacao",
   "Jogos educativos familiares": "familia",
   "Atividades para crianças": "familia",
-  "Histórias infantis com IA": "b2b_geral",
+  "Histórias infantis com IA": "familia",
   "Clube da família": "familia",
-  "Missões familiares": "b2b_geral",
+  "Missões familiares": "familia",
   "Aprendizagem divertida": "familia",
-  "Planejador familiar": "b2b_geral",
+  "Planejador familiar": "familia",
   "Desafios entre pais e filhos": "familia",
   "Diário da família": "familia",
   "Rede de pais": "familia",
   "Comunidade escolar": "familia",
-  "Educação gamificada": "b2b_geral",
-  "Recompensas infantis": "saude_esportes",
-  "Aventuras educativas": "b2b_geral",
+  "Educação gamificada": "familia",
+  "Recompensas infantis": "familia",
+  "Aventuras educativas": "turismo",
   "Clube dos pequenos leitores": "familia",
   "Matemática infantil": "familia",
-  "Desafios criativos infantis": "b2b_geral",
+  "Desafios criativos infantis": "familia",
   "Histórias colaborativas": "familia",
-  "Clube de talentos infantis": "carreiras",
+  "Clube de talentos infantis": "familia",
   "Aprender brincando": "familia",
   "Batalha de cantores": "musica",
   "Karaokê competitivo": "musica",
@@ -311,17 +311,17 @@ const staticProblemCategories: Record<string, string> = {
   "Criador de músicas IA": "musica",
   "Letras colaborativas": "musica",
   "Concurso de composição": "musica",
-  "Ranking musical": "b2b_geral",
+  "Ranking musical": "musica",
   "Descoberta de talentos": "carreiras",
   "Banda virtual": "musica",
   "Jam sessions online": "musica",
   "Comunidade de DJs": "musica",
   "Treino vocal": "musica",
-  "Desafios musicais": "b2b_geral",
+  "Desafios musicais": "musica",
   "Remix colaborativo": "musica",
   "Aprender instrumentos": "musica",
   "Clube de compositores": "musica",
-  "Produção musical social": "b2b_geral",
+  "Produção musical social": "musica",
   "Música por localização": "musica",
   "Ranking de artistas locais": "musica",
   "Festival virtual": "musica",
@@ -409,7 +409,7 @@ const staticProblemCategories: Record<string, string> = {
   "Rede social de desafios IA": "b2b_geral",
   "Reality show digital": "b2b_geral",
   "Competições de criatividade": "b2b_geral",
-  "Aprendizagem gamificada de idiomas": "b2b_geral",
+  "Aprendizagem gamificada de idiomas": "familia",
   "Fitness com rankings sociais": "saude_esportes",
   "Marketplace hiperlocal": "b2b_geral",
   "Banco de ideias monetizáveis": "b2b_geral",
@@ -419,40 +419,42 @@ const staticProblemCategories: Record<string, string> = {
   "Ecossistema de missões e recompensas": "saude_esportes"
 };
 
+const normalize = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
 function getAudienceCategory(name: string): string {
   const staticCat = staticAudienceCategories[name];
   if (staticCat) return staticCat;
 
-  const n = name.toLowerCase();
+  const n = normalize(name);
   
   if (n.includes("barbearia") || n.includes("barbeir")) {
     return "moda";
   }
-  if (n.includes("autoescola") || n.includes("trânsito")) {
+  if (n.includes("autoescola") || n.includes("transito") || n.includes("idiomas")) {
     return "b2b_geral";
   }
-  if (n.includes("turis") || n.includes("viag") || n.includes("viaj") || n.includes("explor") || n.includes("pousada") || n.includes("hostel") || n.includes("balão") || n.includes("guia") || n.includes("intercâmbio") || n.includes("mergulhador")) {
+  if (n.includes("turis") || n.includes("viag") || n.includes("viaj") || n.includes("explor") || n.includes("pousada") || n.includes("hostel") || n.includes("balao") || n.includes("guia") || n.includes("intercambio") || n.includes("mergulhador")) {
     return "turismo";
   }
-  if (n.includes("restaurante") || n.includes("padeir") || n.includes("padaria") || n.includes("cervej") || n.includes("marmita") || n.includes("aliment") || n.includes("comida") || n.includes("cozinha") || n.includes("chef") || n.includes("lanchonete") || n.includes("vinho") || n.includes("bebidas") || n.includes("cogumelos exóticos") || n.includes("trufas brancas") || n.includes("avestruz") || n.includes("apicultor") || n.includes("bar")) {
+  if (n.includes("restaurante") || n.includes("padeir") || n.includes("padaria") || n.includes("cervej") || n.includes("marmita") || n.includes("aliment") || n.includes("comida") || n.includes("cozinha") || n.includes("chef") || n.includes("lanchonete") || n.includes("vinho") || n.includes("bebida") || n.includes("cogumelo") || n.includes("trufa") || n.includes("avestruz") || n.includes("apicultor") || n.includes("bar")) {
     return "alimentacao";
   }
-  if (n.includes("crian") || n.includes("famíl") || n.includes("pais") || n.includes("filh") || n.includes("escola") || n.includes("maternidade") || n.includes("pequeno leitor") || n.includes("buffet infantil") || n.includes("reprodução humana")) {
+  if (n.includes("crian") || n.includes("famili") || n.includes("pais") || n.includes("filh") || n.includes("escola") || n.includes("maternidade") || n.includes("pequeno leitor") || n.includes("buffet infantil") || n.includes("reproducao humana")) {
     return "familia";
   }
-  if (n.includes("músic") || n.includes("cantor") || n.includes("compos") || n.includes("dj") || n.includes("banda") || n.includes("vocal") || n.includes("artista") || n.includes("podcast")) {
+  if (n.includes("music") || n.includes("cantor") || n.includes("compos") || n.includes("dj") || n.includes("banda") || n.includes("vocal") || n.includes("artista") || n.includes("podcast")) {
     return "musica";
   }
-  if (n.includes("esporte") || n.includes("atlet") || n.includes("corrida") || n.includes("ciclismo") || n.includes("futebol") || n.includes("trein") || n.includes("academia") || n.includes("personal trainer") || n.includes("yoga") || n.includes("mindfulness") || n.includes("nutricionista") || n.includes("fisioterapia") || n.includes("psicólog") || n.includes("terapeuta") || n.includes("acupuntura") || n.includes("dentista") || n.includes("odontol") || n.includes("cirurgia plástica") || n.includes("dermatologia") || n.includes("golfe") || n.includes("veterinár") || n.includes("psiquiatr") || n.includes("genética pessoal") || n.includes("biotecnologia") || n.includes("desinfecção hospitalar") || n.includes("cannabis") || n.includes("suplementos") || n.includes("farmácia")) {
+  if (n.includes("esporte") || n.includes("atlet") || n.includes("corrida") || n.includes("ciclismo") || n.includes("futebol") || n.includes("trein") || n.includes("academia") || n.includes("personal trainer") || n.includes("yoga") || n.includes("mindfulness") || n.includes("nutricionista") || n.includes("fisioterapia") || n.includes("psicolog") || n.includes("terapeuta") || n.includes("acupuntura") || n.includes("dentista") || n.includes("odontol") || n.includes("cirurgia plastica") || n.includes("dermatologia") || n.includes("golfe") || n.includes("veterinar") || n.includes("psiquiatr") || n.includes("genetica pessoal") || n.includes("biotecnologia") || n.includes("desinfeccao hospitalar") || n.includes("cannabis") || n.includes("suplemento") || n.includes("farmacia")) {
     return "saude_esportes";
   }
-  if (n.includes("moda") || n.includes("estilo") || n.includes("look") || n.includes("fashion") || n.includes("joalheria") || n.includes("beleza") || n.includes("manicure") || n.includes("salão") || n.includes("tatuagem") || n.includes("costura") || n.includes("estética")) {
+  if (n.includes("moda") || n.includes("estilo") || n.includes("look") || n.includes("fashion") || n.includes("joalheria") || n.includes("beleza") || n.includes("manicure") || n.includes("salao") || n.includes("tatuagem") || n.includes("costura") || n.includes("estetica")) {
     return "moda";
   }
-  if (n.includes("carbono") || n.includes("ecológ") || n.includes("recicl") || n.includes("sustent") || n.includes("verde") || n.includes("ambiental") || n.includes("solar") || n.includes("eólica")) {
+  if (n.includes("carbono") || n.includes("ecolog") || n.includes("recicl") || n.includes("sustent") || n.includes("verde") || n.includes("ambiental") || n.includes("solar") || n.includes("eolica")) {
     return "meio_ambiente";
   }
-  if (n.includes("freelancer") || n.includes("empreended") || n.includes("startup") || n.includes("carreira") || n.includes("líder") || n.includes("design") || n.includes("dev") || n.includes("programad") || n.includes("softw") || n.includes("rha") || n.includes("advogad") || n.includes("contad") || n.includes("consult") || n.includes("rh") || n.includes("securities") || n.includes("seguros") || n.includes("tributár") || n.includes("patrimônio") || n.includes("marketing") || n.includes("seo") || n.includes("copywriter") || n.includes("fintech") || n.includes("edtech") || n.includes("criptomoedas") || n.includes("inteligência artificial") || n.includes("software")) {
+  if (n.includes("freelancer") || n.includes("empreended") || n.includes("startup") || n.includes("carreira") || n.includes("lider") || n.includes("design") || n.includes("dev") || n.includes("programad") || n.includes("softw") || n.includes("rha") || n.includes("advogad") || n.includes("contad") || n.includes("consult") || n.includes("rh") || n.includes("securities") || n.includes("seguro") || n.includes("tributar") || n.includes("patrimonio") || n.includes("marketing") || n.includes("seo") || n.includes("copywriter") || n.includes("fintech") || n.includes("edtech") || n.includes("criptomoedas") || n.includes("inteligencia artificial") || n.includes("software")) {
     return "carreiras";
   }
   return "b2b_geral";
@@ -462,30 +464,30 @@ function getProblemCategory(name: string): string {
   const staticCat = staticProblemCategories[name];
   if (staticCat) return staticCat;
 
-  const n = name.toLowerCase();
+  const n = normalize(name);
   
-  if (n.includes("ecológ") || n.includes("verde") || n.includes("recicl") || n.includes("sustent") || n.includes("carbono") || n.includes("ambiental") || n.includes("horta coletiva") || n.includes("plantio") || n.includes("limpeza comunitária") || n.includes("consumo") || n.includes("circular") || n.includes("impacto positivo")) {
+  if (n.includes("ecolog") || n.includes("verde") || n.includes("recicl") || n.includes("sustent") || n.includes("carbono") || n.includes("ambiental") || n.includes("horta coletiva") || n.includes("plantio") || n.includes("limpeza comunitaria") || n.includes("consumo") || n.includes("circular") || n.includes("impacto positivo")) {
     return "meio_ambiente";
   }
-  if (n.includes("viag") || n.includes("viaj") || n.includes("explor") || n.includes("destino") || n.includes("turis") || n.includes("lugares secretos") || n.includes("trilhas") || n.includes("mochileiros") || n.includes("passaporte digital") || n.includes("check-in gamificado") || n.includes("mapa de experiências")) {
+  if (n.includes("viag") || n.includes("viaj") || n.includes("explor") || n.includes("destino") || n.includes("turis") || n.includes("trilha") || n.includes("mochileiro") || n.includes("passaporte digital") || n.includes("check-in gamificado") || n.includes("mapa de experiencias") || n.includes("cidade") || n.includes("aventura") || n.includes("guia") || n.includes("lugar")) {
     return "turismo";
   }
-  if (n.includes("receita") || n.includes("culinár") || n.includes("cozinhe") || n.includes("vegan") || n.includes("aliment") || n.includes("chef") || n.includes("gastronôm") || n.includes("marmita") || n.includes("prato") || n.includes("cardápio") || n.includes("refeições") || n.includes("comida") || n.includes("restaurante") || n.includes("cozinha")) {
+  if (n.includes("receita") || n.includes("culinar") || n.includes("cozinhe") || n.includes("vegan") || n.includes("aliment") || n.includes("chef") || n.includes("gastronom") || n.includes("marmita") || n.includes("prato") || n.includes("cardapio") || n.includes("refeic") || n.includes("comida") || n.includes("restaurante") || n.includes("cozinha")) {
     return "alimentacao";
   }
-  if (n.includes("crian") || n.includes("famíl") || n.includes("pais") || n.includes("filh") || n.includes("infantil") || n.includes("pequenos leitores") || n.includes("educativo") || n.includes("aprendizagem divertida") || n.includes("escolar") || n.includes("brincando") || n.includes("histórias colaborativas")) {
+  if (n.includes("crian") || n.includes("famili") || n.includes("pais") || n.includes("filh") || n.includes("infant") || n.includes("pequenos leitores") || n.includes("educa") || n.includes("ensino") || n.includes("aprendiz") || n.includes("escolar") || n.includes("brincando") || n.includes("historias colaborativas") || n.includes("maternidade") || n.includes("brinquedo")) {
     return "familia";
   }
-  if (n.includes("cantor") || n.includes("músic") || n.includes("compos") || n.includes("karaokê") || n.includes("dj") || n.includes("vocal") || n.includes("remix") || n.includes("instrumentos") || n.includes("letras") || n.includes("banda virtual") || n.includes("jam sessions") || n.includes("artistas locais") || n.includes("festival virtual")) {
+  if (n.includes("cantor") || n.includes("music") || n.includes("compos") || n.includes("karaoke") || n.includes("dj") || n.includes("vocal") || n.includes("remix") || n.includes("instrumento") || n.includes("letra") || n.includes("banda virtual") || n.includes("jam sessions") || n.includes("artista") || n.includes("festival virtual")) {
     return "musica";
   }
-  if (n.includes("acordar cedo") || n.includes("30 dias") || n.includes("hábit") || n.includes("procrastina") || n.includes("disciplina") || n.includes("gratidão") || n.includes("foco") || n.includes("recompensas") || n.includes("mental") || n.includes("vencedores") || n.includes("coragem") || n.includes("evolução pessoal") || n.includes("futebol") || n.includes("corrida") || n.includes("ciclismo") || n.includes("esport") || n.includes("atleta") || n.includes("treino") || n.includes("jogadores") || n.includes("basquete") || n.includes("torneio") || n.includes("scout") || n.includes("resistência") || n.includes("fitness") || n.includes("metas compartilhadas") || n.includes("diário de evolução")) {
+  if (n.includes("acordar cedo") || n.includes("30 dias") || n.includes("habit") || n.includes("procrastina") || n.includes("disciplina") || n.includes("gratidao") || n.includes("foco") || n.includes("recompensa") || n.includes("mental") || n.includes("vencedor") || n.includes("coragem") || n.includes("evolucao pessoal") || n.includes("futebol") || n.includes("corrida") || n.includes("ciclismo") || n.includes("esport") || n.includes("atleta") || n.includes("treino") || n.includes("jogador") || n.includes("basquete") || n.includes("torneio") || n.includes("scout") || n.includes("resistencia") || n.includes("fitness") || n.includes("metas compartilhadas") || n.includes("diario de evolucao")) {
     return "saude_esportes";
   }
-  if (n.includes("looks") || n.includes("estilo") || n.includes("armário") || n.includes("moda") || n.includes("fashion") || n.includes("roupa") || n.includes("beleza") || n.includes("maquiagem") || n.includes("cabelo") || n.includes("personal shopper")) {
+  if (n.includes("look") || n.includes("estilo") || n.includes("armario") || n.includes("moda") || n.includes("fashion") || n.includes("roupa") || n.includes("beleza") || n.includes("maquiagem") || n.includes("cabelo") || n.includes("personal shopper")) {
     return "moda";
   }
-  if (n.includes("freelancer") || n.includes("empreended") || n.includes("startup") || n.includes("carreira") || n.includes("líder") || n.includes("entrevista") || n.includes("currículo") || n.includes("portfólio") || n.includes("vendas") || n.includes("negociação") || n.includes("programador") || n.includes("habilidades profissionais") || n.includes("talentos") || n.includes("networking") || n.includes("mentor") || n.includes("coaching") || n.includes("especialistas") || n.includes("empresariais") || n.includes("habilidades")) {
+  if (n.includes("freelancer") || n.includes("empreended") || n.includes("startup") || n.includes("carreira") || n.includes("lider") || n.includes("entrevista") || n.includes("curriculo") || n.includes("portfolio") || n.includes("venda") || n.includes("negociac") || n.includes("programador") || n.includes("habilidades profissionais") || n.includes("talento") || n.includes("networking") || n.includes("mentor") || n.includes("coaching") || n.includes("especialista") || n.includes("empresaria") || n.includes("habilidade")) {
     return "carreiras";
   }
   return "b2b_geral";
