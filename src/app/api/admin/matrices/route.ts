@@ -143,10 +143,19 @@ export async function PUT(req: Request) {
       ...monetizations.map(item => ({ type: 'monetization', name: item.name, tier: item.tier }))
     ];
 
+    // Remover duplicados (mesmo tipo e nome) para evitar violação de UNIQUE constraint
+    const seen = new Set<string>();
+    const uniqueDefaultItems = defaultItems.filter(item => {
+      const key = `${item.type}:${item.name.toLowerCase().trim()}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
     // Bulk insert (inserir em lotes de 100 para evitar limites de query)
     const chunkSize = 100;
-    for (let i = 0; i < defaultItems.length; i += chunkSize) {
-      const chunk = defaultItems.slice(i, i + chunkSize);
+    for (let i = 0; i < uniqueDefaultItems.length; i += chunkSize) {
+      const chunk = uniqueDefaultItems.slice(i, i + chunkSize);
       const { error: insertError } = await supabase
         .from('matrix_items')
         .insert(chunk);
@@ -157,7 +166,7 @@ export async function PUT(req: Request) {
     return NextResponse.json({ 
       success: true, 
       message: 'Matrizes padrão restauradas com sucesso.',
-      count: defaultItems.length
+      count: uniqueDefaultItems.length
     });
   } catch (error: any) {
     console.error('Erro ao semear matrizes:', error);
