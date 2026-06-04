@@ -7,28 +7,33 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { useSearchParams, useRouter } from "next/navigation"
 
+const RESULTS_PER_PAGE = 9;
+
 export function BookSearcher() {
   const [query, setQuery] = useState("")
   const [loading, setLoading] = useState(false)
   const [generatingFor, setGeneratingFor] = useState<string | null>(null)
   const [books, setBooks] = useState<any[]>([])
   const [error, setError] = useState("")
+  const [currentPage, setCurrentPage] = useState(0)
   
   const searchParams = useSearchParams()
   const router = useRouter()
   const country = searchParams.get("country") || "US"
 
-  const searchBooks = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const searchBooks = async (e?: React.FormEvent, pageToSearch = 0) => {
+    if (e) e.preventDefault()
     if (!query.trim()) return
 
     setLoading(true)
     setError("")
+    setCurrentPage(pageToSearch)
     
     try {
       const apiKey = process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY;
       const keyParam = apiKey ? `&key=${apiKey}` : '';
-      const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=9${keyParam}`)
+      const startIndex = pageToSearch * RESULTS_PER_PAGE;
+      const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&startIndex=${startIndex}&maxResults=${RESULTS_PER_PAGE}${keyParam}`)
       const data = await res.json()
       
       if (res.ok && data.items) {
@@ -49,7 +54,7 @@ export function BookSearcher() {
         }
       } else {
         setBooks([])
-        setError("Nenhum livro encontrado para este termo.")
+        setError(pageToSearch === 0 ? "Nenhum livro encontrado para este termo." : "Fim dos resultados da busca.")
       }
     } catch (err: any) {
       setError(`Erro ao buscar: ${err.message}`)
@@ -89,7 +94,7 @@ export function BookSearcher() {
           <Book className="h-5 w-5 text-primary" />
           Busca Ativa na Amazon / Google Books
         </h2>
-        <form onSubmit={searchBooks} className="flex flex-col sm:flex-row gap-3">
+        <form onSubmit={(e) => searchBooks(e, 0)} className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input 
@@ -162,6 +167,33 @@ export function BookSearcher() {
               </CardContent>
             </Card>
           ))}
+        </div>
+      )}
+
+      {/* Paginação */}
+      {(books.length > 0 || currentPage > 0) && (
+        <div className="flex items-center justify-center gap-4 mt-8 pb-4">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => searchBooks(undefined, currentPage - 1)}
+            disabled={loading || currentPage === 0}
+            className="border-white/10 hover:bg-white/5 font-semibold rounded-xl px-4 py-2"
+          >
+            ← Página Anterior
+          </Button>
+          <span className="text-xs font-bold text-muted-foreground bg-muted/40 px-4 py-2 rounded-xl border border-white/5 shadow-inner">
+            Página {currentPage + 1}
+          </span>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => searchBooks(undefined, currentPage + 1)}
+            disabled={loading || books.length < RESULTS_PER_PAGE}
+            className="border-white/10 hover:bg-white/5 font-semibold rounded-xl px-4 py-2"
+          >
+            Próxima Página →
+          </Button>
         </div>
       )}
     </div>
