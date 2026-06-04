@@ -25,6 +25,12 @@ export function IdeaGenerator() {
   const [technologiesPool, setTechnologiesPool] = useState<Item[]>(technologies);
   const [monetizationsPool, setMonetizationsPool] = useState<Item[]>(monetizations);
   
+  // Histórico de itens gerados recentemente para evitar repetições
+  const [usedAudiences, setUsedAudiences] = useState<string[]>([]);
+  const [usedProblems, setUsedProblems] = useState<string[]>([]);
+  const [usedTechnologies, setUsedTechnologies] = useState<string[]>([]);
+  const [usedMonetizations, setUsedMonetizations] = useState<string[]>([]);
+
   const [idea, setIdea] = useState({
     audience: "",
     problem: "",
@@ -37,16 +43,68 @@ export function IdeaGenerator() {
     let filtered = arr;
     if (target !== "random") {
       const t = parseInt(target, 10);
-      // Pega itens do tier exato OU um tier acima/abaixo para ter mais variedade, mantendo a média.
       filtered = arr.filter(item => item.tier >= t - 1 && item.tier <= t + 1);
       if (filtered.length === 0) filtered = arr;
     }
     
-    // Tenta evitar repetir o mesmo item que acabou de sair, se possível
     let pool = filtered.filter(item => item.name !== previousName);
-    if (pool.length === 0) pool = filtered; // fallback
+    if (pool.length === 0) pool = filtered;
 
     return pool[Math.floor(Math.random() * pool.length)];
+  };
+
+  // Algoritmo de seleção exclusiva de combinação única
+  const getUniqueCombination = () => {
+    const pickUnique = (pool: Item[], used: string[], target: string) => {
+      let filtered = pool;
+      if (target !== "random") {
+        const t = parseInt(target, 10);
+        filtered = pool.filter(item => item.tier >= t - 1 && item.tier <= t + 1);
+        if (filtered.length === 0) filtered = pool;
+      }
+
+      // Filtrar candidatos não utilizados recentemente
+      let candidates = filtered.filter(item => !used.includes(item.name));
+      let nextUsed = [...used];
+
+      if (candidates.length === 0) {
+        // Pool exaurido, reinicia o histórico
+        candidates = filtered;
+        nextUsed = [];
+      }
+
+      const selected = candidates[Math.floor(Math.random() * candidates.length)];
+      
+      // Limita o histórico a 70% do tamanho do pool filtrado para evitar travamento
+      const maxHistory = Math.max(5, Math.floor(filtered.length * 0.7));
+      nextUsed.push(selected.name);
+      if (nextUsed.length > maxHistory) {
+        nextUsed.shift();
+      }
+
+      return { selected, nextUsed };
+    };
+
+    const { selected: tA, nextUsed: nextAudiences } = pickUnique(audiencesPool, usedAudiences, targetStars);
+    const { selected: tP, nextUsed: nextProblems } = pickUnique(problemsPool, usedProblems, targetStars);
+    const { selected: tT, nextUsed: nextTechs } = pickUnique(technologiesPool, usedTechnologies, targetStars);
+    const { selected: tM, nextUsed: nextMonetizations } = pickUnique(monetizationsPool, usedMonetizations, targetStars);
+
+    // Salva os novos históricos
+    setUsedAudiences(nextAudiences);
+    setUsedProblems(nextProblems);
+    setUsedTechnologies(nextTechs);
+    setUsedMonetizations(nextMonetizations);
+
+    const avgTier = Math.round((tA.tier + tP.tier + tT.tier + tM.tier) / 4);
+
+    return {
+      audience: tA.name,
+      problem: tP.name,
+      technology: tT.name,
+      monetization: tM.name,
+      tier: targetStars !== "random" ? parseInt(targetStars, 10) : avgTier
+    };
   };
 
   const getStarLabel = (tier: number) => {
@@ -62,8 +120,12 @@ export function IdeaGenerator() {
   const generateIdea = () => {
     setIsGenerating(true);
     
+    // Pré-calcula a ideia final que é garantidamente inédita/não repetida recentemente
+    const finalIdea = getUniqueCombination();
+    
     let iterations = 0;
     const interval = setInterval(() => {
+      // Durante o spin da animação visual, sorteia puramente itens aleatórios para dar dinamismo
       const tA = getRandom(audiencesPool, targetStars, idea.audience);
       const tP = getRandom(problemsPool, targetStars, idea.problem);
       const tT = getRandom(technologiesPool, targetStars, idea.technology);
@@ -82,6 +144,8 @@ export function IdeaGenerator() {
       iterations++;
       if (iterations > 15) {
         clearInterval(interval);
+        // Desembarca exatamente na combinação única calculada previamente
+        setIdea(finalIdea);
         setIsGenerating(false);
       }
     }, 50);
@@ -131,6 +195,7 @@ export function IdeaGenerator() {
       const tP = getRandom(currentProblems, targetStars);
       const tT = getRandom(currentTechnologies, targetStars);
       const tM = getRandom(currentMonetizations, targetStars);
+      
       setIdea({
         audience: tA.name,
         problem: tP.name,
@@ -138,6 +203,12 @@ export function IdeaGenerator() {
         monetization: tM.name,
         tier: Math.round((tA.tier + tP.tier + tT.tier + tM.tier) / 4)
       });
+
+      // Registra a ideia inicial no histórico para evitar repetição logo de início
+      setUsedAudiences([tA.name]);
+      setUsedProblems([tP.name]);
+      setUsedTechnologies([tT.name]);
+      setUsedMonetizations([tM.name]);
     }
 
     init();
