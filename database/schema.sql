@@ -80,13 +80,23 @@ ALTER TABLE public.matrix_items ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Enable read access for all users" ON public.matrix_items
     FOR SELECT USING (true);
 
+-- Função helper para verificar se o usuário é admin sem causar recursão de RLS
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN (
+    auth.jwt() ->> 'email' = 'moisesdematos@gmail.com' 
+    OR EXISTS (
+      SELECT 1 FROM public.profiles 
+      WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- Apenas o administrador moisesdematos@gmail.com ou admins gerais podem gerenciar
 CREATE POLICY "Enable all actions for admin users" ON public.matrix_items
     FOR ALL USING (
-        auth.jwt() ->> 'email' = 'moisesdematos@gmail.com' 
-        OR EXISTS (
-            SELECT 1 FROM public.profiles 
-            WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
-        )
+        public.is_admin()
     );
 
