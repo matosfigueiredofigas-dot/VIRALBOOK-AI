@@ -7,7 +7,31 @@ import { Button } from "@/components/ui/button";
 import { ContactModal } from "@/components/contact-modal";
 
 export default function LandingPage() {
-  const [isUSD, setIsUSD] = useState(true);
+  const [currency, setCurrency] = useState<'USD' | 'BRL' | 'EUR'>('USD');
+
+  const getPrice = (plan: 'annual' | 'lifetime', type: 'original' | 'discount') => {
+    if (plan === 'annual') {
+      if (type === 'original') {
+        if (currency === 'USD') return '$ 49/ano';
+        if (currency === 'EUR') return '49 €/ano';
+        return 'R$ 197/ano';
+      } else {
+        if (currency === 'USD') return '$ 19';
+        if (currency === 'EUR') return '19 €';
+        return 'R$ 97';
+      }
+    } else {
+      if (type === 'original') {
+        if (currency === 'USD') return '$ 129 único';
+        if (currency === 'EUR') return '129 € único';
+        return 'R$ 497 único';
+      } else {
+        if (currency === 'USD') return '$ 39';
+        if (currency === 'EUR') return '39 €';
+        return 'R$ 197';
+      }
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -164,16 +188,27 @@ export default function LandingPage() {
               Selecione o plano ideal para você validar seus projetos. Aproveite nossa oferta especial de lançamento.
             </p>
 
-            {/* Toggle USD / BRL */}
-            <div className="flex items-center justify-center gap-3 mb-12">
-              <span className={`text-sm font-medium ${!isUSD ? 'text-white' : 'text-muted-foreground'}`}>BRL (R$)</span>
-              <button 
-                onClick={() => setIsUSD(!isUSD)}
-                className="w-14 h-7 bg-white/10 rounded-full relative flex items-center p-1 transition-colors hover:bg-white/20"
-              >
-                <div className={`w-5 h-5 bg-primary rounded-full shadow-md transition-transform duration-300 ${isUSD ? 'translate-x-7' : 'translate-x-0'}`} />
-              </button>
-              <span className={`text-sm font-medium ${isUSD ? 'text-white' : 'text-muted-foreground'}`}>USD ($)</span>
+            {/* Toggle USD / BRL / EUR */}
+            <div className="flex justify-center mb-12">
+              <div className="inline-flex p-1 bg-white/5 backdrop-blur-md rounded-full border border-white/10 shadow-lg">
+                {[
+                  { code: 'BRL', label: 'BRL (R$)' },
+                  { code: 'USD', label: 'USD ($)' },
+                  { code: 'EUR', label: 'EUR (€)' }
+                ].map((c) => (
+                  <button
+                    key={c.code}
+                    onClick={() => setCurrency(c.code as 'USD' | 'BRL' | 'EUR')}
+                    className={`px-5 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
+                      currency === c.code
+                        ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-105'
+                        : 'text-white hover:text-white/80'
+                    }`}
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto text-left">
@@ -190,11 +225,11 @@ export default function LandingPage() {
                   
                   <div className="py-4">
                     <span className="text-muted-foreground line-through text-lg font-medium block">
-                      {isUSD ? "$ 49/ano" : "R$ 197/ano"}
+                      {getPrice('annual', 'original')}
                     </span>
                     <div className="flex items-baseline gap-2 mt-1">
                       <span className="text-5xl font-extrabold text-white">
-                        {isUSD ? "$ 19" : "R$ 97"}
+                        {getPrice('annual', 'discount')}
                       </span>
                       <span className="text-muted-foreground text-sm">/ano</span>
                     </div>
@@ -238,11 +273,11 @@ export default function LandingPage() {
                     
                     <div className="py-4">
                       <span className="text-muted-foreground line-through text-lg font-medium block">
-                        {isUSD ? "$ 129 único" : "R$ 497 único"}
+                        {getPrice('lifetime', 'original')}
                       </span>
                       <div className="flex items-baseline gap-2 mt-1">
                         <span className="text-5xl font-extrabold text-white">
-                          {isUSD ? "$ 39" : "R$ 197"}
+                          {getPrice('lifetime', 'discount')}
                         </span>
                         <span className="text-muted-foreground text-sm">único</span>
                       </div>
