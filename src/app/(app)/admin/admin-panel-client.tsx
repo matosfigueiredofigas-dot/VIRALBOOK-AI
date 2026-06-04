@@ -459,7 +459,7 @@ export function AdminPanelClient({ initialOpps }: { initialOpps: Opp[] }) {
           { id: "users", label: "Utilizadores", icon: Users },
           { id: "transactions", label: "Aprovação PIX", icon: CreditCard },
           { id: "copilot", label: "AI Admin Copilot", icon: Brain },
-          { id: "matrices", label: "Gerenciar Matrizes", icon: Database },
+          { id: "matrices", label: `Gerenciar Matrizes (${matrices.length})`, icon: Database },
           { id: "contacts", label: "Suporte", icon: Mail },
           { id: "opps", label: "Moderação", icon: ShieldAlert },
         ].map((tab) => (
@@ -1131,6 +1131,30 @@ export function AdminPanelClient({ initialOpps }: { initialOpps: Opp[] }) {
                       </>
                     )}
                   </Button>
+                </div>
+
+                {/* Painel de Estatísticas da Matriz */}
+                <div className="grid gap-3 grid-cols-2 md:grid-cols-5 animate-in fade-in duration-300">
+                  <Card className="p-3 bg-card/20 border border-border/20 shadow-sm flex flex-col justify-center">
+                    <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Total de Termos</div>
+                    <div className="text-xl font-extrabold text-foreground mt-0.5">{matrices.length}</div>
+                  </Card>
+                  <Card className="p-3 bg-card/20 border border-border/20 shadow-sm flex flex-col justify-center border-l-purple-500/35 border-l-2">
+                    <div className="text-[10px] text-purple-400 uppercase font-bold tracking-wider">Públicos-Alvo</div>
+                    <div className="text-xl font-extrabold text-foreground mt-0.5">{matrices.filter(m => m.type === 'audience').length}</div>
+                  </Card>
+                  <Card className="p-3 bg-card/20 border border-border/20 shadow-sm flex flex-col justify-center border-l-red-500/35 border-l-2">
+                    <div className="text-[10px] text-red-400 uppercase font-bold tracking-wider">Dores / Problemas</div>
+                    <div className="text-xl font-extrabold text-foreground mt-0.5">{matrices.filter(m => m.type === 'problem').length}</div>
+                  </Card>
+                  <Card className="p-3 bg-card/20 border border-border/20 shadow-sm flex flex-col justify-center border-l-blue-500/35 border-l-2">
+                    <div className="text-[10px] text-blue-400 uppercase font-bold tracking-wider">Tecnologias</div>
+                    <div className="text-xl font-extrabold text-foreground mt-0.5">{matrices.filter(m => m.type === 'technology').length}</div>
+                  </Card>
+                  <Card className="p-3 bg-card/20 border border-border/20 shadow-sm flex flex-col justify-center border-l-green-500/35 border-l-2">
+                    <div className="text-[10px] text-green-400 uppercase font-bold tracking-wider">Monetizações</div>
+                    <div className="text-xl font-extrabold text-foreground mt-0.5">{matrices.filter(m => m.type === 'monetization').length}</div>
+                  </Card>
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-3">

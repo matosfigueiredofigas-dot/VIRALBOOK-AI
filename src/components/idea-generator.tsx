@@ -186,6 +186,17 @@ export function IdeaGenerator() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Contador de Combinações Premium */}
+      <div className="text-center space-y-1 bg-card/25 backdrop-blur-md border border-white/5 py-4 px-6 rounded-2xl max-w-2xl mx-auto shadow-inner flex flex-col items-center justify-center">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-primary/10 text-primary border border-primary/20 shadow-md">
+          <Zap className="h-3.5 w-3.5 fill-primary animate-pulse text-primary" />
+          {(audiencesPool.length * problemsPool.length * technologiesPool.length * monetizationsPool.length).toLocaleString('pt-BR')} Combinações Únicas de Ideias
+        </span>
+        <p className="text-xxs text-muted-foreground/75 font-medium mt-1">
+          Alimentado por {audiencesPool.length} Públicos-Alvo • {problemsPool.length} Dores/Problemas • {technologiesPool.length} Tecnologias • {monetizationsPool.length} Monetizações
+        </p>
+      </div>
+
       {/* Controles de Geração */}
       <div className="flex flex-col items-center gap-4">
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-2xl">
