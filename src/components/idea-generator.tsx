@@ -11,6 +11,69 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Item, audiences, problems, technologies, monetizations } from "@/lib/matrices";
 import { supabase } from "@/lib/supabase";
 
+function getAudienceCategory(name: string): string {
+  const n = name.toLowerCase();
+  if (n.includes("turis") || n.includes("viag") || n.includes("viaj") || n.includes("explor") || n.includes("pousada") || n.includes("hostel") || n.includes("balão")) {
+    return "turismo";
+  }
+  if (n.includes("restaurante") || n.includes("padeir") || n.includes("padaria") || n.includes("cervej") || n.includes("marmita") || n.includes("aliment") || n.includes("comida") || n.includes("cozinha") || n.includes("chef") || n.includes("bar") || n.includes("lanchonete") || n.includes("vinho")) {
+    return "alimentacao";
+  }
+  if (n.includes("crian") || n.includes("famíl") || n.includes("pais") || n.includes("filh") || n.includes("escola") || n.includes("maternidade") || n.includes("pequeno leitor")) {
+    return "familia";
+  }
+  if (n.includes("músic") || n.includes("cantor") || n.includes("compos") || n.includes("dj") || n.includes("banda") || n.includes("vocal") || n.includes("artista")) {
+    return "musica";
+  }
+  if (n.includes("esporte") || n.includes("atlet") || n.includes("corrida") || n.includes("ciclismo") || n.includes("futebol") || n.includes("trein") || n.includes("academia") || n.includes("personal trainer") || n.includes("yoga") || n.includes("mindfulness") || n.includes("nutricionista")) {
+    return "saude_esportes";
+  }
+  if (n.includes("moda") || n.includes("estilo") || n.includes("look") || n.includes("fashion") || n.includes("joalheria") || n.includes("beleza") || n.includes("manicure") || n.includes("barbearia") || n.includes("salão")) {
+    return "moda";
+  }
+  if (n.includes("carbono") || n.includes("ecológ") || n.includes("recicl") || n.includes("sustent") || n.includes("verde") || n.includes("ambiental") || n.includes("solar") || n.includes("eólica")) {
+    return "meio_ambiente";
+  }
+  if (n.includes("freelancer") || n.includes("empreended") || n.includes("startup") || n.includes("carreira") || n.includes("líder") || n.includes("design") || n.includes("dev") || n.includes("programad") || n.includes("softw") || n.includes("rha") || n.includes("advogad") || n.includes("contad") || n.includes("consult") || n.includes("rh")) {
+    return "carreiras";
+  }
+  return "b2b_geral";
+}
+
+function getProblemCategory(name: string): string {
+  const n = name.toLowerCase();
+  
+  if (n.includes("acordar cedo") || n.includes("30 dias") || n.includes("hábit") || n.includes("procrastina") || n.includes("disciplina") || n.includes("gratidão") || n.includes("foco") || n.includes("recompensas") || n.includes("mental") || n.includes("vencedores") || n.includes("coragem") || n.includes("evolução pessoal")) {
+    return "saude_esportes";
+  }
+  if (n.includes("viag") || n.includes("viaj") || n.includes("explor") || n.includes("destino") || n.includes("turis") || n.includes("lugares secretos") || n.includes("trilhas")) {
+    return "turismo";
+  }
+  if (n.includes("receita") || n.includes("culinár") || n.includes("cozinhe") || n.includes("vegan") || n.includes("aliment") || n.includes("chef") || n.includes("gastronôm") || n.includes("marmita")) {
+    return "alimentacao";
+  }
+  if (n.includes("crian") || n.includes("famíl") || n.includes("pais") || n.includes("filh") || n.includes("infantil") || n.includes("pequenos leitores")) {
+    return "familia";
+  }
+  if (n.includes("cantor") || n.includes("músic") || n.includes("compos") || n.includes("karaokê") || n.includes("dj") || n.includes("vocal") || n.includes("remix") || n.includes("instrumentos")) {
+    return "musica";
+  }
+  if (n.includes("futebol") || n.includes("corrida") || n.includes("ciclismo") || n.includes("esport") || n.includes("atleta") || n.includes("treino") || n.includes("jogadores")) {
+    return "saude_esportes";
+  }
+  if (n.includes("looks") || n.includes("estilo") || n.includes("armário") || n.includes("moda") || n.includes("fashion")) {
+    return "moda";
+  }
+  if (n.includes("ecológ") || n.includes("verde") || n.includes("recicl") || n.includes("sustent") || n.includes("carbono") || n.includes("ambiental") || n.includes("horta coletiva")) {
+    return "meio_ambiente";
+  }
+  if (n.includes("freelancer") || n.includes("empreended") || n.includes("startup") || n.includes("carreira") || n.includes("líder") || n.includes("entrevista") || n.includes("currículo") || n.includes("portfólio") || n.includes("vendas") || n.includes("negociação") || n.includes("programador")) {
+    return "carreiras";
+  }
+
+  return "b2b_geral";
+}
+
 export function IdeaGenerator() {
   const router = useRouter();
   const [isGenerating, setIsGenerating] = useState(false);
@@ -110,14 +173,22 @@ export function IdeaGenerator() {
     return pool[Math.floor(Math.random() * pool.length)];
   };
 
-  // Algoritmo de seleção exclusiva de combinação única
+  // Algoritmo de seleção exclusiva de combinação única com sincronização inteligente de dor/público
   const getUniqueCombination = () => {
-    const pickUnique = (pool: Item[], used: string[], target: string) => {
+    const pickUnique = (pool: Item[], used: string[], target: string, categoryFilter?: (item: Item) => boolean) => {
       let filtered = pool;
       if (target !== "random") {
         const t = parseInt(target, 10);
         filtered = pool.filter(item => item.tier >= t - 1 && item.tier <= t + 1);
         if (filtered.length === 0) filtered = pool;
+      }
+
+      // Aplica o filtro de categoria se fornecido
+      if (categoryFilter) {
+        const catFiltered = filtered.filter(categoryFilter);
+        if (catFiltered.length > 0) {
+          filtered = catFiltered;
+        }
       }
 
       // Filtrar candidatos não utilizados recentemente
@@ -142,8 +213,18 @@ export function IdeaGenerator() {
       return { selected, nextUsed };
     };
 
+    // 1. Sorteia o público-alvo primeiro
     const { selected: tA, nextUsed: nextAudiences } = pickUnique(audiencesPool, usedAudiences, targetStars);
-    const { selected: tP, nextUsed: nextProblems } = pickUnique(problemsPool, usedProblems, targetStars);
+    
+    // 2. Determina a categoria do público-alvo para filtrar as dores (problemas) correspondentes
+    const audCat = getAudienceCategory(tA.name);
+    const problemFilter = (item: Item) => {
+      const probCat = getProblemCategory(item.name);
+      return probCat === 'b2b_geral' || probCat === audCat;
+    };
+
+    // 3. Sorteia os demais elementos com filtro de dor correspondente
+    const { selected: tP, nextUsed: nextProblems } = pickUnique(problemsPool, usedProblems, targetStars, problemFilter);
     const { selected: tT, nextUsed: nextTechs } = pickUnique(technologiesPool, usedTechnologies, targetStars);
     const { selected: tM, nextUsed: nextMonetizations } = pickUnique(monetizationsPool, usedMonetizations, targetStars);
 
@@ -177,14 +258,23 @@ export function IdeaGenerator() {
   const generateIdea = () => {
     setIsGenerating(true);
     
-    // Pré-calcula a ideia final que é garantidamente inédita/não repetida recentemente
+    // Pré-calcula a ideia final que é garantidamente inédita e correspondente
     const finalIdea = getUniqueCombination();
     
     let iterations = 0;
     const interval = setInterval(() => {
-      // Durante o spin da animação visual, sorteia puramente itens aleatórios para dar dinamismo
+      // Durante o spin da animação visual, sorteia puramente itens aleatórios correspondentes
       const tA = getRandom(audiencesPool, targetStars, idea.audience);
-      const tP = getRandom(problemsPool, targetStars, idea.problem);
+      
+      // Sincroniza a dor também durante a animação
+      const audCat = getAudienceCategory(tA.name);
+      const filteredProblems = problemsPool.filter(item => {
+        const probCat = getProblemCategory(item.name);
+        return probCat === 'b2b_geral' || probCat === audCat;
+      });
+      const problemsSource = filteredProblems.length > 0 ? filteredProblems : problemsPool;
+
+      const tP = getRandom(problemsSource, targetStars, idea.problem);
       const tT = getRandom(technologiesPool, targetStars, idea.technology);
       const tM = getRandom(monetizationsPool, targetStars, idea.monetization);
       
@@ -247,9 +337,17 @@ export function IdeaGenerator() {
         console.warn("Erro ao buscar matrizes do banco, usando fallback local:", err);
       }
 
-      // Sorteia ideia inicial com os pools carregados
+      // Sorteia ideia inicial com os pools carregados de forma sincronizada
       const tA = getRandom(currentAudiences, targetStars);
-      const tP = getRandom(currentProblems, targetStars);
+      
+      const audCat = getAudienceCategory(tA.name);
+      const filteredProblems = currentProblems.filter(item => {
+        const probCat = getProblemCategory(item.name);
+        return probCat === 'b2b_geral' || probCat === audCat;
+      });
+      const problemsSource = filteredProblems.length > 0 ? filteredProblems : currentProblems;
+
+      const tP = getRandom(problemsSource, targetStars);
       const tT = getRandom(currentTechnologies, targetStars);
       const tM = getRandom(currentMonetizations, targetStars);
       
