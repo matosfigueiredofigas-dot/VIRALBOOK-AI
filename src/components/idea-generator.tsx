@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shuffle, Users, Target, Cpu, Banknote, Copy, CheckCircle2, Star, Loader2, Zap, Globe } from "lucide-react";
+import { Shuffle, Users, Target, Cpu, Banknote, Copy, CheckCircle2, Star, Loader2, Zap, Globe, Bookmark, Trash2, FolderHeart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Item, audiences, problems, technologies, monetizations } from "@/lib/matrices";
@@ -38,6 +38,63 @@ export function IdeaGenerator() {
     monetization: "",
     tier: 0
   });
+
+  const [drafts, setDrafts] = useState<any[]>([]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("viralbook_idea_drafts");
+    if (saved) {
+      try {
+        setDrafts(JSON.parse(saved));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, []);
+
+  const saveDraft = () => {
+    if (!idea.audience || !idea.problem) return;
+    
+    const isDuplicate = drafts.some(d => 
+      d.audience === idea.audience && 
+      d.problem === idea.problem && 
+      d.technology === idea.technology && 
+      d.monetization === idea.monetization
+    );
+
+    if (isDuplicate) {
+      alert("Este rascunho já está salvo!");
+      return;
+    }
+
+    const newDraft = {
+      id: Date.now().toString(),
+      ...idea
+    };
+
+    const updated = [newDraft, ...drafts];
+    setDrafts(updated);
+    localStorage.setItem("viralbook_idea_drafts", JSON.stringify(updated));
+  };
+
+  const deleteDraft = (id: string) => {
+    const updated = drafts.filter(d => d.id !== id);
+    setDrafts(updated);
+    localStorage.setItem("viralbook_idea_drafts", JSON.stringify(updated));
+  };
+
+  const loadDraft = (draft: any) => {
+    setIdea({
+      audience: draft.audience,
+      problem: draft.problem,
+      technology: draft.technology,
+      monetization: draft.monetization,
+      tier: draft.tier
+    });
+    
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
 
   const getRandom = (arr: Item[], target: string, previousName?: string) => {
     let filtered = arr;
@@ -410,6 +467,16 @@ export function IdeaGenerator() {
               <Button 
                 variant="outline" 
                 size="lg" 
+                className="h-14 rounded-xl border-white/10 hover:bg-white/5 text-purple-400 border-purple-500/20 hover:bg-purple-500/5 font-semibold"
+                onClick={saveDraft}
+                disabled={isGenerating || !idea.audience}
+              >
+                <Bookmark className="mr-2 h-5 w-5 fill-purple-400/10 text-purple-400" />
+                Salvar Rascunho
+              </Button>
+              <Button 
+                variant="outline" 
+                size="lg" 
                 className="h-14 rounded-xl border-white/10 hover:bg-white/5"
                 onClick={handleCopy}
               >
@@ -449,11 +516,115 @@ export function IdeaGenerator() {
         </Card>
       </div>
 
+      {/* Banco de Rascunhos */}
+      {drafts.length > 0 && (
+        <div className="mt-12 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-bold flex items-center gap-2 text-foreground">
+              <FolderHeart className="h-5 w-5 text-pink-500 fill-pink-500/25" />
+              Banco de Rascunhos ({drafts.length})
+            </h3>
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() => {
+                if (confirm("Deseja apagar todos os rascunhos?")) {
+                  setDrafts([]);
+                  localStorage.removeItem("viralbook_idea_drafts");
+                }
+              }}
+              className="text-xs text-muted-foreground hover:text-red-500"
+            >
+              Apagar Tudo
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {drafts.map((draft) => (
+              <Card key={draft.id} className="bg-card/25 backdrop-blur-md border border-border/40 hover:border-border/80 transition-all duration-300 p-5 rounded-2xl relative group/draft flex flex-col justify-between shadow-sm">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-start gap-2">
+                    <Badge variant="outline" className="text-[10px] text-yellow-500 border-yellow-500/20 py-0.5 font-bold">
+                      {getStarLabel(draft.tier).split(" ")[0]} Tier {draft.tier}
+                    </Badge>
+                    <Button 
+                      size="icon" 
+                      variant="ghost" 
+                      onClick={() => deleteDraft(draft.id)}
+                      className="h-7 w-7 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-md shrink-0 md:opacity-0 group-hover/draft:opacity-100 transition-opacity"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                  <p className="text-xs md:text-sm font-medium leading-relaxed text-foreground/90">
+                    Um SaaS B2B para <span className="text-purple-400 font-bold">{draft.audience}</span> focado em resolver problemas de <span className="text-red-400 font-bold">{draft.problem}</span> utilizando <span className="text-blue-400 font-bold">{draft.technology}</span> e monetizado via <span className="text-green-400 font-bold">{draft.monetization}</span>.
+                  </p>
+                </div>
+                
+                <div className="mt-4 flex gap-2 justify-end border-t border-border/20 pt-3">
+                  <Button 
+                    size="sm" 
+                    variant="ghost"
+                    onClick={() => {
+                      const text = `SaaS B2B para ${draft.audience} resolvendo ${draft.problem} com ${draft.technology}`;
+                      navigator.clipboard.writeText(text);
+                      alert("Copiado!");
+                    }}
+                    className="text-[11px] h-8 text-muted-foreground hover:text-primary rounded-lg font-medium px-2.5"
+                  >
+                    Copiar
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="secondary"
+                    onClick={() => loadDraft(draft)}
+                    className="text-[11px] h-8 rounded-lg font-bold px-3 hover:bg-secondary/80"
+                  >
+                    Carregar no Gerador
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="default"
+                    onClick={async () => {
+                      setIsAnalyzing(true);
+                      try {
+                        const text = `SaaS B2B para ${draft.audience} focado em resolver problemas de ${draft.problem} utilizando ${draft.technology} e monetizado via ${draft.monetization}`;
+                        const response = await fetch("/api/radar", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ keyword: text, country }), 
+                        });
+
+                        if (response.ok) {
+                          router.refresh();
+                          window.location.href = `/dashboard?country=${country}`;
+                        } else {
+                          alert("Erro ao analisar nicho. Tente novamente.");
+                        }
+                      } catch (error) {
+                        console.error(error);
+                        alert("Erro de conexão.");
+                      } finally {
+                        setIsAnalyzing(false);
+                      }
+                    }}
+                    className="text-[11px] h-8 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 font-bold text-white shadow-md shadow-blue-500/10 px-3 hover:scale-[1.02] transition-transform"
+                    disabled={isAnalyzing || isGenerating}
+                  >
+                    Analisar no Radar
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Estatísticas */}
       <div className="text-center text-sm text-muted-foreground/60 flex items-center justify-center gap-2">
         <Badge variant="outline" className="bg-white/5 border-white/10 text-xs text-muted-foreground">Matemática</Badge>
         {audiencesPool.length * problemsPool.length * technologiesPool.length * monetizationsPool.length} combinações únicas possíveis.
       </div>
+
     </div>
   );
 }
