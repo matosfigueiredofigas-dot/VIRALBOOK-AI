@@ -32,3 +32,30 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { opportunityId } = await request.json()
+    const supabase = await createClient()
+
+    // Verifica se o usuário está logado
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { error } = await supabase
+      .from('user_favorites')
+      .delete()
+      .eq('user_id', session.user.id)
+      .eq('opportunity_id', opportunityId)
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 400 })
+    }
+
+    return NextResponse.json({ success: true })
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 })
+  }
+}

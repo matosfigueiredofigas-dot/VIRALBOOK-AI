@@ -55,7 +55,36 @@ export const audiences: Item[] = [
   { name: "Fazendas de Mineração de Criptomoedas", tier: 6 }, { name: "Empresas de Desinfecção Hospitalar", tier: 6 }, { name: "Laboratórios de Biotecnologia", tier: 6 },
   { name: "Restauradores de Obras de Arte Clássicas", tier: 6 }, { name: "Investigadores Particulares Cibernéticos", tier: 6 },
   { name: "Produtores de Cannabis Medicinal Legalizada", tier: 6 }, { name: "Criadores de Avestruz e Carnes Exóticas", tier: 6 },
-  { name: "Operadores de Usinas Eólicas", tier: 6 }, { name: "Cultivadores de Trufas Brancas", tier: 6 }, { name: "Pilotos de Balão Turístico", tier: 6 }
+  { name: "Operadores de Usinas Eólicas", tier: 6 }, { name: "Cultivadores de Trufas Brancas", tier: 6 }, { name: "Pilotos de Balão Turístico", tier: 6 },
+  
+  // Nichos Adicionados Dinamicamente
+  { name: "Assistente financeiro com IA", tier: 5 },
+  { name: "Aprendizagem de idiomas por vídeos curtos", tier: 4 },
+  { name: "Rede social de desafios com IA", tier: 5 },
+  { name: "Simulador de entrevistas de emprego", tier: 4 },
+  { name: "Criador de vídeos virais", tier: 5 },
+  { name: "Marketplace hiperlocal", tier: 4 },
+  { name: "Comunidade de empreendedores", tier: 4 },
+  { name: "Reality show digital", tier: 4 },
+  { name: "Rede de networking baseada em IA", tier: 5 },
+  { name: "Plataforma de criação de conteúdo com IA", tier: 5 },
+  { name: "Competições de criatividade", tier: 4 },
+  { name: "Simulador de entrevistas com IA", tier: 5 },
+  { name: "Aprendizagem gamificada de idiomas", tier: 4 },
+  { name: "Fitness com rankings sociais", tier: 4 },
+  { name: "Rede de inventores", tier: 4 },
+  { name: "Banco de ideias monetizáveis", tier: 4 },
+  { name: "Clube dos empreendedores", tier: 4 },
+  { name: "Passaporte digital de viagens", tier: 4 },
+  { name: "Liga de músicos", tier: 4 },
+  { name: "Fantasy esportivo local", tier: 4 },
+  { name: "Fashion battle", tier: 4 },
+  { name: "Consultor de estilo IA", tier: 5 },
+  { name: "Histórias infantis com IA", tier: 5 },
+  { name: "Detector de tendências", tier: 4 },
+  { name: "Comunidade de startups", tier: 4 },
+  { name: "Campeonato global de habilidades", tier: 4 },
+  { name: "Ecossistema de missões e recompensas", tier: 4 }
 ];
 
 export const problems: Item[] = [

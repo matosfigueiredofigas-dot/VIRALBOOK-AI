@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import { Search, Loader2, Sparkles, Copy, CheckCircle2, TrendingUp, Heart, Share2, FileText, Bell, LayoutGrid, List, MessageSquare, Users } from "lucide-react";
+import { Search, Loader2, Sparkles, Copy, CheckCircle2, TrendingUp, Heart, Share2, FileText, Bell, LayoutGrid, List, MessageSquare, Users, Trash2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 // Ícone personalizado do Facebook para evitar incompatibilidade de versão do lucide-react
@@ -84,22 +84,39 @@ function OpportunityCard({ item }: { item: any }) {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-500/10"
+              className={`h-8 w-8 ${typeof window !== 'undefined' && window.location.pathname.includes('/favorites') ? "text-red-500 hover:bg-red-500/10" : "text-muted-foreground hover:text-red-500 hover:bg-red-500/10"}`}
               onClick={async () => {
-                const res = await fetch('/api/favorites', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ opportunityId: item.id })
-                });
-                if (res.status === 401) {
-                  router.push('/login');
-                } else if (res.ok) {
-                  alert('Adicionado aos favoritos!');
+                const isFavoritePage = typeof window !== 'undefined' && window.location.pathname.includes('/favorites');
+                if (isFavoritePage) {
+                  if (confirm("Deseja remover esta oportunidade dos favoritos?")) {
+                    const res = await fetch('/api/favorites', {
+                      method: 'DELETE',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ opportunityId: item.id })
+                    });
+                    if (res.ok) {
+                      alert('Removido dos favoritos!');
+                      router.refresh();
+                    } else {
+                      alert('Erro ao remover.');
+                    }
+                  }
+                } else {
+                  const res = await fetch('/api/favorites', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ opportunityId: item.id })
+                  });
+                  if (res.status === 401) {
+                    router.push('/login');
+                  } else if (res.ok) {
+                    alert('Adicionado aos favoritos!');
+                  }
                 }
               }}
-              title="Favoritar"
+              title={typeof window !== 'undefined' && window.location.pathname.includes('/favorites') ? "Remover dos Favoritos" : "Favoritar"}
             >
-              <Heart className="h-4 w-4" />
+              <Heart className={`h-4 w-4 ${typeof window !== 'undefined' && window.location.pathname.includes('/favorites') ? "fill-red-500 text-red-500" : ""}`} />
             </Button>
             <Button 
               variant="ghost" 
@@ -109,6 +126,30 @@ function OpportunityCard({ item }: { item: any }) {
               title="Monitorar Alerta"
             >
               <Bell className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-500/10"
+              onClick={async () => {
+                if (confirm(`Tem certeza que deseja excluir permanentemente a oportunidade "${item.saas_name}"?`)) {
+                  const res = await fetch('/api/radar', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: item.id })
+                  });
+                  if (res.ok) {
+                    alert('Oportunidade excluída com sucesso!');
+                    router.refresh();
+                  } else {
+                    const errData = await res.json().catch(() => ({}));
+                    alert(errData.error || 'Erro ao excluir oportunidade.');
+                  }
+                }
+              }}
+              title="Excluir Oportunidade"
+            >
+              <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -215,34 +256,53 @@ function OpportunityCard({ item }: { item: any }) {
               <div>
                 <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Validação Social & Canais</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="bg-orange-500/5 p-4 rounded-lg border border-orange-500/10">
+                  <a
+                    href={`https://www.reddit.com/search/?q=${encodeURIComponent(item.target_audience || item.saas_name)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-orange-500/5 p-4 rounded-lg border border-orange-500/10 hover:border-orange-500/30 transition-all block group/reddit"
+                  >
                     <div className="flex items-center gap-2 text-orange-500 font-bold mb-2">
                       <Search className="h-5 w-5" />
                       Validação Reddit
                     </div>
-                    <div className="text-2xl font-extrabold text-foreground mb-1">
+                    <div className="text-2xl font-extrabold text-foreground mb-1 group-hover/reddit:text-orange-500 transition-colors">
                       {item.reddit_mentions || 0}
-                      <span className="text-xs font-normal text-muted-foreground ml-1">menções</span>
+                      <span className="text-xs font-normal text-muted-foreground ml-1 underline decoration-muted-foreground/30 group-hover/reddit:decoration-orange-500">menções ↗</span>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
                       Representa a quantidade de discussões ativas e manifestações de dores de usuários em subreddits relevantes.
                     </p>
-                  </div>
+                  </a>
 
-                  <div className="bg-blue-600/5 p-4 rounded-lg border border-blue-600/10">
-                    <div className="flex items-center gap-2 text-blue-500 font-bold mb-2">
-                      <FacebookIcon className="h-5 w-5" />
-                      Validação Facebook
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <div className="text-base font-bold text-foreground">
-                        Anúncios Ativos: <span className="text-blue-500">{item.facebook_ads_count || 0} campanhas</span>
+                  <div className="bg-blue-600/5 p-4 rounded-lg border border-blue-600/10 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center gap-2 text-blue-500 font-bold mb-2">
+                        <FacebookIcon className="h-5 w-5" />
+                        Validação Facebook
                       </div>
-                      <div className="text-base font-bold text-foreground">
-                        Grupos do Nicho: <span className="text-indigo-400">{item.facebook_groups_count || 0} ativos</span>
+                      <div className="flex flex-col gap-2">
+                        <a
+                          href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(item.target_audience || item.saas_name)}&media_type=all`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm font-bold text-foreground hover:text-blue-500 transition-colors flex items-center justify-between group/link border-b border-border/20 pb-1"
+                        >
+                          <span>Anúncios Ativos:</span>
+                          <span className="text-blue-500 underline decoration-blue-500/30 group-hover/link:decoration-blue-500">{item.facebook_ads_count || 0} campanhas ↗</span>
+                        </a>
+                        <a
+                          href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(item.target_audience || item.saas_name)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm font-bold text-foreground hover:text-indigo-400 transition-colors flex items-center justify-between group/link"
+                        >
+                          <span>Grupos do Nicho:</span>
+                          <span className="text-indigo-400 underline decoration-indigo-400/30 group-hover/link:decoration-indigo-400">{item.facebook_groups_count || 0} ativos ↗</span>
+                        </a>
                       </div>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+                    <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
                       Presença comercial de anúncios concorrentes e grupos ativos ideais para tráfego orgânico e prospecção.
                     </p>
                   </div>
@@ -254,9 +314,16 @@ function OpportunityCard({ item }: { item: any }) {
                   Prompts de Construção
                 </h4>
                 <div className="space-y-4">
-                  {/* Prompt Universal Dinâmico */}
                   <div className="relative group">
-                    <div className="text-xs font-semibold mb-1 text-purple-500">Para ChatGPT / Claude / Gemini (Universal)</div>
+                    <div className="text-xs font-semibold mb-1 text-purple-500">
+                      Para{" "}
+                      <a href="https://chatgpt.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-purple-400 transition-colors">ChatGPT</a>
+                      {" "}/{" "}
+                      <a href="https://claude.ai" target="_blank" rel="noopener noreferrer" className="underline hover:text-purple-400 transition-colors">Claude</a>
+                      {" "}/{" "}
+                      <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-purple-400 transition-colors">Gemini</a>
+                      {" "}(Universal)
+                    </div>
                     <pre className="bg-muted p-4 rounded-lg text-sm text-foreground whitespace-pre-wrap font-mono border border-border/50">
 {`Atue como meu CTO e Estrategista de Negócios. Quero construir um SaaS chamado "${item.saas_name}".
 
@@ -285,7 +352,13 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                   </div>
 
                   <div className="relative group">
-                    <div className="text-xs font-semibold mb-1 text-primary">Para Vercel v0 / Lovable (Frontend)</div>
+                    <div className="text-xs font-semibold mb-1 text-primary">
+                      Para{" "}
+                      <a href="https://v0.dev" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary/80 transition-colors">Vercel v0</a>
+                      {" "}/{" "}
+                      <a href="https://lovable.dev" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary/80 transition-colors">Lovable</a>
+                      {" "}(Frontend)
+                    </div>
                     <pre className="bg-muted p-4 rounded-lg text-sm text-foreground whitespace-pre-wrap font-mono border border-border/50">
                       {item.prompt_lovable}
                     </pre>
@@ -300,7 +373,13 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                   </div>
 
                   <div className="relative group">
-                    <div className="text-xs font-semibold mb-1 text-blue-500">Para Bolt.new / Cursor (Backend/Fullstack)</div>
+                    <div className="text-xs font-semibold mb-1 text-blue-500">
+                      Para{" "}
+                      <a href="https://bolt.new" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-400 transition-colors">Bolt.new</a>
+                      {" "}/{" "}
+                      <a href="https://cursor.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-400 transition-colors">Cursor</a>
+                      {" "}(Backend/Fullstack)
+                    </div>
                     <pre className="bg-muted p-4 rounded-lg text-sm text-foreground whitespace-pre-wrap font-mono border border-border/50">
                       {item.prompt_bolt}
                     </pre>

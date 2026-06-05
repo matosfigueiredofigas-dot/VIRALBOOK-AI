@@ -1,0 +1,2834 @@
+[
+  {
+    "id": "afed9d88-5086-402a-a5a7-717e1434c19a",
+    "type": "audience",
+    "name": "Restaurantes Locais",
+    "tier": 1
+  },
+  {
+    "id": "4af17be6-1b92-401e-b46a-26bd02768d78",
+    "type": "audience",
+    "name": "Personal Trainers",
+    "tier": 1
+  },
+  {
+    "id": "a3dc5859-7027-4721-8313-29b9cf795cc3",
+    "type": "audience",
+    "name": "Pousadas e Hostels",
+    "tier": 1
+  },
+  {
+    "id": "ea735344-aedd-4c6e-b6ba-d8138327f29c",
+    "type": "audience",
+    "name": "Motoristas de Aplicativo",
+    "tier": 1
+  },
+  {
+    "id": "c8ebbdb9-522f-4ff4-8a4d-16bf7a263e82",
+    "type": "audience",
+    "name": "Manicures e Salões de Beleza",
+    "tier": 1
+  },
+  {
+    "id": "aa7d179b-f889-46b4-86e9-f0365672d8f6",
+    "type": "audience",
+    "name": "Vendedores de E-commerce",
+    "tier": 1
+  },
+  {
+    "id": "8c3f8d58-2853-408d-949f-294ffc2cc20f",
+    "type": "audience",
+    "name": "Padeiros Artesanais",
+    "tier": 1
+  },
+  {
+    "id": "3c091773-5a8e-4fea-aba6-36dec3c29953",
+    "type": "audience",
+    "name": "Floriculturas",
+    "tier": 1
+  },
+  {
+    "id": "3a3df81f-f69c-476e-9231-8d2a1d806441",
+    "type": "audience",
+    "name": "Pet Walkers",
+    "tier": 1
+  },
+  {
+    "id": "74230d78-4577-4af1-8b97-a16a8da88f7d",
+    "type": "audience",
+    "name": "Fotógrafos de Casamento",
+    "tier": 1
+  },
+  {
+    "id": "161ded92-cca0-4580-a937-a2b0b252f698",
+    "type": "audience",
+    "name": "Bares e Lanchonetes",
+    "tier": 1
+  },
+  {
+    "id": "6b6a8dfd-f9c0-428e-ae9f-b76a71247990",
+    "type": "audience",
+    "name": "Entregadores",
+    "tier": 1
+  },
+  {
+    "id": "7c786148-f0a7-4c7b-b06b-2ff16c53bcfb",
+    "type": "audience",
+    "name": "Professores Particulares",
+    "tier": 1
+  },
+  {
+    "id": "4412ed1e-648b-4731-af61-a2cc3038329d",
+    "type": "audience",
+    "name": "Costureiras",
+    "tier": 1
+  },
+  {
+    "id": "55435199-baa7-47a7-b3b4-e1707ee2c12b",
+    "type": "audience",
+    "name": "Padarias",
+    "tier": 1
+  },
+  {
+    "id": "1a51671e-f832-4080-bb7f-5ee7b3e870d4",
+    "type": "audience",
+    "name": "Mercadinhos de Bairro",
+    "tier": 1
+  },
+  {
+    "id": "b3866837-76f2-4de9-8c5e-4fa598a9343a",
+    "type": "audience",
+    "name": "Lava-Rápidos",
+    "tier": 1
+  },
+  {
+    "id": "b699bfa6-a1b1-4bcb-9a65-3018a53fce39",
+    "type": "audience",
+    "name": "Academias de Musculação",
+    "tier": 1
+  },
+  {
+    "id": "2bef6c02-0741-41d7-9c2e-bcec07e48cce",
+    "type": "audience",
+    "name": "Pet Shops",
+    "tier": 1
+  },
+  {
+    "id": "883cad42-7009-430e-ac3b-62665af7f21f",
+    "type": "audience",
+    "name": "Lojas de Roupas",
+    "tier": 1
+  },
+  {
+    "id": "399d86b5-d3cb-4be8-9b95-61466906b7f6",
+    "type": "audience",
+    "name": "Autoescolas",
+    "tier": 1
+  },
+  {
+    "id": "72cf1093-6f48-487d-b80f-889043aaa492",
+    "type": "audience",
+    "name": "Farmácias de Bairro",
+    "tier": 1
+  },
+  {
+    "id": "57acb7d0-60bf-453b-bf2c-db670bcdd549",
+    "type": "audience",
+    "name": "Barbearias",
+    "tier": 1
+  },
+  {
+    "id": "bd0dec50-df5e-439f-9364-ad8b7073734b",
+    "type": "audience",
+    "name": "Vidraçarias",
+    "tier": 1
+  },
+  {
+    "id": "38162f58-18d1-493d-8858-f9ef76b9452c",
+    "type": "audience",
+    "name": "Serralherias",
+    "tier": 1
+  },
+  {
+    "id": "3fc6b3d6-e693-432c-90a0-2710b0be06c2",
+    "type": "audience",
+    "name": "Pintores e Pedreiros",
+    "tier": 1
+  },
+  {
+    "id": "5866e947-25a5-4507-8484-00c3d27176e8",
+    "type": "audience",
+    "name": "Corretores de Imóveis",
+    "tier": 2
+  },
+  {
+    "id": "ec4a5d6f-ae60-4fc6-9aa3-fe68ac68948e",
+    "type": "audience",
+    "name": "Advogados Autônomos",
+    "tier": 2
+  },
+  {
+    "id": "f7995594-6b39-4e11-a7aa-8a87969273dc",
+    "type": "audience",
+    "name": "Empresas de Limpeza",
+    "tier": 2
+  },
+  {
+    "id": "46c945e7-8fd1-46ec-83f1-43935f061d27",
+    "type": "audience",
+    "name": "Guias Turísticos",
+    "tier": 2
+  },
+  {
+    "id": "e8fbdfce-9075-48ac-b066-4dd7f3978d15",
+    "type": "audience",
+    "name": "Encanadores e Eletricistas",
+    "tier": 2
+  },
+  {
+    "id": "6aac465f-1657-4d61-a76e-d36a73e44d59",
+    "type": "audience",
+    "name": "Borracharias",
+    "tier": 2
+  },
+  {
+    "id": "fea8f019-f044-4b21-a1cb-ef5b30df442b",
+    "type": "audience",
+    "name": "Gráficas e Copiadoras",
+    "tier": 2
+  },
+  {
+    "id": "3e073666-9923-4d96-9713-945d8b7888bf",
+    "type": "audience",
+    "name": "Lojas de Suplementos",
+    "tier": 2
+  },
+  {
+    "id": "6c82b2f4-4e02-4b26-8307-cfcd024816a8",
+    "type": "audience",
+    "name": "Auto Peças",
+    "tier": 2
+  },
+  {
+    "id": "1918b97c-fa47-4ec3-b792-87d6437e3137",
+    "type": "audience",
+    "name": "Distribuidoras de Bebidas",
+    "tier": 2
+  },
+  {
+    "id": "9fc03fb3-408b-41bb-8905-03962e736c5d",
+    "type": "audience",
+    "name": "Transportadoras Locais",
+    "tier": 2
+  },
+  {
+    "id": "6056b152-697c-4cc5-93b2-a33778692a57",
+    "type": "audience",
+    "name": "Oficinas de Costura",
+    "tier": 2
+  },
+  {
+    "id": "ca6ed4a9-aba0-4015-8270-4b6eb4ec2df7",
+    "type": "audience",
+    "name": "Agências de Turismo",
+    "tier": 2
+  },
+  {
+    "id": "0a8db6c3-b3a1-4a7d-9e50-2200bbdfa7a5",
+    "type": "audience",
+    "name": "Concessionárias de Seminovos",
+    "tier": 2
+  },
+  {
+    "id": "8bc39cfe-28ca-45cc-b2c7-e900bd7faa01",
+    "type": "audience",
+    "name": "Casas de Festas",
+    "tier": 2
+  },
+  {
+    "id": "99a3a4d1-2ff7-48f6-b758-548dc5904502",
+    "type": "audience",
+    "name": "Buffets Infantis",
+    "tier": 2
+  },
+  {
+    "id": "b45e60a1-9b3e-4250-86e2-8903dee42cb5",
+    "type": "audience",
+    "name": "Empreiteiras",
+    "tier": 2
+  },
+  {
+    "id": "2e2bdcac-8a2c-4497-88e7-1f771601829b",
+    "type": "audience",
+    "name": "Clínicas Odontológicas Populares",
+    "tier": 2
+  },
+  {
+    "id": "e53d8be9-c620-48af-a392-e348eb83f409",
+    "type": "audience",
+    "name": "Despachantes",
+    "tier": 2
+  },
+  {
+    "id": "6877c712-2a1c-4077-ab47-6a57066ccda7",
+    "type": "audience",
+    "name": "Escolas de Trânsito",
+    "tier": 2
+  },
+  {
+    "id": "695672bb-7eb1-4fcc-9866-fa7c91e5a76a",
+    "type": "audience",
+    "name": "Estúdios Fotográficos",
+    "tier": 2
+  },
+  {
+    "id": "6f986a08-2110-47eb-b993-d992470a4322",
+    "type": "audience",
+    "name": "Clínicas de Fisioterapia",
+    "tier": 2
+  },
+  {
+    "id": "c7e0f343-75f8-492d-95e5-36113b40a783",
+    "type": "audience",
+    "name": "Agências de Intercâmbio",
+    "tier": 2
+  },
+  {
+    "id": "370bcf6f-2c54-46b5-b020-be219de447b2",
+    "type": "audience",
+    "name": "Nutricionistas Esportivos",
+    "tier": 3
+  },
+  {
+    "id": "cbe87359-9c47-494a-bb6f-9561e5e683a8",
+    "type": "audience",
+    "name": "Escolas de Idiomas Bilingues",
+    "tier": 3
+  },
+  {
+    "id": "d50ff6b8-db47-4bdb-90ef-f048c7f577a7",
+    "type": "audience",
+    "name": "Arquitetos",
+    "tier": 3
+  },
+  {
+    "id": "a697c06d-5ca0-4b60-a6b6-39843259fa22",
+    "type": "audience",
+    "name": "Contadores",
+    "tier": 3
+  },
+  {
+    "id": "bbf45e3b-4bd4-47b1-9dfd-3cb192a54c85",
+    "type": "audience",
+    "name": "Consultores Financeiros",
+    "tier": 3
+  },
+  {
+    "id": "7eebb5d9-96e7-435a-965b-4b401945fc72",
+    "type": "audience",
+    "name": "Produtores de Cerveja Artesanal",
+    "tier": 3
+  },
+  {
+    "id": "c50d8fd3-feb5-4360-8b35-74de4c96cd93",
+    "type": "audience",
+    "name": "Coworkings e Espaços Compartilhados",
+    "tier": 3
+  },
+  {
+    "id": "b66ae63d-3b0c-4af8-a567-bf6b6ebc2dde",
+    "type": "audience",
+    "name": "Escritórios de Engenharia",
+    "tier": 3
+  },
+  {
+    "id": "03885cda-201f-4acf-a5f9-f17d131b4ff9",
+    "type": "audience",
+    "name": "Oficinas de Funilaria Premium",
+    "tier": 3
+  },
+  {
+    "id": "ebb788bf-81c2-4aaa-ae5d-06cee10abca5",
+    "type": "audience",
+    "name": "Produtores de Alimentos Orgânicos",
+    "tier": 3
+  },
+  {
+    "id": "59b21f9e-31f4-4720-a64b-86e754c8984e",
+    "type": "audience",
+    "name": "Consultores de RH",
+    "tier": 3
+  },
+  {
+    "id": "faffdb46-8e01-4211-85be-fabc533b2ce4",
+    "type": "audience",
+    "name": "Síndicos Profissionais",
+    "tier": 3
+  },
+  {
+    "id": "4fe5d96f-80d1-49d0-bd10-0c8bba387ab3",
+    "type": "audience",
+    "name": "Clínicas de Estética Avançada",
+    "tier": 3
+  },
+  {
+    "id": "8acd0790-c4fb-44d0-8a1c-7b2a9a08803c",
+    "type": "audience",
+    "name": "Escolas de Música e Artes",
+    "tier": 3
+  },
+  {
+    "id": "493e7411-29eb-42dd-a6e0-52110aeb04f0",
+    "type": "audience",
+    "name": "Assessorias de Imprensa",
+    "tier": 3
+  },
+  {
+    "id": "7518d432-9f69-4e6d-ae64-ce5880a9a040",
+    "type": "audience",
+    "name": "Corretoras de Seguros",
+    "tier": 3
+  },
+  {
+    "id": "5c4c5af3-5ac9-4ce4-ba88-097a8f4f3874",
+    "type": "audience",
+    "name": "Escritórios de Design de Interiores",
+    "tier": 3
+  },
+  {
+    "id": "984958b6-43a4-4144-96fb-fad2088ae614",
+    "type": "audience",
+    "name": "Psicólogos Clínicos",
+    "tier": 3
+  },
+  {
+    "id": "af14fddc-c37a-4a3a-84b8-9c6d7f54d170",
+    "type": "audience",
+    "name": "Terapeutas Holísticos",
+    "tier": 3
+  },
+  {
+    "id": "34921706-cb26-404c-9a99-b81326be6eb0",
+    "type": "audience",
+    "name": "Clínicas de Acupuntura",
+    "tier": 3
+  },
+  {
+    "id": "d93765f1-2b6f-4292-a280-5c850ddce855",
+    "type": "audience",
+    "name": "Acampamentos de Férias",
+    "tier": 3
+  },
+  {
+    "id": "76be11d0-aad8-4198-b768-738e1f78649e",
+    "type": "audience",
+    "name": "Galerias de Arte Locais",
+    "tier": 3
+  },
+  {
+    "id": "8487f706-1df2-4d2a-be46-a9148ece862b",
+    "type": "audience",
+    "name": "Especialistas em Implantes Dentários",
+    "tier": 4
+  },
+  {
+    "id": "b2ec7512-c804-467b-b6fa-862a1bc213f3",
+    "type": "audience",
+    "name": "Clínicas de Cirurgia Plástica",
+    "tier": 4
+  },
+  {
+    "id": "53e91cc7-0c49-4924-aa32-8fb955b8a7f8",
+    "type": "audience",
+    "name": "Fábricas de Software Bootstrapped",
+    "tier": 4
+  },
+  {
+    "id": "87f179c2-29e8-4e1f-851f-513d0f54d82c",
+    "type": "audience",
+    "name": "Agências de Viagem de Luxo",
+    "tier": 4
+  },
+  {
+    "id": "273387ab-5263-4af0-ac55-15783ddd77f2",
+    "type": "audience",
+    "name": "Hospitais Veterinários 24h",
+    "tier": 4
+  },
+  {
+    "id": "68541ec6-080f-4e40-8271-f3ad69d15c46",
+    "type": "audience",
+    "name": "Construtoras de Alto Padrão",
+    "tier": 4
+  },
+  {
+    "id": "0ba20a14-dbbc-4861-adb5-673aabba7411",
+    "type": "audience",
+    "name": "Joalherias Customizadas",
+    "tier": 4
+  },
+  {
+    "id": "393d8983-9418-4041-80f9-71c0bf912fad",
+    "type": "audience",
+    "name": "Estúdios de Yoga e Mindfulness",
+    "tier": 4
+  },
+  {
+    "id": "a758c5aa-2593-43d7-92e8-f7a64708807a",
+    "type": "audience",
+    "name": "Produtoras Audiovisuais e de Cinema",
+    "tier": 4
+  },
+  {
+    "id": "514ae79b-26ee-41d1-97af-8a1af1f04c74",
+    "type": "audience",
+    "name": "Hospitais e Maternidades Particulares",
+    "tier": 4
+  },
+  {
+    "id": "f7348755-32da-4743-877d-b402c0f02ea3",
+    "type": "audience",
+    "name": "Gestores de Patrimônio (Family Offices)",
+    "tier": 4
+  },
+  {
+    "id": "7b5bf714-e463-431c-9081-61b32c375b8e",
+    "type": "audience",
+    "name": "Concessionárias de Veículos de Luxo",
+    "tier": 4
+  },
+  {
+    "id": "10966a3b-644b-48d5-89fd-fba14c1b5094",
+    "type": "audience",
+    "name": "Consultorias Tributárias Especializadas",
+    "tier": 4
+  },
+  {
+    "id": "8553c1c2-b899-448b-b59e-7f1f3258f86a",
+    "type": "audience",
+    "name": "Clínicas de Dermatologia Estética",
+    "tier": 4
+  },
+  {
+    "id": "c842ccbc-18b0-4d27-9122-ffae1f84953f",
+    "type": "audience",
+    "name": "Escritórios de Advocacia Corporativa",
+    "tier": 4
+  },
+  {
+    "id": "9d0197e9-7dd9-4894-9a8b-9ae8dfe7ea79",
+    "type": "audience",
+    "name": "Importadoras de Vinhos Premium",
+    "tier": 4
+  },
+  {
+    "id": "df10aaa3-1b78-481e-83c1-fedb4897f5a7",
+    "type": "audience",
+    "name": "Clubes de Golfe e Tiro",
+    "tier": 4
+  },
+  {
+    "id": "7760fb5d-5018-4d22-b5f2-c4e4982d35d7",
+    "type": "audience",
+    "name": "Clínicas de Reprodução Humana",
+    "tier": 4
+  },
+  {
+    "id": "eae9ed91-4842-4da9-bba7-57267331cd6d",
+    "type": "audience",
+    "name": "Criadores de Conteúdo (Influencers)",
+    "tier": 5
+  },
+  {
+    "id": "bada4991-6495-434a-8a64-0d39b7b9b6ab",
+    "type": "audience",
+    "name": "Agências de Marketing de Performance",
+    "tier": 5
+  },
+  {
+    "id": "76363f99-7649-4622-a86b-69d72a3cef53",
+    "type": "audience",
+    "name": "Produtores de Festivais de Música",
+    "tier": 5
+  },
+  {
+    "id": "7b92bdbf-9d63-4ea9-a701-02d6bdf6872f",
+    "type": "audience",
+    "name": "Youtubers e Streamers Profissionais",
+    "tier": 5
+  },
+  {
+    "id": "2ebf07cb-b452-4f73-8c5f-34eb7e0072ee",
+    "type": "audience",
+    "name": "Infoprodutores High-Ticket",
+    "tier": 5
+  },
+  {
+    "id": "f9d75d04-cdc6-408d-add1-99cf66f21580",
+    "type": "audience",
+    "name": "Startups em Early Stage",
+    "tier": 5
+  },
+  {
+    "id": "4e6fde5e-98d2-4772-b662-c38b8396d75c",
+    "type": "audience",
+    "name": "Redes de Podcasts",
+    "tier": 5
+  },
+  {
+    "id": "166d665b-58ed-4d42-928d-5695df1510bc",
+    "type": "audience",
+    "name": "Agências de Lançamento de Infoprodutos",
+    "tier": 5
+  },
+  {
+    "id": "dd1d19db-0b57-4185-8ddf-86ef1046b875",
+    "type": "audience",
+    "name": "Consultores de Inteligência Artificial",
+    "tier": 5
+  },
+  {
+    "id": "17359b66-3e53-492b-bb6f-29dd8d1bbf00",
+    "type": "audience",
+    "name": "E-commerces DNVB (Direct-to-Consumer)",
+    "tier": 5
+  },
+  {
+    "id": "8fd8c76d-3546-4c0f-bbd2-330780d9434d",
+    "type": "audience",
+    "name": "Especialistas em SEO e Growth Hacking",
+    "tier": 5
+  },
+  {
+    "id": "85f2d3e0-6d4e-4e63-8e6e-2c61c11a1411",
+    "type": "audience",
+    "name": "Gestores de Comunidades Onlines",
+    "tier": 5
+  },
+  {
+    "id": "193ca69e-b3d6-4139-9219-fe78d9867139",
+    "type": "audience",
+    "name": "Copywriters de Resposta Direta",
+    "tier": 5
+  },
+  {
+    "id": "134b4761-cca9-4a7f-aeee-0f6adcd95615",
+    "type": "audience",
+    "name": "Editores de Vídeo de Alta Retenção",
+    "tier": 5
+  },
+  {
+    "id": "f0e2401f-0a96-4d89-b536-b43294d762e1",
+    "type": "audience",
+    "name": "Plataformas de SaaS B2B Básico",
+    "tier": 5
+  },
+  {
+    "id": "cdc4f8fd-5046-4d42-b18b-fd55f702d891",
+    "type": "audience",
+    "name": "Fintechs em Estágio de Crescimento",
+    "tier": 5
+  },
+  {
+    "id": "d123fe61-93ca-42b3-be72-021a624a5f58",
+    "type": "audience",
+    "name": "EdTechs (Plataformas Educacionais)",
+    "tier": 5
+  },
+  {
+    "id": "cc35cc2a-c0e8-484c-a3a5-c2e300fdae28",
+    "type": "audience",
+    "name": "Clínicas Psiquiátricas com Psicodélicos",
+    "tier": 6
+  },
+  {
+    "id": "2ac3f16c-3716-4e63-a62c-7ab50beea1d2",
+    "type": "audience",
+    "name": "Estúdios de Tatuagem Realista",
+    "tier": 6
+  },
+  {
+    "id": "5621b9fe-53a1-41e2-a605-a3638e38d013",
+    "type": "audience",
+    "name": "Mecânicos Especializados em Porsches",
+    "tier": 6
+  },
+  {
+    "id": "ccaf0f21-a238-462c-ae45-e34883cd2af7",
+    "type": "audience",
+    "name": "Criadores de Gado de Elite",
+    "tier": 6
+  },
+  {
+    "id": "9c1b7c8a-7a18-4841-9c85-49899b9c168c",
+    "type": "audience",
+    "name": "Mergulhadores Profissionais de Alto Mar",
+    "tier": 6
+  },
+  {
+    "id": "f2b3aa70-7752-4b29-b29a-d56fbba4263c",
+    "type": "audience",
+    "name": "Produtores de Cogumelos Exóticos",
+    "tier": 6
+  },
+  {
+    "id": "11dfa013-c6df-49e6-bc0c-cbdd713a9166",
+    "type": "audience",
+    "name": "Estúdios de Animação 3D para Games",
+    "tier": 6
+  },
+  {
+    "id": "7d31ffd9-9251-467d-8b00-3f09f815b08a",
+    "type": "audience",
+    "name": "Empresas de Instalação de Energia Solar",
+    "tier": 6
+  },
+  {
+    "id": "c9b76141-97ae-4b10-965e-bad6aeb17546",
+    "type": "audience",
+    "name": "Fabricantes de Drones Agrícolas",
+    "tier": 6
+  },
+  {
+    "id": "1a5047cc-b3ac-49cc-9de2-88912c303871",
+    "type": "audience",
+    "name": "Laboratórios de Genética Pessoal",
+    "tier": 6
+  },
+  {
+    "id": "5f9b39c4-a770-4c59-bb95-6c87480aae1d",
+    "type": "audience",
+    "name": "Cervejarias Ciganas (Sem Fábrica)",
+    "tier": 6
+  },
+  {
+    "id": "78835b0e-a4ef-420d-8ec0-3d4386686da5",
+    "type": "audience",
+    "name": "Apicultores de Mel Medicinal",
+    "tier": 6
+  },
+  {
+    "id": "14dbdbd7-7ab2-427f-9e5b-02b383c17667",
+    "type": "audience",
+    "name": "Fazendas de Mineração de Criptomoedas",
+    "tier": 6
+  },
+  {
+    "id": "34570974-8f76-40a6-9109-daf78b280c0d",
+    "type": "audience",
+    "name": "Empresas de Desinfecção Hospitalar",
+    "tier": 6
+  },
+  {
+    "id": "9db64c70-735e-4997-aba9-0f7a98de63f2",
+    "type": "audience",
+    "name": "Laboratórios de Biotecnologia",
+    "tier": 6
+  },
+  {
+    "id": "9a8af775-de66-4cb4-bcce-826573082982",
+    "type": "audience",
+    "name": "Restauradores de Obras de Arte Clássicas",
+    "tier": 6
+  },
+  {
+    "id": "7d78b62f-cdd3-46dc-a010-fd420b2f29aa",
+    "type": "audience",
+    "name": "Investigadores Particulares Cibernéticos",
+    "tier": 6
+  },
+  {
+    "id": "a31a3182-ddad-40d4-933f-81d0b17b29c7",
+    "type": "audience",
+    "name": "Produtores de Cannabis Medicinal Legalizada",
+    "tier": 6
+  },
+  {
+    "id": "cbf408fd-4753-4f78-be5f-f2731e8340b1",
+    "type": "audience",
+    "name": "Criadores de Avestruz e Carnes Exóticas",
+    "tier": 6
+  },
+  {
+    "id": "704cc18e-ddf8-4afb-b8f0-0d1841326a12",
+    "type": "audience",
+    "name": "Operadores de Usinas Eólicas",
+    "tier": 6
+  },
+  {
+    "id": "652a3017-fb4e-4c7f-ac72-d5b7dd2bc618",
+    "type": "audience",
+    "name": "Cultivadores de Trufas Brancas",
+    "tier": 6
+  },
+  {
+    "id": "08db2de6-9d02-4936-bbc2-c900331e0db1",
+    "type": "audience",
+    "name": "Pilotos de Balão Turístico",
+    "tier": 6
+  },
+  {
+    "id": "9653b7f8-8866-42a9-af5b-5c63676e921a",
+    "type": "problem",
+    "name": "Criação de Conteúdo para Redes",
+    "tier": 1
+  },
+  {
+    "id": "618fd796-bdcb-42c7-9eb3-bd1d3b991415",
+    "type": "problem",
+    "name": "Organização de Estoque Físico",
+    "tier": 1
+  },
+  {
+    "id": "17908bc2-e29e-4a59-b5d9-d9d6a3a54dee",
+    "type": "problem",
+    "name": "Controle de Ponto de Funcionários",
+    "tier": 1
+  },
+  {
+    "id": "23b7e5f2-4d20-4fb3-918e-ea633e27a7d6",
+    "type": "problem",
+    "name": "Emissão de Recibos em Papel",
+    "tier": 1
+  },
+  {
+    "id": "a094e4e5-a25d-4f83-84f5-46f6a94390bf",
+    "type": "problem",
+    "name": "Agendamento Manual via Telefone",
+    "tier": 1
+  },
+  {
+    "id": "fabbb218-3511-476a-b368-838314a291bb",
+    "type": "problem",
+    "name": "Perda de Clientes Frequentes",
+    "tier": 1
+  },
+  {
+    "id": "01bf79ad-9f7b-463a-a00a-63000eea333b",
+    "type": "problem",
+    "name": "Dificuldade de Controle de Caixa Diário",
+    "tier": 1
+  },
+  {
+    "id": "42ad6cf9-4c73-46b2-a49b-ae61084c95a1",
+    "type": "problem",
+    "name": "Fila de Espera Demorada e Desorganizada",
+    "tier": 1
+  },
+  {
+    "id": "9608ed60-4c32-4609-9d4c-e553fc283356",
+    "type": "problem",
+    "name": "Falta de Orçamentos Claros para o Cliente",
+    "tier": 1
+  },
+  {
+    "id": "2410e460-821d-4e28-90b1-f66a5fadc4ee",
+    "type": "problem",
+    "name": "Controle de 'Fiados' e Cadernetas",
+    "tier": 1
+  },
+  {
+    "id": "a4dede43-8f1f-4521-8027-a98076be10f2",
+    "type": "problem",
+    "name": "Má Gestão de Entregas (Delivery)",
+    "tier": 1
+  },
+  {
+    "id": "e21138b8-dd6b-4219-afe8-828818fbfbb3",
+    "type": "problem",
+    "name": "Agendamento e No-Shows (Faltas)",
+    "tier": 2
+  },
+  {
+    "id": "7be0ed19-4667-4acd-b184-671711f692b8",
+    "type": "problem",
+    "name": "Gestão Financeira e Cobranças de Boletos",
+    "tier": 2
+  },
+  {
+    "id": "3d8a1868-6ab9-4977-9c2a-78c7fb9e30bd",
+    "type": "problem",
+    "name": "Emissão de Notas Fiscais Eletrônicas",
+    "tier": 2
+  },
+  {
+    "id": "e56697f9-4486-41f4-b179-9cb77e780588",
+    "type": "problem",
+    "name": "Atraso Constante em Pagamentos Mensais",
+    "tier": 2
+  },
+  {
+    "id": "69fdafe4-a421-480f-9903-a59b8b0bacbc",
+    "type": "problem",
+    "name": "Gestão de Frota de Veículos",
+    "tier": 2
+  },
+  {
+    "id": "a1ec61f8-40c1-4751-84f4-ca4b5984d081",
+    "type": "problem",
+    "name": "Falta de Histórico Unificado de Clientes",
+    "tier": 2
+  },
+  {
+    "id": "a24d0695-004b-40c6-8d89-874b90e7d969",
+    "type": "problem",
+    "name": "Dificuldade em Delegar Tarefas Simples",
+    "tier": 2
+  },
+  {
+    "id": "1c0e42d5-61f7-4367-a0b8-7a02ff00126c",
+    "type": "problem",
+    "name": "Compras de Insumos Desorganizadas",
+    "tier": 2
+  },
+  {
+    "id": "f356dc7d-1102-4f3b-a1b3-a442e70108ab",
+    "type": "problem",
+    "name": "Cotação Lenta com Múltiplos Fornecedores",
+    "tier": 2
+  },
+  {
+    "id": "2e2a8a7f-423a-41fa-9cd0-8a643de5619b",
+    "type": "problem",
+    "name": "Acompanhamento Cego de Pedidos",
+    "tier": 2
+  },
+  {
+    "id": "45894c55-48f3-4238-9a4f-54721aa7c7a0",
+    "type": "problem",
+    "name": "Logística Reversa e Gestão de Devoluções",
+    "tier": 2
+  },
+  {
+    "id": "ecddddff-d579-48a1-b0b0-652dc3b4653f",
+    "type": "problem",
+    "name": "Recrutamento e Seleção de Talentos Base",
+    "tier": 3
+  },
+  {
+    "id": "1eec30dc-7cac-42de-8ca0-86c5fbfb666a",
+    "type": "problem",
+    "name": "Otimização de SEO Local (Google Maps)",
+    "tier": 3
+  },
+  {
+    "id": "5cfa832e-a828-4744-b472-0a0c87394942",
+    "type": "problem",
+    "name": "Treinamento de Equipe Operacional",
+    "tier": 3
+  },
+  {
+    "id": "b0c32228-76ca-4dc1-9ff6-e22aed333673",
+    "type": "problem",
+    "name": "Organização de Documentos na Nuvem",
+    "tier": 3
+  },
+  {
+    "id": "49e61cb3-422b-47cd-be6b-0b407a91e816",
+    "type": "problem",
+    "name": "Gestão de Tarefas Complexas em Equipe",
+    "tier": 3
+  },
+  {
+    "id": "292d75d4-1893-4a25-9021-8ae5e8d9c2bd",
+    "type": "problem",
+    "name": "Controle de Prazos de Entregas B2B",
+    "tier": 3
+  },
+  {
+    "id": "a0987956-28bf-4c47-9345-8749d7a72715",
+    "type": "problem",
+    "name": "Conformidade Trabalhista e Ponto Digital",
+    "tier": 3
+  },
+  {
+    "id": "76c6a8ac-b279-4db6-a775-84d8b46e7bdd",
+    "type": "problem",
+    "name": "Criação Rápida de Propostas Comerciais Visuais",
+    "tier": 3
+  },
+  {
+    "id": "28cb5756-ee52-4f2e-9c31-f8266c5199bf",
+    "type": "problem",
+    "name": "Onboarding Confuso de Novos Funcionários",
+    "tier": 3
+  },
+  {
+    "id": "5f925ff9-80ff-45ad-9d57-ea4c7f6c7759",
+    "type": "problem",
+    "name": "Retenção de Clientes Premium VIPs",
+    "tier": 4
+  },
+  {
+    "id": "9eedd058-f698-48db-9059-c1ac45e0042c",
+    "type": "problem",
+    "name": "Gestão de Contratos e Assinaturas Digitais",
+    "tier": 4
+  },
+  {
+    "id": "fd2084f2-d127-4f89-af98-d2a312c98542",
+    "type": "problem",
+    "name": "Coleta Automática de Feedbacks e Avaliações",
+    "tier": 4
+  },
+  {
+    "id": "8f935743-ede2-4e2c-a8a4-0d3852b1a2de",
+    "type": "problem",
+    "name": "Controle de Garantias de Produtos Caros",
+    "tier": 4
+  },
+  {
+    "id": "7f59cdcf-a4e8-4775-88eb-656c9cc5e97d",
+    "type": "problem",
+    "name": "Previsão de Demanda de Estoque para o Trimestre",
+    "tier": 4
+  },
+  {
+    "id": "bc31adab-f1b0-4517-a4ab-e5acf03005f4",
+    "type": "problem",
+    "name": "Cálculo Preciso de Margem de Lucro por Projeto",
+    "tier": 4
+  },
+  {
+    "id": "18e7d894-fe1a-4682-9a33-a8e70bad282f",
+    "type": "problem",
+    "name": "Automação de Marketing B2B Omnichannel",
+    "tier": 4
+  },
+  {
+    "id": "592dc267-06b6-4d24-8494-0639cb14c579",
+    "type": "problem",
+    "name": "Integração Pobre com Sistemas Legados Antigos",
+    "tier": 4
+  },
+  {
+    "id": "c6212022-43de-44c5-8532-0fa428f6b910",
+    "type": "problem",
+    "name": "Gestão de Riscos Operacionais em Escala",
+    "tier": 4
+  },
+  {
+    "id": "a7908852-431f-41d0-a126-c6a10ad32312",
+    "type": "problem",
+    "name": "Compliance Fiscal e Tributário Dinâmico",
+    "tier": 4
+  },
+  {
+    "id": "dfa92dcb-0001-4c65-95a3-efcc9859192f",
+    "type": "problem",
+    "name": "Aquisição Cara de Leads Frios via Anúncios",
+    "tier": 5
+  },
+  {
+    "id": "3c8fea4e-c1f6-4375-9bb0-a8fbdd482bca",
+    "type": "problem",
+    "name": "Baixo Engajamento e Cultura de Funcionários Remotos",
+    "tier": 5
+  },
+  {
+    "id": "d3e22b8b-6f89-4060-bed4-f6f4655e207c",
+    "type": "problem",
+    "name": "Onboarding Dinâmico e Gamificado de Clientes",
+    "tier": 5
+  },
+  {
+    "id": "f7fcd2e0-0725-4eb1-a2ac-13d3e02170c6",
+    "type": "problem",
+    "name": "Personalização em Massa de Emails (Cold Emailing)",
+    "tier": 5
+  },
+  {
+    "id": "233a512e-b16a-47ed-8922-b6cbde01e62d",
+    "type": "problem",
+    "name": "Automação Inteligente de Funil de Vendas",
+    "tier": 5
+  },
+  {
+    "id": "9f130b5a-bfe6-48dc-a862-55ba9c3c886b",
+    "type": "problem",
+    "name": "Monitoramento Cego de Métricas SaaS (LTV/CAC)",
+    "tier": 5
+  },
+  {
+    "id": "6ff066aa-9f98-4ea7-bb2c-2404e91a8691",
+    "type": "problem",
+    "name": "Gestão Descentralizada de Afiliados e Parceiros",
+    "tier": 5
+  },
+  {
+    "id": "786b32da-ee68-4948-8d6d-67571ad1d47b",
+    "type": "problem",
+    "name": "Otimização Contínua de Conversão (CRO) de LPs",
+    "tier": 5
+  },
+  {
+    "id": "e8bc3a4a-63fb-4d5a-bbb5-fcdc150bf1a0",
+    "type": "problem",
+    "name": "Segmentação de Audiência Super Avançada",
+    "tier": 5
+  },
+  {
+    "id": "4f4603a6-90f6-4838-aec2-6a23f06efdac",
+    "type": "problem",
+    "name": "Qualificação Automática de Leads via Comportamento",
+    "tier": 5
+  },
+  {
+    "id": "e11ef8eb-1995-4c91-ba24-b445249d95cc",
+    "type": "problem",
+    "name": "Prevenção Avançada de Fraudes com Cartão Clonado",
+    "tier": 6
+  },
+  {
+    "id": "40e79542-3768-434a-ab8c-b660928eccae",
+    "type": "problem",
+    "name": "Monitoramento Deep Web de Reputação Online",
+    "tier": 6
+  },
+  {
+    "id": "2034d982-c914-43fc-b4ae-e9c9d2ec63fc",
+    "type": "problem",
+    "name": "Tradução e Localização Contextual em Tempo Real",
+    "tier": 6
+  },
+  {
+    "id": "8e576b32-096e-4908-976c-26f9286d2937",
+    "type": "problem",
+    "name": "Logística e Otimização de Rotas de Múltiplos Veículos",
+    "tier": 6
+  },
+  {
+    "id": "0c25e765-fc13-4d0a-b2f8-343d006a5346",
+    "type": "problem",
+    "name": "Automação de Respostas de Suporte de Alta Complexidade",
+    "tier": 6
+  },
+  {
+    "id": "eb4543e0-4978-41dc-a17f-3cb1a01b0df4",
+    "type": "problem",
+    "name": "Rastreio Global de Ativos Extremamente Valiosos",
+    "tier": 6
+  },
+  {
+    "id": "829c2fd0-50fa-4eed-b9e8-28865ed5559f",
+    "type": "problem",
+    "name": "Análise Preditiva de Churn (Cancelamento) de Contas Key",
+    "tier": 6
+  },
+  {
+    "id": "d81635d4-0920-4a55-b252-0c3efca9e607",
+    "type": "problem",
+    "name": "Detecção de Anomalias Financeiras e Lavagem de Dinheiro",
+    "tier": 6
+  },
+  {
+    "id": "8922af9e-9ce6-4e00-baf6-2797475923cd",
+    "type": "problem",
+    "name": "Simulação de Cenários de Crise em Realidade Virtual",
+    "tier": 6
+  },
+  {
+    "id": "7b9c442a-ef7f-4822-b9f8-410a1c728cc5",
+    "type": "problem",
+    "name": "Auditoria Imutável de Contratos e Acordos em Blockchain",
+    "tier": 6
+  },
+  {
+    "id": "25a2234d-8a17-495c-8401-78a356bc7ee8",
+    "type": "problem",
+    "name": "Gestão Automatizada de Créditos de Carbono ESG",
+    "tier": 6
+  },
+  {
+    "id": "aa83d6b7-5566-4132-9d67-d35cd0c0ad89",
+    "type": "problem",
+    "name": "Desafio de acordar cedo",
+    "tier": 1
+  },
+  {
+    "id": "51844734-0d90-4af7-934b-c72ca2500791",
+    "type": "problem",
+    "name": "Clube dos 30 dias",
+    "tier": 2
+  },
+  {
+    "id": "dd9c12d1-a88e-4343-a251-c1b532f6b370",
+    "type": "problem",
+    "name": "Construção de hábitos",
+    "tier": 2
+  },
+  {
+    "id": "a9cb80be-a165-4531-8034-4ff0700c1fe1",
+    "type": "problem",
+    "name": "Desafio sem procrastinação",
+    "tier": 3
+  },
+  {
+    "id": "39cb85d6-17ae-4efb-a142-72d9385194a7",
+    "type": "problem",
+    "name": "Metas compartilhadas",
+    "tier": 2
+  },
+  {
+    "id": "9740b1f1-e372-4cde-8a8f-cfa0eaadc553",
+    "type": "problem",
+    "name": "Diário de evolução",
+    "tier": 1
+  },
+  {
+    "id": "da02375a-73f5-4194-a411-898011aa7d0c",
+    "type": "problem",
+    "name": "Ranking de disciplina",
+    "tier": 2
+  },
+  {
+    "id": "0fa507d7-ff64-4256-be88-0d63da1e9abe",
+    "type": "problem",
+    "name": "Coach de hábitos por IA",
+    "tier": 5
+  },
+  {
+    "id": "f28281a3-3cdd-493a-a3bc-fced287c0210",
+    "type": "problem",
+    "name": "Competição de produtividade",
+    "tier": 3
+  },
+  {
+    "id": "3cf23c92-2598-4296-97d8-da3699ff23c3",
+    "type": "problem",
+    "name": "Planejador de vida",
+    "tier": 2
+  },
+  {
+    "id": "acad6720-a39f-4172-941c-20290d79ec43",
+    "type": "problem",
+    "name": "Missões de autodesenvolvimento",
+    "tier": 3
+  },
+  {
+    "id": "317e2412-03d5-4c70-a4af-91e281bfbb24",
+    "type": "problem",
+    "name": "Desafio sem redes sociais",
+    "tier": 2
+  },
+  {
+    "id": "6e869191-e6ab-4bd6-a9eb-1d4848191ed1",
+    "type": "problem",
+    "name": "Clube da leitura diária",
+    "tier": 1
+  },
+  {
+    "id": "fc3a399c-ef3c-4993-af8c-7d32320c75a2",
+    "type": "problem",
+    "name": "Diário de gratidão",
+    "tier": 1
+  },
+  {
+    "id": "1630af42-163a-4688-83d8-129b2de8c6e5",
+    "type": "problem",
+    "name": "Desafio de foco",
+    "tier": 2
+  },
+  {
+    "id": "1aa972cb-179e-47d0-90e6-9c2e1a04fc9d",
+    "type": "problem",
+    "name": "Sistema de recompensas pessoais",
+    "tier": 3
+  },
+  {
+    "id": "cee888d0-b62c-4034-81f4-db73cf420f62",
+    "type": "problem",
+    "name": "Academia mental",
+    "tier": 4
+  },
+  {
+    "id": "03b22002-0883-4efd-8189-b0c2fd8b2516",
+    "type": "problem",
+    "name": "Clube dos vencedores",
+    "tier": 3
+  },
+  {
+    "id": "9e11ff81-e8de-4e8a-89b0-b7f3ba73dfa0",
+    "type": "problem",
+    "name": "Missões de coragem",
+    "tier": 3
+  },
+  {
+    "id": "b5c256c0-7af1-42bd-a711-aba5096bd1db",
+    "type": "problem",
+    "name": "Evolução pessoal gamificada",
+    "tier": 4
+  },
+  {
+    "id": "f45c4b9c-6b37-4d6c-954d-c6f38ec19c21",
+    "type": "problem",
+    "name": "Networking local",
+    "tier": 2
+  },
+  {
+    "id": "e6483a0f-97e4-4924-8a03-2c036ac5ffcd",
+    "type": "problem",
+    "name": "Desafios de habilidades profissionais",
+    "tier": 3
+  },
+  {
+    "id": "bd20e00c-07d4-468f-9e3e-078c045d8fd8",
+    "type": "problem",
+    "name": "Simulador de entrevistas com IA",
+    "tier": 4
+  },
+  {
+    "id": "cbd12ab5-f219-4ba8-b8f9-54015403df3b",
+    "type": "problem",
+    "name": "Ranking de freelancers",
+    "tier": 3
+  },
+  {
+    "id": "a3d041d3-8a6b-456e-b80f-c316eeb1067c",
+    "type": "problem",
+    "name": "Banco de talentos",
+    "tier": 3
+  },
+  {
+    "id": "7c185aec-4a3a-415f-83d9-4742333901b8",
+    "type": "problem",
+    "name": "Missões para carreira",
+    "tier": 3
+  },
+  {
+    "id": "66e5e928-8f5a-4ae3-8fb5-a432f59fcbf8",
+    "type": "problem",
+    "name": "Clube de empreendedores",
+    "tier": 4
+  },
+  {
+    "id": "00d39f3e-f885-421c-b761-d223cc60c33c",
+    "type": "problem",
+    "name": "Comunidade de startups",
+    "tier": 4
+  },
+  {
+    "id": "40eac9be-841e-45f6-b209-e2e0d773cc64",
+    "type": "problem",
+    "name": "Mentor IA",
+    "tier": 5
+  },
+  {
+    "id": "336330ba-b6f9-446c-a5fd-1f5b08c4c38a",
+    "type": "problem",
+    "name": "Aprender vendas",
+    "tier": 3
+  },
+  {
+    "id": "94b86891-3a36-45d6-baab-a90ad662b8c1",
+    "type": "problem",
+    "name": "Aprender negociação",
+    "tier": 3
+  },
+  {
+    "id": "47ca8feb-3751-497b-8ae2-131000a24668",
+    "type": "problem",
+    "name": "Comunidade de programadores",
+    "tier": 4
+  },
+  {
+    "id": "baa8abef-a946-4d3f-9859-de3396f13c63",
+    "type": "problem",
+    "name": "Batalha de currículos",
+    "tier": 2
+  },
+  {
+    "id": "64d4d626-677f-41bf-8ede-11785e7f565b",
+    "type": "problem",
+    "name": "Construção de portfólio",
+    "tier": 2
+  },
+  {
+    "id": "117f09e0-1242-426f-b4c3-0b639dfb4926",
+    "type": "problem",
+    "name": "Avaliação profissional",
+    "tier": 3
+  },
+  {
+    "id": "0d6092d8-d287-4859-9909-6562abd95848",
+    "type": "problem",
+    "name": "Clube de líderes",
+    "tier": 4
+  },
+  {
+    "id": "01cfc09e-943d-422e-bea7-07bcaa6392ae",
+    "type": "problem",
+    "name": "Marketplace de conhecimento",
+    "tier": 4
+  },
+  {
+    "id": "3125efe4-a9a0-48e0-bcb3-b295d60e8171",
+    "type": "problem",
+    "name": "Coaching profissional",
+    "tier": 3
+  },
+  {
+    "id": "35fc4878-4cd3-4f21-99c2-3f4143b320b8",
+    "type": "problem",
+    "name": "Carreira internacional",
+    "tier": 4
+  },
+  {
+    "id": "8ec8272a-a774-41ad-b7af-058bc7075950",
+    "type": "problem",
+    "name": "Ranking de especialistas",
+    "tier": 3
+  },
+  {
+    "id": "70361696-45a7-4b9b-81b8-0e8eb7e1fb22",
+    "type": "problem",
+    "name": "Caça a lugares secretos",
+    "tier": 3
+  },
+  {
+    "id": "e048e7b3-7e3e-4bbd-a33c-65abb72805e2",
+    "type": "problem",
+    "name": "Desafios de viagem",
+    "tier": 3
+  },
+  {
+    "id": "7fd0229b-6a02-4562-aa03-692ac8bc7ee7",
+    "type": "problem",
+    "name": "Passaporte digital de viagens",
+    "tier": 4
+  },
+  {
+    "id": "fcee1c7e-3a86-4b1c-bccb-5fb2e1f26d6f",
+    "type": "problem",
+    "name": "Ranking de exploradores",
+    "tier": 3
+  },
+  {
+    "id": "8e3c9200-d184-4888-b8d8-6baf78c987cc",
+    "type": "problem",
+    "name": "Diário de viagens",
+    "tier": 2
+  },
+  {
+    "id": "fcce504e-a63e-4c6f-91cb-b1dc3de68c2b",
+    "type": "problem",
+    "name": "Turismo colaborativo",
+    "tier": 3
+  },
+  {
+    "id": "bbee58c3-96b4-427e-b100-858d3fc0c411",
+    "type": "problem",
+    "name": "Descubra sua cidade",
+    "tier": 2
+  },
+  {
+    "id": "51564a3c-0152-4a0a-8e3a-6a06eb098cf6",
+    "type": "problem",
+    "name": "Turismo gastronômico",
+    "tier": 3
+  },
+  {
+    "id": "a2ac0fa7-aa8e-4eb1-b505-890bca290cb7",
+    "type": "problem",
+    "name": "Aventuras locais",
+    "tier": 2
+  },
+  {
+    "id": "ff4d89dd-bee5-4667-a0a7-16076beab925",
+    "type": "problem",
+    "name": "Guia feito pelos usuários",
+    "tier": 3
+  },
+  {
+    "id": "c0a2d67d-6c6f-4c26-86fc-86620944e16b",
+    "type": "problem",
+    "name": "Check-in gamificado",
+    "tier": 3
+  },
+  {
+    "id": "62082a6e-65b0-4a04-a2d2-07b8d9543b96",
+    "type": "problem",
+    "name": "Competição entre viajantes",
+    "tier": 4
+  },
+  {
+    "id": "22e8a1d4-7d7a-48cd-9801-26933db0071e",
+    "type": "problem",
+    "name": "Viagens econômicas",
+    "tier": 2
+  },
+  {
+    "id": "288e1791-4372-4bd5-bc68-1089e491b55e",
+    "type": "problem",
+    "name": "Mochileiros conectados",
+    "tier": 3
+  },
+  {
+    "id": "2e103ebc-8ae9-4056-87be-e450f27c9fe1",
+    "type": "problem",
+    "name": "Turismo histórico",
+    "tier": 3
+  },
+  {
+    "id": "5d3770af-3a85-437d-a8f7-1bc9525e04e8",
+    "type": "problem",
+    "name": "Trilhas compartilhadas",
+    "tier": 3
+  },
+  {
+    "id": "066f06ae-0dfd-4fae-bc42-06bb3f22e9a0",
+    "type": "problem",
+    "name": "Fotos de lugares raros",
+    "tier": 3
+  },
+  {
+    "id": "d9256e2a-473d-425a-bd64-65cba0664962",
+    "type": "problem",
+    "name": "Ranking de destinos",
+    "tier": 3
+  },
+  {
+    "id": "a3e898fa-b311-4dbb-a7ec-ea976f0a9926",
+    "type": "problem",
+    "name": "Viagens em grupo",
+    "tier": 3
+  },
+  {
+    "id": "916ecca4-3b3f-4a68-ab61-08c4c00466a2",
+    "type": "problem",
+    "name": "Mapa de experiências",
+    "tier": 3
+  },
+  {
+    "id": "303db9f9-fdda-48a4-b818-57dc68473c3b",
+    "type": "problem",
+    "name": "Receitas em vídeo",
+    "tier": 2
+  },
+  {
+    "id": "8c61e9ac-20fb-491b-b96f-5f50a531f0f9",
+    "type": "problem",
+    "name": "Desafio culinário diário",
+    "tier": 3
+  },
+  {
+    "id": "9d3ca320-82dc-4000-bb71-ee434b259af1",
+    "type": "problem",
+    "name": "Batalha de cozinheiros",
+    "tier": 4
+  },
+  {
+    "id": "10594967-922a-4483-8724-7186ce22edf4",
+    "type": "problem",
+    "name": "Comunidade vegana",
+    "tier": 3
+  },
+  {
+    "id": "ba32d8a3-def7-4fe3-aebc-fa6f5af945f6",
+    "type": "problem",
+    "name": "Ranking de receitas",
+    "tier": 2
+  },
+  {
+    "id": "a7fe2245-ecf2-44d7-9738-d6b8252f6813",
+    "type": "problem",
+    "name": "Pratos criados por IA",
+    "tier": 5
+  },
+  {
+    "id": "41311d21-f89f-4bef-8ba9-46c9c6044be4",
+    "type": "problem",
+    "name": "Cardápio inteligente",
+    "tier": 4
+  },
+  {
+    "id": "f321bdaf-37f8-4b7c-b612-782dfb818959",
+    "type": "problem",
+    "name": "Refeições econômicas",
+    "tier": 2
+  },
+  {
+    "id": "acdddc8e-f1fe-405a-aebc-6c2503de8bf8",
+    "type": "problem",
+    "name": "Desafio de alimentação saudável",
+    "tier": 3
+  },
+  {
+    "id": "814eb39e-f25e-43d4-9cae-1a62d7472e27",
+    "type": "problem",
+    "name": "Planejador alimentar",
+    "tier": 2
+  },
+  {
+    "id": "10a2df27-415a-412d-a1c2-429790f9b81f",
+    "type": "problem",
+    "name": "Comunidade fitness culinária",
+    "tier": 3
+  },
+  {
+    "id": "85706061-3687-4429-8b13-5d3050107c7d",
+    "type": "problem",
+    "name": "Receitas de família",
+    "tier": 2
+  },
+  {
+    "id": "6a0c64b3-0a81-401e-bcac-5740f85cbdcf",
+    "type": "problem",
+    "name": "Comida internacional",
+    "tier": 3
+  },
+  {
+    "id": "8060e433-df00-41fa-9e1f-567424850581",
+    "type": "problem",
+    "name": "Clube dos chefs",
+    "tier": 4
+  },
+  {
+    "id": "cf6bf9b5-1c83-415d-b3b0-5b58b46e5a5e",
+    "type": "problem",
+    "name": "Receitas rápidas",
+    "tier": 1
+  },
+  {
+    "id": "3a5e3031-41f0-46c8-a6cd-b4469472e47b",
+    "type": "problem",
+    "name": "Troca de receitas",
+    "tier": 2
+  },
+  {
+    "id": "99aedf4c-7c9a-4c9c-95ce-5d262b0edf21",
+    "type": "problem",
+    "name": "Concurso gastronômico",
+    "tier": 3
+  },
+  {
+    "id": "3ceeb5a9-9c10-419c-827e-831fd4fb39a0",
+    "type": "problem",
+    "name": "Ranking de restaurantes",
+    "tier": 3
+  },
+  {
+    "id": "9b9166e4-fc26-4e13-adb0-80a4ab0fdbb7",
+    "type": "problem",
+    "name": "Marmitas inteligentes",
+    "tier": 3
+  },
+  {
+    "id": "13c676c4-a1d1-4225-ada6-a3778c91b87d",
+    "type": "problem",
+    "name": "Cozinha colaborativa",
+    "tier": 3
+  },
+  {
+    "id": "4ba2c120-3781-4bf1-971a-d7239ded465e",
+    "type": "problem",
+    "name": "Jogos educativos familiares",
+    "tier": 3
+  },
+  {
+    "id": "873115c0-6eb0-4048-b547-b542444e33c6",
+    "type": "problem",
+    "name": "Atividades para crianças",
+    "tier": 2
+  },
+  {
+    "id": "2d14e28a-0a2a-43f3-95d3-2eb4231400a4",
+    "type": "problem",
+    "name": "Histórias infantis com IA",
+    "tier": 5
+  },
+  {
+    "id": "891b19b4-609e-4db9-905e-2440d68d307f",
+    "type": "problem",
+    "name": "Clube da família",
+    "tier": 3
+  },
+  {
+    "id": "91f0ab35-cab2-43f8-8a57-83ba6e81c8ad",
+    "type": "problem",
+    "name": "Missões familiares",
+    "tier": 3
+  },
+  {
+    "id": "3635a45f-efa7-4c73-9b54-5af66766aa64",
+    "type": "problem",
+    "name": "Aprendizagem divertida",
+    "tier": 3
+  },
+  {
+    "id": "09d620d8-939b-4138-ab01-9cd987f8c20a",
+    "type": "problem",
+    "name": "Planejador familiar",
+    "tier": 2
+  },
+  {
+    "id": "ebe79fa9-bc29-40d6-8cc3-554aa4792393",
+    "type": "problem",
+    "name": "Desafios entre pais e filhos",
+    "tier": 3
+  },
+  {
+    "id": "fd9f9afe-615b-442a-9b71-f125f984e658",
+    "type": "problem",
+    "name": "Diário da família",
+    "tier": 2
+  },
+  {
+    "id": "b6ac3a1f-f8c3-4d42-822d-b3e142538637",
+    "type": "problem",
+    "name": "Rede de pais",
+    "tier": 3
+  },
+  {
+    "id": "21290769-c81b-4c94-9c75-a8ff53426a6a",
+    "type": "problem",
+    "name": "Comunidade escolar",
+    "tier": 3
+  },
+  {
+    "id": "6c24b34b-6207-4db6-b809-89ce5074f8da",
+    "type": "problem",
+    "name": "Educação gamificada",
+    "tier": 4
+  },
+  {
+    "id": "e5e1664e-aa17-4b73-99d7-7ed9f3971cd4",
+    "type": "problem",
+    "name": "Recompensas infantis",
+    "tier": 3
+  },
+  {
+    "id": "a77e1def-67e7-462f-8de2-07327eb7510f",
+    "type": "problem",
+    "name": "Aventuras educativas",
+    "tier": 3
+  },
+  {
+    "id": "c3b60665-f4f8-4123-841e-0bdb701e0d42",
+    "type": "problem",
+    "name": "Clube dos pequenos leitores",
+    "tier": 3
+  },
+  {
+    "id": "2405bbd7-6124-4358-998d-0fe4cfecb19e",
+    "type": "problem",
+    "name": "Matemática infantil",
+    "tier": 3
+  },
+  {
+    "id": "6d22b4b4-369d-45b4-9e84-e86b7bf526ad",
+    "type": "problem",
+    "name": "Desafios criativos infantis",
+    "tier": 3
+  },
+  {
+    "id": "27d3e998-38f1-4383-81f7-6c14a8083bad",
+    "type": "problem",
+    "name": "Histórias colaborativas",
+    "tier": 3
+  },
+  {
+    "id": "362c506c-1755-40ff-a022-4568e4e2b4ad",
+    "type": "problem",
+    "name": "Clube de talentos infantis",
+    "tier": 3
+  },
+  {
+    "id": "4fbd69fe-c16e-4b07-99c1-3a0dcecc5871",
+    "type": "problem",
+    "name": "Aprender brincando",
+    "tier": 2
+  },
+  {
+    "id": "f71174d0-38b6-40f9-9838-1b593b452f83",
+    "type": "problem",
+    "name": "Batalha de cantores",
+    "tier": 4
+  },
+  {
+    "id": "ba9e07ae-5b4e-49d8-a7c2-0f777f73a96b",
+    "type": "problem",
+    "name": "Karaokê competitivo",
+    "tier": 3
+  },
+  {
+    "id": "3a67168c-b5ba-4fbb-8fc2-cbeae4362a9f",
+    "type": "problem",
+    "name": "Liga de músicos",
+    "tier": 4
+  },
+  {
+    "id": "63f4489d-d12e-4451-88df-30229a2007e7",
+    "type": "problem",
+    "name": "Criador de músicas IA",
+    "tier": 5
+  },
+  {
+    "id": "cd89188e-1764-4e73-9820-2f15a2419ad8",
+    "type": "problem",
+    "name": "Letras colaborativas",
+    "tier": 3
+  },
+  {
+    "id": "3fa832d0-d928-47da-ab06-717ce97f948f",
+    "type": "problem",
+    "name": "Concurso de composição",
+    "tier": 4
+  },
+  {
+    "id": "d46dad75-6fc7-405f-9f22-761847253fbf",
+    "type": "problem",
+    "name": "Ranking musical",
+    "tier": 3
+  },
+  {
+    "id": "72767a22-f24f-4080-b419-8ccd1e5c57ab",
+    "type": "problem",
+    "name": "Descoberta de talentos",
+    "tier": 4
+  },
+  {
+    "id": "bcae578b-f366-4a2e-9db5-f511b65c5b49",
+    "type": "problem",
+    "name": "Banda virtual",
+    "tier": 4
+  },
+  {
+    "id": "d4075b54-f329-4f8a-9499-409e234ff288",
+    "type": "problem",
+    "name": "Jam sessions online",
+    "tier": 4
+  },
+  {
+    "id": "f471d0d6-f668-462f-a7c8-f9449f7e9be5",
+    "type": "problem",
+    "name": "Comunidade de DJs",
+    "tier": 4
+  },
+  {
+    "id": "9237f0a1-a7a4-48d1-801c-fc0f60d832c6",
+    "type": "problem",
+    "name": "Treino vocal",
+    "tier": 3
+  },
+  {
+    "id": "c04e9908-b344-4334-9896-b033e69dd4e6",
+    "type": "problem",
+    "name": "Desafios musicais",
+    "tier": 3
+  },
+  {
+    "id": "0e1968e9-bdc9-4e20-aac5-2d182b80db24",
+    "type": "problem",
+    "name": "Remix colaborativo",
+    "tier": 4
+  },
+  {
+    "id": "1fb3a7e5-c536-4dd5-b6d5-8a6b7ad1f4e1",
+    "type": "problem",
+    "name": "Aprender instrumentos",
+    "tier": 3
+  },
+  {
+    "id": "54205745-bd61-40f4-8700-6605927e8e8a",
+    "type": "problem",
+    "name": "Clube de compositores",
+    "tier": 4
+  },
+  {
+    "id": "8ab1787b-7af7-466d-a293-9375d3c75c1d",
+    "type": "problem",
+    "name": "Produção musical social",
+    "tier": 4
+  },
+  {
+    "id": "b88fbabf-df11-4306-8561-a4fb736f6fff",
+    "type": "problem",
+    "name": "Música por localização",
+    "tier": 3
+  },
+  {
+    "id": "c368afa8-d2f9-4bbe-86fb-fdc18a3a8ac6",
+    "type": "problem",
+    "name": "Ranking de artistas locais",
+    "tier": 3
+  },
+  {
+    "id": "f4d4ade8-9807-4320-9c29-3f5503067a9d",
+    "type": "problem",
+    "name": "Festival virtual",
+    "tier": 4
+  },
+  {
+    "id": "0d414b11-132f-433d-8118-7fd35bd399c7",
+    "type": "problem",
+    "name": "Liga de futebol amador",
+    "tier": 3
+  },
+  {
+    "id": "ae1e558a-d0e6-4d6b-80a0-a5a35ad65fc3",
+    "type": "problem",
+    "name": "Ranking de jogadores locais",
+    "tier": 3
+  },
+  {
+    "id": "b6901b82-6f36-4602-8a1b-e2f44655ba79",
+    "type": "problem",
+    "name": "Comunidade de corrida",
+    "tier": 3
+  },
+  {
+    "id": "e4059574-e824-4068-bd99-46b7607b6fc2",
+    "type": "problem",
+    "name": "Desafios esportivos",
+    "tier": 3
+  },
+  {
+    "id": "648907e6-8c2c-4988-a705-e2dc8754f01d",
+    "type": "problem",
+    "name": "Clube de ciclismo",
+    "tier": 3
+  },
+  {
+    "id": "8a2d75c7-f64a-41c0-8e25-8a27fad39fa6",
+    "type": "problem",
+    "name": "Torneios comunitários",
+    "tier": 3
+  },
+  {
+    "id": "f3f7971b-e2d1-4a3f-9d60-67ff594b7e15",
+    "type": "problem",
+    "name": "Futebol entre amigos",
+    "tier": 2
+  },
+  {
+    "id": "54895685-0cc6-44de-95ef-f755bd836573",
+    "type": "problem",
+    "name": "Basquete local",
+    "tier": 2
+  },
+  {
+    "id": "8809388b-6a3c-4fa1-913d-d61629fbcbf0",
+    "type": "problem",
+    "name": "Treinos esportivos",
+    "tier": 2
+  },
+  {
+    "id": "9d29a309-41e0-491c-b484-e51dd363d0de",
+    "type": "problem",
+    "name": "Scout de talentos",
+    "tier": 4
+  },
+  {
+    "id": "53bb0e25-11d0-4f52-bd35-88919f6542c7",
+    "type": "problem",
+    "name": "Estatísticas pessoais",
+    "tier": 2
+  },
+  {
+    "id": "0248798e-b551-4fb9-827f-f72522527819",
+    "type": "problem",
+    "name": "Fantasy esportivo local",
+    "tier": 4
+  },
+  {
+    "id": "e2a079cc-04f3-41b6-8867-dbafa9198871",
+    "type": "problem",
+    "name": "Clube de atletas",
+    "tier": 3
+  },
+  {
+    "id": "bca1735d-45e9-4d6d-a806-9556008d32a7",
+    "type": "problem",
+    "name": "Missões esportivas",
+    "tier": 3
+  },
+  {
+    "id": "62f9ce06-8712-4fd4-ad75-4adc82f10f6e",
+    "type": "problem",
+    "name": "Ranking regional",
+    "tier": 3
+  },
+  {
+    "id": "7ca5c0e3-00a5-49f6-8382-e0639fcbb7cc",
+    "type": "problem",
+    "name": "Comunidade de esportes radicais",
+    "tier": 4
+  },
+  {
+    "id": "d6050db1-2ae9-453e-9a14-138d39f82b12",
+    "type": "problem",
+    "name": "Desafios de resistência",
+    "tier": 3
+  },
+  {
+    "id": "eb4301bd-a32b-43a3-9f60-c160b2506720",
+    "type": "problem",
+    "name": "Eventos esportivos",
+    "tier": 3
+  },
+  {
+    "id": "837ff6c9-1f74-4ca5-9aeb-885d4e601000",
+    "type": "problem",
+    "name": "Equipes por bairro",
+    "tier": 3
+  },
+  {
+    "id": "68d36921-c6cd-4ef3-920d-e56cec3c125f",
+    "type": "problem",
+    "name": "Jogos recreativos",
+    "tier": 2
+  },
+  {
+    "id": "5f34dfe3-71bb-4ae5-9ad8-96aae76c6f55",
+    "type": "problem",
+    "name": "Consultor de estilo IA",
+    "tier": 5
+  },
+  {
+    "id": "0219f21f-088f-49c4-8e74-b7bb2e1c1b10",
+    "type": "problem",
+    "name": "Avaliação de looks",
+    "tier": 3
+  },
+  {
+    "id": "9602c2e2-303d-4eb5-81b5-46ea656dbeed",
+    "type": "problem",
+    "name": "Comunidade fashion",
+    "tier": 3
+  },
+  {
+    "id": "fddbd632-a2b7-4e46-a7a9-0d7ef78a65ba",
+    "type": "problem",
+    "name": "Desafio de moda",
+    "tier": 3
+  },
+  {
+    "id": "0c8b7855-98a2-4c6c-b05d-cb7add0712ce",
+    "type": "problem",
+    "name": "Troca de roupas",
+    "tier": 2
+  },
+  {
+    "id": "81d70785-8957-4396-b344-4079b6f0165c",
+    "type": "problem",
+    "name": "Ranking de estilo",
+    "tier": 3
+  },
+  {
+    "id": "a88faf86-2ef1-4afa-bbde-33c5c3a4e4e9",
+    "type": "problem",
+    "name": "Looks do dia",
+    "tier": 2
+  },
+  {
+    "id": "5a3ef12f-2706-406d-a001-19bf5aafef00",
+    "type": "problem",
+    "name": "Armário digital",
+    "tier": 3
+  },
+  {
+    "id": "b1e565c7-df8c-43b6-8e23-69aa379d2421",
+    "type": "problem",
+    "name": "Moda sustentável",
+    "tier": 3
+  },
+  {
+    "id": "8576e013-8229-42bf-be7e-31517c0de00f",
+    "type": "problem",
+    "name": "Tendências locais",
+    "tier": 3
+  },
+  {
+    "id": "015f8bf3-8110-4b86-86b2-8911d3ce4916",
+    "type": "problem",
+    "name": "Beleza colaborativa",
+    "tier": 3
+  },
+  {
+    "id": "c5b4d458-557b-4cb2-b9e8-b8ed7d168408",
+    "type": "problem",
+    "name": "Dicas de maquiagem",
+    "tier": 2
+  },
+  {
+    "id": "91ba3dbe-da21-4d07-9cbd-4f36265461c0",
+    "type": "problem",
+    "name": "Simulador de cortes de cabelo",
+    "tier": 4
+  },
+  {
+    "id": "d33585bc-6632-4ade-8172-cc697867bbff",
+    "type": "problem",
+    "name": "Estilo masculino",
+    "tier": 2
+  },
+  {
+    "id": "7761b7af-0712-4a41-8cd3-be80f89e44df",
+    "type": "problem",
+    "name": "Estilo feminino",
+    "tier": 2
+  },
+  {
+    "id": "93e8947b-ee10-442f-b5b7-3135ddc6ef7f",
+    "type": "problem",
+    "name": "Moda para eventos",
+    "tier": 3
+  },
+  {
+    "id": "5dde6aad-c52b-4ab9-a18f-2c789585b17a",
+    "type": "problem",
+    "name": "Concurso fashion",
+    "tier": 3
+  },
+  {
+    "id": "75c56c71-15ac-487e-a8d4-ff954dfab811",
+    "type": "problem",
+    "name": "Comunidade de influenciadores",
+    "tier": 4
+  },
+  {
+    "id": "d7843529-c19f-474e-8037-be998ab7d254",
+    "type": "problem",
+    "name": "Personal shopper IA",
+    "tier": 5
+  },
+  {
+    "id": "4e30277b-24a6-4e20-be3d-b87a406110c3",
+    "type": "problem",
+    "name": "Fashion battle",
+    "tier": 4
+  },
+  {
+    "id": "24c2bc33-c23b-4284-869a-77272b0645a6",
+    "type": "problem",
+    "name": "Desafios ecológicos",
+    "tier": 3
+  },
+  {
+    "id": "d8c067f0-14eb-4fdc-9224-2b39eb4ee4c8",
+    "type": "problem",
+    "name": "Plantio colaborativo",
+    "tier": 3
+  },
+  {
+    "id": "916afd8a-d333-46d2-a5af-fec1c9a7b40d",
+    "type": "problem",
+    "name": "Comunidade verde",
+    "tier": 3
+  },
+  {
+    "id": "b4af8f1e-f946-4aeb-aea0-cdc751483913",
+    "type": "problem",
+    "name": "Reciclagem gamificada",
+    "tier": 4
+  },
+  {
+    "id": "d49014da-136e-4edf-a27e-feae44d034d4",
+    "type": "problem",
+    "name": "Ranking ecológico",
+    "tier": 3
+  },
+  {
+    "id": "15664add-4b22-4168-a99b-bdad6c047e4b",
+    "type": "problem",
+    "name": "Missões sustentáveis",
+    "tier": 3
+  },
+  {
+    "id": "4171429f-5450-4bed-91ef-9e828482e5a8",
+    "type": "problem",
+    "name": "Limpeza comunitária",
+    "tier": 3
+  },
+  {
+    "id": "552800c5-20ef-4717-8160-afeef4a6db8f",
+    "type": "problem",
+    "name": "Redução de carbono",
+    "tier": 4
+  },
+  {
+    "id": "526d54b2-e951-4505-963d-397eb7c3ea9c",
+    "type": "problem",
+    "name": "Clube ambiental",
+    "tier": 3
+  },
+  {
+    "id": "dfb0c2df-0089-4307-a877-65750f79436f",
+    "type": "problem",
+    "name": "Monitor de consumo",
+    "tier": 3
+  },
+  {
+    "id": "5a4cef12-724b-4087-a4c0-7256bec75d92",
+    "type": "problem",
+    "name": "Horta coletiva",
+    "tier": 3
+  },
+  {
+    "id": "68cf6ee9-d386-4764-bb01-bd1de26c0fe8",
+    "type": "problem",
+    "name": "Sustentabilidade doméstica",
+    "tier": 3
+  },
+  {
+    "id": "c49dafa4-5b66-4fa7-8a8e-f400b99fecf8",
+    "type": "problem",
+    "name": "Economia circular",
+    "tier": 3
+  },
+  {
+    "id": "e8f66f90-38a8-4f75-aab0-a8ac73833d7e",
+    "type": "problem",
+    "name": "Troca sustentável",
+    "tier": 3
+  },
+  {
+    "id": "8ae24af6-be9b-498d-a746-17838b41d16f",
+    "type": "problem",
+    "name": "Educação ambiental",
+    "tier": 3
+  },
+  {
+    "id": "01717b96-6fa6-4818-a4da-cba7340dbbdb",
+    "type": "problem",
+    "name": "Voluntariado verde",
+    "tier": 3
+  },
+  {
+    "id": "68acf371-7c00-411f-a823-1a3121c5a33a",
+    "type": "problem",
+    "name": "Eventos ecológicos",
+    "tier": 3
+  },
+  {
+    "id": "ce7ba92b-e185-46e0-9dfb-267ad39cd52f",
+    "type": "problem",
+    "name": "Concurso ambiental",
+    "tier": 3
+  },
+  {
+    "id": "34189b2e-1586-4c1f-a5c2-885e065df577",
+    "type": "problem",
+    "name": "Comunidade de recicladores",
+    "tier": 3
+  },
+  {
+    "id": "cd85e3e3-784a-4933-a94e-9257c68caa60",
+    "type": "problem",
+    "name": "Impacto positivo",
+    "tier": 3
+  },
+  {
+    "id": "85b9d3c7-5459-4fe3-bbb4-93cb217dc095",
+    "type": "problem",
+    "name": "Reality show entre usuários",
+    "tier": 4
+  },
+  {
+    "id": "117df33d-a443-4032-b6d2-7f1a35f429a5",
+    "type": "problem",
+    "name": "Competição de inteligência",
+    "tier": 4
+  },
+  {
+    "id": "37985b00-c2af-4be7-91e9-f648f03a3924",
+    "type": "problem",
+    "name": "Simulador de fama",
+    "tier": 4
+  },
+  {
+    "id": "db730c11-b443-44e2-a36a-0ff5cac8a335",
+    "type": "problem",
+    "name": "Missões secretas",
+    "tier": 4
+  },
+  {
+    "id": "63e4e1ae-674f-4dd2-80cc-a379877e8e36",
+    "type": "problem",
+    "name": "Rede de desafios globais",
+    "tier": 4
+  },
+  {
+    "id": "b36785f5-ff46-4291-bda3-51f36ac2d0c5",
+    "type": "problem",
+    "name": "Campeonato de criatividade",
+    "tier": 4
+  },
+  {
+    "id": "163f0117-8082-4a0a-b926-fc96b6437a62",
+    "type": "problem",
+    "name": "Liga de solucionadores de problemas",
+    "tier": 4
+  },
+  {
+    "id": "8a8d15dd-3c96-4f24-96de-88f770d65325",
+    "type": "problem",
+    "name": "Rede de inventores",
+    "tier": 4
+  },
+  {
+    "id": "80c9c97d-721c-45e1-99c6-cfdff2e411fc",
+    "type": "problem",
+    "name": "Banco de ideias",
+    "tier": 3
+  },
+  {
+    "id": "b2600fb8-622e-4319-bfe3-a2ae4eecbac3",
+    "type": "problem",
+    "name": "Construção coletiva de projetos",
+    "tier": 4
+  },
+  {
+    "id": "1ad230ed-9029-44c7-a6c5-455a0961c6e3",
+    "type": "problem",
+    "name": "IA para prever tendências",
+    "tier": 5
+  },
+  {
+    "id": "28a72efd-07f4-4204-8cf2-6fee1e76193c",
+    "type": "problem",
+    "name": "Clube dos curiosos",
+    "tier": 3
+  },
+  {
+    "id": "16e68a3e-c29e-4c80-bc54-45748eb0084c",
+    "type": "problem",
+    "name": "Caça a oportunidades",
+    "tier": 3
+  },
+  {
+    "id": "d4860137-d142-40f3-8270-efd543ce45e1",
+    "type": "problem",
+    "name": "Ranking de inovação",
+    "tier": 4
+  },
+  {
+    "id": "1c58e8e0-72b9-46cd-8027-5383b2ee8e44",
+    "type": "problem",
+    "name": "Rede de descobertas",
+    "tier": 4
+  },
+  {
+    "id": "dca4bd81-25ea-46b9-8e8b-7a206866c51b",
+    "type": "problem",
+    "name": "Competição de startups",
+    "tier": 4
+  },
+  {
+    "id": "3d9665db-ce8c-4688-9f2a-228cb7130691",
+    "type": "problem",
+    "name": "Comunidade de visionários",
+    "tier": 4
+  },
+  {
+    "id": "45b52df0-a384-4633-be6c-cb0213e1d1e0",
+    "type": "problem",
+    "name": "Missões empresariais",
+    "tier": 4
+  },
+  {
+    "id": "71915801-c325-40fd-b722-e858423a1782",
+    "type": "problem",
+    "name": "Liga dos criadores",
+    "tier": 4
+  },
+  {
+    "id": "773436de-3b84-4453-810a-ad6d435352ef",
+    "type": "problem",
+    "name": "Ecossistema global de desafios",
+    "tier": 5
+  },
+  {
+    "id": "5dd8e30f-ab73-433b-bc66-89f3eff1dfcb",
+    "type": "problem",
+    "name": "Top 20 mais promissoras entre as 400 ideias",
+    "tier": 4
+  },
+  {
+    "id": "3acdb9d1-aa18-45e4-b8c2-cf3103356129",
+    "type": "problem",
+    "name": "Rede social de desafios IA",
+    "tier": 5
+  },
+  {
+    "id": "e22832f0-318b-4d1e-ab62-68d4884223af",
+    "type": "problem",
+    "name": "Reality show digital",
+    "tier": 4
+  },
+  {
+    "id": "41f3b35c-0b3b-45e1-af65-6e22ea0e9ba7",
+    "type": "problem",
+    "name": "Competições de criatividade",
+    "tier": 4
+  },
+  {
+    "id": "0728a95b-3662-43f2-b2a1-9ac8d780543f",
+    "type": "problem",
+    "name": "Aprendizagem gamificada de idiomas",
+    "tier": 4
+  },
+  {
+    "id": "14101ffa-5504-4320-a1db-a2d53c2f4c94",
+    "type": "problem",
+    "name": "Fitness com rankings sociais",
+    "tier": 4
+  },
+  {
+    "id": "31d5dcd3-70ac-4368-b0ac-035e772ad1a4",
+    "type": "problem",
+    "name": "Marketplace hiperlocal",
+    "tier": 4
+  },
+  {
+    "id": "392eca4f-4cbb-4b31-a2d1-3e6b81b3179e",
+    "type": "problem",
+    "name": "Banco de ideias monetizáveis",
+    "tier": 4
+  },
+  {
+    "id": "b744f18f-5964-4802-8a7b-77d9f33ce527",
+    "type": "problem",
+    "name": "Clube dos empreendedores",
+    "tier": 4
+  },
+  {
+    "id": "9e20386a-6a31-43ae-b1c7-65a1d7a0ea6c",
+    "type": "problem",
+    "name": "Detector de tendências",
+    "tier": 4
+  },
+  {
+    "id": "d23fa6c3-d03b-4b5a-b9c8-4d460d47ef2f",
+    "type": "problem",
+    "name": "Campeonato global de habilidades",
+    "tier": 4
+  },
+  {
+    "id": "dfba05bc-bf5f-4512-a71c-90fb9af0776e",
+    "type": "problem",
+    "name": "Ecossistema de missões e recompensas",
+    "tier": 4
+  },
+  {
+    "id": "60814bd5-98e7-438a-a2eb-9e54884c6d27",
+    "type": "technology",
+    "name": "Painéis de Business Intelligence Básicos",
+    "tier": 1
+  },
+  {
+    "id": "b661cbba-abb9-4b7b-8610-0ac5ad32a44c",
+    "type": "technology",
+    "name": "CRM Simplificado",
+    "tier": 1
+  },
+  {
+    "id": "3f4139f5-d76b-42b5-a679-614cd4ee14e6",
+    "type": "technology",
+    "name": "Aplicativo Mobile Responsivo PWA",
+    "tier": 1
+  },
+  {
+    "id": "9655218b-6b20-4e11-9c88-2f6824dad84c",
+    "type": "technology",
+    "name": "Construtor de Landing Pages Dinâmicas",
+    "tier": 1
+  },
+  {
+    "id": "d8e1446d-e96f-460a-a23b-4a64ac563796",
+    "type": "technology",
+    "name": "Sistema PDV Operando na Nuvem",
+    "tier": 1
+  },
+  {
+    "id": "b8c91804-3600-47c3-bb8e-25f268ea1b22",
+    "type": "technology",
+    "name": "Gestor de Tarefas estilo Kanban",
+    "tier": 1
+  },
+  {
+    "id": "67a84617-86bf-4e56-a425-9ae5f54cc42a",
+    "type": "technology",
+    "name": "Extensão Utilitária para Google Chrome",
+    "tier": 1
+  },
+  {
+    "id": "4f9a09a7-ef78-4a52-9ab0-1a61121b47e9",
+    "type": "technology",
+    "name": "Sincronização com Planilhas Automatizadas",
+    "tier": 1
+  },
+  {
+    "id": "bb525934-c1dc-4553-b89d-edd8b592279b",
+    "type": "technology",
+    "name": "Criador de Formulários com Condicionais",
+    "tier": 1
+  },
+  {
+    "id": "6403b037-5c0f-41f6-8028-b446369bb637",
+    "type": "technology",
+    "name": "Integração Transparente via APIs REST",
+    "tier": 2
+  },
+  {
+    "id": "a225d8bf-1dfd-41e1-98fe-b0bd8f269cd4",
+    "type": "technology",
+    "name": "Portais de Cliente Totalmente White-label",
+    "tier": 2
+  },
+  {
+    "id": "b3fc927b-d4de-4ff3-a0d7-4b091946b6ba",
+    "type": "technology",
+    "name": "Motor de Disparo de SMS/Emails Transacionais",
+    "tier": 2
+  },
+  {
+    "id": "370eb2b5-ce76-4734-a64c-fd6991fa117d",
+    "type": "technology",
+    "name": "Gestor Granular de Permissões de Usuários",
+    "tier": 2
+  },
+  {
+    "id": "0e9197f3-4913-411c-9430-e7b432c60675",
+    "type": "technology",
+    "name": "Sistema de Agendamento Online Self-Service",
+    "tier": 2
+  },
+  {
+    "id": "9dec0fd8-0e72-46c0-9b3b-efe689b79944",
+    "type": "technology",
+    "name": "App de Delivery Whitelabel com Rastreio",
+    "tier": 2
+  },
+  {
+    "id": "667ab066-756e-426d-87a4-1731ee783c08",
+    "type": "technology",
+    "name": "Catálogo Digital Interativo Escaneável",
+    "tier": 2
+  },
+  {
+    "id": "7762c43f-ada7-4d4d-9523-6e498fa969f0",
+    "type": "technology",
+    "name": "Sistema de Tickets de Suporte e Helpdesk",
+    "tier": 2
+  },
+  {
+    "id": "ab5b6eda-c6c0-4bac-b40c-6474d47f92e3",
+    "type": "technology",
+    "name": "Automações No-Code Complexas (Make/Zapier)",
+    "tier": 3
+  },
+  {
+    "id": "7fde9ccd-ce12-4d46-bb87-fc27d1da870c",
+    "type": "technology",
+    "name": "Dashboards Interativos Consolidados em Tempo Real",
+    "tier": 3
+  },
+  {
+    "id": "d1437c28-b889-4e1e-9114-e76225ee6fbc",
+    "type": "technology",
+    "name": "Reconhecimento de Voz Básico (Speech-to-Text)",
+    "tier": 3
+  },
+  {
+    "id": "26d9cdb2-3315-484a-b21d-b8df508007de",
+    "type": "technology",
+    "name": "Web Scraping Automatizado Extraindo Dados Concorrentes",
+    "tier": 3
+  },
+  {
+    "id": "6018c600-58c3-43d2-8c57-1a415338f4bb",
+    "type": "technology",
+    "name": "Integração Nativa com Múltiplos ERPs (SAP/Totvs)",
+    "tier": 3
+  },
+  {
+    "id": "8f707f9e-7d42-43ab-b28c-fb7af6619d48",
+    "type": "technology",
+    "name": "Motores de Busca Internos Inteligentes (Elasticsearch)",
+    "tier": 3
+  },
+  {
+    "id": "8b06941d-87c0-490e-831f-e6bf7aabdbf3",
+    "type": "technology",
+    "name": "Sistema de Assinatura Eletrônica e Criptografia",
+    "tier": 3
+  },
+  {
+    "id": "acac0232-d002-4339-ad8c-e5b392879e13",
+    "type": "technology",
+    "name": "Gerador de Relatórios Dinâmicos Exportáveis (PDF/CSV)",
+    "tier": 3
+  },
+  {
+    "id": "1371c503-b0a9-4799-99fd-f8af9540b8d2",
+    "type": "technology",
+    "name": "Chatbots de WhatsApp com Processamento Natural",
+    "tier": 4
+  },
+  {
+    "id": "164fa7ae-6a2a-48b4-91fb-2de03ad7ed20",
+    "type": "technology",
+    "name": "Assistentes de Voz Especializados (Voice AI)",
+    "tier": 4
+  },
+  {
+    "id": "06cf8f8f-1612-475c-a74e-1a8e9251fdb5",
+    "type": "technology",
+    "name": "Integração Bidirecional com IoT (Internet das Coisas)",
+    "tier": 4
+  },
+  {
+    "id": "8076873b-731d-4c40-a235-5f7ef6786b30",
+    "type": "technology",
+    "name": "Motor de Regras de Negócio Personalizável",
+    "tier": 4
+  },
+  {
+    "id": "c4f07536-c26f-4568-9ee9-c6996046263f",
+    "type": "technology",
+    "name": "Automação Gráfica de Fluxo de Trabalho (Workflow Engine)",
+    "tier": 4
+  },
+  {
+    "id": "e98dae89-6ca1-42c5-b6b2-b8c2e96e917f",
+    "type": "technology",
+    "name": "Reconhecimento Ótico de Caracteres Avançado (OCR)",
+    "tier": 4
+  },
+  {
+    "id": "06e40e36-8134-4926-90ad-257d28c6e286",
+    "type": "technology",
+    "name": "Motor de Recomendação Algorítmica de Produtos",
+    "tier": 4
+  },
+  {
+    "id": "49185467-3ff7-4ca5-ad1b-6452db05448d",
+    "type": "technology",
+    "name": "Análise Precisa de Sentimentos em Grandes Textos",
+    "tier": 5
+  },
+  {
+    "id": "956d3cf4-5d7b-4472-979e-ceab5dd10010",
+    "type": "technology",
+    "name": "Processamento de Linguagem Natural Avançado (NLP)",
+    "tier": 5
+  },
+  {
+    "id": "d3b76dce-6dcd-4e47-b643-da863e8fb449",
+    "type": "technology",
+    "name": "Machine Learning Preditivo Adaptável",
+    "tier": 5
+  },
+  {
+    "id": "938e964e-cfbe-4565-b658-ef3eadc0d1b0",
+    "type": "technology",
+    "name": "Classificação Automática Massiva de Imagens",
+    "tier": 5
+  },
+  {
+    "id": "27b8e855-4193-499c-92a1-b3de6ba59e06",
+    "type": "technology",
+    "name": "Plataforma de Dados Unificados do Cliente (CDP)",
+    "tier": 5
+  },
+  {
+    "id": "7e05d549-85a9-480c-8b2d-ecea0470427a",
+    "type": "technology",
+    "name": "Geração Dinâmica de Áudio Sob Demanda",
+    "tier": 5
+  },
+  {
+    "id": "d51e3853-4b7f-4ce6-a435-b7c6de0049cf",
+    "type": "technology",
+    "name": "Chatbots Treinados com Base Privada Própria (RAG)",
+    "tier": 5
+  },
+  {
+    "id": "8876a348-2579-4f39-b251-b2140aff7da7",
+    "type": "technology",
+    "name": "Segmentação Comportamental com Hiperpersonalização AI",
+    "tier": 5
+  },
+  {
+    "id": "76774aec-0ce0-4433-8fe7-11e45e0c5cb4",
+    "type": "technology",
+    "name": "Visão Computacional de Alta Precisão (Análise de Vídeo)",
+    "tier": 6
+  },
+  {
+    "id": "e12c3a17-0a28-47bd-9bcc-4991845a1aad",
+    "type": "technology",
+    "name": "Ecossistema de Agentes Autônomos de IA Colaborativos",
+    "tier": 6
+  },
+  {
+    "id": "0986c33f-900c-4be9-b6cb-e25e93577011",
+    "type": "technology",
+    "name": "Geração Renderizada de Vídeos e Avatares por IA",
+    "tier": 6
+  },
+  {
+    "id": "c19832c2-3f30-4324-8916-4e3320e2357b",
+    "type": "technology",
+    "name": "Reconhecimento Facial Biométrico em Tempo Real",
+    "tier": 6
+  },
+  {
+    "id": "e189a79b-fc20-4ea2-a6a1-d01b03354869",
+    "type": "technology",
+    "name": "Análise Estruturadora de Dados Desordenados/Não-Estruturados",
+    "tier": 6
+  },
+  {
+    "id": "00db6b0b-1923-4777-a6e6-41ffeb040671",
+    "type": "technology",
+    "name": "Clonagem de Voz de Alta Fidelidade (Deepfake de Áudio)",
+    "tier": 6
+  },
+  {
+    "id": "5861e570-3c5c-4afa-a262-d83f77e14df0",
+    "type": "technology",
+    "name": "Execução Autônoma de Smart Contracts (Web3/Blockchain)",
+    "tier": 6
+  },
+  {
+    "id": "660a506c-a870-4a8f-8dda-4d742ff9030b",
+    "type": "technology",
+    "name": "Interfaces Nativas para Computação Espacial (AR/VR/Vision Pro)",
+    "tier": 6
+  },
+  {
+    "id": "b3dd67fe-abca-4e04-bbd1-a1945f3c6abe",
+    "type": "technology",
+    "name": "Diagnóstico Clínico ou Mecânico Automatizado por Deep Learning",
+    "tier": 6
+  },
+  {
+    "id": "e1aa0a03-faf5-4eec-aed6-f062eb7e4ba5",
+    "type": "monetization",
+    "name": "Venda de Licença Única (Lifetime Deal)",
+    "tier": 1
+  },
+  {
+    "id": "a8298f1b-2177-4971-b1d9-c3fb7fcc2c96",
+    "type": "monetization",
+    "name": "Sistema Mantido por Doações/Patrocínios",
+    "tier": 1
+  },
+  {
+    "id": "8255ad28-18ad-4a43-971d-73b044e664e5",
+    "type": "monetization",
+    "name": "Pagamento Unitário por Módulo Liberado",
+    "tier": 1
+  },
+  {
+    "id": "3cadef63-5781-4c40-a16b-902055a6c5db",
+    "type": "monetization",
+    "name": "Modelo de Agência (Você Vende Software + Serviço Acoplado)",
+    "tier": 2
+  },
+  {
+    "id": "261dd58b-2cc7-428f-ab5d-6d6923bad9e2",
+    "type": "monetization",
+    "name": "Taxa de Manutenção Anual Simples",
+    "tier": 2
+  },
+  {
+    "id": "cbb252c7-de71-40a9-9f3c-56e4002774c3",
+    "type": "monetization",
+    "name": "Cobrança de Setup Inicial Fixo + Mensalidade Muito Baixa",
+    "tier": 2
+  },
+  {
+    "id": "9d0295e8-74f9-4654-ac04-014a5bb9c1a6",
+    "type": "monetization",
+    "name": "Plano Anual com Forte Desconto de Retenção",
+    "tier": 3
+  },
+  {
+    "id": "a1332345-94ae-4b35-8997-4d202b34d5ba",
+    "type": "monetization",
+    "name": "Assinatura Semestral Bloqueada",
+    "tier": 3
+  },
+  {
+    "id": "cc9024a8-10a7-4772-9947-54741cfc0ef4",
+    "type": "monetization",
+    "name": "Pacote de Créditos Pré-pagos que Expiram Mensalmente",
+    "tier": 3
+  },
+  {
+    "id": "2b8b9768-ea61-47b8-bafe-3aac5afbe29a",
+    "type": "monetization",
+    "name": "Assinatura Mensal Recorrente (O Padrão SaaS Clássico)",
+    "tier": 4
+  },
+  {
+    "id": "23cf7a53-7d6a-4416-9677-4a11d3797729",
+    "type": "monetization",
+    "name": "Plano Freemium com Upsell In-App Agressivo",
+    "tier": 4
+  },
+  {
+    "id": "2d8a1a9b-3bb3-4517-b3d9-c209c31adc7e",
+    "type": "monetization",
+    "name": "Tiered Pricing Psicológico (Planos Bronze/Prata/Ouro)",
+    "tier": 4
+  },
+  {
+    "id": "6bfec75b-de0d-4819-8200-f19f97bd13bc",
+    "type": "monetization",
+    "name": "Cobrança Escalonável Baseada no Número de Usuários (Seats)",
+    "tier": 4
+  },
+  {
+    "id": "152ab11e-3312-4895-8daf-f8bf6b3b59fe",
+    "type": "monetization",
+    "name": "Pay-per-use Direto (O Cliente Só Paga Exatamente o que Consome)",
+    "tier": 5
+  },
+  {
+    "id": "a04053de-a552-49f2-bede-ba0fc50658d1",
+    "type": "monetization",
+    "name": "Cobrança Transparente por Volume Processado de Dados/APIs",
+    "tier": 5
+  },
+  {
+    "id": "468a972e-122f-4548-a648-d422a6d14b08",
+    "type": "monetization",
+    "name": "Plano de Sucesso Baseado Exclusivamente no Crescimento da Empresa",
+    "tier": 5
+  },
+  {
+    "id": "bace541f-b16e-4340-9dc8-b1c35de158dd",
+    "type": "monetization",
+    "name": "Cobrança de Alta Performance por Lead (Contato) Gerado",
+    "tier": 5
+  },
+  {
+    "id": "41dcc7cb-e90c-4b4e-b688-eaf07aafbd60",
+    "type": "monetization",
+    "name": "Taxa Percentual Invisível sobre Transações (Efeito Marketplace)",
+    "tier": 6
+  },
+  {
+    "id": "d0b3f76e-5560-486d-b08d-2246f9c9730d",
+    "type": "monetization",
+    "name": "Participação Genuína no Faturamento Adicional Gerado (Revenue Share)",
+    "tier": 6
+  },
+  {
+    "id": "a85ade11-c970-4ccd-b089-9819d5e4077f",
+    "type": "monetization",
+    "name": "Cobrança Atrelada ao ROI Direto Comprovado Pelo Software",
+    "tier": 6
+  },
+  {
+    "id": "89eeb9ea-065c-4812-8cb8-f7981fc986b6",
+    "type": "monetization",
+    "name": "Economia Baseada em Tokenomics ou Rewards Criptografados",
+    "tier": 6
+  }
+]

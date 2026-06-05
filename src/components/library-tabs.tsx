@@ -44,9 +44,9 @@ export function LibraryTabs({ opportunities }: { opportunities: any[] }) {
         {activeTab === "generator" ? (
           <div className="animate-in fade-in-50 slide-in-from-bottom-2 duration-300">
             <div className="text-center mb-8 space-y-2">
-              <h2 className="text-2xl font-bold text-foreground">Gerador de Permutações de SaaS</h2>
+              <h2 className="text-2xl font-bold text-foreground">Gerador de Oportunidades por Público-Alvo</h2>
               <p className="text-sm text-muted-foreground max-w-xl mx-auto">
-                Cruze nichos de mercado com tecnologias emergentes e modelos de monetização para descobrir oceanos azuis inéditos.
+                Escolha ou sorteie um público-alvo e deixe a IA rastrear sinais de mercado para mapear a dor ideal e projetar o SaaS ideal para ele.
               </p>
             </div>
             <IdeaGenerator />

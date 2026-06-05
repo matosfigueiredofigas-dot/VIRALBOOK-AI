@@ -6,12 +6,7 @@ import { Globe } from "lucide-react";
 
 const COUNTRIES = [
   { code: "US", name: "United States" },
-  { code: "UK", name: "United Kingdom" },
   { code: "BR", name: "Brazil" },
-  { code: "DE", name: "Germany" },
-  { code: "FR", name: "France" },
-  { code: "JP", name: "Japan" },
-  { code: "IN", name: "India" },
 ];
 
 export function CountrySelect() {

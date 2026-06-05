@@ -28,22 +28,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Não autorizado. Faça login para usar o radar.' }, { status: 401 });
     }
 
-    // 0.2 Limitador de Créditos: Máximo de 10 pesquisas por usuário a cada 24 horas
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    const { count: searchCount, error: countError } = await supabase
-      .from('opportunities')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .gte('created_at', oneDayAgo);
+    // 0.2 Limitador de Créditos: Máximo de 10 pesquisas por usuário a cada 24 horas (ignorado em desenvolvimento)
+    if (process.env.NODE_ENV !== 'development') {
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const { count: searchCount, error: countError } = await supabase
+        .from('opportunities')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .gte('created_at', oneDayAgo);
 
-    if (countError) {
-      console.error("[Radar] Erro ao checar rate limit:", countError);
-    } else if (searchCount !== null && searchCount >= 10) {
-      console.log(`[Radar] Rate limit atingido pelo usuário: ${user.id} (${searchCount} buscas nas últimas 24h)`);
-      return NextResponse.json(
-        { error: 'Limite diário atingido. Você realizou 10 pesquisas nas últimas 24 horas. Para liberar mais pesquisas, faça upgrade da sua conta.' }, 
-        { status: 429 }
-      );
+      if (countError) {
+        console.error("[Radar] Erro ao checar rate limit:", countError);
+      } else if (searchCount !== null && searchCount >= 10) {
+        console.log(`[Radar] Rate limit atingido pelo usuário: ${user.id} (${searchCount} buscas nas últimas 24h)`);
+        return NextResponse.json(
+          { error: 'Limite diário atingido. Você realizou 10 pesquisas nas últimas 24 horas. Para liberar mais pesquisas, faça upgrade da sua conta.' }, 
+          { status: 429 }
+        );
+      }
     }
 
     const { keyword, country = 'US' } = await request.json();
@@ -54,7 +56,7 @@ export async function POST(request: Request) {
       .from('opportunities')
       .select('*')
       .eq('country', country)
-      .or(`book_title.ilike.%${keyword}%,problem_solved.ilike.%${keyword}%`)
+      .or(`book_title.ilike.%${keyword}%,problem_solved.ilike.%${keyword}%,target_audience.ilike.%${keyword}%`)
       .order('created_at', { ascending: false })
       .limit(1);
 
@@ -73,34 +75,39 @@ export async function POST(request: Request) {
       }
     }
 
+    // Se for combinação (crossover) com '+', extrai o primeiro nicho como termo de pesquisa principal nas APIs
+    const searchKeyword = keyword.includes(' + ') 
+      ? keyword.split(' + ')[0].trim() 
+      : (keyword.includes('+') ? keyword.split('+')[0].trim() : keyword);
+
     // 1. Buscar Livro
-    console.log("[Radar] Buscando livro para:", keyword);
-    const books = await GoogleBooksService.searchTrendingBooks(keyword, 1);
+    console.log("[Radar] Buscando livro para:", searchKeyword);
+    const books = await GoogleBooksService.searchTrendingBooks(searchKeyword, 1);
     if (!books.length) {
       console.log("[Radar] Nenhum livro encontrado!");
-      return NextResponse.json({ error: 'Nenhum livro encontrado' }, { status: 404 });
+      return NextResponse.json({ error: 'Nenhum livro encontrado para o nicho principal' }, { status: 404 });
     }
     const book = books[0];
     console.log("[Radar] Livro:", book.title);
 
     // 2. Buscar Google Trends
     console.log("[Radar] Buscando Trends...");
-    const trendsData = await TrendsService.getKeywordGrowth(keyword, country);
+    const trendsData = await TrendsService.getKeywordGrowth(searchKeyword, country);
     console.log("[Radar] Trends Data:", trendsData);
 
     // 3. Buscar Validação Social (Reddit)
     console.log("[Radar] Buscando Reddit...");
-    const redditData = await RedditService.getSocialValidation(keyword);
+    const redditData = await RedditService.getSocialValidation(searchKeyword);
     console.log("[Radar] Reddit Data:", redditData);
 
     // 3.5 Buscar Validação Social (Facebook)
     console.log("[Radar] Buscando Facebook...");
-    const facebookData = await FacebookService.getSocialValidation(keyword);
+    const facebookData = await FacebookService.getSocialValidation(searchKeyword);
     console.log("[Radar] Facebook Data:", facebookData);
 
     // 4. Processamento via IA (Groq/Llama3)
     console.log("[Radar] Iniciando Groq Pipeline Multi-Agente...");
-    const aiInsight = await GroqService.generateOpportunity(book, trendsData, redditData, facebookData, country);
+    const aiInsight = await GroqService.generateOpportunity(book, trendsData, redditData, facebookData, country, keyword);
     if (!aiInsight) {
       console.log("[Radar] Falha na IA. aiInsight é null.");
       return NextResponse.json({ error: 'Falha na geração de IA' }, { status: 500 });
@@ -159,6 +166,47 @@ export async function POST(request: Request) {
       data: insertedData ? insertedData[0] : null
     });
 
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const authSupabase = await createClient();
+    const { data: { user } } = await authSupabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+    }
+
+    const { id } = await request.json();
+    if (!id) {
+      return NextResponse.json({ error: 'ID da oportunidade é obrigatório' }, { status: 400 });
+    }
+
+    // Deleta dos favoritos primeiro para evitar erro de constraint de chave estrangeira
+    await supabase
+      .from('user_favorites')
+      .delete()
+      .eq('opportunity_id', id);
+
+    let query = supabase
+      .from('opportunities')
+      .delete()
+      .eq('id', id);
+
+    // Em produção, garante que o usuário só deleta as próprias oportunidades
+    if (process.env.NODE_ENV !== 'development') {
+      query = query.eq('user_id', user.id);
+    }
+
+    const { error } = await query;
+    if (error) {
+      console.error("[Radar DELETE] Erro ao deletar:", error);
+      return NextResponse.json({ error: 'Erro de banco de dados ao excluir', details: error }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

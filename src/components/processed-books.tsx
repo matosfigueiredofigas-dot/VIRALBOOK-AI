@@ -116,9 +116,16 @@ export function ProcessedBooks({ initialBooks }: ProcessedBooksProps) {
                   
                   {/* Book Title and Author */}
                   <div className="space-y-1.5 pl-2">
-                    <h3 className="font-extrabold text-sm line-clamp-2 leading-tight drop-shadow-md font-serif text-white">
-                      {book.book_title}
-                    </h3>
+                    <a 
+                      href={`https://www.google.com/search?tbm=bks&q=${encodeURIComponent(book.book_title + " " + (book.book_author || ""))}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline block z-20 relative text-white"
+                    >
+                      <h3 className="font-extrabold text-sm line-clamp-2 leading-tight drop-shadow-md font-serif">
+                        {book.book_title}
+                      </h3>
+                    </a>
                     <p className="text-[10px] text-white/80 font-medium italic truncate">
                       por {book.book_author || "Autor Mapeado"}
                     </p>
@@ -134,9 +141,16 @@ export function ProcessedBooks({ initialBooks }: ProcessedBooksProps) {
                 {/* Additional Info below the cover */}
                 <div className="mt-3.5 space-y-1 pl-1">
                   <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Livro Mapeado</div>
-                  <h4 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-1">
-                    {book.book_title}
-                  </h4>
+                  <a 
+                    href={`https://www.google.com/search?tbm=bks&q=${encodeURIComponent(book.book_title + " " + (book.book_author || ""))}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline"
+                  >
+                    <h4 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                      {book.book_title}
+                    </h4>
+                  </a>
                   <p className="text-xs text-muted-foreground truncate">
                     {book.book_author || "Autor Desconhecido"}
                   </p>
@@ -166,7 +180,16 @@ export function ProcessedBooks({ initialBooks }: ProcessedBooksProps) {
             <TableBody>
               {initialBooks.map((book, i) => (
                 <TableRow key={i} className="hover:bg-muted/30 transition-colors">
-                  <TableCell className="font-medium text-primary">{book.book_title}</TableCell>
+                  <TableCell className="font-medium text-primary">
+                    <a 
+                      href={`https://www.google.com/search?tbm=bks&q=${encodeURIComponent(book.book_title + " " + (book.book_author || ""))}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline"
+                    >
+                      {book.book_title}
+                    </a>
+                  </TableCell>
                   <TableCell className="text-muted-foreground">{book.book_author}</TableCell>
                   <TableCell>
                     <span className="px-2 py-1 rounded-md bg-secondary text-xs">{book.book_category}</span>

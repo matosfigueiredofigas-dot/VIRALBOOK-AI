@@ -81,7 +81,7 @@ export class GroqService {
   /**
    * Pipeline Multi-Agente para descobrir e projetar SaaS
    */
-  static async generateOpportunity(book: any, trendsData: any, redditData: any, facebookData: any, country: string) {
+  static async generateOpportunity(book: any, trendsData: any, redditData: any, facebookData: any, country: string, targetAudience?: string) {
     try {
       // ---------------------------------------------------------
       // AGENTE 1: O ANALISTA DE NEGÓCIOS & CONCORRÊNCIA
@@ -89,13 +89,18 @@ export class GroqService {
       // ---------------------------------------------------------
       const systemAnalyst = `You are a brilliant Business Analyst. Return a valid JSON.
 Output language MUST be in the native language of ${country}.
-Analyze the book metadata, Google Trends data, Reddit pain points, and Facebook signals to extract the core problem.
-Then, use your own knowledge to identify 2-3 potential competitors in the market.
+Your primary goal is to analyze the Target Audience and identify the single most critical, urgent, and monetizable pain point (core_problem) they face in their daily workflow or operations, and why existing solutions fail them.
+Use the provided book metadata, Google Trends data, Reddit pain points, and Facebook signals as market inputs and context, but rely on your own deep expertise to define a realistic, cohesive, and highly specific problem for this audience.
+Do NOT pair unrelated concepts; the pain point MUST make complete sense for this specific target audience.
+Define 2-3 potential competitors in the market for this audience's pain point.
 Based on the competitors, define a Unique Competitive Advantage (differentiation angle).
 JSON Schema: { "core_problem": "string", "target_audience": "string", "competitors": "string", "competitive_advantage": "string" }`;
 
-      const userAnalyst = `Book: ${book.title} (${book.categories?.join(', ')}). Description: ${book.description?.substring(0, 500)}
-Trends: ${trendsData.monthlyGrowth}% growth. Reddit: ${redditData.mentions} mentions. Facebook: ${facebookData.adsCount} active ads, ${facebookData.groupsCount} related groups (examples: ${facebookData.relevantGroups?.join(', ')}).`;
+      const userAnalyst = `Target Audience: ${targetAudience || 'Any match based on context'}
+Book Context: ${book.title} (${book.categories?.join(', ')}). Description: ${book.description?.substring(0, 500)}
+Trends Signal: ${trendsData.monthlyGrowth}% growth.
+Reddit Signal: ${redditData.mentions} mentions.
+Facebook Signal: ${facebookData.adsCount} active ads, ${facebookData.groupsCount} related groups (examples: ${facebookData.relevantGroups?.join(', ')}).`;
       
       const analystResult = await runAgent(systemAnalyst, userAnalyst);
 
@@ -110,7 +115,7 @@ Provide a catchy SaaS Name, MVP Features (buildable in 30 days), Development Tim
 Also write highly detailed, step-by-step technical prompts for an AI code generator like Lovable and Bolt.new to build the MVP.
 JSON Schema: { "saas_name": "string", "mvp_features": "string", "development_time": "string", "implementation_difficulty": "string", "prompt_lovable": "string", "prompt_bolt": "string" }`;
 
-      const userArchitect = `Problem: ${analystResult.core_problem}. Audience: ${analystResult.target_audience}. Advantage: ${analystResult.competitive_advantage}`;
+      const userArchitect = `Problem: ${analystResult.core_problem}. Audience: ${targetAudience || analystResult.target_audience}. Advantage: ${analystResult.competitive_advantage}`;
 
       const architectResult = await runAgent(systemArchitect, userArchitect);
 
@@ -123,7 +128,7 @@ Output language MUST be in the native language of ${country}.
 Based on the SaaS designed, define the monetization model, suggested price, and an AI confidence score for this opportunity.
 JSON Schema: { "monetization_model": "string", "suggested_price": "string", "potential_revenue": "string", "aiOpportunityScore": number (0-100) }`;
 
-      const userGrowth = `SaaS Name: ${architectResult.saas_name}. Audience: ${analystResult.target_audience}. Features: ${architectResult.mvp_features}`;
+      const userGrowth = `SaaS Name: ${architectResult.saas_name}. Audience: ${targetAudience || analystResult.target_audience}. Features: ${architectResult.mvp_features}`;
 
       const growthResult = await runAgent(systemGrowth, userGrowth);
 
@@ -131,7 +136,7 @@ JSON Schema: { "monetization_model": "string", "suggested_price": "string", "pot
       return {
         saasName: architectResult.saas_name,
         problemSolved: analystResult.core_problem,
-        targetAudience: analystResult.target_audience,
+        targetAudience: targetAudience || analystResult.target_audience,
         competitiveAdvantage: `${analystResult.competitive_advantage} (Concorrentes Mapeados: ${analystResult.competitors})`,
         mvpFeatures: architectResult.mvp_features,
         monetizationModel: growthResult.monetization_model,

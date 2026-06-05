@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { Search, BookOpen, Sparkles, Heart, Share2, Bell, MessageSquare, TrendingUp, Users, Copy, CheckCircle2, FileText } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Search, BookOpen, Sparkles, Heart, Share2, Bell, MessageSquare, TrendingUp, Users, Copy, CheckCircle2, FileText, Trash2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -50,12 +50,61 @@ function getCategoryColor(category: string) {
 
 export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
   const router = useRouter();
+  const [items, setItems] = useState(initialData);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [copiedPrompt, setCopiedPrompt] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<any | null>(null);
+
+  useEffect(() => {
+    setItems(initialData);
+  }, [initialData]);
+
+  const handleFavorite = async (id: string) => {
+    try {
+      const res = await fetch('/api/favorites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ opportunityId: id })
+      });
+      if (res.status === 401) {
+        router.push('/login');
+      } else if (res.ok) {
+        alert('Adicionado aos favoritos!');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao favoritar.');
+    }
+  };
+
+  const handleDelete = async (id: string, title: string) => {
+    if (!confirm(`Tem certeza que deseja excluir a oportunidade "${title}" da biblioteca?`)) {
+      return;
+    }
+    try {
+      const res = await fetch('/api/radar', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      if (res.status === 401) {
+        router.push('/login');
+      } else if (res.ok) {
+        alert('Oportunidade excluída com sucesso!');
+        setItems(items.filter((item) => item.id !== id));
+        router.refresh();
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        alert(errorData.error || 'Erro ao excluir.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erro de conexão ao excluir.');
+    }
+  };
 
   const copyToClipboard = (text: string, type: string) => {
     navigator.clipboard.writeText(text);
@@ -71,11 +120,11 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
 
   // Mapear todas as categorias únicas disponíveis no histórico
   const categories = Array.from(
-    new Set(initialData.map((item) => item.book_category || "Sem Categoria"))
+    new Set(items.map((item) => item.book_category || "Sem Categoria"))
   ).filter(Boolean);
 
   // Filtragem dos dados
-  const filteredData = initialData.filter((item) => {
+  const filteredData = items.filter((item) => {
     const titleMatch = item.book_title?.toLowerCase().includes(searchQuery.toLowerCase());
     const saasMatch = item.saas_name?.toLowerCase().includes(searchQuery.toLowerCase());
     const problemMatch = item.problem_solved?.toLowerCase().includes(searchQuery.toLowerCase());
@@ -86,6 +135,30 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
 
   return (
     <div className="space-y-6">
+      {/* Painel de Métricas Rápidas da Biblioteca */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-muted/20 p-5 rounded-3xl border border-border/40 backdrop-blur-md shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className="text-center">
+          <div className="text-[10px] text-muted-foreground font-extrabold uppercase tracking-widest">Livros Processados</div>
+          <div className="text-2xl font-black text-foreground mt-1.5">{items.length}</div>
+        </div>
+        <div className="text-center border-l border-border/30">
+          <div className="text-[10px] text-purple-400 font-extrabold uppercase tracking-widest">Nichos Distintos</div>
+          <div className="text-2xl font-black text-purple-400 mt-1.5">
+            {new Set(items.map(item => item.target_audience).filter(Boolean)).size}
+          </div>
+        </div>
+        <div className="text-center border-l border-border/30">
+          <div className="text-[10px] text-blue-400 font-extrabold uppercase tracking-widest">Categorias Únicas</div>
+          <div className="text-2xl font-black text-blue-400 mt-1.5">{categories.length}</div>
+        </div>
+        <div className="text-center border-l border-border/30">
+          <div className="text-[10px] text-green-500 font-extrabold uppercase tracking-widest">Score Médio Geral</div>
+          <div className="text-2xl font-black text-green-500 mt-1.5">
+            {items.length > 0 ? Math.round(items.reduce((acc, curr) => acc + (curr.viral_opportunity_score || 0), 0) / items.length) : 0}
+          </div>
+        </div>
+      </div>
+
       {/* Barra de Filtros e Busca */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-muted/30 p-4 rounded-2xl border border-border/40 backdrop-blur-md">
         <div className="relative w-full md:max-w-md">
@@ -147,9 +220,16 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                   </div>
                   
                   <div className="space-y-2 pl-3">
-                    <h3 className="font-extrabold text-lg line-clamp-2 leading-tight drop-shadow-md font-serif">
-                      {item.book_title}
-                    </h3>
+                    <a 
+                      href={`https://www.google.com/search?tbm=bks&q=${encodeURIComponent(item.book_title + " " + (item.book_author || ""))}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline block z-20 relative"
+                    >
+                      <h3 className="font-extrabold text-lg line-clamp-2 leading-tight drop-shadow-md font-serif">
+                        {item.book_title}
+                      </h3>
+                    </a>
                     <p className="text-xs text-white/80 font-medium italic truncate">
                       por {item.book_author || "Autor Mapeado"}
                     </p>
@@ -175,12 +255,11 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                   </p>
                 </div>
               </div>
-
               {/* Ações */}
-              <CardFooter className="p-5 pt-0 flex gap-2">
+              <CardFooter className="p-5 pt-0 flex gap-2 items-center">
                 <Sheet>
-                  <SheetTrigger render={<Button className="flex-1 bg-primary/10 text-primary hover:bg-primary/20 border border-primary/10 rounded-xl font-bold py-5" />}>
-                    <span onClick={() => setActiveItem(item)}>Abrir Ebook & SaaS</span>
+                  <SheetTrigger render={<Button className="flex-1 bg-primary/10 text-primary hover:bg-primary/20 border border-primary/10 rounded-xl font-bold py-5 text-xs" />}>
+                    <span onClick={() => setActiveItem(item)}>Abrir</span>
                   </SheetTrigger>
                   
                   {activeItem && (
@@ -215,7 +294,16 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                           </div>
                         </SheetTitle>
                         <SheetDescription className="text-base text-foreground mt-2">
-                          <strong>Livro Original:</strong> {activeItem.book_title} (por {activeItem.book_author})
+                          <strong>Livro Original:</strong>{" "}
+                          <a 
+                            href={`https://www.google.com/search?tbm=bks&q=${encodeURIComponent(activeItem.book_title + " " + (activeItem.book_author || ""))}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline hover:text-primary transition-colors font-semibold"
+                          >
+                            {activeItem.book_title}
+                          </a>
+                          {" "}(por {activeItem.book_author})
                           <br />
                           <strong>Problema Resolvido:</strong> {activeItem.problem_solved}
                         </SheetDescription>
@@ -239,7 +327,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                                 Discussões de dores ativas identificadas em fóruns do Reddit.
                               </p>
                             </div>
-
+ 
                             <div className="bg-blue-600/5 p-4 rounded-lg border border-blue-600/10">
                               <div className="flex items-center gap-2 text-blue-500 font-bold mb-2">
                                 <FacebookIcon className="h-4 w-4" />
@@ -257,7 +345,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                             </div>
                           </div>
                         </div>
-
+ 
                         {/* Monetização */}
                         <div>
                           <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Como Monetizar</h4>
@@ -274,7 +362,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                             </div>
                           </div>
                         </div>
-
+ 
                         {/* Plano MVP */}
                         <div>
                           <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Plano do MVP</h4>
@@ -286,7 +374,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                             </div>
                           </div>
                         </div>
-
+ 
                         {/* Prompts */}
                         <div>
                           <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider flex items-center justify-between">
@@ -302,7 +390,7 @@ MVP: ${activeItem.mvp_features}
 Preço: ${activeItem.suggested_price}`}
                               </pre>
                             </div>
-
+ 
                             <div className="relative group">
                               <div className="text-[11px] font-semibold mb-1 text-primary">Para Vercel v0 / Lovable (Frontend)</div>
                               <pre className="bg-muted p-4 rounded-lg text-[12px] text-foreground overflow-x-auto whitespace-pre-wrap font-mono border border-border/50">
@@ -317,7 +405,7 @@ Preço: ${activeItem.suggested_price}`}
                                 {copiedPrompt === 'lovable' ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                               </Button>
                             </div>
-
+ 
                             <div className="relative group">
                               <div className="text-[11px] font-semibold mb-1 text-blue-500">Para Bolt.new / Cursor</div>
                               <pre className="bg-muted p-4 rounded-lg text-[12px] text-foreground overflow-x-auto whitespace-pre-wrap font-mono border border-border/50">
@@ -344,11 +432,11 @@ Preço: ${activeItem.suggested_price}`}
                     </SheetContent>
                   )}
                 </Sheet>
-
+ 
                 {/* Reutilizar */}
                 <Button 
                   variant="outline"
-                  className="rounded-xl border-border hover:bg-muted font-semibold text-xs py-5 px-3 flex items-center gap-1.5"
+                  className="rounded-xl border-border hover:bg-muted font-semibold text-xs py-5 px-3"
                   onClick={() => {
                     alert(`Carregando análise reutilizada para "${item.book_title}"...`);
                     window.location.href = `/dashboard?search=${encodeURIComponent(item.saas_name)}`;
@@ -356,6 +444,28 @@ Preço: ${activeItem.suggested_price}`}
                   title="Focar no Painel de Análise"
                 >
                   Focar
+                </Button>
+
+                {/* Favoritar */}
+                <Button 
+                  variant="outline"
+                  size="icon"
+                  className="h-10 w-10 shrink-0 border-border text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-xl"
+                  onClick={() => handleFavorite(item.id)}
+                  title="Adicionar aos Favoritos"
+                >
+                  <Heart className="h-4 w-4" />
+                </Button>
+
+                {/* Excluir */}
+                <Button 
+                  variant="outline"
+                  size="icon"
+                  className="h-10 w-10 shrink-0 border-border text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-xl"
+                  onClick={() => handleDelete(item.id, item.book_title)}
+                  title="Excluir da Biblioteca"
+                >
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </CardFooter>
             </Card>
