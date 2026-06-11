@@ -1,6 +1,6 @@
 import { Groq } from 'groq-sdk';
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || 'placeholder_key' });
 
 async function runOpenAIFallback(systemPrompt: string, userPrompt: string): Promise<any> {
   const apiKey = process.env.OPENAI_API_KEY;
