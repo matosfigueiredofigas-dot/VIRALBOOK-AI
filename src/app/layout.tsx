@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -22,6 +22,17 @@ export const metadata: Metadata = {
     title: "ViralBook AI",
     statusBarStyle: "default",
   },
+  icons: {
+    icon: "/icon-192x192.png",
+    shortcut: "/icon-192x192.png",
+    apple: "/icon-192x192.png",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#a855f7",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
