@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight, Zap, Target, BookOpen, Lock, CheckCircle2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowRight, Zap, Target, BookOpen, Lock, CheckCircle2, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContactModal } from "@/components/contact-modal";
 import { AuthModal } from "@/components/auth-modal";
@@ -10,8 +11,8 @@ import { AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ProductSimulator } from "@/components/product-simulator";
 
-
 export default function LandingPage() {
+  const router = useRouter();
   const [currency, setCurrency] = useState<'USD' | 'BRL' | 'EUR'>('USD');
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authTab, setAuthTab] = useState<"login" | "signup" | "forgot">("login");
@@ -73,7 +74,6 @@ export default function LandingPage() {
             Acesso Restrito
           </button>
           <ThemeToggle />
-
         </nav>
       </header>
 
