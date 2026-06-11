@@ -5,117 +5,130 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--app-bg);
+  --color-foreground: var(--app-fg);
+  --color-card: var(--app-card);
+  --color-card-foreground: var(--app-card-fg);
+  --color-popover: var(--app-popover);
+  --color-popover-foreground: var(--app-popover-fg);
+  --color-primary: var(--app-primary);
+  --color-primary-foreground: var(--app-primary-fg);
+  --color-secondary: var(--app-secondary);
+  --color-secondary-foreground: var(--app-secondary-fg);
+  --color-muted: var(--app-muted);
+  --color-muted-foreground: var(--app-muted-fg);
+  --color-accent: var(--app-accent);
+  --color-accent-foreground: var(--app-accent-fg);
+  --color-destructive: var(--app-destructive);
+  --color-border: var(--app-border);
+  --color-input: var(--app-input);
+  --color-ring: var(--app-ring);
+  
+  --color-sidebar: var(--app-sidebar);
+  --color-sidebar-foreground: var(--app-sidebar-fg);
+  --color-sidebar-primary: var(--app-sidebar-primary);
+  --color-sidebar-primary-foreground: var(--app-sidebar-primary-fg);
+  --color-sidebar-accent: var(--app-sidebar-accent);
+  --color-sidebar-accent-foreground: var(--app-sidebar-accent-fg);
+  --color-sidebar-border: var(--app-sidebar-border);
+  --color-sidebar-ring: var(--app-sidebar-ring);
+
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
 }
 
 :root {
-  --background: oklch(0.98 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.96 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0 0);
-  --input: oklch(0.92 0 0);
-  --ring: oklch(0.708 0 0);
+  /* Premium Soft Light Slate Theme */
+  --app-bg: hsl(220 14% 97%);
+  --app-fg: hsl(220 20% 12%);
+  
+  --app-card: hsl(0 0% 100%);
+  --app-card-fg: hsl(220 20% 12%);
+  
+  --app-popover: hsl(0 0% 100%);
+  --app-popover-fg: hsl(220 20% 12%);
+  
+  --app-primary: hsl(220 85% 55%);
+  --app-primary-fg: hsl(220 14% 98%);
+  
+  --app-secondary: hsl(220 10% 94%);
+  --app-secondary-fg: hsl(220 20% 12%);
+  
+  --app-muted: hsl(220 10% 94%);
+  --app-muted-fg: hsl(220 10% 48%);
+  
+  --app-accent: hsl(220 10% 93%);
+  --app-accent-fg: hsl(220 20% 12%);
+  
+  --app-destructive: hsl(350 80% 55%);
+  
+  --app-border: hsl(220 15% 88%);
+  --app-input: hsl(220 15% 88%);
+  --app-ring: hsl(220 85% 55%);
+  
   --radius: 0.6rem;
-  --sidebar: oklch(0.98 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.96 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.92 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  
+  --app-sidebar: hsl(220 14% 97%);
+  --app-sidebar-fg: hsl(220 20% 12%);
+  --app-sidebar-primary: hsl(220 85% 55%);
+  --app-sidebar-primary-fg: hsl(220 14% 98%);
+  --app-sidebar-accent: hsl(220 10% 94%);
+  --app-sidebar-accent-fg: hsl(220 20% 12%);
+  --app-sidebar-border: hsl(220 15% 88%);
+  --app-sidebar-ring: hsl(220 85% 55%);
 }
 
 .dark {
-  /* Fundo estilo Vercel (escuro quase preto, mas suave) */
-  --background: oklch(0.13 0 0);
-  --foreground: oklch(0.98 0 0);
+  /* Rich Midnight Blue-Slate Theme (Very dark, clean, and modern) */
+  --app-bg: hsl(222 25% 8%);
+  --app-fg: hsl(210 20% 98%);
   
-  /* Cards levemente mais claros com suporte a backdrop filter */
-  --card: oklch(0.16 0 0 / 0.7);
-  --card-foreground: oklch(0.98 0 0);
+  --app-card: hsl(222 20% 13% / 0.65);
+  --app-card-fg: hsl(210 20% 98%);
   
-  --popover: oklch(0.15 0 0 / 0.8);
-  --popover-foreground: oklch(0.98 0 0);
+  --app-popover: hsl(222 20% 11% / 0.85);
+  --app-popover-fg: hsl(210 20% 98%);
   
-  /* Botões e destaque (Primary) com contraste alto */
-  --primary: oklch(0.98 0 0);
-  --primary-foreground: oklch(0.13 0 0);
+  --app-primary: hsl(217 91% 60%);
+  --app-primary-fg: hsl(222 25% 8%);
   
-  --secondary: oklch(0.20 0 0);
-  --secondary-foreground: oklch(0.98 0 0);
+  --app-secondary: hsl(222 15% 15%);
+  --app-secondary-fg: hsl(210 20% 95%);
   
-  --muted: oklch(0.20 0 0);
-  --muted-foreground: oklch(0.70 0 0);
+  --app-muted: hsl(222 15% 15%);
+  --app-muted-fg: hsl(215 15% 75%);
   
-  --accent: oklch(0.25 0 0);
-  --accent-foreground: oklch(0.98 0 0);
+  --app-accent: hsl(222 15% 18%);
+  --app-accent-fg: hsl(210 20% 98%);
   
-  --destructive: oklch(0.50 0.19 22);
+  --app-destructive: hsl(350 70% 50%);
   
-  /* Bordas super sutis estilo vidro */
-  --border: oklch(0.35 0 0 / 0.4);
-  --input: oklch(0.35 0 0 / 0.4);
-  --ring: oklch(0.5 0 0);
+  --app-border: hsl(222 15% 22% / 0.8);
+  --app-input: hsl(222 15% 22% / 0.8);
+  --app-ring: hsl(217 91% 60%);
   
-  --sidebar: oklch(0.14 0 0);
-  --sidebar-foreground: oklch(0.98 0 0);
-  --sidebar-primary: oklch(0.98 0 0);
-  --sidebar-primary-foreground: oklch(0.13 0 0);
-  --sidebar-accent: oklch(0.20 0 0);
-  --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(0.35 0 0 / 0.4);
-  --sidebar-ring: oklch(0.5 0 0);
+  --app-sidebar: hsl(222 25% 10%);
+  --app-sidebar-fg: hsl(210 20% 98%);
+  --app-sidebar-primary: hsl(217 91% 60%);
+  --app-sidebar-primary-fg: hsl(222 25% 8%);
+  --app-sidebar-accent: hsl(222 15% 15%);
+  --app-sidebar-accent-fg: hsl(210 20% 95%);
+  --app-sidebar-border: hsl(222 15% 22% / 0.8);
+  --app-sidebar-ring: hsl(217 91% 60%);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+  html, body {
+    background-color: var(--app-bg) !important;
+    color: var(--app-fg) !important;
+  }
   body {
-    @apply bg-background text-foreground;
     background-image: radial-gradient(circle at top center, rgba(0,0,0,0.03) 0%, transparent 40%);
     background-attachment: fixed;
   }
@@ -124,12 +137,32 @@
     background-image: radial-gradient(circle at top center, rgba(255,255,255,0.03) 0%, transparent 40%);
   }
   
+  .tech-ai body {
+    background-image: radial-gradient(circle at top center, rgba(56,189,248,0.04) 0%, transparent 45%);
+  }
+
+  .cyberpunk body {
+    background-image: radial-gradient(circle at top center, rgba(244,63,94,0.04) 0%, transparent 45%);
+  }
+
+  .retro body {
+    background-image: radial-gradient(circle at top center, rgba(245,158,11,0.02) 0%, transparent 45%);
+  }
+  
   html {
     @apply font-sans;
   }
+
+  .bg-background {
+    background-color: var(--app-bg) !important;
+  }
+
+  .text-foreground {
+    color: var(--app-fg) !important;
+  }
 }
 
-/* Utilitários Premium extras */
+/* Utilitários Premium */
 .glass-card {
   @apply bg-card/60 backdrop-blur-xl border border-border/50 shadow-sm transition-all duration-300;
 }
@@ -138,34 +171,119 @@
   box-shadow: 0 0 20px rgba(255,255,255,0.02);
 }
 
-/* Tema Experimental: Tech & AI */
-.theme-tech-ai {
-  /* Fundo Azul-Escuro Profundo (Deep Midnight Blue) */
-  --background: oklch(0.18 0.03 260);
-  --foreground: oklch(0.98 0.01 260);
+/* Theme: Tech & AI (Deep Midnight & Cyan) */
+.tech-ai {
+  --app-bg: hsl(224 35% 10%);
+  --app-fg: hsl(190 20% 98%);
   
-  /* Cards em tons de roxo/azul bem escuro e transparente */
-  --card: oklch(0.22 0.05 265 / 0.7);
-  --card-foreground: oklch(0.98 0.01 260);
+  --app-card: hsl(224 30% 15% / 0.7);
+  --app-card-fg: hsl(190 20% 98%);
   
-  --popover: oklch(0.20 0.05 265 / 0.8);
-  --popover-foreground: oklch(0.98 0.01 260);
+  --app-popover: hsl(224 30% 13% / 0.8);
+  --app-popover-fg: hsl(190 20% 98%);
   
-  /* Botões e destaques em Ciano Brilhante / Azul Neon */
-  --primary: oklch(0.65 0.15 250);
-  --primary-foreground: oklch(0.15 0.05 260);
+  --app-primary: hsl(188 90% 50%);
+  --app-primary-fg: hsl(224 35% 8%);
   
-  --secondary: oklch(0.25 0.08 270);
-  --secondary-foreground: oklch(0.85 0.1 260);
+  --app-secondary: hsl(224 20% 18%);
+  --app-secondary-fg: hsl(190 20% 92%);
   
-  --muted: oklch(0.25 0.05 265);
-  --muted-foreground: oklch(0.75 0.05 260);
+  --app-muted: hsl(224 20% 18%);
+  --app-muted-fg: hsl(190 15% 72%);
   
-  --accent: oklch(0.30 0.08 270);
-  --accent-foreground: oklch(0.95 0.05 260);
+  --app-accent: hsl(224 20% 22%);
+  --app-accent-fg: hsl(190 20% 98%);
   
-  /* Bordas Neon Sutis */
-  --border: oklch(0.40 0.10 260 / 0.5);
-  --input: oklch(0.40 0.10 260 / 0.5);
-  --ring: oklch(0.65 0.15 250);
+  --app-destructive: hsl(350 70% 50%);
+  
+  --app-border: hsl(190 30% 25% / 0.8);
+  --app-input: hsl(190 30% 25% / 0.8);
+  --app-ring: hsl(188 90% 50%);
+  
+  --app-sidebar: hsl(224 35% 12%);
+  --app-sidebar-fg: hsl(190 20% 98%);
+  --app-sidebar-primary: hsl(188 90% 50%);
+  --app-sidebar-primary-fg: hsl(224 35% 8%);
+  --app-sidebar-accent: hsl(224 20% 18%);
+  --app-sidebar-accent-fg: hsl(190 20% 92%);
+  --app-sidebar-border: hsl(190 30% 25% / 0.8);
+  --app-sidebar-ring: hsl(188 90% 50%);
+}
+
+/* Theme: Cyberpunk (Dark Violet & Neon Pink/Green) */
+.cyberpunk {
+  --app-bg: hsl(290 35% 8%);
+  --app-fg: hsl(300 20% 95%);
+  
+  --app-card: hsl(290 30% 13% / 0.7);
+  --app-card-fg: hsl(300 20% 95%);
+  
+  --app-popover: hsl(290 30% 11% / 0.8);
+  --app-popover-fg: hsl(300 20% 95%);
+  
+  --app-primary: hsl(320 90% 60%);
+  --app-primary-fg: hsl(290 35% 6%);
+  
+  --app-secondary: hsl(290 20% 16%);
+  --app-secondary-fg: hsl(300 15% 90%);
+  
+  --app-muted: hsl(290 20% 16%);
+  --app-muted-fg: hsl(300 10% 72%);
+  
+  --app-accent: hsl(290 20% 20%);
+  --app-accent-fg: hsl(300 20% 95%);
+  
+  --app-destructive: hsl(350 70% 50%);
+  
+  --app-border: hsl(320 30% 22% / 0.8);
+  --app-input: hsl(320 30% 22% / 0.8);
+  --app-ring: hsl(320 90% 60%);
+  
+  --app-sidebar: hsl(290 35% 9%);
+  --app-sidebar-fg: hsl(300 20% 95%);
+  --app-sidebar-primary: hsl(320 90% 60%);
+  --app-sidebar-primary-fg: hsl(290 35% 6%);
+  --app-sidebar-accent: hsl(290 20% 16%);
+  --app-sidebar-accent-fg: hsl(300 15% 90%);
+  --app-sidebar-border: hsl(320 30% 22% / 0.8);
+  --app-sidebar-ring: hsl(320 90% 60%);
+}
+
+/* Theme: Retro Sepia (Warm Cream & Terracotta) */
+.retro {
+  --app-bg: hsl(40 25% 93%);
+  --app-fg: hsl(25 25% 20%);
+  
+  --app-card: hsl(40 20% 89% / 0.7);
+  --app-card-fg: hsl(25 25% 20%);
+  
+  --app-popover: hsl(40 20% 90% / 0.8);
+  --app-popover-fg: hsl(25 25% 20%);
+  
+  --app-primary: hsl(15 65% 45%);
+  --app-primary-fg: hsl(40 25% 96%);
+  
+  --app-secondary: hsl(40 15% 86%);
+  --app-secondary-fg: hsl(25 20% 25%);
+  
+  --app-muted: hsl(40 15% 86%);
+  --app-muted-fg: hsl(25 10% 48%);
+  
+  --app-accent: hsl(40 15% 83%);
+  --app-accent-fg: hsl(25 25% 20%);
+  
+  --app-destructive: hsl(355 60% 45%);
+  
+  --app-border: hsl(25 15% 75% / 0.6);
+  --app-input: hsl(25 15% 75% / 0.6);
+  --app-ring: hsl(15 65% 45%);
+  
+  --app-sidebar: hsl(40 25% 91%);
+  --app-sidebar-fg: hsl(25 25% 20%);
+  --app-sidebar-primary: hsl(15 65% 45%);
+  --app-sidebar-primary-fg: hsl(40 25% 96%);
+  --app-sidebar-accent: hsl(40 15% 86%);
+  --app-sidebar-accent-fg: hsl(25 20% 25%);
+  --app-sidebar-border: hsl(25 15% 75% / 0.6);
+  --app-sidebar-ring: hsl(15 65% 45%);
 }

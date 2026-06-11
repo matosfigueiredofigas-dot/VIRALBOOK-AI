@@ -3,6 +3,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CountrySelect } from "@/components/country-select";
 import { TimeSelect } from "@/components/time-select";
+
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Suspense } from "react";
 
@@ -18,6 +19,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
             <div className="flex items-center gap-3">
               <ThemeToggle />
+
               <Suspense fallback={<div className="h-9 w-[140px] bg-muted animate-pulse rounded-md"></div>}>
                 <TimeSelect />
               </Suspense>

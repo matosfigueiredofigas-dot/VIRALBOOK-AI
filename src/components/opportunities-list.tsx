@@ -165,18 +165,36 @@ function OpportunityCard({ item }: { item: any }) {
             <TrendingUp className="h-4 w-4 text-green-500" />
             <span className="font-semibold text-green-500">+{item.trends_growth_monthly}%</span>
           </div>
-          <div className="flex items-center gap-1" title="Menções no Reddit">
+          <a
+            href={`https://www.reddit.com/search/?q=${encodeURIComponent(item.target_audience || item.saas_name)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 hover:underline hover:text-orange-500 transition-colors"
+            title="Buscar no Reddit"
+          >
             <Search className="h-4 w-4 text-orange-500" />
             <span className="font-semibold text-orange-500">{item.reddit_mentions} refs</span>
-          </div>
-          <div className="flex items-center gap-1" title="Anúncios no Facebook">
+          </a>
+          <a
+            href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(item.target_audience || item.saas_name)}&media_type=all`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 hover:underline hover:text-blue-600 transition-colors"
+            title="Buscar na Biblioteca de Anúncios do Facebook"
+          >
             <FacebookIcon className="h-4 w-4 text-blue-600" />
             <span className="font-semibold text-blue-600">{item.facebook_ads_count || 0} ads</span>
-          </div>
-          <div className="flex items-center gap-1" title="Grupos no Facebook">
+          </a>
+          <a
+            href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(item.target_audience || item.saas_name)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 hover:underline hover:text-indigo-400 transition-colors"
+            title="Buscar Grupos no Facebook"
+          >
             <Users className="h-4 w-4 text-indigo-400" />
             <span className="font-semibold text-indigo-400">{item.facebook_groups_count || 0} grps</span>
-          </div>
+          </a>
         </div>
 
         <div className="text-sm font-medium mb-1">Diferencial:</div>
@@ -233,11 +251,11 @@ function OpportunityCard({ item }: { item: any }) {
                   <Separator className="my-3" />
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-muted-foreground">Preço Sugerido:</span>
-                    <span className="font-bold text-green-500">{item.suggested_price}</span>
+                    <span className="font-bold text-green-500">{item.suggested_price?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
                   </div>
                   <div className="flex justify-between items-center text-sm mt-2">
                     <span className="text-muted-foreground">Potencial:</span>
-                    <span className="font-bold">{item.potential_revenue}</span>
+                    <span className="font-bold">{item.potential_revenue?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
                   </div>
                 </div>
               </div>

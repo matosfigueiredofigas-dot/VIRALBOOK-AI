@@ -1,12 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { LayoutGrid, Table as TableIcon, Calendar, User, Tag, BookOpen } from "lucide-react"
+import { LayoutGrid, Table as TableIcon, Calendar, User, Tag, BookOpen, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useRouter } from "next/navigation"
 
 interface ProcessedBook {
+  id: string
   book_title: string
   book_author: string
   book_category: string
@@ -43,7 +45,25 @@ function getCategoryColor(category: string) {
 }
 
 export function ProcessedBooks({ initialBooks }: ProcessedBooksProps) {
+  const router = useRouter()
   const [viewMode, setViewMode] = useState<"mosaic" | "table">("mosaic")
+
+  const handleDelete = async (id: string, title: string) => {
+    if (confirm(`Tem certeza que deseja excluir permanentemente a análise do livro "${title}"?`)) {
+      const res = await fetch('/api/radar', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      if (res.ok) {
+        alert('Livro excluído com sucesso!');
+        router.refresh();
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        alert(errData.error || 'Erro ao excluir livro.');
+      }
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -108,10 +128,21 @@ export function ProcessedBooks({ initialBooks }: ProcessedBooksProps) {
                   <div className="absolute left-2 top-0 bottom-0 w-px bg-white/10" />
 
                   {/* Header info */}
-                  <div className="flex justify-between items-start pl-2">
+                  <div className="flex justify-between items-center pl-2 w-full z-20">
                     <Badge className="bg-white/20 border-none backdrop-blur-md text-white text-[9px] uppercase font-bold tracking-wider py-0.5 px-2">
                       {book.book_category || "Geral"}
                     </Badge>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        handleDelete(book.id, book.book_title);
+                      }}
+                      className="p-1 rounded-md bg-black/30 hover:bg-red-600/80 text-white/80 hover:text-white transition-all cursor-pointer z-30"
+                      title="Excluir do Radar"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
                   </div>
                   
                   {/* Book Title and Author */}
@@ -175,6 +206,7 @@ export function ProcessedBooks({ initialBooks }: ProcessedBooksProps) {
                 <TableHead>Autor</TableHead>
                 <TableHead>Categoria</TableHead>
                 <TableHead>Capturado Em</TableHead>
+                <TableHead className="w-[80px] text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -195,6 +227,17 @@ export function ProcessedBooks({ initialBooks }: ProcessedBooksProps) {
                     <span className="px-2 py-1 rounded-md bg-secondary text-xs">{book.book_category}</span>
                   </TableCell>
                   <TableCell className="text-muted-foreground">{new Date(book.created_at).toLocaleDateString()}</TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-lg"
+                      onClick={() => handleDelete(book.id, book.book_title)}
+                      title="Excluir"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
               

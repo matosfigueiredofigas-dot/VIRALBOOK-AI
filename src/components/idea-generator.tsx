@@ -84,15 +84,30 @@ export function IdeaGenerator() {
   };
 
   const generateSuggestions = (audiencesList: Item[], techsList: Item[], count: number = 5, type: "2-audiences" | "audience-tech" = "2-audiences", quality: string = "premium") => {
-    const suggestions = [];
-    for (let i = 0; i < count; i++) {
+    const suggestions = [
+      { id: "s1", name: "Estudantes + dificuldade em estudar + passar em exames", tier: 6 },
+      { id: "s2", name: "Desempregados + falta de experiência + encontrar emprego", tier: 6 },
+      { id: "s3", name: "Programadores + dificuldade em usar IA + aprender IA", tier: 6 },
+      { id: "s4", name: "Comerciantes + gestão financeira + aumentar lucro", tier: 6 },
+      { id: "s5", name: "Criadores de conteúdo + pouca visibilidade + viralizar conteúdo", tier: 6 },
+      { id: "s6", name: "Agricultores + falta de previsões + melhorar produtividade", tier: 5 },
+      { id: "s7", name: "Mototaxistas + desorganização financeira + poupar dinheiro", tier: 4 }
+    ];
+    
+    // Fill the rest with random combinations up to count
+    while (suggestions.length < count + 7) {
       const comb = generateCombination(audiencesList, techsList, type, quality);
-      suggestions.push({
-        id: Math.random().toString(36).substring(2, 9),
-        name: comb.name,
-        tier: comb.tier
-      });
+      // Avoid adding duplicates of the predefined ones
+      const alreadyExists = suggestions.some(s => s.name.toLowerCase() === comb.name.toLowerCase());
+      if (!alreadyExists) {
+        suggestions.push({
+          id: Math.random().toString(36).substring(2, 9),
+          name: comb.name,
+          tier: comb.tier
+        });
+      }
     }
+    
     setCrossoverSuggestions(suggestions);
   };
 

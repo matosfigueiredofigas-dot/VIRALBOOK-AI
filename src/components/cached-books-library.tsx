@@ -333,13 +333,25 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                                 <FacebookIcon className="h-4 w-4" />
                                 Validação Facebook
                               </div>
-                              <div className="text-[13px] font-bold text-foreground">
-                                Anúncios Ativos: <span className="text-blue-500">{activeItem.facebook_ads_count || 0} ads</span>
+                              <div className="space-y-1">
+                                <a
+                                  href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(activeItem.target_audience || activeItem.saas_name)}&media_type=all`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-[13px] font-bold text-foreground hover:text-blue-500 hover:underline transition-colors block"
+                                >
+                                  Anúncios Ativos: <span className="text-blue-500">{activeItem.facebook_ads_count || 0} ads ↗</span>
+                                </a>
+                                <a
+                                  href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(activeItem.target_audience || activeItem.saas_name)}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-[13px] font-bold text-foreground hover:text-indigo-400 hover:underline transition-colors block"
+                                >
+                                  Grupos do Nicho: <span className="text-indigo-400">{activeItem.facebook_groups_count || 0} ativos ↗</span>
+                                </a>
                               </div>
-                              <div className="text-[13px] font-bold text-foreground">
-                                Grupos do Nicho: <span className="text-indigo-400">{activeItem.facebook_groups_count || 0} ativos</span>
-                              </div>
-                              <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
+                              <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
                                 Presença comercial e audiência mapeada no Facebook.
                               </p>
                             </div>
@@ -354,11 +366,11 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                             <Separator className="my-3" />
                             <div className="flex justify-between items-center text-sm">
                               <span className="text-muted-foreground">Preço Sugerido:</span>
-                              <span className="font-bold text-green-500">{activeItem.suggested_price}</span>
+                              <span className="font-bold text-green-500">{activeItem.suggested_price?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
                             </div>
                             <div className="flex justify-between items-center text-sm mt-2">
                               <span className="text-muted-foreground">Potencial:</span>
-                              <span className="font-bold">{activeItem.potential_revenue}</span>
+                              <span className="font-bold">{activeItem.potential_revenue?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
                             </div>
                           </div>
                         </div>

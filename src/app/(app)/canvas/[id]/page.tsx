@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase"
 import { notFound } from "next/navigation"
-import { Printer, ArrowLeft } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
+import { PrintButton } from "@/components/print-button"
 
 export const dynamic = 'force-dynamic';
 
@@ -27,12 +28,7 @@ export default async function CanvasPage(props: { params: Promise<{ id: string }
         </a>
         <div className="flex items-center gap-4">
           <p className="text-sm text-gray-500">Dica: Salve como PDF na janela de impressão.</p>
-          <button 
-            onClick={() => window.print()}
-            className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-md font-bold hover:bg-gray-800 transition-colors"
-          >
-            <Printer className="h-4 w-4" /> Imprimir / PDF
-          </button>
+          <PrintButton />
         </div>
       </div>
 

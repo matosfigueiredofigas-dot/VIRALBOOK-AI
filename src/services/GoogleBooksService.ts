@@ -19,12 +19,12 @@ export class GoogleBooksService {
 
       return data.items.map((item: any) => ({
         id: item.id,
-        title: item.volumeInfo.title,
-        authors: item.volumeInfo.authors || ['Desconhecido'],
-        description: item.volumeInfo.description || '',
-        categories: item.volumeInfo.categories || ['Sem categoria'],
-        publishedDate: item.volumeInfo.publishedDate,
-        language: item.volumeInfo.language,
+        title: item.volumeInfo?.title || `Guia definitivo sobre ${query}`,
+        authors: item.volumeInfo?.authors || ['Desconhecido'],
+        description: item.volumeInfo?.description || '',
+        categories: item.volumeInfo?.categories || ['Sem categoria'],
+        publishedDate: item.volumeInfo?.publishedDate || '2023',
+        language: item.volumeInfo?.language || 'pt-BR',
       }));
     } catch (error) {
       console.error("Erro no GoogleBooksService (Fallback ativado):", error);

@@ -124,7 +124,7 @@ JSON Schema: { "saas_name": "string", "mvp_features": "string", "development_tim
       // Objetivo: Definir preço e estimativa de MRR.
       // ---------------------------------------------------------
       const systemGrowth = `You are a brilliant SaaS Growth Marketer. Return a valid JSON.
-Output language MUST be in the native language of ${country}.
+Output language MUST be in the native language of ${country}, EXCEPT for pricing and revenue values (suggested_price and potential_revenue), which MUST always be specified in USD ($) currency.
 Based on the SaaS designed, define the monetization model, suggested price, and an AI confidence score for this opportunity.
 JSON Schema: { "monetization_model": "string", "suggested_price": "string", "potential_revenue": "string", "aiOpportunityScore": number (0-100) }`;
 
