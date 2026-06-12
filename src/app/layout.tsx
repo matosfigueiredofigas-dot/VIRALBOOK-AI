@@ -42,7 +42,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="pt"
       className={`dark ${geistSans.variable} ${geistMono.variable} antialiased`}
       suppressHydrationWarning
     >
