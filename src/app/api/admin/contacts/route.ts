@@ -1,21 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-
-// Função auxiliar para validar se o usuário atual é o Admin principal
-async function checkAdmin(supabase: any) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return false;
-
-  if (user.email === 'moisesdematos@gmail.com') return true;
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-
-  return profile?.role === 'admin';
-}
+import { checkAdmin, createAdminClient } from '@/utils/supabase/admin';
 
 // 1. LISTAR MENSAGENS DE CONTATO (GET - Admin Apenas)
 export async function GET() {
@@ -45,7 +30,8 @@ export async function GET() {
 // 2. CRIAR NOVA MENSAGEM DE CONTATO (POST - Público)
 export async function POST(req: Request) {
   try {
-    const supabase = await createClient();
+    // Usamos o admin client para contatos públicos para evitar recursão ou erros de RLS
+    const adminSupabase = createAdminClient();
     const { name, email, message } = await req.json();
 
     if (!name || !email || !message) {
@@ -53,7 +39,7 @@ export async function POST(req: Request) {
     }
 
     // Insere na tabela de contatos
-    const { data, error } = await supabase
+    const { data, error } = await adminSupabase
       .from('contacts')
       .insert([{ name, email, message, status: 'pending' }])
       .select();

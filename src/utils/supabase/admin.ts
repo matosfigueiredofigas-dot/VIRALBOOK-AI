@@ -11,3 +11,31 @@ export function createAdminClient() {
     }
   })
 }
+
+export async function checkAdmin(supabase: any) {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return false;
+
+    // Proteção dupla: pelo e-mail do dono ou checando o role na tabela profiles
+    if (user.email === 'moisesdematos@gmail.com') return true;
+
+    // Usamos o admin client para evitar recursão de RLS na tabela profiles
+    const adminSupabase = createAdminClient();
+    const { data: profile, error } = await adminSupabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (error) {
+      console.error('[checkAdmin] Erro ao buscar profile:', error);
+      return false;
+    }
+
+    return profile?.role === 'admin';
+  } catch (err) {
+    console.error('[checkAdmin] Erro crítico:', err);
+    return false;
+  }
+}
