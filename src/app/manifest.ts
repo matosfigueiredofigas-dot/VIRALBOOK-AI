@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'ViralBook AI',
     short_name: 'ViralBook',
     description: 'Detecte a sua próxima startup baseada em fatos de livros virais.',
-    start_url: '/dashboard',
+    start_url: '/',
     display: 'standalone',
     background_color: '#0d0d0d',
     theme_color: '#a855f7',

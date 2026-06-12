@@ -14,11 +14,11 @@ export async function POST(request: Request) {
 
   if (error) {
     return NextResponse.redirect(new URL(`/login?message=${error.message}`, request.url), {
-      status: 301,
+      status: 302,
     })
   }
 
   return NextResponse.redirect(new URL('/login?message=Verifique seu e-mail para confirmar o cadastro.', request.url), {
-    status: 301,
+    status: 302,
   })
 }

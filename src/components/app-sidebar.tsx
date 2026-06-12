@@ -1,4 +1,4 @@
-import { BookOpen, TrendingUp, Lightbulb, Activity, BarChart3, Settings, Heart, LogIn, Sparkles, LayoutDashboard, PlayCircle, User, LogOut, Shield } from "lucide-react"
+import { TrendingUp, User, LogOut } from "lucide-react"
 import { createClient } from "@/utils/supabase/server"
 import {
   Sidebar,
@@ -12,40 +12,12 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar"
-
-// Menu items
-const items = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "SaaS Opportunities",
-    url: "/opportunities",
-    icon: Lightbulb,
-  },
-  {
-    title: "Biblioteca de Ideias",
-    url: "/library",
-    icon: Sparkles,
-  },
-  {
-    title: "Emerging Niches",
-    url: "/niches",
-    icon: Activity,
-  },
-  {
-    title: "Ebooks Radar",
-    url: "/radar",
-    icon: BookOpen,
-  },
-  {
-    title: "Global Trends",
-    url: "/trends",
-    icon: BarChart3,
-  },
-]
+import { 
+  SidebarMenuClient, 
+  SidebarMyAccountClient, 
+  SidebarAdminClient, 
+  SidebarFooterLinksClient 
+} from "@/components/sidebar-menu-client"
 
 export async function AppSidebar() {
   const supabase = await createClient()
@@ -85,82 +57,37 @@ export async function AppSidebar() {
       <SidebarSeparator className="bg-border/50 mx-4" />
       
       <SidebarContent className="px-4 py-4">
+        {/* Menu Principal & Comece por Aqui (Gerenciados Client-side para Active States) */}
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  render={<a href="/welcome" className="flex items-center gap-3 px-3" />}
-                  className="h-12 bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary transition-all rounded-lg group border border-primary/20 mb-4 shadow-sm shadow-primary/5"
-                >
-                  <PlayCircle className="h-5 w-5" />
-                  <span className="font-bold text-sm">Comece por Aqui</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
+            <SidebarMenuClient />
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-semibold tracking-wider text-muted-foreground/70 uppercase mb-2">Menu Principal</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu className="gap-2">
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    render={<a href={item.url} className="flex items-center gap-3 px-3" />}
-                    className="h-11 hover:bg-primary/10 hover:text-primary transition-all rounded-lg group"
-                  >
-                    <item.icon className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                    <span className="font-medium text-sm">{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
+        {/* Minha Conta (Favoritos) */}
         <SidebarGroup className="mt-8">
           <SidebarGroupLabel className="text-xs font-semibold tracking-wider text-muted-foreground/70 uppercase mb-2">Minha Conta</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="gap-2">
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  render={<a href="/favorites" className="flex items-center gap-3 px-3" />}
-                  className="h-11 hover:bg-red-500/10 hover:text-red-500 transition-all rounded-lg group"
-                >
-                  <Heart className="h-5 w-5 text-muted-foreground group-hover:text-red-500 transition-colors" />
-                  <span className="font-medium text-sm">Favoritos Salvos</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
+            <SidebarMyAccountClient />
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {/* Painel Administrativo */}
         {isAdmin && (
           <SidebarGroup className="mt-4">
             <SidebarGroupLabel className="text-xs font-semibold tracking-wider text-muted-foreground/70 uppercase mb-2">Administração</SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu className="gap-2">
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    render={<a href="/admin" className="flex items-center gap-3 px-3" />}
-                    className="h-11 hover:bg-amber-500/10 hover:text-amber-500 transition-all rounded-lg group"
-                  >
-                    <Shield className="h-5 w-5 text-muted-foreground group-hover:text-amber-500 transition-colors" />
-                    <span className="font-medium text-sm">Painel Admin</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
+              <SidebarAdminClient isAdmin={isAdmin} />
             </SidebarGroupContent>
           </SidebarGroup>
         )}
 
+        {/* Rodapé do Menu (Perfil, Configurações e Auth) */}
         <SidebarGroup className="mt-auto">
           <SidebarGroupContent>
-            <SidebarMenu className="gap-2">
-              {user ? (
-                <>
+            {user ? (
+              <>
+                <SidebarMenu className="gap-2 mb-2">
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       render={<div className="flex items-center gap-3 px-3" />}
@@ -178,28 +105,12 @@ export async function AppSidebar() {
                       </SidebarMenuButton>
                     </form>
                   </SidebarMenuItem>
-                </>
-              ) : (
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    render={<a href="/login" className="flex items-center gap-3 px-3" />}
-                    className="h-11 hover:bg-muted transition-all rounded-lg group"
-                  >
-                    <LogIn className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-                    <span className="font-medium text-sm">Login / Autenticação</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )}
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  render={<a href="/settings" className="flex items-center gap-3 px-3" />}
-                  className="h-11 hover:bg-muted transition-all rounded-lg group"
-                >
-                  <Settings className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-                  <span className="font-medium text-sm">Configurações</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
+                </SidebarMenu>
+                <SidebarFooterLinksClient isAuthenticated={true} />
+              </>
+            ) : (
+              <SidebarFooterLinksClient isAuthenticated={false} />
+            )}
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

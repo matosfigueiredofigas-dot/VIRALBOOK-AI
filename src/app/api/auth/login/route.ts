@@ -14,11 +14,11 @@ export async function POST(request: Request) {
 
   if (error) {
     return NextResponse.redirect(new URL(`/login?message=E-mail ou senha incorretos`, request.url), {
-      status: 301,
+      status: 302,
     })
   }
 
   return NextResponse.redirect(new URL('/dashboard', request.url), {
-    status: 301,
+    status: 302,
   })
 }

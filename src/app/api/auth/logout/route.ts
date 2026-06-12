@@ -9,6 +9,6 @@ export async function POST(request: Request) {
 
   // Redireciona para a página de login
   return NextResponse.redirect(new URL('/login', request.url), {
-    status: 301,
+    status: 302,
   })
 }
