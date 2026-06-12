@@ -93,22 +93,36 @@ export class GroqService {
       // AGENTE 1: O ANALISTA DE NEGÓCIOS & CONCORRÊNCIA
       // Objetivo: Entender a dor, avaliar concorrência e achar o diferencial.
       // ---------------------------------------------------------
-      const targetAudienceText = targetAudience ? `specifically for target audience "${targetAudience}"` : '';
-      const targetProblemText = targetProblem ? `and target problem "${targetProblem}"` : '';
-
       const systemAnalyst = `You are a brilliant Business Analyst. Return a valid JSON.
-Output language MUST be in the native language of ${country}.
-${targetProblem ? `Analyze the book metadata, Google Trends data, Reddit pain points, and Facebook signals to validate and enrich the opportunity ${targetAudienceText} ${targetProblemText}.` : `Your primary goal is to analyze the Target Audience (${targetAudience || 'Any match based on context'}) and identify the single most critical, urgent, and monetizable pain point (core_problem) they face in their daily workflow or operations, and why existing solutions fail them. Use the provided book metadata, Google Trends data, Reddit pain points, and Facebook signals as market inputs and context, but rely on your own deep expertise to define a realistic, cohesive, and highly specific problem for this audience. Do NOT pair unrelated concepts; the pain point MUST make complete sense for this specific target audience.`}
-Define 2-3 potential competitors in the market for this audience's pain point.
-Based on the competitors, define a Unique Competitive Advantage (differentiation angle).
+Output language MUST be in the native language of the requested country.
+
+Instructions:
+1. Analyze the book metadata, Google Trends data, Reddit pain points, and Facebook signals provided in the user prompt.
+2. If a specific "Target Problem" is provided by the user, validate and enrich the opportunity using that problem and target audience.
+3. If no specific "Target Problem" is provided, identify the single most critical, urgent, and monetizable pain point (core_problem) the target audience faces in their daily workflow or operations, and why existing solutions fail them. Use the market inputs as context, but rely on your expertise to define a realistic, cohesive, and highly specific problem. Do NOT pair unrelated concepts; the pain point MUST make complete sense for the specific target audience.
+4. Define 2-3 potential competitors in the market for this audience's pain point.
+5. Based on the competitors, define a Unique Competitive Advantage (differentiation angle).
+
 JSON Schema: { "core_problem": "string", "target_audience": "string", "competitors": "string", "competitive_advantage": "string" }`;
 
-      const userAnalyst = `Target Audience: ${targetAudience || 'Any match based on context'}
-Book Context: ${book.title} (${book.categories?.join(', ')}). Description: ${book.description?.substring(0, 500)}
-Trends Signal: ${trendsData.monthlyGrowth}% growth.
-Reddit Signal: ${redditData.mentions} mentions.
-Facebook Signal: ${facebookData.adsCount} active ads, ${facebookData.groupsCount} related groups (examples: ${facebookData.relevantGroups?.join(', ')}).
-${targetProblem ? `Target Problem/Pain (you MUST use this problem): ${targetProblem}` : ''}`;
+      const userAnalyst = `### Target Country
+${country}
+
+### Target Audience
+${targetAudience || 'Any match based on context'}
+
+### Book Context
+Title: ${book.title}
+Categories: ${book.categories?.join(', ') || 'N/A'}
+Description: ${book.description?.substring(0, 500) || 'N/A'}
+
+### Market Signals
+- Google Trends: ${trendsData.monthlyGrowth}% growth.
+- Reddit Mentions: ${redditData.mentions} mentions.
+- Facebook Ads: ${facebookData.adsCount} active ads.
+- Facebook Groups: ${facebookData.groupsCount} related groups (examples: ${facebookData.relevantGroups?.join(', ') || 'None'}).
+
+${targetProblem ? `### Target Problem (You MUST use this problem)\n${targetProblem}` : ''}`;
       
       const analystResult = await runAgent(systemAnalyst, userAnalyst);
 
@@ -120,16 +134,25 @@ ${targetProblem ? `Target Problem/Pain (you MUST use this problem): ${targetProb
       // AGENTE 2: O ARQUITETO TÉCNICO
       // Objetivo: Criar a solução SaaS e os prompts de código.
       // ---------------------------------------------------------
-      const techText = targetTechnology ? `specifically utilizing the technology/angle: "${targetTechnology}"` : ``;
       const systemArchitect = `You are a brilliant SaaS Technical Architect. Return a valid JSON.
-Output language MUST be in the native language of ${country}.
-Based on the business analyst's findings, design a Micro-SaaS ${techText}.
-Provide a catchy SaaS Name, MVP Features (buildable in 30 days), Development Time estimation, Implementation Difficulty (Low/Medium/High).
-Also write highly detailed, step-by-step technical prompts for an AI code generator like Lovable and Bolt.new to build the MVP.
+Output language MUST be in the native language of the requested country.
+
+Instructions:
+1. Based on the business analyst's findings (problem, audience, and competitive advantage) and the requested technology or angle, design a Micro-SaaS.
+2. Provide a catchy SaaS Name, MVP Features (buildable in 30 days), Development Time estimation, and Implementation Difficulty (Low/Medium/High).
+3. Write highly detailed, step-by-step technical prompts for an AI code generator like Lovable and Bolt.new to build the MVP.
+
 JSON Schema: { "saas_name": "string", "mvp_features": "string", "development_time": "string", "implementation_difficulty": "string", "prompt_lovable": "string", "prompt_bolt": "string" }`;
 
-      const userArchitect = `Problem: ${coreProblem}. Audience: ${finalTargetAudience}. Advantage: ${analystResult.competitive_advantage}.
-${targetTechnology ? `Target Technology (you MUST use this technology): ${targetTechnology}` : ''}`;
+      const userArchitect = `### Target Country
+${country}
+
+### Business Findings
+- Problem: ${coreProblem}
+- Audience: ${finalTargetAudience}
+- Competitive Advantage: ${analystResult.competitive_advantage}
+
+${targetTechnology ? `### Target Technology/Angle (You MUST utilize this technology/angle)\n${targetTechnology}` : ''}`;
 
       const architectResult = await runAgent(systemArchitect, userArchitect);
 
@@ -137,14 +160,24 @@ ${targetTechnology ? `Target Technology (you MUST use this technology): ${target
       // AGENTE 3: O DIRETOR DE GROWTH & MONETIZAÇÃO
       // Objetivo: Definir preço e estimativa de MRR.
       // ---------------------------------------------------------
-      const monetizationText = targetMonetization ? `specifically utilizing the monetization model: "${targetMonetization}"` : ``;
       const systemGrowth = `You are a brilliant SaaS Growth Marketer. Return a valid JSON.
-Output language MUST be in the native language of ${country}, EXCEPT for pricing and revenue values (suggested_price and potential_revenue), which MUST always be specified in USD ($) currency.
-Based on the SaaS designed, define the monetization model, suggested price, and an AI confidence score for this opportunity ${monetizationText}.
+Output language MUST be in the native language of the requested country, EXCEPT for pricing and revenue values (suggested_price and potential_revenue), which MUST always be specified in USD ($) currency.
+
+Instructions:
+1. Based on the designed SaaS (name, audience, and features) and the requested monetization model, define the business monetization model, suggested price, and potential revenue.
+2. Calculate a realistic AI confidence score (aiOpportunityScore) between 0 and 100 for this opportunity.
+
 JSON Schema: { "monetization_model": "string", "suggested_price": "string", "potential_revenue": "string", "aiOpportunityScore": number (0-100) }`;
 
-      const userGrowth = `SaaS Name: ${architectResult.saas_name}. Audience: ${finalTargetAudience}. Features: ${architectResult.mvp_features}.
-${targetMonetization ? `Target Monetization Model (you MUST use this model): ${targetMonetization}` : ''}`;
+      const userGrowth = `### Target Country
+${country}
+
+### SaaS Details
+- SaaS Name: ${architectResult.saas_name}
+- Audience: ${finalTargetAudience}
+- Features: ${architectResult.mvp_features}
+
+${targetMonetization ? `### Target Monetization Model (You MUST utilize this model)\n${targetMonetization}` : ''}`;
 
       const growthResult = await runAgent(systemGrowth, userGrowth);
 
