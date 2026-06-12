@@ -11,6 +11,12 @@ import { AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ProductSimulator } from "@/components/product-simulator";
 
+const LEMON_SQUEEZY_CHECKOUT_URLS = {
+  USD: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_USD_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-usd-id",
+  BRL: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BRL_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-brl-id",
+  EUR: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_EUR_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-eur-id"
+};
+
 export default function LandingPage() {
   const router = useRouter();
   const [currency, setCurrency] = useState<'USD' | 'BRL' | 'EUR'>('USD');
@@ -247,99 +253,66 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto text-left">
-              {/* Card 1: Plano Anual */}
-              <div className="glass-card bg-card/30 border border-border/50 rounded-[30px] p-8 md:p-10 flex flex-col justify-between hover:border-border transition-all duration-300">
-                <div className="space-y-6">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-2xl font-bold text-foreground">Plano Anual</h3>
-                      <p className="text-sm text-muted-foreground mt-1">Acesso recorrente e estável</p>
-                    </div>
-                    <span className="text-[10px] font-bold px-2.5 py-1 bg-muted border border-border/50 text-muted-foreground rounded-full uppercase tracking-wider">PADRÃO</span>
-                  </div>
-                  
-                  <div className="py-4">
-                    <span className="text-muted-foreground line-through text-lg font-medium block">
-                      {getPrice('annual', 'original')}
-                    </span>
-                    <div className="flex items-baseline gap-2 mt-1">
-                      <span className="text-5xl font-extrabold text-foreground">
-                        {getPrice('annual', 'discount')}
-                      </span>
-                      <span className="text-muted-foreground text-sm">/ano</span>
-                    </div>
-                  </div>
-
-                  <ul className="space-y-3.5">
-                    {['Acesso ilimitado ao Radar de Tendências', 'Gerador de Oportunidades Infinito', 'Validação no Reddit e Facebook', 'Filtros Globais e Inteligência Groq', 'Exportação de relatórios em CSV', 'Renovação anual recorrente'].map((item, i) => (
-                      <li key={i} className="flex items-center gap-2.5 text-muted-foreground text-sm font-medium">
-                        <CheckCircle2 className="h-4.5 w-4.5 text-primary shrink-0" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="mt-8 pt-6 border-t border-border/50 space-y-4">
-                  <button 
-                    onClick={() => openAuth("signup")}
-                    className="group/button inline-flex shrink-0 items-center justify-center bg-muted hover:bg-muted/80 text-foreground w-full h-12 text-md font-bold rounded-xl transition-all border border-border/50 cursor-pointer"
-                  >
-                    Assinar Plano Anual
-                  </button>
-                  <div className="text-[11px] text-muted-foreground text-center">Cancele quando quiser. Reembolso em até 7 dias.</div>
-                </div>
-              </div>
-
-              {/* Card 2: Plano Fundador Vitalício */}
-              <div className="p-[2px] rounded-[32px] bg-gradient-to-b from-primary/50 via-primary/25 to-transparent relative group flex flex-col justify-between">
-                <div className="absolute inset-0 bg-primary/10 blur-xl rounded-[32px] -z-10 group-hover:bg-primary/20 transition-all duration-700"/>
-                <div className="bg-card/90 backdrop-blur-xl rounded-[30px] p-8 md:p-10 flex flex-col justify-between h-full border border-border/50">
+            <div className="max-w-2xl mx-auto text-left">
+              {/* Card: Plano Fundador Vitalício */}
+              <div className="p-[2px] rounded-[32px] bg-gradient-to-b from-primary via-primary/50 to-transparent relative group flex flex-col justify-between shadow-2xl">
+                <div className="absolute inset-0 bg-primary/10 blur-2xl rounded-[32px] -z-10 group-hover:bg-primary/25 transition-all duration-700"/>
+                <div className="bg-card/90 backdrop-blur-xl rounded-[30px] p-8 md:p-12 flex flex-col justify-between h-full border border-border/50">
                   <div className="space-y-6">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                        <h3 className="text-3xl font-bold text-foreground flex items-center gap-2">
                           Membro Vitalício
                         </h3>
-                        <p className="text-sm text-primary mt-1">Oferta especial de lançamento</p>
+                        <p className="text-sm text-primary mt-1.5 font-semibold">Oferta especial e definitiva de lançamento</p>
                       </div>
-                      <span className="text-[10px] font-bold px-2.5 py-1 bg-primary/20 text-primary rounded-full uppercase tracking-wider">OFERTA LIMITADA</span>
+                      <span className="text-[10px] font-bold px-3 py-1 bg-primary/20 text-primary rounded-full uppercase tracking-wider">OFERTA LIMITADA</span>
                     </div>
                     
-                    <div className="py-4">
+                    <div className="py-4 border-y border-border/40 my-6">
                       <span className="text-muted-foreground line-through text-lg font-medium block">
                         {getPrice('lifetime', 'original')}
                       </span>
                       <div className="flex items-baseline gap-2 mt-1">
-                        <span className="text-5xl font-extrabold text-foreground">
+                        <span className="text-6xl font-extrabold text-foreground tracking-tight">
                           {getPrice('lifetime', 'discount')}
                         </span>
-                        <span className="text-muted-foreground text-sm">único</span>
+                        <span className="text-muted-foreground text-sm font-medium">pagamento único</span>
                       </div>
                     </div>
 
-                    <ul className="space-y-3.5">
-                      {['Acesso vitalício ilimitado (Sem mensalidades)', 'Gerador de Oportunidades e Biblioteca', 'Validação no Reddit e Facebook', 'Filtros Globais e Inteligência Groq', 'Exportação de relatórios em CSV', 'Suporte prioritário e badge fundador', 'Acesso permanente a todas as atualizações'].map((item, i) => (
-                        <li key={i} className="flex items-center gap-2.5 text-muted-foreground text-sm font-medium">
-                          <CheckCircle2 className="h-4.5 w-4.5 text-primary shrink-0" />
-                          <span className={i === 0 || i === 6 ? "text-foreground font-bold" : ""}>{item}</span>
+                    <ul className="grid sm:grid-cols-2 gap-4">
+                      {[
+                        'Acesso vitalício ilimitado (Sem mensalidades)',
+                        'Gerador de Oportunidades & Biblioteca',
+                        'Validação em tempo real (Reddit e FB)',
+                        'Filtros Globais e Inteligência Groq',
+                        'Exportação de relatórios em CSV',
+                        'Suporte prioritário e badge fundador',
+                        'Acesso permanente a atualizações',
+                        'Garantia incondicional de 7 dias'
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-center gap-3 text-muted-foreground text-sm font-medium">
+                          <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+                          <span className={i === 0 || i === 7 ? "text-foreground font-bold" : ""}>{item}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="mt-8 pt-6 border-t border-border/50 space-y-4">
-                    <div className="text-xs font-bold text-yellow-500/90 text-center bg-yellow-500/10 py-1.5 px-3 rounded-lg border border-yellow-500/20">
-                      ⚡ Restam apenas 17 vagas com este preço!
+                  <div className="mt-10 pt-6 border-t border-border/50 space-y-4">
+                    <div className="text-xs font-bold text-yellow-500/90 text-center bg-yellow-500/10 py-2 px-4 rounded-lg border border-yellow-500/20">
+                      ⚡ Restam apenas 17 vagas com este preço promocional!
                     </div>
-                    <button 
-                      onClick={() => openAuth("signup")}
-                      className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/85 w-full h-12 text-md font-bold rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5 cursor-pointer"
+                    <a 
+                      href={LEMON_SQUEEZY_CHECKOUT_URLS[currency]}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/85 w-full h-14 text-lg font-bold rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5 cursor-pointer text-center font-bold text-md"
                     >
                       Garantir Acesso Vitalício
-                    </button>
-                    <div className="text-[11px] text-muted-foreground text-center">Pagamento único e permanente. Sem taxas ocultas.</div>
+                    </a>
+                    <div className="text-[11px] text-muted-foreground text-center">Pagamento único e permanente. Processado de forma segura via Lemon Squeezy.</div>
                   </div>
                 </div>
               </div>
