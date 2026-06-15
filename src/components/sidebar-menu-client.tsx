@@ -11,7 +11,8 @@ import {
   Heart, 
   Shield, 
   LogIn, 
-  Settings 
+  Settings,
+  Globe
 } from "lucide-react";
 import { SidebarMenu } from "@/components/ui/sidebar";
 import { SidebarLink } from "@/components/sidebar-link";
@@ -32,6 +33,11 @@ export function SidebarMenuClient() {
       title: "SaaS Opportunities",
       url: "/opportunities",
       icon: Lightbulb,
+    },
+    {
+      title: "Landing Pages",
+      url: "/landing-pages",
+      icon: Globe,
     },
     {
       title: "Biblioteca de Ideias",

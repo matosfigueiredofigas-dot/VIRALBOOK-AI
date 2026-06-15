@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import { Search, Loader2, Sparkles, Copy, CheckCircle2, TrendingUp, Heart, Share2, FileText, Bell, LayoutGrid, List, MessageSquare, Users, Trash2 } from "lucide-react";
+import { Search, Loader2, Sparkles, Copy, CheckCircle2, TrendingUp, Heart, Share2, FileText, Bell, LayoutGrid, List, MessageSquare, Users, Trash2, Globe, Megaphone, DollarSign, Percent, HelpCircle } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 // Ícone personalizado do Facebook para evitar incompatibilidade de versão do lucide-react
@@ -36,6 +37,98 @@ function OpportunityCard({ item }: { item: any }) {
   const [copiedPrompt, setCopiedPrompt] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [generatingLP, setGeneratingLP] = useState(false);
+  const [redditPainPoints, setRedditPainPoints] = useState<any[]>(item.reddit_pain_points || []);
+  const [mappingReddit, setMappingReddit] = useState(false);
+  const [marketingKit, setMarketingKit] = useState<any>(item.marketing_kit || {});
+  const [generatingKit, setGeneratingKit] = useState(false);
+  const [marketingTab, setMarketingTab] = useState<"twitter" | "linkedin" | "tiktok" | "email">("twitter");
+  const [copiedMarketing, setCopiedMarketing] = useState<string | null>(null);
+
+  // States for SaaS Financial Calculator
+  const parseSuggestedPrice = (priceStr: string): number => {
+    if (!priceStr) return 49;
+    const match = priceStr.match(/\d+([.,]\d+)?/);
+    if (match) {
+      return parseFloat(match[0].replace(',', '.'));
+    }
+    return 49;
+  };
+
+  const [calcPrice, setCalcPrice] = useState<number>(parseSuggestedPrice(item.suggested_price));
+  const [calcLeadsTarget, setCalcLeadsTarget] = useState<number>(1000);
+  const [calcConversion, setCalcConversion] = useState<number>(2.0);
+  const [calcChurn, setCalcChurn] = useState<number>(5.0);
+
+  const handleCopyMarketingText = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedMarketing(id);
+    setTimeout(() => setCopiedMarketing(null), 2000);
+  };
+
+  const handleGenerateMarketingKit = async () => {
+    setGeneratingKit(true);
+    try {
+      const res = await fetch("/api/opportunities/marketing-kit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ opportunityId: item.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Erro ao gerar o Kit de Marketing.");
+      }
+      setMarketingKit(data.marketingKit || {});
+      router.refresh();
+    } catch (err: any) {
+      alert(err.message || "Erro de conexão ao gerar o Kit de Marketing.");
+    } finally {
+      setGeneratingKit(false);
+    }
+  };
+
+  const handleGenerateLandingPage = async () => {
+    setGeneratingLP(true);
+    try {
+      const res = await fetch("/api/landing-page", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ opportunityId: item.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Erro ao gerar a Landing Page.");
+      }
+      alert("Landing Page gerada com sucesso!");
+      router.push("/landing-pages");
+      router.refresh();
+    } catch (err: any) {
+      alert(err.message || "Ocorreu um erro ao gerar a Landing Page.");
+    } finally {
+      setGeneratingLP(false);
+    }
+  };
+
+  const handleMapRedditPainPoints = async () => {
+    setMappingReddit(true);
+    try {
+      const res = await fetch("/api/opportunities/reddit-pain-points", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ opportunityId: item.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Erro ao mapear dores.");
+      }
+      setRedditPainPoints(data.painPoints || []);
+      router.refresh();
+    } catch (err: any) {
+      alert(err.message || "Erro de conexão ao mapear dores.");
+    } finally {
+      setMappingReddit(false);
+    }
+  };
 
   const copyToClipboard = (text: string, type: string) => {
     navigator.clipboard.writeText(text);
@@ -236,6 +329,23 @@ function OpportunityCard({ item }: { item: any }) {
                   >
                     <MessageSquare className="h-4 w-4 mr-2" /> Falar com CTO (IA)
                   </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="bg-purple-600 text-white hover:bg-purple-700 hover:text-white border-none"
+                    onClick={handleGenerateLandingPage}
+                    disabled={generatingLP}
+                  >
+                    {generatingLP ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Gerando...
+                      </>
+                    ) : (
+                      <>
+                        <Globe className="h-4 w-4 mr-2" /> Gerar Landing Page
+                      </>
+                    )}
+                  </Button>
                 </div>
               </SheetTitle>
               <SheetDescription className="text-base text-foreground mt-2">
@@ -323,6 +433,509 @@ function OpportunityCard({ item }: { item: any }) {
                     <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
                       Presença comercial de anúncios concorrentes e grupos ativos ideais para tráfego orgânico e prospecção.
                     </p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-bold text-sm text-muted-foreground mb-3 uppercase tracking-wider flex items-center justify-between">
+                  Dores Reais do Reddit (Mapeador de IA)
+                </h4>
+                {redditPainPoints.length === 0 ? (
+                  <div className="bg-orange-500/5 p-5 rounded-lg border border-orange-500/10 text-center space-y-4">
+                    <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                      Ainda não mapeado. Deixe a IA analisar as discussões e desabafos dos usuários no Reddit para extrair dores críticas e reais do seu público-alvo.
+                    </p>
+                    <Button
+                      onClick={handleMapRedditPainPoints}
+                      disabled={mappingReddit}
+                      className="bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
+                    >
+                      {mappingReddit ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" /> Mapeando dores...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="h-4 w-4 text-yellow-300 animate-pulse" /> Mapear Dores Reais (Reddit)
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {redditPainPoints.map((pain: any, index: number) => (
+                      <div key={index} className="bg-orange-500/5 border border-orange-500/10 p-5 rounded-xl space-y-3 transition-all hover:border-orange-500/20">
+                        <div className="flex justify-between items-start gap-2">
+                          <h5 className="font-extrabold text-sm text-white leading-snug">
+                            {index + 1}. {pain.pain_point}
+                          </h5>
+                          <Badge 
+                            variant="outline" 
+                            className={cn(
+                              "shrink-0 text-[10px] font-bold px-2.5 py-0.5 rounded-full border-none",
+                              pain.severity >= 4 
+                                ? "bg-red-500/20 text-red-400" 
+                                : pain.severity >= 3 
+                                ? "bg-yellow-500/20 text-yellow-400" 
+                                : "bg-zinc-800 text-zinc-400"
+                            )}
+                          >
+                            Severidade: {pain.severity}/5
+                          </Badge>
+                        </div>
+
+                        {pain.quotes && pain.quotes.length > 0 && (
+                          <div className="space-y-2 border-l-2 border-orange-500/30 pl-3">
+                            {pain.quotes.map((quote: string, qIdx: number) => (
+                              <p key={qIdx} className="text-xs text-zinc-400 italic">
+                                &ldquo;{quote}&rdquo;
+                              </p>
+                            ))}
+                          </div>
+                        )}
+
+                        {pain.source_title && (
+                          <div className="pt-2.5 text-[10px] text-muted-foreground flex justify-between items-center flex-wrap gap-2 border-t border-white/5">
+                            <span className="truncate max-w-[220px]" title={pain.source_title}>
+                              Origem: {pain.source_title}
+                            </span>
+                            {pain.source_url && (
+                              <a 
+                                href={pain.source_url} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="text-orange-400 hover:text-orange-300 hover:underline inline-flex items-center gap-0.5"
+                              >
+                                Ver Discussão ↗
+                              </a>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+
+                    <div className="flex justify-end">
+                      <Button
+                        onClick={handleMapRedditPainPoints}
+                        disabled={mappingReddit}
+                        variant="ghost"
+                        className="text-orange-400 hover:text-orange-300 hover:bg-orange-500/5 text-xs font-bold"
+                      >
+                        {mappingReddit ? (
+                          <>
+                            <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Remapeando...
+                          </>
+                        ) : (
+                          <>
+                            Refazer Análise de IA ↗
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <h4 className="font-bold text-sm text-muted-foreground mb-3 uppercase tracking-wider flex items-center justify-between">
+                  📢 Kit de Lançamento & Marketing (IA)
+                </h4>
+                {!marketingKit || Object.keys(marketingKit).length === 0 ? (
+                  <div className="bg-primary/5 p-5 rounded-lg border border-primary/10 text-center space-y-4">
+                    <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                      Dificuldade em vender seu SaaS? Deixe a IA gerar copys prontas em formato de thread do Twitter/X, posts profissionais do LinkedIn, roteiros de vídeos para TikTok/Reels e e-mails de vendas frios.
+                    </p>
+                    <Button
+                      onClick={handleGenerateMarketingKit}
+                      disabled={generatingKit}
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
+                    >
+                      {generatingKit ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" /> Gerando Kit de Marketing...
+                        </>
+                      ) : (
+                        <>
+                          <Megaphone className="h-4 w-4 text-white" /> Gerar Kit de Marketing (IA)
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Tab Selector */}
+                    <div className="grid grid-cols-4 p-1 bg-white/5 rounded-xl border border-white/5">
+                      {(["twitter", "linkedin", "tiktok", "email"] as const).map((tab) => (
+                        <button
+                          key={tab}
+                          type="button"
+                          onClick={() => setMarketingTab(tab)}
+                          className={cn(
+                            "py-2 rounded-lg text-xxs font-bold uppercase transition-all duration-300",
+                            marketingTab === tab
+                              ? "bg-primary text-primary-foreground shadow-md"
+                              : "text-muted-foreground hover:text-white"
+                          )}
+                        >
+                          {tab === "twitter" && "Twitter/X"}
+                          {tab === "linkedin" && "LinkedIn"}
+                          {tab === "tiktok" && "TikTok/Reels"}
+                          {tab === "email" && "E-mail"}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Content display based on active tab */}
+                    <div className="bg-zinc-900/40 border border-white/5 p-5 rounded-xl space-y-3 relative group">
+                      
+                      {/* Twitter Thread Tab */}
+                      {marketingTab === "twitter" && marketingKit.twitter_thread && (
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                            <span className="text-xs font-semibold text-zinc-400">Sequência do Twitter/X (Thread)</span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
+                              onClick={() => handleCopyMarketingText(marketingKit.twitter_thread.join("\n\n"), "tw-all")}
+                            >
+                              {copiedMarketing === "tw-all" ? "Copiado!" : "Copiar Thread Completa"}
+                            </Button>
+                          </div>
+                          <div className="space-y-3">
+                            {marketingKit.twitter_thread.map((tweet: string, idx: number) => (
+                              <div key={idx} className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 relative group/tweet">
+                                <div className="text-xxs text-primary font-bold mb-1">Tweet {idx + 1}/{marketingKit.twitter_thread.length}</div>
+                                <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-wrap">{tweet}</p>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6 absolute top-2.5 right-2.5 opacity-0 group-hover/tweet:opacity-100 transition-opacity"
+                                  onClick={() => handleCopyMarketingText(tweet, `tw-${idx}`)}
+                                >
+                                  {copiedMarketing === `tw-${idx}` ? <CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* LinkedIn Post Tab */}
+                      {marketingTab === "linkedin" && (
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                            <span className="text-xs font-semibold text-zinc-400">Postagem Profissional do LinkedIn</span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
+                              onClick={() => handleCopyMarketingText(marketingKit.linkedin_post, "li")}
+                            >
+                              {copiedMarketing === "li" ? "Copiado!" : "Copiar Texto"}
+                            </Button>
+                          </div>
+                          <div className="p-4 bg-zinc-950/40 rounded-lg border border-white/5 max-h-[350px] overflow-y-auto pr-2">
+                            <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-line">{marketingKit.linkedin_post}</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* TikTok/Reels Script Tab */}
+                      {marketingTab === "tiktok" && marketingKit.tiktok_script && (
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                            <span className="text-xs font-semibold text-zinc-400">Roteiro de Vídeo Curto (TikTok/Reels)</span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
+                              onClick={() => {
+                                const fullScript = `HOOK:\n"${marketingKit.tiktok_script.hook}"\n\nSCENES:\n${marketingKit.tiktok_script.scenes.map((s: any, i: number) => `CENA ${i+1}:\nVisual: [${s.visual}]\nFala: "${s.voiceover}"`).join("\n\n")}\n\nCTA:\n"${marketingKit.tiktok_script.cta}"`;
+                                handleCopyMarketingText(fullScript, "tk");
+                              }}
+                            >
+                              {copiedMarketing === "tk" ? "Copiado!" : "Copiar Roteiro Completo"}
+                            </Button>
+                          </div>
+                          <div className="space-y-3 text-xs">
+                            <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
+                              <span className="font-bold text-red-400 block mb-1">🧲 O GANCHO (Primeiros 3s):</span>
+                              <p className="italic text-zinc-300">&ldquo;{marketingKit.tiktok_script.hook}&rdquo;</p>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <span className="font-bold text-zinc-400 block">🎬 CENAS & NARRATIVA:</span>
+                              {marketingKit.tiktok_script.scenes.map((scene: any, idx: number) => (
+                                <div key={idx} className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 space-y-1">
+                                  <div className="text-[10px] text-zinc-500 uppercase font-bold">Cena {idx + 1}</div>
+                                  <div className="text-zinc-500 font-semibold text-xxs">Vídeo: <span className="font-normal text-zinc-400 italic">[{scene.visual}]</span></div>
+                                  <div className="text-zinc-200">Áudio (Falar): &ldquo;{scene.voiceover}&rdquo;</div>
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
+                              <span className="font-bold text-green-400 block mb-1">📢 CHAMADA PARA AÇÃO (CTA):</span>
+                              <p className="font-semibold text-zinc-300">{marketingKit.tiktok_script.cta}</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Cold Email Tab */}
+                      {marketingTab === "email" && (
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                            <span className="text-xs font-semibold text-zinc-400">E-mail de Prospecção Fria</span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
+                              onClick={() => handleCopyMarketingText(marketingKit.cold_email, "em")}
+                            >
+                              {copiedMarketing === "em" ? "Copiado!" : "Copiar E-mail"}
+                            </Button>
+                          </div>
+                          <div className="p-4 bg-zinc-950/40 rounded-lg border border-white/5 pr-2">
+                            <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-line">{marketingKit.cold_email}</p>
+                          </div>
+                        </div>
+                      )}
+
+                    </div>
+
+                    <div className="flex justify-end">
+                      <Button
+                        onClick={handleGenerateMarketingKit}
+                        disabled={generatingKit}
+                        variant="ghost"
+                        className="text-primary hover:text-primary-foreground hover:bg-primary/5 text-xs font-bold"
+                      >
+                        {generatingKit ? (
+                          <>
+                            <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Remontando...
+                          </>
+                        ) : (
+                          <>
+                            Refazer Copys de IA ↗
+                          </>
+                        )}
+                      </Button>
+                    </div>
+
+                  </div>
+                )}
+              </div>
+
+              {/* SaaS Financial Calculator Section */}
+              <div className="border-t border-white/5 pt-6">
+                <h4 className="font-bold text-sm text-muted-foreground mb-3 uppercase tracking-wider flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-emerald-400" />
+                  📊 Calculadora de Viabilidade Financeira (SaaS)
+                </h4>
+                
+                <div className="bg-zinc-900/40 border border-white/5 p-5 rounded-xl space-y-4">
+                  <p className="text-xs text-zinc-400 leading-relaxed">
+                    Simule a viabilidade financeira do seu SaaS em tempo real. Altere os parâmetros abaixo para ver as projeções de faturamento e metas de aquisição.
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Inputs Column */}
+                    <div className="space-y-4">
+                      <h5 className="text-xs font-bold text-zinc-300 uppercase tracking-wide border-b border-white/5 pb-2">
+                        Parâmetros de Simulação
+                      </h5>
+                      
+                      {/* Price input */}
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between text-xs">
+                          <label className="text-zinc-400 font-medium flex items-center gap-1">
+                            <DollarSign className="h-3.5 w-3.5 text-emerald-400" />
+                            Preço da Assinatura (Mensal)
+                          </label>
+                          <span className="text-emerald-400 font-bold">${calcPrice}</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <Input
+                            type="number"
+                            value={calcPrice}
+                            onChange={(e) => setCalcPrice(Math.max(1, parseFloat(e.target.value) || 0))}
+                            className="bg-zinc-950/40 border-white/5 text-xs text-white h-8 w-24 shrink-0"
+                            min="1"
+                          />
+                          <input
+                            type="range"
+                            min="5"
+                            max="500"
+                            value={calcPrice}
+                            onChange={(e) => setCalcPrice(parseInt(e.target.value))}
+                            className="flex-1 accent-emerald-500 bg-zinc-950/40 cursor-pointer h-2 rounded-lg my-auto"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Leads / Traffic input */}
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between text-xs">
+                          <label className="text-zinc-400 font-medium flex items-center gap-1">
+                            <Users className="h-3.5 w-3.5 text-blue-400" />
+                            Tráfego / Leads (Mensal)
+                          </label>
+                          <span className="text-blue-400 font-bold">{calcLeadsTarget.toLocaleString()} visitantes</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <Input
+                            type="number"
+                            value={calcLeadsTarget}
+                            onChange={(e) => setCalcLeadsTarget(Math.max(100, parseInt(e.target.value) || 0))}
+                            className="bg-zinc-950/40 border-white/5 text-xs text-white h-8 w-24 shrink-0"
+                            min="100"
+                          />
+                          <input
+                            type="range"
+                            min="100"
+                            max="50000"
+                            step="100"
+                            value={calcLeadsTarget}
+                            onChange={(e) => setCalcLeadsTarget(parseInt(e.target.value))}
+                            className="flex-1 accent-blue-500 bg-zinc-950/40 cursor-pointer h-2 rounded-lg my-auto"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Conversion input */}
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between text-xs">
+                          <label className="text-zinc-400 font-medium flex items-center gap-1">
+                            <Percent className="h-3.5 w-3.5 text-purple-400" />
+                            Taxa de Conversão
+                          </label>
+                          <span className="text-purple-400 font-bold">{calcConversion}%</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <Input
+                            type="number"
+                            step="0.1"
+                            value={calcConversion}
+                            onChange={(e) => setCalcConversion(Math.max(0.1, parseFloat(e.target.value) || 0))}
+                            className="bg-zinc-950/40 border-white/5 text-xs text-white h-8 w-24 shrink-0"
+                            min="0.1"
+                            max="100"
+                          />
+                          <input
+                            type="range"
+                            min="0.1"
+                            max="10"
+                            step="0.1"
+                            value={calcConversion}
+                            onChange={(e) => setCalcConversion(parseFloat(e.target.value))}
+                            className="flex-1 accent-purple-500 bg-zinc-950/40 cursor-pointer h-2 rounded-lg my-auto"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Churn rate input */}
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between text-xs">
+                          <label className="text-zinc-400 font-medium flex items-center gap-1">
+                            <HelpCircle className="h-3.5 w-3.5 text-red-400" />
+                            Taxa de Churn (Cancelamento Mensal)
+                          </label>
+                          <span className="text-red-400 font-bold">{calcChurn}%</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <Input
+                            type="number"
+                            step="0.5"
+                            value={calcChurn}
+                            onChange={(e) => setCalcChurn(Math.max(0, parseFloat(e.target.value) || 0))}
+                            className="bg-zinc-950/40 border-white/5 text-xs text-white h-8 w-24 shrink-0"
+                            min="0"
+                            max="100"
+                          />
+                          <input
+                            type="range"
+                            min="0"
+                            max="25"
+                            step="0.5"
+                            value={calcChurn}
+                            onChange={(e) => setCalcChurn(parseFloat(e.target.value))}
+                            className="flex-1 accent-red-500 bg-zinc-950/40 cursor-pointer h-2 rounded-lg my-auto"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Projections Column */}
+                    <div className="space-y-4">
+                      <h5 className="text-xs font-bold text-zinc-300 uppercase tracking-wide border-b border-white/5 pb-2">
+                        Métricas de Viabilidade & Prospecção
+                      </h5>
+
+                      {/* Metrics cards grid */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 space-y-1">
+                          <span className="text-[10px] text-zinc-400 font-medium block">Novos Clientes/Mês</span>
+                          <span className="text-base font-bold text-blue-400">
+                            {Math.round(calcLeadsTarget * (calcConversion / 100))}
+                          </span>
+                        </div>
+
+                        <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 space-y-1">
+                          <span className="text-[10px] text-zinc-400 font-medium block">Lifetime Value (LTV)</span>
+                          <span className="text-base font-bold text-emerald-400">
+                            ${calcChurn > 0 ? Math.round(calcPrice / (calcChurn / 100)) : calcPrice * 100}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* 12-Month Projected MRR Card */}
+                      <div className="p-4 bg-zinc-950/40 rounded-lg border border-emerald-500/20 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl -mr-8 -mt-8" />
+                        <span className="text-[10px] text-zinc-400 font-medium block">Receita Recorrente Projetada (12 Meses)</span>
+                        <div className="flex items-baseline gap-1 mt-1">
+                          <span className="text-2xl font-extrabold text-white">
+                            ${(() => {
+                              const newCustomers = calcLeadsTarget * (calcConversion / 100);
+                              const churnRate = calcChurn / 100;
+                              let totalCustomers = 0;
+                              if (churnRate > 0) {
+                                totalCustomers = newCustomers * ((1 - Math.pow(1 - churnRate, 12)) / churnRate);
+                              } else {
+                                totalCustomers = newCustomers * 12;
+                              }
+                              return Math.round(totalCustomers * calcPrice).toLocaleString();
+                            })()}
+                          </span>
+                          <span className="text-xs text-emerald-400 font-semibold">/mês (MRR)</span>
+                        </div>
+                        <p className="text-[10px] text-zinc-500 mt-2 leading-relaxed">
+                          Baseado em adquirir novos clientes mensalmente com retenção composta.
+                        </p>
+                      </div>
+
+                      {/* Financial Goals / Targets list */}
+                      <div className="space-y-2">
+                        <span className="text-[10px] text-zinc-400 font-bold block uppercase tracking-wider">Clientes Necessários por Meta:</span>
+                        <div className="space-y-1 text-xs">
+                          <div className="flex justify-between items-center p-2 bg-zinc-950/20 rounded border border-white/5">
+                            <span className="text-zinc-400">Meta $1k/mês:</span>
+                            <span className="font-bold text-white">{Math.ceil(1000 / calcPrice)} clientes</span>
+                          </div>
+                          <div className="flex justify-between items-center p-2 bg-zinc-950/20 rounded border border-white/5">
+                            <span className="text-zinc-400">Meta $5k/mês:</span>
+                            <span className="font-bold text-white">{Math.ceil(5000 / calcPrice)} clientes</span>
+                          </div>
+                          <div className="flex justify-between items-center p-2 bg-zinc-950/20 rounded border border-white/5">
+                            <span className="text-zinc-400">Meta $10k/mês:</span>
+                            <span className="font-bold text-white">{Math.ceil(10000 / calcPrice)} clientes</span>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
                   </div>
                 </div>
               </div>
