@@ -1,4 +1,5 @@
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/utils/supabase/server"
+import { redirect } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart3, TrendingUp, MessageSquare, Star, Flame } from "lucide-react"
 import { AdvancedFilters } from "@/components/advanced-filters"
@@ -28,6 +29,13 @@ function StarRating({ stars }: { stars: number }) {
 }
 
 export default async function TrendsPage(props: { searchParams: Promise<{ country?: string, time?: string, search?: string, minScore?: string, view?: string }> }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   const searchParams = await props.searchParams;
   const country = searchParams.country || "US";
   const time = searchParams.time || "all";
@@ -41,6 +49,7 @@ export default async function TrendsPage(props: { searchParams: Promise<{ countr
     .from('opportunities')
     .select('saas_name, book_category, trends_growth_monthly, reddit_mentions, viral_opportunity_score')
     .eq('country', country)
+    .or(`user_id.is.null,user_id.eq.${user.id}`)
     .order('trends_growth_monthly', { ascending: false });
 
   if (filterDate) {

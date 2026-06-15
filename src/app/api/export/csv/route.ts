@@ -1,4 +1,3 @@
-import { supabase as adminSupabase } from '@/lib/supabase'
 import { createClient } from '@/utils/supabase/server'
 import { NextResponse } from 'next/server'
 
@@ -17,11 +16,12 @@ export async function GET(request: Request) {
     return new NextResponse('Unauthorized. Faça login para exportar.', { status: 401 })
   }
 
-  // Busca os dados
-  let query = adminSupabase
+  // Busca os dados (globais ou criados por este usuário) usando o cliente do servidor autenticado
+  let query = supabase
     .from('opportunities')
     .select('*')
     .eq('country', country)
+    .or(`user_id.is.null,user_id.eq.${user.id}`)
     .order('viral_opportunity_score', { ascending: false })
 
   if (filterDate) {

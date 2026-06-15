@@ -4,7 +4,6 @@ import { TrendsService } from '@/services/TrendsService';
 import { RedditService } from '@/services/RedditService';
 import { FacebookService } from '@/services/FacebookService';
 import { GroqService } from '@/services/GroqService';
-import { supabase } from '@/lib/supabase';
 import { createClient } from '@/utils/supabase/server';
 
 // Lógica de cálculo do Viral Opportunity Score (0-100)
@@ -31,7 +30,7 @@ export async function POST(request: Request) {
     // 0.2 Limitador de Créditos: Máximo de 10 pesquisas por usuário a cada 24 horas (ignorado em desenvolvimento)
     if (process.env.NODE_ENV !== 'development') {
       const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-      const { count: searchCount, error: countError } = await supabase
+      const { count: searchCount, error: countError } = await authSupabase
         .from('opportunities')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', user.id)
@@ -53,7 +52,7 @@ export async function POST(request: Request) {
     // 0.5 Cache: Se já buscamos esse livro/termo nos últimos 7 dias, retorna do cache (apenas para pesquisas gerais sem ideia estruturada)
     if (!idea) {
       console.log("[Radar] Checando cache para:", keyword);
-      const { data: cachedOpp } = await supabase
+      const { data: cachedOpp } = await authSupabase
         .from('opportunities')
         .select('*')
         .eq('country', country)
@@ -140,7 +139,7 @@ export async function POST(request: Request) {
     );
 
     // 6. Salvar no Supabase
-    const { data: insertedData, error: dbError } = await supabase
+    const { data: insertedData, error: dbError } = await authSupabase
       .from('opportunities')
       .insert([
         {
@@ -201,12 +200,12 @@ export async function DELETE(request: Request) {
     }
 
     // Deleta dos favoritos primeiro para evitar erro de constraint de chave estrangeira
-    await supabase
+    await authSupabase
       .from('user_favorites')
       .delete()
       .eq('opportunity_id', id);
 
-    let query = supabase
+    let query = authSupabase
       .from('opportunities')
       .delete()
       .eq('id', id);

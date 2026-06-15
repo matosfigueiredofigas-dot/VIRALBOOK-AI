@@ -1,17 +1,25 @@
-import { supabase } from "@/lib/supabase"
-import { notFound } from "next/navigation"
+import { createClient } from "@/utils/supabase/server"
+import { notFound, redirect } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import { PrintButton } from "@/components/print-button"
 
 export const dynamic = 'force-dynamic';
 
 export default async function CanvasPage(props: { params: Promise<{ id: string }> }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   const params = await props.params;
 
   const { data: opportunity, error } = await supabase
     .from('opportunities')
     .select('*')
     .eq('id', params.id)
+    .or(`user_id.is.null,user_id.eq.${user.id}`)
     .single();
 
   if (error || !opportunity) {

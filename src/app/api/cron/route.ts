@@ -4,7 +4,7 @@ import { TrendsService } from '@/services/TrendsService';
 import { RedditService } from '@/services/RedditService';
 import { FacebookService } from '@/services/FacebookService';
 import { GroqService } from '@/services/GroqService';
-import { supabase } from '@/lib/supabase';
+import { createAdminClient } from '@/utils/supabase/admin';
 
 // Lógica de cálculo do Viral Opportunity Score (0-100)
 // 25% Trends, 20% Reddit, 20% Facebook (Ads + Groups), 20% Livro, 15% IA
@@ -38,6 +38,7 @@ const NICHES = [
 ];
 
 export async function GET(request: Request) {
+  const adminSupabase = createAdminClient();
   try {
     // Segurança: Verifica se a requisição tem a chave secreta de autorização
     const authHeader = request.headers.get('authorization');
@@ -74,8 +75,8 @@ export async function GET(request: Request) {
           aiInsight.aiOpportunityScore
         );
 
-        // Salva no Supabase
-        await supabase.from('opportunities').insert([{
+        // Salva no Supabase usando o cliente administrador
+        await adminSupabase.from('opportunities').insert([{
           book_title: book.title,
           book_author: book.authors[0],
           book_category: book.categories[0],
