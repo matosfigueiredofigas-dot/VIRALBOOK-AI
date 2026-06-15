@@ -24,12 +24,16 @@ export async function POST(req: Request) {
     // 1. Carregar Oportunidade
     const { data: opportunity, error: fetchErr } = await supabase
       .from('opportunities')
-      .select('id, saas_name, target_audience, problem_solved, reddit_pain_points')
+      .select('id, saas_name, target_audience, problem_solved, reddit_pain_points, user_id')
       .eq('id', opportunityId)
       .single();
 
     if (fetchErr || !opportunity) {
       return NextResponse.json({ error: 'Oportunidade não encontrada' }, { status: 404 });
+    }
+
+    if (opportunity.user_id && opportunity.user_id !== user.id) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
 
     // Se já foi analisado e possui dores no cache, retorna direto

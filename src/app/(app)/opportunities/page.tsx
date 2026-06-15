@@ -1,4 +1,5 @@
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/utils/supabase/server"
+import { redirect } from "next/navigation"
 import { Lightbulb } from "lucide-react"
 
 import { getFilterDate } from "@/lib/utils"
@@ -7,6 +8,13 @@ import { OpportunitiesGrid } from "@/components/opportunities-grid"
 export const dynamic = 'force-dynamic';
 
 export default async function OpportunitiesPage(props: { searchParams: Promise<{ country?: string, time?: string }> }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   const searchParams = await props.searchParams;
   const country = searchParams.country || "US";
   const time = searchParams.time || "all";
@@ -16,6 +24,7 @@ export default async function OpportunitiesPage(props: { searchParams: Promise<{
     .from('opportunities')
     .select('id, saas_name, problem_solved, target_audience, monetization_model, potential_revenue, implementation_difficulty')
     .eq('country', country)
+    .or(`user_id.is.null,user_id.eq.${user.id}`)
     .order('created_at', { ascending: false });
 
   if (filterDate) {

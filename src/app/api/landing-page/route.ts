@@ -41,6 +41,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Oportunidade não encontrada' }, { status: 404 });
     }
 
+    if (opportunity.user_id && opportunity.user_id !== user?.id) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+    }
+
     // Verificar se já existe uma Landing Page para essa oportunidade
     const { data: existingLP } = await supabase
       .from('landing_pages')

@@ -1,4 +1,5 @@
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/utils/supabase/server"
+import { redirect } from "next/navigation"
 import { BookOpen } from "lucide-react"
 
 import { getFilterDate } from "@/lib/utils"
@@ -8,6 +9,13 @@ import { ProcessedBooks } from "@/components/processed-books"
 export const dynamic = 'force-dynamic';
 
 export default async function RadarPage(props: { searchParams: Promise<{ country?: string, time?: string }> }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   const searchParams = await props.searchParams;
   const country = searchParams.country || "US";
   const time = searchParams.time || "all";
@@ -17,6 +25,7 @@ export default async function RadarPage(props: { searchParams: Promise<{ country
     .from('opportunities')
     .select('id, book_title, book_author, book_category, country, created_at')
     .eq('country', country)
+    .or(`user_id.is.null,user_id.eq.${user.id}`)
     .order('created_at', { ascending: false });
 
   if (filterDate) {

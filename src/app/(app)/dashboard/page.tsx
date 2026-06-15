@@ -29,6 +29,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cou
   let query = supabase
     .from('opportunities')
     .select('*')
+    .or(`user_id.is.null,user_id.eq.${user.id}`)
     .order('created_at', { ascending: false });
 
   if (country) {

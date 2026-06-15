@@ -1,4 +1,5 @@
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/utils/supabase/server"
+import { redirect } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Activity, Award, FileSpreadsheet, Sparkles, TrendingUp } from "lucide-react"
@@ -8,6 +9,13 @@ import { getFilterDate } from "@/lib/utils"
 export const dynamic = 'force-dynamic';
 
 export default async function NichesPage(props: { searchParams: Promise<{ country?: string, time?: string }> }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   const searchParams = await props.searchParams;
   const country = searchParams.country || "US";
   const time = searchParams.time || "all";
@@ -17,6 +25,7 @@ export default async function NichesPage(props: { searchParams: Promise<{ countr
     .from('opportunities')
     .select('book_category, viral_opportunity_score, country')
     .eq('country', country)
+    .or(`user_id.is.null,user_id.eq.${user.id}`)
     .order('viral_opportunity_score', { ascending: false });
 
   if (filterDate) {
