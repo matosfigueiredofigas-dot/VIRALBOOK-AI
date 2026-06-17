@@ -16,16 +16,19 @@ export default async function OpportunitiesPage(props: { searchParams: Promise<{
   }
 
   const searchParams = await props.searchParams;
-  const country = searchParams.country || "US";
+  const country = searchParams.country || "ALL";
   const time = searchParams.time || "all";
   const filterDate = getFilterDate(time);
 
   let query = supabase
     .from('opportunities')
     .select('id, saas_name, problem_solved, target_audience, monetization_model, potential_revenue, implementation_difficulty')
-    .eq('country', country)
     .or(`user_id.is.null,user_id.eq.${user.id}`)
     .order('created_at', { ascending: false });
+
+  if (country !== "ALL") {
+    query = query.eq('country', country);
+  }
 
   if (filterDate) {
     query = query.gte('created_at', filterDate);
@@ -41,7 +44,7 @@ export default async function OpportunitiesPage(props: { searchParams: Promise<{
           SaaS Opportunities
         </h1>
         <p className="text-muted-foreground mt-2">
-          Catálogo exclusivo das ideias geradas para o mercado de <strong className="text-foreground">{country}</strong>.
+          Catálogo exclusivo das ideias geradas para o mercado de <strong className="text-foreground">{country === 'ALL' ? 'TODOS PAÍSES' : country}</strong>.
         </p>
       </div>
 

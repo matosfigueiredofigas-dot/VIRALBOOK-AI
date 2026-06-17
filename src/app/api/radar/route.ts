@@ -47,7 +47,7 @@ export async function POST(request: Request) {
       }
     }
 
-    const { keyword, country = 'US', idea } = await request.json();
+    const { keyword, country = 'ALL', idea } = await request.json();
 
     // 0.5 Cache: Se já buscamos esse livro/termo nos últimos 7 dias, retorna do cache (apenas para pesquisas gerais sem ideia estruturada)
     if (!idea) {

@@ -5,8 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Globe } from "lucide-react";
 
 const COUNTRIES = [
-  { code: "US", name: "United States" },
-  { code: "BR", name: "Brazil" },
+  { code: "ALL", name: "TODOS PAÍSES" },
 ];
 
 export function CountrySelect() {
@@ -14,10 +13,10 @@ export function CountrySelect() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   
-  const currentCountry = searchParams.get("country") || "US";
+  const currentCountry = searchParams.get("country") || "ALL";
 
   const handleCountryChange = (code: string | null) => {
-    const val = code || "US";
+    const val = code || "ALL";
     const params = new URLSearchParams(searchParams.toString());
     params.set("country", val);
     router.push(`${pathname}?${params.toString()}`);

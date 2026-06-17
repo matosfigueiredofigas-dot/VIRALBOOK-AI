@@ -9,7 +9,7 @@ export class TrendsService {
     try {
       const results = await googleTrends.interestOverTime({
         keyword: keyword,
-        geo: geo,
+        geo: geo === 'ALL' ? '' : geo,
         startTime: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Últimos 30 dias
       });
       

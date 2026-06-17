@@ -5,7 +5,7 @@ import { getFilterDate } from '@/lib/utils'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
-  const country = searchParams.get('country') || 'US'
+  const country = searchParams.get('country') || 'ALL'
   const time = searchParams.get('time') || 'all'
   const filterDate = getFilterDate(time);
 
@@ -20,9 +20,12 @@ export async function GET(request: Request) {
   let query = supabase
     .from('opportunities')
     .select('*')
-    .eq('country', country)
     .or(`user_id.is.null,user_id.eq.${user.id}`)
     .order('viral_opportunity_score', { ascending: false })
+
+  if (country !== 'ALL') {
+    query = query.eq('country', country);
+  }
 
   if (filterDate) {
     query = query.gte('created_at', filterDate);

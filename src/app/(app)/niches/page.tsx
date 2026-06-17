@@ -17,16 +17,19 @@ export default async function NichesPage(props: { searchParams: Promise<{ countr
   }
 
   const searchParams = await props.searchParams;
-  const country = searchParams.country || "US";
+  const country = searchParams.country || "ALL";
   const time = searchParams.time || "all";
   const filterDate = getFilterDate(time);
 
   let query = supabase
     .from('opportunities')
     .select('book_category, viral_opportunity_score, country')
-    .eq('country', country)
     .or(`user_id.is.null,user_id.eq.${user.id}`)
     .order('viral_opportunity_score', { ascending: false });
+
+  if (country !== "ALL") {
+    query = query.eq('country', country);
+  }
 
   if (filterDate) {
     query = query.gte('created_at', filterDate);
@@ -52,7 +55,7 @@ export default async function NichesPage(props: { searchParams: Promise<{ countr
       <div>
         <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
           <Activity className="h-8 w-8 text-blue-500" />
-          Emerging Niches em {country}
+          Emerging Niches em {country === 'ALL' ? 'TODOS PAÍSES' : country}
         </h1>
         <p className="text-muted-foreground mt-2">
           As categorias com mais bolhas de hype no mercado selecionado.

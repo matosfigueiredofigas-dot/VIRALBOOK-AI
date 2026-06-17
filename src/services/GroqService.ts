@@ -94,7 +94,7 @@ export class GroqService {
       // Objetivo: Entender a dor, avaliar concorrência e achar o diferencial.
       // ---------------------------------------------------------
       const systemAnalyst = `You are a brilliant Business Analyst. Return a valid JSON.
-Output language MUST be in the native language of the requested country.
+Output language MUST be in the native language of the requested country (if country is ALL, output in Portuguese).
 
 Instructions:
 1. Analyze the book metadata, Google Trends data, Reddit pain points, and Facebook signals provided in the user prompt.
@@ -135,7 +135,7 @@ ${targetProblem ? `### Target Problem (You MUST use this problem)\n${targetProbl
       // Objetivo: Criar a solução SaaS e os prompts de código.
       // ---------------------------------------------------------
       const systemArchitect = `You are a brilliant SaaS Technical Architect. Return a valid JSON.
-Output language MUST be in the native language of the requested country.
+Output language MUST be in the native language of the requested country (if country is ALL, output in Portuguese).
 
 Instructions:
 1. Based on the business analyst's findings (problem, audience, and competitive advantage) and the requested technology or angle, design a Micro-SaaS.
@@ -161,7 +161,7 @@ ${targetTechnology ? `### Target Technology/Angle (You MUST utilize this technol
       // Objetivo: Definir preço e estimativa de MRR.
       // ---------------------------------------------------------
       const systemGrowth = `You are a brilliant SaaS Growth Marketer. Return a valid JSON.
-Output language MUST be in the native language of the requested country, EXCEPT for pricing and revenue values (suggested_price and potential_revenue), which MUST always be specified in USD ($) currency.
+Output language MUST be in the native language of the requested country (if country is ALL, output in Portuguese), EXCEPT for pricing and revenue values (suggested_price and potential_revenue), which MUST always be specified in USD ($) currency.
 
 Instructions:
 1. Based on the designed SaaS (name, audience, and features) and the requested monetization model, define the business monetization model, suggested price, and potential revenue.

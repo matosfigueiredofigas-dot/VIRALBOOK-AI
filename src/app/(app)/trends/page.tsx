@@ -37,7 +37,7 @@ export default async function TrendsPage(props: { searchParams: Promise<{ countr
   }
 
   const searchParams = await props.searchParams;
-  const country = searchParams.country || "US";
+  const country = searchParams.country || "ALL";
   const time = searchParams.time || "all";
   const search = searchParams.search || "";
   const minScore = searchParams.minScore ? parseInt(searchParams.minScore) : 0;
@@ -48,9 +48,12 @@ export default async function TrendsPage(props: { searchParams: Promise<{ countr
   let query = supabase
     .from('opportunities')
     .select('saas_name, book_category, trends_growth_monthly, reddit_mentions, viral_opportunity_score')
-    .eq('country', country)
     .or(`user_id.is.null,user_id.eq.${user.id}`)
     .order('trends_growth_monthly', { ascending: false });
+
+  if (country !== "ALL") {
+    query = query.eq('country', country);
+  }
 
   if (filterDate) {
     query = query.gte('created_at', filterDate);
@@ -73,7 +76,7 @@ export default async function TrendsPage(props: { searchParams: Promise<{ countr
           <div className="p-2 bg-green-500/10 rounded-xl">
             <BarChart3 className="h-8 w-8 text-green-500" />
           </div>
-          Global Trends ({country})
+          Global Trends ({country === 'ALL' ? 'TODOS PAÍSES' : country})
         </h1>
         <p className="text-muted-foreground mt-3 text-lg">
           Análise de crescimento e termômetro de validação no Reddit para cada mercado.

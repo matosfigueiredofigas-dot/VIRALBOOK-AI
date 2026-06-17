@@ -17,16 +17,19 @@ export default async function RadarPage(props: { searchParams: Promise<{ country
   }
 
   const searchParams = await props.searchParams;
-  const country = searchParams.country || "US";
+  const country = searchParams.country || "ALL";
   const time = searchParams.time || "all";
   const filterDate = getFilterDate(time);
 
   let query = supabase
     .from('opportunities')
     .select('id, book_title, book_author, book_category, country, created_at')
-    .eq('country', country)
     .or(`user_id.is.null,user_id.eq.${user.id}`)
     .order('created_at', { ascending: false });
+
+  if (country !== "ALL") {
+    query = query.eq('country', country);
+  }
 
   if (filterDate) {
     query = query.gte('created_at', filterDate);
@@ -42,7 +45,7 @@ export default async function RadarPage(props: { searchParams: Promise<{ country
           Ebooks Radar
         </h1>
         <p className="text-muted-foreground mt-2">
-          Base literária de {country} escaneada.
+          Base literária de {country === 'ALL' ? 'TODOS PAÍSES' : country} escaneada.
         </p>
       </div>
 

@@ -17,7 +17,7 @@ export function IdeaGenerator() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [copied, setCopied] = useState(false);
   const [targetStars, setTargetStars] = useState<string>("random");
-  const [country, setCountry] = useState<string>("BR");
+  const [country, setCountry] = useState<string>("ALL");
   
   // Pool local com fallback para dados estáticos
   const [audiencesPool, setAudiencesPool] = useState<Item[]>(audiences);
@@ -524,7 +524,7 @@ export function IdeaGenerator() {
   };
 
   const handleCountryChange = (value: string | null) => {
-    setCountry(value || "BR");
+    setCountry(value || "ALL");
   };
 
   const handleCopy = () => {
@@ -667,8 +667,7 @@ export function IdeaGenerator() {
                 <SelectValue placeholder="País Alvo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="BR">🇧🇷 Brasil (BR)</SelectItem>
-                <SelectItem value="US">🇺🇸 Estados Unidos (US)</SelectItem>
+                <SelectItem value="ALL">🌐 TODOS PAÍSES</SelectItem>
               </SelectContent>
             </Select>
           </div>

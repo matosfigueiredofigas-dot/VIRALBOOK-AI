@@ -18,7 +18,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cou
   }
 
   const searchParams = await props.searchParams;
-  const country = searchParams.country || null; // Opcional
+  const country = searchParams.country || "ALL";
   const time = searchParams.time || "all";
   const search = searchParams.search || "";
   const minScore = searchParams.minScore ? parseInt(searchParams.minScore) : 0;
@@ -32,7 +32,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cou
     .or(`user_id.is.null,user_id.eq.${user.id}`)
     .order('created_at', { ascending: false });
 
-  if (country) {
+  if (country && country !== "ALL") {
     query = query.eq('country', country);
   }
 
@@ -86,7 +86,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cou
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="glass-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Oportunidades SaaS ({country})</CardTitle>
+            <CardTitle className="text-sm font-medium">Oportunidades SaaS ({country === 'ALL' ? 'TODOS PAÍSES' : country})</CardTitle>
             <Zap className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
@@ -110,7 +110,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cou
             <Globe className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{country}</div>
+            <div className="text-3xl font-bold text-xl md:text-2xl">{country === 'ALL' ? 'TODOS PAÍSES' : country}</div>
           </CardContent>
         </Card>
       </div>

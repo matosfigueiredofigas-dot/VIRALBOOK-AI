@@ -1059,7 +1059,7 @@ export function OpportunitiesList({ initialData, hideSearch = false }: { initial
     e.preventDefault();
     if (!keyword) return;
 
-    const activeCountry = searchParams.get("country") || "US";
+    const activeCountry = searchParams.get("country") || "ALL";
 
     setLoading(true);
     try {

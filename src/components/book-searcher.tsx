@@ -19,7 +19,7 @@ export function BookSearcher() {
   
   const searchParams = useSearchParams()
   const router = useRouter()
-  const country = searchParams.get("country") || "US"
+  const country = searchParams.get("country") || "ALL"
 
   const searchBooks = async (e?: React.FormEvent, pageToSearch = 0) => {
     if (e) e.preventDefault()
