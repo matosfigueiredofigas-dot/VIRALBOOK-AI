@@ -153,3 +153,19 @@ CREATE POLICY "Enable read for landing page owner" ON public.waitlist_leads
     );
 
 
+
+
+-- Tabela de configurações do sistema (Motor de IA)
+CREATE TABLE IF NOT EXISTS public.system_settings (
+    id TEXT PRIMARY KEY,
+    value JSONB NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.system_settings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Enable read access for all users" ON public.system_settings
+    FOR SELECT USING (true);
+
+CREATE POLICY "Enable all actions for admin users" ON public.system_settings
+    FOR ALL USING (public.is_admin());

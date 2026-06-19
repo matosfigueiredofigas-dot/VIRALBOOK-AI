@@ -8,12 +8,19 @@ import { createClient } from '@/utils/supabase/server';
 
 // Lógica de cálculo do Viral Opportunity Score (0-100)
 // 25% Trends, 20% Reddit, 20% Facebook (Ads + Groups), 20% Livro, 15% IA
-function calculateViralScore(trendsGrowth: number, redditMentions: number, facebookAds: number, facebookGroups: number, aiScore: number = 70) {
-  const trendsWeight = Math.min((trendsGrowth / 100) * 25, 25); // Máx 25 pts se cresceu 100%+
-  const redditWeight = Math.min((redditMentions / 50) * 20, 20); // Máx 20 pts se tiver >= 50 menções
-  const facebookWeight = Math.min(((facebookAds * 3 + facebookGroups) / 30) * 20, 20); // Máx 20 pts para Ads/Groups no FB
-  const bookWeight = 20; // Fixo para MVP simplificado
-  const aiWeight = (aiScore / 100) * 15;
+function calculateViralScore(
+  trendsGrowth: number, 
+  redditMentions: number, 
+  facebookAds: number, 
+  facebookGroups: number, 
+  aiScore: number = 70,
+  weights: { trends: number, reddit: number, facebook: number, book: number, ai: number } = { trends: 25, reddit: 20, facebook: 20, book: 20, ai: 15 }
+) {
+  const trendsWeight = Math.min((trendsGrowth / 100) * weights.trends, weights.trends); 
+  const redditWeight = Math.min((redditMentions / 50) * weights.reddit, weights.reddit); 
+  const facebookWeight = Math.min(((facebookAds * 3 + facebookGroups) / 30) * weights.facebook, weights.facebook); 
+  const bookWeight = weights.book; 
+  const aiWeight = (aiScore / 100) * weights.ai;
   
   return Math.round(trendsWeight + redditWeight + facebookWeight + bookWeight + aiWeight);
 }
@@ -130,13 +137,25 @@ export async function POST(request: Request) {
     }
     console.log("[Radar] IA concluída com sucesso!");
 
+    // 4.5. Buscar Pesos da IA (Configurações do Admin)
+    let aiWeights = { trends: 25, reddit: 20, facebook: 20, book: 20, ai: 15 };
+    try {
+      const { data: settings } = await authSupabase.from('system_settings').select('value').eq('id', 'ai_weights').single();
+      if (settings?.value) {
+        aiWeights = settings.value as typeof aiWeights;
+      }
+    } catch (e) {
+      console.log("[Radar] Usando pesos padrão para o score.");
+    }
+
     // 5. Motor de Pontuação
     const viralScore = calculateViralScore(
       trendsData.monthlyGrowth, 
       redditData.mentions, 
       facebookData.adsCount, 
       facebookData.groupsCount, 
-      aiInsight.aiOpportunityScore
+      aiInsight.aiOpportunityScore,
+      aiWeights
     );
 
     // 6. Salvar no Supabase

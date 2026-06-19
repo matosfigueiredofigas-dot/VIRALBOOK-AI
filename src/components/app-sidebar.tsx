@@ -25,7 +25,7 @@ export async function AppSidebar() {
 
   let isAdmin = false
   if (user) {
-    if (user.email === 'moisesdematos@gmail.com') {
+    if (['moisesdematos@gmail.com', 'edsonquicuca92@gmail.com'].includes(user.email)) {
       isAdmin = true
     } else {
       try {

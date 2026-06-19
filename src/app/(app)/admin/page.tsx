@@ -15,7 +15,7 @@ export default async function AdminPage() {
   // Verifica se o usuário é o dono principal pelo email
   // ou se ele possui a role de admin na tabela profiles
   let isAdmin = false;
-  if (user.email === 'moisesdematos@gmail.com') {
+  if (['moisesdematos@gmail.com', 'edsonquicuca92@gmail.com'].includes(user.email)) {
     isAdmin = true;
   } else {
     const { data: profile } = await supabase

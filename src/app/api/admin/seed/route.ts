@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/server';
 async function checkAdmin(supabase: any) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return false;
-  if (user.email === 'moisesdematos@gmail.com') return true;
+  if (['moisesdematos@gmail.com', 'edsonquicuca92@gmail.com'].includes(user.email)) return true;
 
   const { data: profile } = await supabase
     .from('profiles')

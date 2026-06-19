@@ -18,7 +18,7 @@ export async function checkAdmin(supabase: any) {
     if (!user) return false;
 
     // Proteção dupla: pelo e-mail do dono ou checando o role na tabela profiles
-    if (user.email === 'moisesdematos@gmail.com') return true;
+    if (['moisesdematos@gmail.com', 'edsonquicuca92@gmail.com'].includes(user.email)) return true;
 
     // Usamos o admin client para evitar recursão de RLS na tabela profiles
     const adminSupabase = createAdminClient();

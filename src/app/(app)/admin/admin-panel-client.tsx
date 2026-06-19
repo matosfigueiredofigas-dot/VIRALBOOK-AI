@@ -397,7 +397,7 @@ export function AdminPanelClient({ initialOpps }: { initialOpps: Opp[] }) {
   const totalOpps = opps.length;
 
   // Filtrar utilizadores gratuitos para exibir na aba de pagamentos PIX pendentes
-  const freeUsersPendingPix = users.filter(u => !u.is_premium && u.email !== 'moisesdematos@gmail.com');
+  const freeUsersPendingPix = users.filter(u => !u.is_premium && !['moisesdematos@gmail.com', 'edsonquicuca92@gmail.com'].includes(u.email));
 
   return (
     <div className="space-y-6">
@@ -771,7 +771,7 @@ export function AdminPanelClient({ initialOpps }: { initialOpps: Opp[] }) {
                         <tr key={user.id} className="hover:bg-muted/10 transition-colors">
                           <td className="p-4 font-semibold flex items-center gap-2">
                             {user.email}
-                            {user.email === 'moisesdematos@gmail.com' && <BadgeAdmin />}
+                            {['moisesdematos@gmail.com', 'edsonquicuca92@gmail.com'].includes(user.email) && <BadgeAdmin />}
                           </td>
                           <td className="p-4 capitalize">
                             <span className={`px-2 py-0.5 rounded-full text-xxs font-medium ${user.role === 'admin' ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-muted text-muted-foreground'}`}>
@@ -806,7 +806,7 @@ export function AdminPanelClient({ initialOpps }: { initialOpps: Opp[] }) {
                                 "Dar VIP"
                               )}
                             </Button>
-                            {user.email !== 'moisesdematos@gmail.com' && (
+                            {!['moisesdematos@gmail.com', 'edsonquicuca92@gmail.com'].includes(user.email) && (
                               <Button
                                 variant="ghost"
                                 size="sm"
