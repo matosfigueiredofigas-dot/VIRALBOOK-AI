@@ -1,19 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 
-async function checkAdmin(supabase: any) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return false;
-  if (['moisesdematos@gmail.com', 'edsonquicuca92@gmail.com'].includes(user.email)) return true;
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-
-  return profile?.role === 'admin';
-}
+import { checkAdmin, createAdminClient } from '@/utils/supabase/admin';
 
 export async function POST() {
   try {
@@ -24,9 +12,10 @@ export async function POST() {
       return NextResponse.json({ error: 'Não autorizado.' }, { status: 403 });
     }
 
-    // 1. Limpar oportunidades antigas de demonstração (opcional, mantemos as reais e limpamos as antigas de seed)
-    // Para simplificar localmente, limpamos as oportunidades criadas pelo seeder ou apenas fazemos o truncate/delete
-    const { error: deleteOppError } = await supabase
+    const adminSupabase = createAdminClient();
+
+    // 1. Limpar oportunidades antigas de demonstração
+    const { error: deleteOppError } = await adminSupabase
       .from('opportunities')
       .delete()
       .neq('id', '00000000-0000-0000-0000-000000000000'); // Limpa tudo
@@ -129,7 +118,7 @@ export async function POST() {
       }
     ];
 
-    const { data: insertedOpps, error: insertOppError } = await supabase
+    const { data: insertedOpps, error: insertOppError } = await adminSupabase
       .from('opportunities')
       .insert(demoOpps)
       .select();
@@ -137,7 +126,7 @@ export async function POST() {
     if (insertOppError) throw insertOppError;
 
     // 3. Limpar contatos e semear contatos de suporte de teste
-    const { error: deleteContactsError } = await supabase
+    const { error: deleteContactsError } = await adminSupabase
       .from('contacts')
       .delete()
       .neq('id', '00000000-0000-0000-0000-000000000000');
@@ -165,7 +154,7 @@ export async function POST() {
       }
     ];
 
-    const { data: insertedContacts, error: insertContactsError } = await supabase
+    const { data: insertedContacts, error: insertContactsError } = await adminSupabase
       .from('contacts')
       .insert(demoContacts)
       .select();

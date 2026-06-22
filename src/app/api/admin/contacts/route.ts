@@ -12,7 +12,9 @@ export async function GET() {
       return NextResponse.json({ error: 'Não autorizado.' }, { status: 403 });
     }
 
-    const { data: contacts, error } = await supabase
+    // Usamos o cliente admin para evitar políticas de RLS e erros de recursão ao consultar perfis
+    const adminSupabase = createAdminClient();
+    const { data: contacts, error } = await adminSupabase
       .from('contacts')
       .select('*')
       .order('created_at', { ascending: false });
@@ -70,7 +72,9 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: 'Campos inválidos.' }, { status: 400 });
     }
 
-    const { data, error } = await supabase
+    // Usamos o cliente admin para atualizar
+    const adminSupabase = createAdminClient();
+    const { data, error } = await adminSupabase
       .from('contacts')
       .update({ status })
       .eq('id', contactId)

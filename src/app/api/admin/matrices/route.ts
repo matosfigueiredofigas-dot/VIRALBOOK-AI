@@ -1,21 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { checkAdmin } from '@/utils/supabase/admin';
 import { audiences, problems, technologies, monetizations } from '@/lib/matrices';
-
-// Helper to check if user is admin
-async function checkAdmin(supabase: any) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return false;
-  if (['moisesdematos@gmail.com', 'edsonquicuca92@gmail.com'].includes(user.email)) return true;
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-
-  return profile?.role === 'admin';
-}
 
 // 1. LISTAR ITENS DA MATRIZ (GET)
 export async function GET() {

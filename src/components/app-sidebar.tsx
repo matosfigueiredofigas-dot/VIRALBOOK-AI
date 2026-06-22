@@ -1,5 +1,6 @@
 import { TrendingUp, User, LogOut } from "lucide-react"
 import { createClient } from "@/utils/supabase/server"
+import { checkAdmin } from "@/utils/supabase/admin"
 import {
   Sidebar,
   SidebarContent,
@@ -25,22 +26,7 @@ export async function AppSidebar() {
 
   let isAdmin = false
   if (user) {
-    if (['moisesdematos@gmail.com', 'edsonquicuca92@gmail.com'].includes(user.email)) {
-      isAdmin = true
-    } else {
-      try {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single()
-        if (profile?.role === 'admin') {
-          isAdmin = true
-        }
-      } catch (e) {
-        // Silently catch error if database table doesn't exist
-      }
-    }
+    isAdmin = await checkAdmin(supabase)
   }
 
   return (

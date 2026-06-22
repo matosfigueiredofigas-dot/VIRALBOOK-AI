@@ -1,21 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 
-// Função auxiliar para validar se o usuário atual é o Admin principal
-async function checkAdmin(supabase: any) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return false;
-
-  if (['moisesdematos@gmail.com', 'edsonquicuca92@gmail.com'].includes(user.email)) return true;
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-
-  return profile?.role === 'admin';
-}
+import { checkAdmin, createAdminClient } from '@/utils/supabase/admin';
 
 // EXCLUIR OPORTUNIDADE (DELETE - Admin Apenas)
 export async function DELETE(req: Request) {
@@ -34,7 +20,8 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: 'ID da oportunidade é obrigatório.' }, { status: 400 });
     }
 
-    const { error } = await supabase
+    const adminSupabase = createAdminClient();
+    const { error } = await adminSupabase
       .from('opportunities')
       .delete()
       .eq('id', opportunityId);

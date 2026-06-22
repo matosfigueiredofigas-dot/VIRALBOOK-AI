@@ -2,6 +2,8 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { AdminPanelClient } from "./admin-panel-client";
 
+import { checkAdmin } from "@/utils/supabase/admin";
+
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPage() {
@@ -12,22 +14,7 @@ export default async function AdminPage() {
     redirect("/login");
   }
 
-  // Verifica se o usuário é o dono principal pelo email
-  // ou se ele possui a role de admin na tabela profiles
-  let isAdmin = false;
-  if (['moisesdematos@gmail.com', 'edsonquicuca92@gmail.com'].includes(user.email)) {
-    isAdmin = true;
-  } else {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-
-    if (profile?.role === 'admin') {
-      isAdmin = true;
-    }
-  }
+  const isAdmin = await checkAdmin(supabase);
 
   if (!isAdmin) {
     redirect("/dashboard");

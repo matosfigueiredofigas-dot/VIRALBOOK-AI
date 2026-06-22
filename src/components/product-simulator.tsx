@@ -203,11 +203,11 @@ export function ProductSimulator() {
             clearInterval(interval);
             timer = setTimeout(() => {
               setActiveTab("dashboard");
-            }, 1000);
+            }, 280);
             return prev;
           }
         });
-      }, 900);
+      }, 120);
 
       return () => {
         clearInterval(interval);

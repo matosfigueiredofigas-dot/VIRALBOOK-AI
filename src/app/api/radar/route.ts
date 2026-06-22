@@ -113,20 +113,14 @@ export async function POST(request: Request) {
     const book = books[0];
     console.log("[Radar] Livro:", book.title);
 
-    // 2. Buscar Google Trends
-    console.log("[Radar] Buscando Trends...");
-    const trendsData = await TrendsService.getKeywordGrowth(apiSearchKeyword, country);
-    console.log("[Radar] Trends Data:", trendsData);
-
-    // 3. Buscar Validação Social (Reddit)
-    console.log("[Radar] Buscando Reddit...");
-    const redditData = await RedditService.getSocialValidation(apiSearchKeyword);
-    console.log("[Radar] Reddit Data:", redditData);
-
-    // 3.5 Buscar Validação Social (Facebook)
-    console.log("[Radar] Buscando Facebook...");
-    const facebookData = await FacebookService.getSocialValidation(apiSearchKeyword);
-    console.log("[Radar] Facebook Data:", facebookData);
+    // 2, 3 & 3.5. Buscar Trends, Reddit e Facebook em Paralelo para maior velocidade
+    console.log("[Radar] Buscando Trends, Reddit e Facebook em paralelo...");
+    const [trendsData, redditData, facebookData] = await Promise.all([
+      TrendsService.getKeywordGrowth(apiSearchKeyword, country),
+      RedditService.getSocialValidation(apiSearchKeyword),
+      FacebookService.getSocialValidation(apiSearchKeyword)
+    ]);
+    console.log("[Radar] Sinais obtidos em paralelo:", { trendsData, redditData, facebookData });
 
     // 4. Processamento via IA (Groq/Llama3)
     console.log("[Radar] Iniciando Groq Pipeline Multi-Agente...");

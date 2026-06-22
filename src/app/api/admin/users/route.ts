@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import { checkAdmin } from '@/utils/supabase/admin';
+import { checkAdmin, createAdminClient } from '@/utils/supabase/admin';
 
 // 1. LISTAR TODOS OS USUÁRIOS (GET)
 export async function GET() {
@@ -12,8 +12,9 @@ export async function GET() {
       return NextResponse.json({ error: 'Não autorizado.' }, { status: 403 });
     }
 
-    // Busca os perfis da tabela pública. Ordena por data de criação.
-    const { data: profiles, error } = await supabase
+    // Busca os perfis da tabela pública usando o cliente admin para contornar políticas de RLS e evitar erros de recursão.
+    const adminSupabase = createAdminClient();
+    const { data: profiles, error } = await adminSupabase
       .from('profiles')
       .select('*')
       .order('created_at', { ascending: false });
@@ -48,7 +49,9 @@ export async function PUT(req: Request) {
     if (isPremium !== undefined) updateData.is_premium = isPremium;
     if (role !== undefined) updateData.role = role;
 
-    const { data, error } = await supabase
+    // Atualiza o perfil usando o cliente admin
+    const adminSupabase = createAdminClient();
+    const { data, error } = await adminSupabase
       .from('profiles')
       .update(updateData)
       .eq('id', userId)
