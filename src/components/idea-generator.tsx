@@ -121,7 +121,7 @@ export function IdeaGenerator() {
       const response = await fetch("/api/radar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ keyword: suggestion.name, country }), 
+        body: JSON.stringify({ keyword: suggestion.name, country, tier: suggestion.tier }), 
       });
 
       if (response.ok) {
@@ -189,7 +189,10 @@ export function IdeaGenerator() {
     let filtered = arr;
     if (target !== "random") {
       const t = parseInt(target, 10);
-      filtered = arr.filter(item => item.tier >= t - 1 && item.tier <= t + 1);
+      filtered = arr.filter(item => item.tier === t);
+      if (filtered.length === 0) {
+        filtered = arr.filter(item => item.tier >= t - 1 && item.tier <= t + 1);
+      }
       if (filtered.length === 0) filtered = arr;
     }
     
@@ -540,7 +543,7 @@ export function IdeaGenerator() {
       const response = await fetch("/api/radar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ keyword: idea.audience, country }), 
+        body: JSON.stringify({ keyword: idea.audience, country, tier: idea.tier }), 
       });
 
       if (response.ok) {

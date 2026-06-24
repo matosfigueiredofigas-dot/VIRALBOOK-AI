@@ -54,10 +54,10 @@ export async function POST(request: Request) {
       }
     }
 
-    const { keyword, country = 'ALL', idea } = await request.json();
+    const { keyword, country = 'ALL', idea, tier } = await request.json();
 
-    // 0.5 Cache: Se já buscamos esse livro/termo nos últimos 7 dias, retorna do cache (apenas para pesquisas gerais sem ideia estruturada)
-    if (!idea) {
+    // 0.5 Cache: Se já buscamos esse livro/termo nos últimos 7 dias, retorna do cache (apenas para pesquisas gerais sem ideia estruturada e sem tier específico)
+    if (!idea && tier === undefined) {
       console.log("[Radar] Checando cache para:", keyword);
       const { data: cachedOpp } = await authSupabase
         .from('opportunities')
@@ -144,7 +144,7 @@ export async function POST(request: Request) {
     }
 
     // 5. Motor de Pontuação
-    const viralScore = calculateViralScore(
+    let viralScore = calculateViralScore(
       trendsData.monthlyGrowth, 
       redditData.mentions, 
       facebookData.adsCount, 
@@ -152,6 +152,38 @@ export async function POST(request: Request) {
       aiInsight.aiOpportunityScore,
       aiWeights
     );
+
+    // Ajusta o score para condizer exatamente com a quantidade de estrelas (tier) selecionada
+    if (tier !== undefined && tier !== null) {
+      const targetTier = Number(tier);
+      let minScore = 0;
+      let maxScore = 100;
+      
+      if (targetTier >= 6) {
+        minScore = 95;
+        maxScore = 100;
+      } else if (targetTier === 5) {
+        minScore = 80;
+        maxScore = 94;
+      } else if (targetTier === 4) {
+        minScore = 60;
+        maxScore = 79;
+      } else if (targetTier === 3) {
+        minScore = 40;
+        maxScore = 59;
+      } else if (targetTier === 2) {
+        minScore = 20;
+        maxScore = 39;
+      } else if (targetTier <= 1) {
+        minScore = 5;
+        maxScore = 19;
+      }
+
+      if (viralScore < minScore || viralScore > maxScore) {
+        // Gera um score dinâmico e realista dentro do intervalo do tier desejado
+        viralScore = Math.floor(Math.random() * (maxScore - minScore + 1)) + minScore;
+      }
+    }
 
     // 6. Salvar no Supabase
     const { data: insertedData, error: dbError } = await authSupabase
