@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createClient, getCachedUser } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { AdminPanelClient } from "./admin-panel-client";
 
@@ -7,14 +7,14 @@ import { checkAdmin } from "@/utils/supabase/admin";
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCachedUser();
 
   if (!user) {
     redirect("/login");
   }
 
-  const isAdmin = await checkAdmin(supabase);
+  const supabase = await createClient();
+  const isAdmin = await checkAdmin(supabase, user);
 
   if (!isAdmin) {
     redirect("/dashboard");

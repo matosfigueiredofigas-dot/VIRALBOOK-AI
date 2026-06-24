@@ -45,6 +45,29 @@ function OpportunityCard({ item }: { item: any }) {
   const [marketingTab, setMarketingTab] = useState<"twitter" | "linkedin" | "tiktok" | "email">("twitter");
   const [copiedMarketing, setCopiedMarketing] = useState<string | null>(null);
 
+  const [details, setDetails] = useState<any>(null);
+  const [loadingDetails, setLoadingDetails] = useState(false);
+
+  const handleSheetOpen = async (open: boolean) => {
+    if (open && !details) {
+      setLoadingDetails(true);
+      try {
+        const res = await fetch(`/api/opportunities/${item.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setDetails(data);
+          setRedditPainPoints(data.reddit_pain_points || []);
+          setMarketingKit(data.marketing_kit || {});
+          setCalcPrice(parseSuggestedPrice(data.suggested_price));
+        }
+      } catch (err) {
+        console.error("Erro ao carregar detalhes:", err);
+      } finally {
+        setLoadingDetails(false);
+      }
+    }
+  };
+
   // States for SaaS Financial Calculator
   const parseSuggestedPrice = (priceStr: string): number => {
     if (!priceStr) return 49;
@@ -269,7 +292,7 @@ function OpportunityCard({ item }: { item: any }) {
             <span className="font-semibold text-orange-500">{item.reddit_mentions} refs</span>
           </a>
           <a
-            href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(item.target_audience || item.saas_name)}&media_type=all`}
+            href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(item.search_keyword || item.target_audience || item.saas_name)}&media_type=all`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1 hover:underline hover:text-blue-600 transition-colors"
@@ -279,7 +302,7 @@ function OpportunityCard({ item }: { item: any }) {
             <span className="font-semibold text-blue-600">{item.facebook_ads_count || 0} ads</span>
           </a>
           <a
-            href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(item.target_audience || item.saas_name)}`}
+            href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(item.search_keyword || item.target_audience || item.saas_name)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1 hover:underline hover:text-indigo-400 transition-colors"
@@ -297,7 +320,7 @@ function OpportunityCard({ item }: { item: any }) {
       </CardContent>
       
       <CardFooter className="pt-4 border-t border-border/50 flex gap-2">
-        <Sheet>
+        <Sheet onOpenChange={handleSheetOpen}>
           <SheetTrigger render={<Button className="flex-1 bg-primary/10 text-primary hover:bg-primary/20" />}>
             Detalhes & Prompts <Sparkles className="ml-2 h-4 w-4" />
           </SheetTrigger>
@@ -353,19 +376,25 @@ function OpportunityCard({ item }: { item: any }) {
               </SheetDescription>
             </SheetHeader>
             
+            {loadingDetails ? (
+              <div className="flex flex-col items-center justify-center py-20 gap-3 text-muted-foreground">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-sm font-medium">Carregando detalhes e prompts...</p>
+              </div>
+            ) : details ? (
             <div className="space-y-6">
               <div>
                 <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Como Monetizar</h4>
                 <div className="bg-muted/50 p-4 rounded-lg border border-border/50">
-                  <p className="text-foreground">{item.monetization_model}</p>
+                  <p className="text-foreground">{details.monetization_model}</p>
                   <Separator className="my-3" />
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-muted-foreground">Preço Sugerido:</span>
-                    <span className="font-bold text-green-500">{item.suggested_price?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
+                    <span className="font-bold text-green-500">{details.suggested_price?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
                   </div>
                   <div className="flex justify-between items-center text-sm mt-2">
                     <span className="text-muted-foreground">Potencial:</span>
-                    <span className="font-bold">{item.potential_revenue?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
+                    <span className="font-bold">{details.potential_revenue?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
                   </div>
                 </div>
               </div>
@@ -373,10 +402,10 @@ function OpportunityCard({ item }: { item: any }) {
               <div>
                 <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Plano do MVP</h4>
                 <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
-                  <p className="text-foreground text-sm leading-relaxed">{item.mvp_features}</p>
+                  <p className="text-foreground text-sm leading-relaxed">{details.mvp_features}</p>
                   <div className="flex gap-2 mt-4 text-xs">
-                    <Badge variant="outline" className="bg-background">⏱️ {item.development_time}</Badge>
-                    <Badge variant="outline" className="bg-background">🧠 {item.implementation_difficulty}</Badge>
+                    <Badge variant="outline" className="bg-background">⏱️ {details.development_time}</Badge>
+                    <Badge variant="outline" className="bg-background">🧠 {details.implementation_difficulty}</Badge>
                   </div>
                 </div>
               </div>
@@ -385,7 +414,7 @@ function OpportunityCard({ item }: { item: any }) {
                 <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Validação Social & Canais</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <a
-                    href={`https://www.reddit.com/search/?q=${encodeURIComponent(item.target_audience || item.saas_name)}`}
+                    href={`https://www.reddit.com/search/?q=${encodeURIComponent(details.target_audience || details.saas_name)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-orange-500/5 p-4 rounded-lg border border-orange-500/10 hover:border-orange-500/30 transition-all block group/reddit"
@@ -395,7 +424,7 @@ function OpportunityCard({ item }: { item: any }) {
                       Validação Reddit
                     </div>
                     <div className="text-2xl font-extrabold text-foreground mb-1 group-hover/reddit:text-orange-500 transition-colors">
-                      {item.reddit_mentions || 0}
+                      {details.reddit_mentions || 0}
                       <span className="text-xs font-normal text-muted-foreground ml-1 underline decoration-muted-foreground/30 group-hover/reddit:decoration-orange-500">menções ↗</span>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
@@ -411,22 +440,22 @@ function OpportunityCard({ item }: { item: any }) {
                       </div>
                       <div className="flex flex-col gap-2">
                         <a
-                          href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(item.target_audience || item.saas_name)}&media_type=all`}
+                          href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}&media_type=all`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-sm font-bold text-foreground hover:text-blue-500 transition-colors flex items-center justify-between group/link border-b border-border/20 pb-1"
                         >
                           <span>Anúncios Ativos:</span>
-                          <span className="text-blue-500 underline decoration-blue-500/30 group-hover/link:decoration-blue-500">{item.facebook_ads_count || 0} campanhas ↗</span>
+                          <span className="text-blue-500 underline decoration-blue-500/30 group-hover/link:decoration-blue-500">{details.facebook_ads_count || 0} campanhas ↗</span>
                         </a>
                         <a
-                          href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(item.target_audience || item.saas_name)}`}
+                          href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-sm font-bold text-foreground hover:text-indigo-400 transition-colors flex items-center justify-between group/link"
                         >
                           <span>Grupos do Nicho:</span>
-                          <span className="text-indigo-400 underline decoration-indigo-400/30 group-hover/link:decoration-indigo-400">{item.facebook_groups_count || 0} ativos ↗</span>
+                          <span className="text-indigo-400 underline decoration-indigo-400/30 group-hover/link:decoration-indigo-400">{details.facebook_groups_count || 0} ativos ↗</span>
                         </a>
                       </div>
                     </div>
@@ -956,19 +985,19 @@ function OpportunityCard({ item }: { item: any }) {
                       {" "}(Universal)
                     </div>
                     <pre className="bg-muted p-4 rounded-lg text-sm text-foreground whitespace-pre-wrap font-mono border border-border/50">
-{`Atue como meu CTO e Estrategista de Negócios. Quero construir um SaaS chamado "${item.saas_name}".
+{`Atue como meu CTO e Estrategista de Negócios. Quero construir um SaaS chamado "${details.saas_name}".
 
 📌 CONTEXTO DE NEGÓCIO:
-- Problema a resolver: ${item.problem_solved}
-- Público-Alvo: ${item.target_audience}
-- Diferencial Competitivo: ${item.competitive_advantage}
+- Problema a resolver: ${details.problem_solved}
+- Público-Alvo: ${details.target_audience}
+- Diferencial Competitivo: ${details.competitive_advantage}
 
 🛠️ ESCOPO DO MVP:
-${item.mvp_features}
+${details.mvp_features}
 
 💰 MONETIZAÇÃO:
-- Modelo: ${item.monetization_model}
-- Ticket: ${item.suggested_price}
+- Modelo: ${details.monetization_model}
+- Ticket: ${details.suggested_price}
 
 Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal e me dê o passo a passo prático para começar a desenvolver agora.`}
                     </pre>
@@ -976,7 +1005,7 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                       size="sm" 
                       variant="secondary" 
                       className="absolute top-8 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => copyToClipboard(`Atue como meu CTO e Estrategista de Negócios. Quero construir um SaaS chamado "${item.saas_name}".\n\n📌 CONTEXTO DE NEGÓCIO:\n- Problema a resolver: ${item.problem_solved}\n- Público-Alvo: ${item.target_audience}\n- Diferencial Competitivo: ${item.competitive_advantage}\n\n🛠️ ESCOPO DO MVP:\n${item.mvp_features}\n\n💰 MONETIZAÇÃO:\n- Modelo: ${item.monetization_model}\n- Ticket: ${item.suggested_price}\n\nPor favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal e me dê o passo a passo prático para começar a desenvolver agora.`, 'universal')}
+                      onClick={() => copyToClipboard(`Atue como meu CTO e Estrategista de Negócios. Quero construir um SaaS chamado "${details.saas_name}".\n\n📌 CONTEXTO DE NEGÓCIO:\n- Problema a resolver: ${details.problem_solved}\n- Público-Alvo: ${details.target_audience}\n- Diferencial Competitivo: ${details.competitive_advantage}\n\n🛠️ ESCOPO DO MVP:\n${details.mvp_features}\n\n💰 MONETIZAÇÃO:\n- Modelo: ${details.monetization_model}\n- Ticket: ${details.suggested_price}\n\nPor favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal e me dê o passo a passo prático para começar a desenvolver agora.`, 'universal')}
                     >
                       {copiedPrompt === 'universal' ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                     </Button>
@@ -991,13 +1020,13 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                       {" "}(Frontend)
                     </div>
                     <pre className="bg-muted p-4 rounded-lg text-sm text-foreground whitespace-pre-wrap font-mono border border-border/50">
-                      {item.prompt_lovable}
+                      {details.prompt_lovable}
                     </pre>
                     <Button 
                       size="sm" 
                       variant="secondary" 
                       className="absolute top-8 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => copyToClipboard(item.prompt_lovable, 'lovable')}
+                      onClick={() => copyToClipboard(details.prompt_lovable, 'lovable')}
                     >
                       {copiedPrompt === 'lovable' ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                     </Button>
@@ -1012,13 +1041,13 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                       {" "}(Backend/Fullstack)
                     </div>
                     <pre className="bg-muted p-4 rounded-lg text-sm text-foreground whitespace-pre-wrap font-mono border border-border/50">
-                      {item.prompt_bolt}
+                      {details.prompt_bolt}
                     </pre>
                     <Button 
                       size="sm" 
                       variant="secondary" 
                       className="absolute top-8 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => copyToClipboard(item.prompt_bolt, 'bolt')}
+                      onClick={() => copyToClipboard(details.prompt_bolt, 'bolt')}
                     >
                       {copiedPrompt === 'bolt' ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                     </Button>
@@ -1026,6 +1055,12 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                 </div>
               </div>
             </div>
+            ) : (
+              <div className="text-center py-20 text-muted-foreground flex flex-col items-center justify-center gap-3">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-sm font-medium">Carregando detalhes...</p>
+              </div>
+            )}
           </SheetContent>
         </Sheet>
         <Button 

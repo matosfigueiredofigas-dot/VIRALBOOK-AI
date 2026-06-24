@@ -1,4 +1,4 @@
-import { createClient } from '@/utils/supabase/server'
+import { createClient, getCachedUser } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { OpportunitiesList } from '@/components/opportunities-list'
 import { AdvancedFilters } from '@/components/advanced-filters'
@@ -7,24 +7,38 @@ import { Heart } from 'lucide-react'
 export const dynamic = 'force-dynamic';
 
 export default async function FavoritesPage(props: { searchParams: Promise<{ search?: string, minScore?: string }> }) {
-  const supabase = await createClient();
-  const searchParams = await props.searchParams;
-  const search = searchParams.search || "";
-  const minScore = searchParams.minScore ? parseInt(searchParams.minScore) : 0;
-
-  // 1. Verifica autenticação
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getCachedUser();
 
   if (!user) {
     redirect('/login')
   }
+
+  const supabase = await createClient();
+  const searchParams = await props.searchParams;
+  const search = searchParams.search || "";
+  const minScore = searchParams.minScore ? parseInt(searchParams.minScore) : 0;
 
   // 2. Busca as oportunidades que foram favoritadas por este usuário
   const { data: userFavorites, error } = await supabase
     .from('user_favorites')
     .select(`
       opportunity_id,
-      opportunities (*)
+      opportunities (
+        id,
+        created_at,
+        saas_name,
+        problem_solved,
+        viral_opportunity_score,
+        country,
+        trends_growth_monthly,
+        reddit_mentions,
+        facebook_ads_count,
+        facebook_groups_count,
+        target_audience,
+        competitive_advantage,
+        suggested_price,
+        book_category
+      )
     `)
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });

@@ -63,7 +63,7 @@ export async function POST(request: Request) {
         .from('opportunities')
         .select('*')
         .eq('country', country)
-        .or(`book_title.ilike.%${keyword}%,problem_solved.ilike.%${keyword}%,target_audience.ilike.%${keyword}%`)
+        .or(`search_keyword.ilike.%${keyword}%,book_title.ilike.%${keyword}%`)
         .or(`user_id.is.null,user_id.eq.${user.id}`)
         .order('created_at', { ascending: false })
         .limit(1);
@@ -73,7 +73,8 @@ export async function POST(request: Request) {
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
         const createdAt = new Date(cachedOpp[0].created_at);
 
-        if (createdAt > oneWeekAgo) {
+        // Só usa o cache se for recente E se já tiver search_keyword (registos novos)
+        if (createdAt > oneWeekAgo && cachedOpp[0].search_keyword) {
           console.log("[Radar] Cache Hit! Retornando dados pré-salvos para economizar APIs.");
           return NextResponse.json({
             success: true,
@@ -163,6 +164,9 @@ export async function POST(request: Request) {
           book_description: book.description,
           country: country,
           user_id: user.id,
+          // Keyword original usada para buscar Facebook/Reddit/Trends
+          // Garante sincronia entre os números exibidos e os links da Ads Library
+          search_keyword: apiSearchKeyword,
           trends_growth_monthly: trendsData.monthlyGrowth,
           reddit_mentions: redditData.mentions,
           facebook_ads_count: facebookData.adsCount,

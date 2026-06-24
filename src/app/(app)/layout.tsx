@@ -6,12 +6,11 @@ import { TimeSelect } from "@/components/time-select";
 
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Suspense } from "react";
-import { createClient } from "@/utils/supabase/server";
+import { createClient, getCachedUser } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCachedUser();
 
   if (!user) {
     redirect("/login");

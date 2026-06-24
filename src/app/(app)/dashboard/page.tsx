@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server"
+import { createClient, getCachedUser } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import { OpportunitiesList } from "@/components/opportunities-list"
 import { AdvancedFilters } from "@/components/advanced-filters"
@@ -10,12 +10,13 @@ import { getFilterDate } from "@/lib/utils"
 export const dynamic = 'force-dynamic';
 
 export default async function DashboardPage(props: { searchParams: Promise<{ country?: string, time?: string, search?: string, minScore?: string }> }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCachedUser();
 
   if (!user) {
     redirect("/login");
   }
+
+  const supabase = await createClient();
 
   const searchParams = await props.searchParams;
   const country = searchParams.country || "ALL";
@@ -28,7 +29,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cou
   // Busca os dados filtrando pelo país apenas se fornecido
   let query = supabase
     .from('opportunities')
-    .select('*')
+    .select('id, created_at, saas_name, problem_solved, viral_opportunity_score, country, trends_growth_monthly, reddit_mentions, facebook_ads_count, facebook_groups_count, target_audience, competitive_advantage, suggested_price, book_category')
     .or(`user_id.is.null,user_id.eq.${user.id}`)
     .order('created_at', { ascending: false });
 

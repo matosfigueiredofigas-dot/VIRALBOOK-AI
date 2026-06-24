@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server"
+import { createClient, getCachedUser } from "@/utils/supabase/server"
 import { notFound, redirect } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import { PrintButton } from "@/components/print-button"
@@ -6,12 +6,13 @@ import { PrintButton } from "@/components/print-button"
 export const dynamic = 'force-dynamic';
 
 export default async function CanvasPage(props: { params: Promise<{ id: string }> }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCachedUser();
 
   if (!user) {
     redirect("/login");
   }
+
+  const supabase = await createClient();
 
   const params = await props.params;
 

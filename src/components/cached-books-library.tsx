@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Search, BookOpen, Sparkles, Heart, Share2, Bell, MessageSquare, TrendingUp, Users, Copy, CheckCircle2, FileText, Trash2 } from "lucide-react"
+import { Search, BookOpen, Sparkles, Heart, Share2, Bell, MessageSquare, TrendingUp, Users, Copy, CheckCircle2, FileText, Trash2, Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -58,9 +58,35 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<any | null>(null);
 
+  const [details, setDetails] = useState<any>(null);
+  const [loadingDetails, setLoadingDetails] = useState(false);
+
   useEffect(() => {
     setItems(initialData);
   }, [initialData]);
+
+  useEffect(() => {
+    if (activeItem && activeItem.id) {
+      setDetails(null);
+      setLoadingDetails(true);
+      fetch(`/api/opportunities/${activeItem.id}`)
+        .then((res) => {
+          if (res.ok) return res.json();
+          throw new Error("Failed to load details");
+        })
+        .then((data) => {
+          setDetails(data);
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          setLoadingDetails(false);
+        });
+    } else {
+      setDetails(null);
+    }
+  }, [activeItem]);
 
   const handleFavorite = async (id: string) => {
     try {
@@ -309,137 +335,149 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                         </SheetDescription>
                       </SheetHeader>
                       
-                      <div className="space-y-6">
-                        {/* Canais de Validação */}
-                        <div>
-                          <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Validação Social & Canais</h4>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="bg-orange-500/5 p-4 rounded-lg border border-orange-500/10">
-                              <div className="flex items-center gap-2 text-orange-500 font-bold mb-2">
-                                <Search className="h-4 w-4" />
-                                Validação Reddit
+                      {loadingDetails ? (
+                        <div className="flex flex-col items-center justify-center py-20 gap-3 text-muted-foreground">
+                          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                          <p className="text-sm font-medium">Carregando detalhes...</p>
+                        </div>
+                      ) : details ? (
+                        <div className="space-y-6">
+                          {/* Canais de Validação */}
+                          <div>
+                            <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Validação Social & Canais</h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div className="bg-orange-500/5 p-4 rounded-lg border border-orange-500/10">
+                                <div className="flex items-center gap-2 text-orange-500 font-bold mb-2">
+                                  <Search className="h-4 w-4" />
+                                  Validação Reddit
+                                </div>
+                                <div className="text-xl font-extrabold text-foreground mb-1">
+                                  {details.reddit_mentions || 0}
+                                  <span className="text-xs font-normal text-muted-foreground ml-1">menções</span>
+                                </div>
+                                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                                  Discussões de dores ativas identificadas em fóruns do Reddit.
+                                </p>
                               </div>
-                              <div className="text-xl font-extrabold text-foreground mb-1">
-                                {activeItem.reddit_mentions || 0}
-                                <span className="text-xs font-normal text-muted-foreground ml-1">menções</span>
+   
+                              <div className="bg-blue-600/5 p-4 rounded-lg border border-blue-600/10">
+                                <div className="flex items-center gap-2 text-blue-500 font-bold mb-2">
+                                  <FacebookIcon className="h-4 w-4" />
+                                  Validação Facebook
+                                </div>
+                                <div className="space-y-1">
+                                  <a
+                                    href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}&media_type=all`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[13px] font-bold text-foreground hover:text-blue-500 hover:underline transition-colors block"
+                                  >
+                                    Anúncios Ativos: <span className="text-blue-500">{details.facebook_ads_count || 0} ads ↗</span>
+                                  </a>
+                                  <a
+                                    href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[13px] font-bold text-foreground hover:text-indigo-400 hover:underline transition-colors block"
+                                  >
+                                    Grupos do Nicho: <span className="text-indigo-400">{details.facebook_groups_count || 0} ativos ↗</span>
+                                  </a>
+                                </div>
+                                <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
+                                  Presença comercial e audiência mapeada no Facebook.
+                                </p>
                               </div>
-                              <p className="text-[11px] text-muted-foreground leading-relaxed">
-                                Discussões de dores ativas identificadas em fóruns do Reddit.
-                              </p>
                             </div>
- 
-                            <div className="bg-blue-600/5 p-4 rounded-lg border border-blue-600/10">
-                              <div className="flex items-center gap-2 text-blue-500 font-bold mb-2">
-                                <FacebookIcon className="h-4 w-4" />
-                                Validação Facebook
+                          </div>
+   
+                          {/* Monetização */}
+                          <div>
+                            <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Como Monetizar</h4>
+                            <div className="bg-muted/50 p-4 rounded-lg border border-border/50">
+                              <p className="text-foreground text-sm">{details.monetization_model}</p>
+                              <Separator className="my-3" />
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="text-muted-foreground">Preço Sugerido:</span>
+                                <span className="font-bold text-green-500">{details.suggested_price?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
                               </div>
-                              <div className="space-y-1">
-                                <a
-                                  href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(activeItem.target_audience || activeItem.saas_name)}&media_type=all`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-[13px] font-bold text-foreground hover:text-blue-500 hover:underline transition-colors block"
+                              <div className="flex justify-between items-center text-sm mt-2">
+                                <span className="text-muted-foreground">Potencial:</span>
+                                <span className="font-bold">{details.potential_revenue?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
+                              </div>
+                            </div>
+                          </div>
+   
+                          {/* Plano MVP */}
+                          <div>
+                            <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Plano do MVP</h4>
+                            <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
+                              <p className="text-foreground text-sm leading-relaxed">{details.mvp_features}</p>
+                              <div className="flex gap-2 mt-4 text-xs">
+                                <Badge variant="outline" className="bg-background">⏱️ {details.development_time}</Badge>
+                                <Badge variant="outline" className="bg-background">🧠 {details.implementation_difficulty}</Badge>
+                              </div>
+                            </div>
+                          </div>
+   
+                          {/* Prompts */}
+                          <div>
+                            <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider flex items-center justify-between">
+                              Prompts de Construção
+                            </h4>
+                            <div className="space-y-4">
+                              <div className="relative group">
+                                <div className="text-[11px] font-semibold mb-1 text-purple-500">Para ChatGPT / Claude / Gemini (Universal)</div>
+                                <pre className="bg-muted p-4 rounded-lg text-[12px] text-foreground overflow-x-auto whitespace-pre-wrap font-mono border border-border/50">
+{`Atue como meu CTO. SaaS: "${details.saas_name}".
+Problema: ${details.problem_solved}
+MVP: ${details.mvp_features}
+Preço: ${details.suggested_price}`}
+                                </pre>
+                              </div>
+   
+                              <div className="relative group">
+                                <div className="text-[11px] font-semibold mb-1 text-primary">Para Vercel v0 / Lovable (Frontend)</div>
+                                <pre className="bg-muted p-4 rounded-lg text-[12px] text-foreground overflow-x-auto whitespace-pre-wrap font-mono border border-border/50">
+                                  {details.prompt_lovable}
+                                </pre>
+                                <Button 
+                                  size="sm" 
+                                  variant="secondary" 
+                                  className="absolute top-8 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                  onClick={() => copyToClipboard(details.prompt_lovable, 'lovable')}
                                 >
-                                  Anúncios Ativos: <span className="text-blue-500">{activeItem.facebook_ads_count || 0} ads ↗</span>
-                                </a>
-                                <a
-                                  href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(activeItem.target_audience || activeItem.saas_name)}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-[13px] font-bold text-foreground hover:text-indigo-400 hover:underline transition-colors block"
-                                >
-                                  Grupos do Nicho: <span className="text-indigo-400">{activeItem.facebook_groups_count || 0} ativos ↗</span>
-                                </a>
+                                  {copiedPrompt === 'lovable' ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                                </Button>
                               </div>
-                              <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
-                                Presença comercial e audiência mapeada no Facebook.
-                              </p>
+   
+                              <div className="relative group">
+                                <div className="text-[11px] font-semibold mb-1 text-blue-500">Para Bolt.new / Cursor</div>
+                                <pre className="bg-muted p-4 rounded-lg text-[12px] text-foreground overflow-x-auto whitespace-pre-wrap font-mono border border-border/50">
+                                  {details.prompt_bolt}
+                                </pre>
+                                <Button 
+                                  size="sm" 
+                                  variant="secondary" 
+                                  className="absolute top-8 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                  onClick={() => copyToClipboard(details.prompt_bolt, 'bolt')}
+                                >
+                                  {copiedPrompt === 'bolt' ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                                </Button>
+                              </div>
                             </div>
                           </div>
                         </div>
- 
-                        {/* Monetização */}
-                        <div>
-                          <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Como Monetizar</h4>
-                          <div className="bg-muted/50 p-4 rounded-lg border border-border/50">
-                            <p className="text-foreground text-sm">{activeItem.monetization_model}</p>
-                            <Separator className="my-3" />
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="text-muted-foreground">Preço Sugerido:</span>
-                              <span className="font-bold text-green-500">{activeItem.suggested_price?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
-                            </div>
-                            <div className="flex justify-between items-center text-sm mt-2">
-                              <span className="text-muted-foreground">Potencial:</span>
-                              <span className="font-bold">{activeItem.potential_revenue?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
-                            </div>
-                          </div>
+                      ) : (
+                        <div className="text-center py-20 text-muted-foreground flex flex-col items-center justify-center gap-3">
+                          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                          <p className="text-sm font-medium">Carregando detalhes...</p>
                         </div>
- 
-                        {/* Plano MVP */}
-                        <div>
-                          <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Plano do MVP</h4>
-                          <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
-                            <p className="text-foreground text-sm leading-relaxed">{activeItem.mvp_features}</p>
-                            <div className="flex gap-2 mt-4 text-xs">
-                              <Badge variant="outline" className="bg-background">⏱️ {activeItem.development_time}</Badge>
-                              <Badge variant="outline" className="bg-background">🧠 {activeItem.implementation_difficulty}</Badge>
-                            </div>
-                          </div>
-                        </div>
- 
-                        {/* Prompts */}
-                        <div>
-                          <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider flex items-center justify-between">
-                            Prompts de Construção
-                          </h4>
-                          <div className="space-y-4">
-                            <div className="relative group">
-                              <div className="text-[11px] font-semibold mb-1 text-purple-500">Para ChatGPT / Claude / Gemini (Universal)</div>
-                              <pre className="bg-muted p-4 rounded-lg text-[12px] text-foreground overflow-x-auto whitespace-pre-wrap font-mono border border-border/50">
-{`Atue como meu CTO. SaaS: "${activeItem.saas_name}".
-Problema: ${activeItem.problem_solved}
-MVP: ${activeItem.mvp_features}
-Preço: ${activeItem.suggested_price}`}
-                              </pre>
-                            </div>
- 
-                            <div className="relative group">
-                              <div className="text-[11px] font-semibold mb-1 text-primary">Para Vercel v0 / Lovable (Frontend)</div>
-                              <pre className="bg-muted p-4 rounded-lg text-[12px] text-foreground overflow-x-auto whitespace-pre-wrap font-mono border border-border/50">
-                                {activeItem.prompt_lovable}
-                              </pre>
-                              <Button 
-                                size="sm" 
-                                variant="secondary" 
-                                className="absolute top-8 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={() => copyToClipboard(activeItem.prompt_lovable, 'lovable')}
-                              >
-                                {copiedPrompt === 'lovable' ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
-                              </Button>
-                            </div>
- 
-                            <div className="relative group">
-                              <div className="text-[11px] font-semibold mb-1 text-blue-500">Para Bolt.new / Cursor</div>
-                              <pre className="bg-muted p-4 rounded-lg text-[12px] text-foreground overflow-x-auto whitespace-pre-wrap font-mono border border-border/50">
-                                {activeItem.prompt_bolt}
-                              </pre>
-                              <Button 
-                                size="sm" 
-                                variant="secondary" 
-                                className="absolute top-8 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={() => copyToClipboard(activeItem.prompt_bolt, 'bolt')}
-                              >
-                                {copiedPrompt === 'bolt' ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      )}
                       <AIChatModal 
                         isOpen={isChatOpen} 
                         onClose={() => setIsChatOpen(false)} 
-                        contextText={JSON.stringify(activeItem, null, 2)} 
-                        projectName={activeItem.saas_name} 
+                        contextText={JSON.stringify(details || activeItem, null, 2)} 
+                        projectName={(details || activeItem).saas_name} 
                       />
                     </SheetContent>
                   )}

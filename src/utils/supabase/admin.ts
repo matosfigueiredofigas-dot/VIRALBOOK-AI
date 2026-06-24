@@ -12,9 +12,9 @@ export function createAdminClient() {
   })
 }
 
-export async function checkAdmin(supabase: any) {
+export async function checkAdmin(supabase: any, userObj?: any) {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
+    const user = userObj || (await supabase.auth.getUser()).data.user;
     if (!user) return false;
 
     // Proteção dupla: pelo e-mail do dono ou checando o role na tabela profiles

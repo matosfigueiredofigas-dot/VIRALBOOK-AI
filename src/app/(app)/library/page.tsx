@@ -1,22 +1,23 @@
 import { Sparkles } from "lucide-react"
 import { LibraryTabs } from "@/components/library-tabs"
-import { createClient } from "@/utils/supabase/server"
+import { createClient, getCachedUser } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 
 export const dynamic = 'force-dynamic';
 
 export default async function LibraryPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCachedUser();
 
   if (!user) {
     redirect('/login');
   }
 
+  const supabase = await createClient();
+
   // Busca as oportunidades mapeadas anteriormente no banco (globais ou do próprio usuário)
   const { data: opportunities } = await supabase
     .from('opportunities')
-    .select('*')
+    .select('id, created_at, book_title, book_author, book_category, viral_opportunity_score, country, saas_name, problem_solved')
     .or(`user_id.is.null,user_id.eq.${user.id}`)
     .order('created_at', { ascending: false });
 

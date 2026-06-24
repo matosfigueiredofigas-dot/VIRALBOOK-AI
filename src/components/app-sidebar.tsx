@@ -1,5 +1,5 @@
 import { TrendingUp, User, LogOut } from "lucide-react"
-import { createClient } from "@/utils/supabase/server"
+import { createClient, getCachedUser } from "@/utils/supabase/server"
 import { checkAdmin } from "@/utils/supabase/admin"
 import {
   Sidebar,
@@ -21,12 +21,12 @@ import {
 } from "@/components/sidebar-menu-client"
 
 export async function AppSidebar() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getCachedUser()
 
   let isAdmin = false
   if (user) {
-    isAdmin = await checkAdmin(supabase)
+    const supabase = await createClient()
+    isAdmin = await checkAdmin(supabase, user)
   }
 
   return (

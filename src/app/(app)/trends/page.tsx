@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server"
+import { createClient, getCachedUser } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart3, TrendingUp, MessageSquare, Star, Flame } from "lucide-react"
@@ -29,12 +29,13 @@ function StarRating({ stars }: { stars: number }) {
 }
 
 export default async function TrendsPage(props: { searchParams: Promise<{ country?: string, time?: string, search?: string, minScore?: string, view?: string }> }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCachedUser();
 
   if (!user) {
     redirect("/login");
   }
+
+  const supabase = await createClient();
 
   const searchParams = await props.searchParams;
   const country = searchParams.country || "ALL";

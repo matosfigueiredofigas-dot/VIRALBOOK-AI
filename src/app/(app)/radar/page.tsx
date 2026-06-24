@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server"
+import { createClient, getCachedUser } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import { BookOpen } from "lucide-react"
 
@@ -9,12 +9,13 @@ import { ProcessedBooks } from "@/components/processed-books"
 export const dynamic = 'force-dynamic';
 
 export default async function RadarPage(props: { searchParams: Promise<{ country?: string, time?: string }> }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCachedUser();
 
   if (!user) {
     redirect("/login");
   }
+
+  const supabase = await createClient();
 
   const searchParams = await props.searchParams;
   const country = searchParams.country || "ALL";
