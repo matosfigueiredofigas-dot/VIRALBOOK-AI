@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { MessageCircle, X, Send, Bot, User, Loader2 } from "lucide-react";
 
 interface Message {
@@ -17,6 +18,7 @@ interface AIChatModalProps {
 }
 
 export function AIChatModal({ isOpen, onClose, contextText, projectName, showLeft = false }: AIChatModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -26,6 +28,10 @@ export function AIChatModal({ isOpen, onClose, contextText, projectName, showLef
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Auto-scroll para a última mensagem
   useEffect(() => {
@@ -74,9 +80,9 @@ export function AIChatModal({ isOpen, onClose, contextText, projectName, showLef
     }
   }
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
+  return createPortal(
     <>
       <div 
         className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] transition-opacity ${
@@ -169,6 +175,7 @@ export function AIChatModal({ isOpen, onClose, contextText, projectName, showLef
           </form>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 }
