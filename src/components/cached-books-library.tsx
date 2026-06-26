@@ -478,6 +478,7 @@ Preço: ${details.suggested_price}`}
                         onClose={() => setIsChatOpen(false)} 
                         contextText={JSON.stringify(details || activeItem, null, 2)} 
                         projectName={(details || activeItem).saas_name} 
+                        showLeft={!isExpanded}
                       />
                     </SheetContent>
                   )}

@@ -13,9 +13,10 @@ interface AIChatModalProps {
   onClose: () => void;
   contextText: string;
   projectName: string;
+  showLeft?: boolean;
 }
 
-export function AIChatModal({ isOpen, onClose, contextText, projectName }: AIChatModalProps) {
+export function AIChatModal({ isOpen, onClose, contextText, projectName, showLeft = false }: AIChatModalProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -78,10 +79,16 @@ export function AIChatModal({ isOpen, onClose, contextText, projectName }: AICha
   return (
     <>
       <div 
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] transition-opacity" 
+        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] transition-opacity ${
+          showLeft ? "lg:bg-transparent lg:backdrop-blur-none lg:pointer-events-none" : ""
+        }`} 
         onClick={onClose}
       />
-      <div className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-background border-l border-border/50 shadow-2xl z-[100] flex flex-col animate-in slide-in-from-right-full duration-300">
+      <div className={`fixed top-0 bottom-0 w-full max-w-md bg-background border-l border-border/50 shadow-2xl z-[100] flex flex-col animate-in duration-300 ${
+        showLeft 
+          ? "right-0 lg:right-auto lg:left-0 lg:border-l-0 lg:border-r slide-in-from-right-full lg:slide-in-from-left-full" 
+          : "right-0 slide-in-from-right-full"
+      }`}>
         
         {/* Header */}
         <div className="h-16 border-b border-border/50 flex items-center justify-between px-6 bg-muted/30">

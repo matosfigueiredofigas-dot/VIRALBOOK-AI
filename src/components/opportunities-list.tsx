@@ -44,11 +44,13 @@ function OpportunityCard({ item }: { item: any }) {
   const [generatingKit, setGeneratingKit] = useState(false);
   const [marketingTab, setMarketingTab] = useState<"twitter" | "linkedin" | "tiktok" | "email">("twitter");
   const [copiedMarketing, setCopiedMarketing] = useState<string | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const [details, setDetails] = useState<any>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
 
   const handleSheetOpen = async (open: boolean) => {
+    setIsSheetOpen(open);
     if (open && !details) {
       setLoadingDetails(true);
       try {
@@ -1078,6 +1080,7 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
         onClose={() => setIsChatOpen(false)} 
         contextText={JSON.stringify(item, null, 2)} 
         projectName={item.saas_name} 
+        showLeft={isSheetOpen && !isExpanded}
       />
     </Card>
   );
