@@ -5,6 +5,7 @@ import { RedditService } from '@/services/RedditService';
 import { FacebookService } from '@/services/FacebookService';
 import { GroqService } from '@/services/GroqService';
 import { createClient } from '@/utils/supabase/server';
+import { createAdminClient, checkAdmin } from '@/utils/supabase/admin';
 
 // Lógica de cálculo do Viral Opportunity Score (0-100)
 // 25% Trends, 20% Reddit, 20% Facebook (Ads + Groups), 20% Livro, 15% IA
@@ -249,30 +250,68 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'ID da oportunidade é obrigatório' }, { status: 400 });
     }
 
-    // Deleta dos favoritos primeiro para evitar erro de constraint de chave estrangeira
-    await authSupabase
+    // Criar cliente admin para lidar com deleções em cascata e contornar RLS em tabelas dependentes
+    const adminSupabase = createAdminClient();
+
+    // 1. Buscar a oportunidade para checar propriedade antes de deletar via admin
+    const { data: opportunity, error: fetchError } = await adminSupabase
+      .from('opportunities')
+      .select('user_id')
+      .eq('id', id)
+      .single();
+
+    if (fetchError || !opportunity) {
+      return NextResponse.json({ error: 'Oportunidade não encontrada' }, { status: 404 });
+    }
+
+    // 2. Proteção de segurança: apenas o dono ou o admin pode excluir a oportunidade
+    const isAdminUser = await checkAdmin(authSupabase, user);
+    if (opportunity.user_id !== user.id && !isAdminUser) {
+      return NextResponse.json({ error: 'Não autorizado a excluir esta oportunidade' }, { status: 403 });
+    }
+
+    // 3. Excluir os favoritos associados
+    await adminSupabase
       .from('user_favorites')
       .delete()
       .eq('opportunity_id', id);
 
-    let query = authSupabase
+    // 4. Buscar as Landing Pages vinculadas para apagar seus leads primeiro
+    const { data: landingPages } = await adminSupabase
+      .from('landing_pages')
+      .select('id')
+      .eq('opportunity_id', id);
+
+    if (landingPages && landingPages.length > 0) {
+      const lpIds = landingPages.map(lp => lp.id);
+      
+      // Excluir os leads capturados nessas Landing Pages
+      await adminSupabase
+        .from('waitlist_leads')
+        .delete()
+        .in('landing_page_id', lpIds);
+        
+      // Excluir as Landing Pages vinculadas
+      await adminSupabase
+        .from('landing_pages')
+        .delete()
+        .eq('opportunity_id', id);
+    }
+
+    // 5. Por fim, excluir a oportunidade principal
+    const { error: deleteError } = await adminSupabase
       .from('opportunities')
       .delete()
       .eq('id', id);
 
-    // Em produção, garante que o usuário só deleta as próprias oportunidades
-    if (process.env.NODE_ENV !== 'development') {
-      query = query.eq('user_id', user.id);
-    }
-
-    const { error } = await query;
-    if (error) {
-      console.error("[Radar DELETE] Erro ao deletar:", error);
-      return NextResponse.json({ error: 'Erro de banco de dados ao excluir', details: error }, { status: 500 });
+    if (deleteError) {
+      console.error("[Radar DELETE] Erro ao deletar oportunidade:", deleteError);
+      return NextResponse.json({ error: 'Erro de banco de dados ao excluir', details: deleteError }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
+    console.error("[Radar DELETE] Erro inesperado:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
