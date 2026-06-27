@@ -12,23 +12,38 @@ import {
   Shield, 
   LogIn, 
   Settings,
-  Globe
+  Globe,
+  Mail,
+  Users
 } from "lucide-react";
 import { SidebarMenu } from "@/components/ui/sidebar";
 import { SidebarLink } from "@/components/sidebar-link";
 
-interface SidebarMenuClientProps {
-  isAdmin: boolean;
-  isAuthenticated: boolean;
-}
-
 export function SidebarMenuClient() {
-  const items = [
+  const ideacaoItems = [
     {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: LayoutDashboard,
+      title: "Biblioteca de Ideias",
+      url: "/library",
+      icon: Sparkles,
     },
+    {
+      title: "Ebooks Radar",
+      url: "/radar",
+      icon: BookOpen,
+    },
+    {
+      title: "Emerging Niches",
+      url: "/niches",
+      icon: Activity,
+    },
+    {
+      title: "Global Trends",
+      url: "/trends",
+      icon: BarChart3,
+    },
+  ];
+
+  const validacaoItems = [
     {
       title: "SaaS Opportunities",
       url: "/opportunities",
@@ -40,51 +55,88 @@ export function SidebarMenuClient() {
       icon: Globe,
     },
     {
-      title: "Biblioteca de Ideias",
-      url: "/library",
-      icon: Sparkles,
+      title: "Conselho de Mentores",
+      url: "/advisors",
+      icon: Users,
     },
+  ];
+
+  const tracaoItems = [
     {
-      title: "Emerging Niches",
-      url: "/niches",
-      icon: Activity,
-    },
-    {
-      title: "Ebooks Radar",
-      url: "/radar",
-      icon: BookOpen,
-    },
-    {
-      title: "Global Trends",
-      url: "/trends",
-      icon: BarChart3,
+      title: "Automação de E-mails",
+      url: "/email-funnel",
+      icon: Mail,
     },
   ];
 
   return (
-    <>
-      {/* Comece por Aqui */}
-      <SidebarMenu className="mb-4">
+    <div className="space-y-6">
+      {/* Comece por Aqui & Dashboard */}
+      <SidebarMenu className="gap-1.5">
         <SidebarLink
           href="/welcome"
           icon={PlayCircle}
           title="Comece por Aqui"
           variant="welcome"
         />
+        <SidebarLink
+          href="/dashboard"
+          icon={LayoutDashboard}
+          title="Dashboard"
+        />
       </SidebarMenu>
 
-      {/* Menu Principal */}
-      <SidebarMenu className="gap-2">
-        {items.map((item) => (
-          <SidebarLink
-            key={item.title}
-            href={item.url}
-            icon={item.icon}
-            title={item.title}
-          />
-        ))}
-      </SidebarMenu>
-    </>
+      {/* Fase 1: Ideação */}
+      <div>
+        <div className="text-[10px] font-bold tracking-wider text-muted-foreground/50 uppercase px-3 mb-2">
+          🧠 Fase 1: Ideação
+        </div>
+        <SidebarMenu className="gap-1.5">
+          {ideacaoItems.map((item) => (
+            <SidebarLink
+              key={item.title}
+              href={item.url}
+              icon={item.icon}
+              title={item.title}
+            />
+          ))}
+        </SidebarMenu>
+      </div>
+
+      {/* Fase 2: Validação */}
+      <div>
+        <div className="text-[10px] font-bold tracking-wider text-muted-foreground/50 uppercase px-3 mb-2">
+          🚀 Fase 2: Validação
+        </div>
+        <SidebarMenu className="gap-1.5">
+          {validacaoItems.map((item) => (
+            <SidebarLink
+              key={item.title}
+              href={item.url}
+              icon={item.icon}
+              title={item.title}
+            />
+          ))}
+        </SidebarMenu>
+      </div>
+
+      {/* Fase 3: Tração & Vendas */}
+      <div>
+        <div className="text-[10px] font-bold tracking-wider text-muted-foreground/50 uppercase px-3 mb-2">
+          📣 Fase 3: Tração & Vendas
+        </div>
+        <SidebarMenu className="gap-1.5">
+          {tracaoItems.map((item) => (
+            <SidebarLink
+              key={item.title}
+              href={item.url}
+              icon={item.icon}
+              title={item.title}
+            />
+          ))}
+        </SidebarMenu>
+      </div>
+    </div>
   );
 }
 
