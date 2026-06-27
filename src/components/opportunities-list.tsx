@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import { Search, Loader2, Sparkles, Copy, CheckCircle2, TrendingUp, Heart, Share2, FileText, Bell, LayoutGrid, List, MessageSquare, Users, Trash2, Globe, Megaphone, DollarSign, Percent, HelpCircle } from "lucide-react";
+import { Search, Loader2, Sparkles, Copy, CheckCircle2, TrendingUp, Heart, Share2, FileText, Bell, LayoutGrid, List, MessageSquare, Users, Trash2, Globe, Megaphone, DollarSign, Percent, HelpCircle, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 // Ícone personalizado do Facebook para evitar incompatibilidade de versão do lucide-react
@@ -45,12 +45,18 @@ function OpportunityCard({ item }: { item: any }) {
   const [marketingTab, setMarketingTab] = useState<"twitter" | "linkedin" | "tiktok" | "email">("twitter");
   const [copiedMarketing, setCopiedMarketing] = useState<string | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [showRedditPainPoints, setShowRedditPainPoints] = useState(true);
+  const [showMarketingKit, setShowMarketingKit] = useState(true);
 
   const [details, setDetails] = useState<any>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
 
   const handleSheetOpen = async (open: boolean) => {
     setIsSheetOpen(open);
+    if (open) {
+      setShowRedditPainPoints(true);
+      setShowMarketingKit(true);
+    }
     if (open && !details) {
       setLoadingDetails(true);
       try {
@@ -104,6 +110,7 @@ function OpportunityCard({ item }: { item: any }) {
         throw new Error(data.error || "Erro ao gerar o Kit de Marketing.");
       }
       setMarketingKit(data.marketingKit || {});
+      setShowMarketingKit(true);
       router.refresh();
     } catch (err: any) {
       alert(err.message || "Erro de conexão ao gerar o Kit de Marketing.");
@@ -147,6 +154,7 @@ function OpportunityCard({ item }: { item: any }) {
         throw new Error(data.error || "Erro ao mapear dores.");
       }
       setRedditPainPoints(data.painPoints || []);
+      setShowRedditPainPoints(true);
       router.refresh();
     } catch (err: any) {
       alert(err.message || "Erro de conexão ao mapear dores.");
@@ -470,29 +478,68 @@ function OpportunityCard({ item }: { item: any }) {
 
               <div>
                 <h4 className="font-bold text-sm text-muted-foreground mb-3 uppercase tracking-wider flex items-center justify-between">
-                  Dores Reais do Reddit (Mapeador de IA)
-                </h4>
-                {redditPainPoints.length === 0 ? (
-                  <div className="bg-orange-500/5 p-5 rounded-lg border border-orange-500/10 text-center space-y-4">
-                    <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                      Ainda não mapeado. Deixe a IA analisar as discussões e desabafos dos usuários no Reddit para extrair dores críticas e reais do seu público-alvo.
-                    </p>
+                  <span>Dores Reais do Reddit (Mapeador de IA)</span>
+                  {redditPainPoints.length > 0 && showRedditPainPoints && (
                     <Button
-                      onClick={handleMapRedditPainPoints}
-                      disabled={mappingReddit}
-                      className="bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 rounded-full hover:bg-white/10 text-muted-foreground hover:text-white"
+                      onClick={() => setShowRedditPainPoints(false)}
+                      title="Ocultar"
                     >
-                      {mappingReddit ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" /> Mapeando dores...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="h-4 w-4 text-yellow-300 animate-pulse" /> Mapear Dores Reais (Reddit)
-                        </>
-                      )}
+                      <X className="h-4 w-4" />
                     </Button>
-                  </div>
+                  )}
+                </h4>
+                {redditPainPoints.length === 0 || !showRedditPainPoints ? (
+                  redditPainPoints.length > 0 ? (
+                    <div className="bg-orange-500/5 p-5 rounded-lg border border-orange-500/10 text-center space-y-4">
+                      <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                        Dores do Reddit mapeadas para este nicho. Deseja visualizar?
+                      </p>
+                      <div className="flex gap-2 justify-center">
+                        <Button
+                          onClick={() => setShowRedditPainPoints(true)}
+                          className="bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
+                        >
+                          <Sparkles className="h-4 w-4 text-yellow-300 animate-pulse" /> Ver Dores Mapeadas
+                        </Button>
+                        <Button
+                          onClick={handleMapRedditPainPoints}
+                          disabled={mappingReddit}
+                          variant="outline"
+                          className="border-orange-500/30 text-orange-400 hover:bg-orange-500/10 font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
+                        >
+                          {mappingReddit ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            "Refazer Mapeamento (IA)"
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-orange-500/5 p-5 rounded-lg border border-orange-500/10 text-center space-y-4">
+                      <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                        Ainda não mapeado. Deixe a IA analisar as discussões e desabafos dos usuários no Reddit para extrair dores críticas e reais do seu público-alvo.
+                      </p>
+                      <Button
+                        onClick={handleMapRedditPainPoints}
+                        disabled={mappingReddit}
+                        className="bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
+                      >
+                        {mappingReddit ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" /> Mapeando dores...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="h-4 w-4 text-yellow-300 animate-pulse" /> Mapear Dores Reais (Reddit)
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )
                 ) : (
                   <div className="space-y-4">
                     {redditPainPoints.map((pain: any, index: number) => (
@@ -570,29 +617,68 @@ function OpportunityCard({ item }: { item: any }) {
 
               <div>
                 <h4 className="font-bold text-sm text-muted-foreground mb-3 uppercase tracking-wider flex items-center justify-between">
-                  📢 Kit de Lançamento & Marketing (IA)
-                </h4>
-                {!marketingKit || Object.keys(marketingKit).length === 0 ? (
-                  <div className="bg-primary/5 p-5 rounded-lg border border-primary/10 text-center space-y-4">
-                    <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                      Dificuldade em vender seu SaaS? Deixe a IA gerar copys prontas em formato de thread do Twitter/X, posts profissionais do LinkedIn, roteiros de vídeos para TikTok/Reels e e-mails de vendas frios.
-                    </p>
+                  <span>📢 Kit de Lançamento & Marketing (IA)</span>
+                  {marketingKit && Object.keys(marketingKit).length > 0 && showMarketingKit && (
                     <Button
-                      onClick={handleGenerateMarketingKit}
-                      disabled={generatingKit}
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 rounded-full hover:bg-white/10 text-muted-foreground hover:text-white"
+                      onClick={() => setShowMarketingKit(false)}
+                      title="Ocultar"
                     >
-                      {generatingKit ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" /> Gerando Kit de Marketing...
-                        </>
-                      ) : (
-                        <>
-                          <Megaphone className="h-4 w-4 text-white" /> Gerar Kit de Marketing (IA)
-                        </>
-                      )}
+                      <X className="h-4 w-4" />
                     </Button>
-                  </div>
+                  )}
+                </h4>
+                {!marketingKit || Object.keys(marketingKit).length === 0 || !showMarketingKit ? (
+                  marketingKit && Object.keys(marketingKit).length > 0 ? (
+                    <div className="bg-primary/5 p-5 rounded-lg border border-primary/10 text-center space-y-4">
+                      <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                        Kit de Lançamento & Marketing pronto. Deseja visualizar as postagens, tweets, roteiros e emails?
+                      </p>
+                      <div className="flex gap-2 justify-center">
+                        <Button
+                          onClick={() => setShowMarketingKit(true)}
+                          className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
+                        >
+                          <Megaphone className="h-4 w-4 text-white" /> Ver Kit de Marketing
+                        </Button>
+                        <Button
+                          onClick={handleGenerateMarketingKit}
+                          disabled={generatingKit}
+                          variant="outline"
+                          className="border-primary/30 text-primary hover:bg-primary/10 font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
+                        >
+                          {generatingKit ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            "Regerar Kit (IA)"
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-primary/5 p-5 rounded-lg border border-primary/10 text-center space-y-4">
+                      <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                        Dificuldade em vender seu SaaS? Deixe a IA gerar copys prontas em formato de thread do Twitter/X, posts profissionais do LinkedIn, roteiros de vídeos para TikTok/Reels e e-mails de vendas frios.
+                      </p>
+                      <Button
+                        onClick={handleGenerateMarketingKit}
+                        disabled={generatingKit}
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
+                      >
+                        {generatingKit ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" /> Gerando Kit de Marketing...
+                          </>
+                        ) : (
+                          <>
+                            <Megaphone className="h-4 w-4 text-white" /> Gerar Kit de Marketing (IA)
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )
                 ) : (
                   <div className="space-y-4">
                     {/* Tab Selector */}
