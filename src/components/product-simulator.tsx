@@ -182,7 +182,7 @@ export function ProductSimulator() {
     "🔍 Iniciando radar de validação de mercado...",
     `📡 Analisando conversas e posts recentes no Reddit sobre '${isCustomMode ? customAudience : selectedCombo.audience}'...`,
     "📊 Identificando reclamações recorrentes e nível de frustração emocional...",
-    "📚 Consultando base literária do Google Books para mapear virabilidade de compra...",
+    "📚 Consultando base literária do Google Books para mapear viralidade de compra...",
     "⚡ Calculando estimativa de Custo de Construção e Saturação de mercado...",
     "🧠 Alimentando a inteligência artificial (Groq API) para desenhar o Lean Canvas...",
     "✅ Validação concluída com sucesso! Gerando painel de oportunidades..."
@@ -277,7 +277,7 @@ export function ProductSimulator() {
               SIMULAÇÃO INTERATIVA
             </div>
             <h3 className="text-2xl font-extrabold text-foreground tracking-tight">
-              Como funciona o Radar de Virabilidade?
+              Como funciona o Radar de Viralidade?
             </h3>
           </div>
           

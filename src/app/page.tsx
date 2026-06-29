@@ -55,12 +55,12 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Header Simples */}
-      <header className="px-6 lg:px-14 h-20 flex items-center justify-between border-b border-border/40 backdrop-blur-md sticky top-0 z-50">
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/20">
-            <Zap className="h-4 w-4 text-white" />
+      <header className="px-6 lg:px-14 h-24 flex items-center justify-between border-b border-border/40 backdrop-blur-md sticky top-0 z-50">
+        <div className="flex items-center gap-3">
+          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/20">
+            <Zap className="h-8 w-8 text-white" />
           </div>
-          <span className="font-bold text-xl tracking-tight text-foreground">ViralBook AI</span>
+          <span className="font-extrabold text-3xl md:text-4xl tracking-tight text-foreground">ViralBook AI</span>
         </div>
         <nav className="flex items-center gap-4 sm:gap-6">
           <Link href="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
@@ -93,20 +93,20 @@ export default function LandingPage() {
               ✨ O Primeiro Radar Anti-Achismos do Brasil
             </div>
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground drop-shadow-sm leading-[1.1]">
-              Descubra o próximo <br className="hidden md:block"/>
+              Pare de construir <br className="hidden md:block"/>
               <span className="bg-gradient-to-r from-blue-400 via-primary to-purple-500 bg-clip-text text-transparent">
-                SaaS Bilionário
-              </span> antes de todo mundo.
+                produtos que ninguém quer.
+              </span>
             </h1>
-            <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed mt-6">
-              A inteligência artificial que varre a internet para encontrar os micro-nichos mais lucrativos, inexplorados e com maior potencial de viralização. Pare de adivinhar. Comece a construir.
+            <p className="mx-auto max-w-[800px] text-foreground/95 md:text-2xl/relaxed font-medium mt-8 px-6 py-4 rounded-2xl bg-muted/30 border border-border/50 backdrop-blur-md shadow-inner">
+              Transforme os insights de <span className="bg-gradient-to-r from-blue-400 to-primary bg-clip-text text-transparent font-extrabold">livros virais</span> e <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent font-extrabold">ideias já validadas</span> em aplicativos, SaaS e Micro-SaaS com potencial real de mercado.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
               <button 
                 onClick={() => openAuth("signup")}
                 className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/80 h-14 px-8 text-lg font-bold rounded-full shadow-[0_0_40px_-10px_rgba(59,130,246,0.6)] transition-all hover:scale-105 hover:shadow-[0_0_60px_-15px_rgba(59,130,246,0.8)] cursor-pointer"
               >
-                Começar Agora <ArrowRight className="ml-2 h-5 w-5" />
+                Encontre sua próxima ideia <ArrowRight className="ml-2 h-5 w-5" />
               </button>
               <Link 
                 href="#pricing" 
@@ -128,6 +128,58 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* Pain & Solution Section */}
+        <section className="w-full py-20 bg-muted/10 border-t border-border/50 px-4 md:px-6 relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[250px] bg-red-500/5 dark:bg-red-500/10 blur-[100px] rounded-full pointer-events-none" />
+          <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[500px] h-[250px] bg-emerald-500/5 dark:bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none" />
+          
+          <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 items-stretch relative z-10">
+            {/* Pain Column */}
+            <div className="p-8 md:p-10 rounded-3xl bg-red-500/5 border border-red-500/10 flex flex-col justify-between transition-all hover:border-red-500/20">
+              <div>
+                <h3 className="text-2xl md:text-3xl font-extrabold text-foreground mb-6 flex items-center gap-2">
+                  <span className="text-red-500">Você sofre com isso?</span>
+                </h3>
+                <ul className="space-y-4">
+                  {[
+                    "Não sabe qual produto criar.",
+                    "Tem medo de perder meses desenvolvendo.",
+                    "Nunca encontra uma ideia realmente boa.",
+                    "Fica preso pesquisando tendências."
+                  ].map((pain, i) => (
+                    <li key={i} className="flex items-start gap-3 text-muted-foreground text-base">
+                      <span className="text-red-500 font-bold text-lg mt-0.5">✕</span>
+                      <span>{pain}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Relief Column */}
+            <div className="p-8 md:p-10 rounded-3xl bg-emerald-500/5 border border-emerald-500/10 flex flex-col justify-between transition-all hover:border-emerald-500/20">
+              <div>
+                <h3 className="text-2xl md:text-3xl font-extrabold text-foreground mb-6 flex items-center gap-2">
+                  <span className="text-emerald-500">A ViralBook resolve isso para você.</span>
+                </h3>
+                <ul className="space-y-4">
+                  {[
+                    { emoji: "📚", text: "Analisa livros virais" },
+                    { emoji: "🧠", text: "Descobre problemas recorrentes" },
+                    { emoji: "💡", text: "Gera ideias de SaaS" },
+                    { emoji: "🚀", text: "Cria um roadmap para o MVP" }
+                  ].map((sol, i) => (
+                    <li key={i} className="flex items-center gap-3 text-foreground font-semibold text-base">
+                      <span className="text-2xl shrink-0">{sol.emoji}</span>
+                      <span>{sol.text}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Product Simulator Section */}
         <section className="w-full py-16 md:py-24 px-4 md:px-6 relative overflow-hidden">
           <div className="max-w-6xl mx-auto text-center mb-12 space-y-4">
@@ -135,7 +187,7 @@ export default function LandingPage() {
               Veja a IA Varrendo o Mercado em Tempo Real
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Simule a análise de virabilidade de um crossover agora mesmo. Descubra a dor, o nível de saturação e o canvas da ideia selecionada.
+              Simule a análise de viralidade de um crossover agora mesmo. Descubra a dor, o nível de saturação e o canvas da ideia selecionada.
             </p>
           </div>
           <ProductSimulator />
