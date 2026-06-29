@@ -115,6 +115,42 @@ export function AdvisorsClient({ initialOpportunities }: { initialOpportunities:
           glow: "shadow-[0_0_15px_rgba(20,184,166,0.15)]",
           avatarBg: "bg-teal-500/20 text-teal-300 border-teal-500/30"
         };
+      case "musk":
+        return {
+          bg: "bg-rose-500/5 border-rose-500/20 hover:border-rose-500/40",
+          text: "text-rose-400",
+          activeBg: "bg-rose-500/10 border-rose-500 text-white",
+          dot: "bg-rose-400",
+          glow: "shadow-[0_0_15px_rgba(244,63,94,0.15)]",
+          avatarBg: "bg-rose-500/20 text-rose-300 border-rose-500/30"
+        };
+      case "altman":
+        return {
+          bg: "bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40",
+          text: "text-emerald-400",
+          activeBg: "bg-emerald-500/10 border-emerald-500 text-white",
+          dot: "bg-emerald-400",
+          glow: "shadow-[0_0_15px_rgba(16,185,129,0.15)]",
+          avatarBg: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+        };
+      case "zuck":
+        return {
+          bg: "bg-blue-500/5 border-blue-500/20 hover:border-blue-500/40",
+          text: "text-blue-400",
+          activeBg: "bg-blue-500/10 border-blue-500 text-white",
+          dot: "bg-blue-400",
+          glow: "shadow-[0_0_15px_rgba(59,130,246,0.15)]",
+          avatarBg: "bg-blue-500/20 text-blue-300 border-blue-500/30"
+        };
+      case "bezos":
+        return {
+          bg: "bg-orange-500/5 border-orange-500/20 hover:border-orange-500/40",
+          text: "text-orange-400",
+          activeBg: "bg-orange-500/10 border-orange-500 text-white",
+          dot: "bg-orange-400",
+          glow: "shadow-[0_0_15px_rgba(249,115,22,0.15)]",
+          avatarBg: "bg-orange-500/20 text-orange-300 border-orange-500/30"
+        };
       default:
         return {
           bg: "bg-primary/5 border-primary/20",
