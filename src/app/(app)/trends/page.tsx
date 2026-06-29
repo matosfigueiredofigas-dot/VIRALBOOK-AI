@@ -49,7 +49,7 @@ export default async function TrendsPage(props: { searchParams: Promise<{ countr
   let query = supabase
     .from('opportunities')
     .select('saas_name, book_category, trends_growth_monthly, reddit_mentions, viral_opportunity_score')
-    .or(`user_id.is.null,user_id.eq.${user.id}`)
+    .eq('user_id', user.id)
     .order('trends_growth_monthly', { ascending: false });
 
   if (country !== "ALL") {

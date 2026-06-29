@@ -65,7 +65,7 @@ export async function POST(request: Request) {
         .select('*')
         .eq('country', country)
         .or(`search_keyword.ilike.%${keyword}%,book_title.ilike.%${keyword}%`)
-        .or(`user_id.is.null,user_id.eq.${user.id}`)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1);
 

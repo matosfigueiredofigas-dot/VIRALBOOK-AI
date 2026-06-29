@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import { Search, Loader2, Sparkles, Copy, CheckCircle2, TrendingUp, Heart, Share2, FileText, Bell, LayoutGrid, List, MessageSquare, Users, Trash2, Globe, Megaphone, DollarSign, Percent, HelpCircle, X } from "lucide-react";
+import { Search, Loader2, Sparkles, Copy, CheckCircle2, TrendingUp, Heart, Share2, FileText, Bell, LayoutGrid, List, MessageSquare, Users, Trash2, Globe, Megaphone, DollarSign, Percent, HelpCircle, X, ChevronDown, ChevronUp } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 // Ícone personalizado do Facebook para evitar incompatibilidade de versão do lucide-react
@@ -31,6 +31,36 @@ function FacebookIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 import { AIChatModal } from "@/components/ai-chat-modal";
 
+interface CollapsibleHeaderProps {
+  title: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  icon: React.ReactNode;
+  badge?: React.ReactNode;
+}
+
+function CollapsibleSectionHeader({ title, isOpen, onToggle, icon, badge }: CollapsibleHeaderProps) {
+  return (
+    <button
+      onClick={onToggle}
+      className="w-full flex items-center justify-between py-3 px-4 bg-zinc-900/40 hover:bg-zinc-900/60 border border-white/5 rounded-xl transition-all duration-300 group text-left cursor-pointer"
+    >
+      <div className="flex items-center gap-2.5">
+        <span className="text-muted-foreground group-hover:text-primary transition-colors flex items-center justify-center">
+          {icon}
+        </span>
+        <span className="font-bold text-xs text-zinc-200 tracking-wider uppercase group-hover:text-white transition-colors">
+          {title}
+        </span>
+        {badge}
+      </div>
+      <div className="text-zinc-500 group-hover:text-zinc-300 transition-colors">
+        {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+      </div>
+    </button>
+  );
+}
+
 // Sub-componente para isolar os estados individuais (como expandir a sheet)
 function OpportunityCard({ item }: { item: any }) {
   const router = useRouter();
@@ -45,18 +75,20 @@ function OpportunityCard({ item }: { item: any }) {
   const [marketingTab, setMarketingTab] = useState<"twitter" | "linkedin" | "tiktok" | "email">("twitter");
   const [copiedMarketing, setCopiedMarketing] = useState<string | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [showRedditPainPoints, setShowRedditPainPoints] = useState(true);
-  const [showMarketingKit, setShowMarketingKit] = useState(true);
+  // Collapsible section states - start collapsed (false) to prevent infinite scrolling
+  const [showMonetization, setShowMonetization] = useState(false);
+  const [showMvpPlan, setShowMvpPlan] = useState(false);
+  const [showValidation, setShowValidation] = useState(false);
+  const [showRedditPainPoints, setShowRedditPainPoints] = useState(false);
+  const [showMarketingKit, setShowMarketingKit] = useState(false);
+  const [showCalculator, setShowCalculator] = useState(false);
+  const [showPrompts, setShowPrompts] = useState(false);
 
   const [details, setDetails] = useState<any>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
 
   const handleSheetOpen = async (open: boolean) => {
     setIsSheetOpen(open);
-    if (open) {
-      setShowRedditPainPoints(true);
-      setShowMarketingKit(true);
-    }
     if (open && !details) {
       setLoadingDetails(true);
       try {
@@ -392,468 +424,442 @@ function OpportunityCard({ item }: { item: any }) {
                 <p className="text-sm font-medium">Carregando detalhes e prompts...</p>
               </div>
             ) : details ? (
-            <div className="space-y-6">
-              <div>
-                <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Como Monetizar</h4>
-                <div className="bg-muted/50 p-4 rounded-lg border border-border/50">
-                  <p className="text-foreground">{details.monetization_model}</p>
-                  <Separator className="my-3" />
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-muted-foreground">Preço Sugerido:</span>
-                    <span className="font-bold text-green-500">{details.suggested_price?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
+            <div className="space-y-4">
+              {/* Como Monetizar */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Como Monetizar"
+                  isOpen={showMonetization}
+                  onToggle={() => setShowMonetization(!showMonetization)}
+                  icon={<DollarSign className="h-4 w-4 text-green-400" />}
+                />
+                {showMonetization && (
+                  <div className="bg-muted/50 p-4 rounded-xl border border-border/50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <p className="text-foreground text-sm">{details.monetization_model}</p>
+                    <Separator className="my-3" />
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-muted-foreground">Preço Sugerido:</span>
+                      <span className="font-bold text-green-500">{details.suggested_price?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm mt-2">
+                      <span className="text-muted-foreground">Potencial:</span>
+                      <span className="font-bold">{details.potential_revenue?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center text-sm mt-2">
-                    <span className="text-muted-foreground">Potencial:</span>
-                    <span className="font-bold">{details.potential_revenue?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
-                  </div>
-                </div>
+                )}
               </div>
 
-              <div>
-                <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Plano do MVP</h4>
-                <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
-                  <p className="text-foreground text-sm leading-relaxed">{details.mvp_features}</p>
-                  <div className="flex gap-2 mt-4 text-xs">
-                    <Badge variant="outline" className="bg-background">⏱️ {details.development_time}</Badge>
-                    <Badge variant="outline" className="bg-background">🧠 {details.implementation_difficulty}</Badge>
+              {/* Plano do MVP */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Plano do MVP"
+                  isOpen={showMvpPlan}
+                  onToggle={() => setShowMvpPlan(!showMvpPlan)}
+                  icon={<List className="h-4 w-4 text-blue-400" />}
+                />
+                {showMvpPlan && (
+                  <div className="bg-primary/5 p-4 rounded-xl border border-primary/20 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <p className="text-foreground text-sm leading-relaxed">{details.mvp_features}</p>
+                    <div className="flex gap-2 mt-4 text-xs">
+                      <Badge variant="outline" className="bg-background">⏱️ {details.development_time}</Badge>
+                      <Badge variant="outline" className="bg-background">🧠 {details.implementation_difficulty}</Badge>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
-              <div>
-                <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Validação Social & Canais</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <a
-                    href={`https://www.reddit.com/search/?q=${encodeURIComponent(details.target_audience || details.saas_name)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-orange-500/5 p-4 rounded-lg border border-orange-500/10 hover:border-orange-500/30 transition-all block group/reddit"
-                  >
-                    <div className="flex items-center gap-2 text-orange-500 font-bold mb-2">
-                      <Search className="h-5 w-5" />
-                      Validação Reddit
-                    </div>
-                    <div className="text-2xl font-extrabold text-foreground mb-1 group-hover/reddit:text-orange-500 transition-colors">
-                      {details.reddit_mentions || 0}
-                      <span className="text-xs font-normal text-muted-foreground ml-1 underline decoration-muted-foreground/30 group-hover/reddit:decoration-orange-500">menções ↗</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
-                      Representa a quantidade de discussões ativas e manifestações de dores de usuários em subreddits relevantes.
-                    </p>
-                  </a>
-
-                  <div className="bg-blue-600/5 p-4 rounded-lg border border-blue-600/10 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center gap-2 text-blue-500 font-bold mb-2">
-                        <FacebookIcon className="h-5 w-5" />
-                        Validação Facebook
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <a
-                          href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}&media_type=all`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm font-bold text-foreground hover:text-blue-500 transition-colors flex items-center justify-between group/link border-b border-border/20 pb-1"
-                        >
-                          <span>Anúncios Ativos:</span>
-                          <span className="text-blue-500 underline decoration-blue-500/30 group-hover/link:decoration-blue-500">{details.facebook_ads_count || 0} campanhas ↗</span>
-                        </a>
-                        <a
-                          href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm font-bold text-foreground hover:text-indigo-400 transition-colors flex items-center justify-between group/link"
-                        >
-                          <span>Grupos do Nicho:</span>
-                          <span className="text-indigo-400 underline decoration-indigo-400/30 group-hover/link:decoration-indigo-400">{details.facebook_groups_count || 0} ativos ↗</span>
-                        </a>
-                      </div>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
-                      Presença comercial de anúncios concorrentes e grupos ativos ideais para tráfego orgânico e prospecção.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-bold text-sm text-muted-foreground mb-3 uppercase tracking-wider flex items-center justify-between">
-                  <span>Dores Reais do Reddit (Mapeador de IA)</span>
-                  {redditPainPoints.length > 0 && showRedditPainPoints && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6 rounded-full hover:bg-white/10 text-muted-foreground hover:text-white"
-                      onClick={() => setShowRedditPainPoints(false)}
-                      title="Ocultar"
+              {/* Validação Social & Canais */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Validação Social & Canais"
+                  isOpen={showValidation}
+                  onToggle={() => setShowValidation(!showValidation)}
+                  icon={<Globe className="h-4 w-4 text-teal-400" />}
+                />
+                {showValidation && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <a
+                      href={`https://www.reddit.com/search/?q=${encodeURIComponent(details.target_audience || details.saas_name)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-orange-500/5 p-4 rounded-xl border border-orange-500/10 hover:border-orange-500/30 transition-all block group/reddit"
                     >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
-                </h4>
-                {redditPainPoints.length === 0 || !showRedditPainPoints ? (
-                  redditPainPoints.length > 0 ? (
-                    <div className="bg-orange-500/5 p-5 rounded-lg border border-orange-500/10 text-center space-y-4">
-                      <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                        Dores do Reddit mapeadas para este nicho. Deseja visualizar?
+                      <div className="flex items-center gap-2 text-orange-500 font-bold mb-2">
+                        <Search className="h-5 w-5" />
+                        Validação Reddit
+                      </div>
+                      <div className="text-2xl font-extrabold text-foreground mb-1 group-hover/reddit:text-orange-500 transition-colors">
+                        {details.reddit_mentions || 0}
+                        <span className="text-xs font-normal text-muted-foreground ml-1 underline decoration-muted-foreground/30 group-hover/reddit:decoration-orange-500">menções ↗</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Representa a quantidade de discussões ativas e manifestações de dores de usuários em subreddits relevantes.
                       </p>
-                      <div className="flex gap-2 justify-center">
-                        <Button
-                          onClick={() => setShowRedditPainPoints(true)}
-                          className="bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
-                        >
-                          <Sparkles className="h-4 w-4 text-yellow-300 animate-pulse" /> Ver Dores Mapeadas
-                        </Button>
+                    </a>
+
+                    <div className="bg-blue-600/5 p-4 rounded-xl border border-blue-600/10 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center gap-2 text-blue-500 font-bold mb-2">
+                          <FacebookIcon className="h-5 w-5" />
+                          Validação Facebook
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <a
+                            href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}&media_type=all`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm font-bold text-foreground hover:text-blue-500 transition-colors flex items-center justify-between group/link border-b border-border/20 pb-1"
+                          >
+                            <span>Anúncios Ativos:</span>
+                            <span className="text-blue-500 underline decoration-blue-500/30 group-hover/link:decoration-blue-500">{details.facebook_ads_count || 0} campanhas ↗</span>
+                          </a>
+                          <a
+                            href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm font-bold text-foreground hover:text-indigo-400 transition-colors flex items-center justify-between group/link"
+                          >
+                            <span>Grupos do Nicho:</span>
+                            <span className="text-indigo-400 underline decoration-indigo-400/30 group-hover/link:decoration-indigo-400">{details.facebook_groups_count || 0} ativos ↗</span>
+                          </a>
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
+                        Presença comercial de anúncios concorrentes e grupos ativos ideais para tráfego orgânico e prospecção.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Dores Reais do Reddit (Mapeador de IA) */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Dores Reais do Reddit (Mapeador de IA)"
+                  isOpen={showRedditPainPoints}
+                  onToggle={() => setShowRedditPainPoints(!showRedditPainPoints)}
+                  icon={<Search className="h-4 w-4 text-orange-500" />}
+                  badge={redditPainPoints.length > 0 && (
+                    <Badge variant="secondary" className="bg-orange-500/10 text-orange-400 border-none text-[10px] px-1.5 h-4">
+                      {redditPainPoints.length}
+                    </Badge>
+                  )}
+                />
+                {showRedditPainPoints && (
+                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                    {redditPainPoints.length === 0 ? (
+                      <div className="bg-orange-500/5 p-5 rounded-lg border border-orange-500/10 text-center space-y-4">
+                        <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                          Ainda não mapeado. Deixe a IA analisar as discussões e desabafos dos usuários no Reddit para extrair dores críticas e reais do seu público-alvo.
+                        </p>
                         <Button
                           onClick={handleMapRedditPainPoints}
                           disabled={mappingReddit}
-                          variant="outline"
-                          className="border-orange-500/30 text-orange-400 hover:bg-orange-500/10 font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
+                          className="bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
                         >
                           {mappingReddit ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" /> Mapeando dores...
+                            </>
                           ) : (
-                            "Refazer Mapeamento (IA)"
+                            <>
+                              <Sparkles className="h-4 w-4 text-yellow-300 animate-pulse" /> Mapear Dores Reais (Reddit)
+                            </>
                           )}
                         </Button>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="bg-orange-500/5 p-5 rounded-lg border border-orange-500/10 text-center space-y-4">
-                      <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                        Ainda não mapeado. Deixe a IA analisar as discussões e desabafos dos usuários no Reddit para extrair dores críticas e reais do seu público-alvo.
-                      </p>
-                      <Button
-                        onClick={handleMapRedditPainPoints}
-                        disabled={mappingReddit}
-                        className="bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
-                      >
-                        {mappingReddit ? (
-                          <>
-                            <Loader2 className="h-4 w-4 animate-spin" /> Mapeando dores...
-                          </>
-                        ) : (
-                          <>
-                            <Sparkles className="h-4 w-4 text-yellow-300 animate-pulse" /> Mapear Dores Reais (Reddit)
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  )
-                ) : (
-                  <div className="space-y-4">
-                    {redditPainPoints.map((pain: any, index: number) => (
-                      <div key={index} className="bg-orange-500/5 border border-orange-500/10 p-5 rounded-xl space-y-3 transition-all hover:border-orange-500/20">
-                        <div className="flex justify-between items-start gap-2">
-                          <h5 className="font-extrabold text-sm text-white leading-snug">
-                            {index + 1}. {pain.pain_point}
-                          </h5>
-                          <Badge 
-                            variant="outline" 
-                            className={cn(
-                              "shrink-0 text-[10px] font-bold px-2.5 py-0.5 rounded-full border-none",
-                              pain.severity >= 4 
-                                ? "bg-red-500/20 text-red-400" 
-                                : pain.severity >= 3 
-                                ? "bg-yellow-500/20 text-yellow-400" 
-                                : "bg-zinc-800 text-zinc-400"
-                            )}
-                          >
-                            Severidade: {pain.severity}/5
-                          </Badge>
-                        </div>
-
-                        {pain.quotes && pain.quotes.length > 0 && (
-                          <div className="space-y-2 border-l-2 border-orange-500/30 pl-3">
-                            {pain.quotes.map((quote: string, qIdx: number) => (
-                              <p key={qIdx} className="text-xs text-zinc-400 italic">
-                                &ldquo;{quote}&rdquo;
-                              </p>
-                            ))}
-                          </div>
-                        )}
-
-                        {pain.source_title && (
-                          <div className="pt-2.5 text-[10px] text-muted-foreground flex justify-between items-center flex-wrap gap-2 border-t border-white/5">
-                            <span className="truncate max-w-[220px]" title={pain.source_title}>
-                              Origem: {pain.source_title}
-                            </span>
-                            {pain.source_url && (
-                              <a 
-                                href={pain.source_url} 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                className="text-orange-400 hover:text-orange-300 hover:underline inline-flex items-center gap-0.5"
+                    ) : (
+                      <div className="space-y-4">
+                        {redditPainPoints.map((pain: any, index: number) => (
+                          <div key={index} className="bg-orange-500/5 border border-orange-500/10 p-5 rounded-xl space-y-3 transition-all hover:border-orange-500/20">
+                            <div className="flex justify-between items-start gap-2">
+                              <h5 className="font-extrabold text-sm text-white leading-snug">
+                                {index + 1}. {pain.pain_point}
+                              </h5>
+                              <Badge 
+                                variant="outline" 
+                                className={cn(
+                                  "shrink-0 text-[10px] font-bold px-2.5 py-0.5 rounded-full border-none",
+                                  pain.severity >= 4 
+                                    ? "bg-red-500/20 text-red-400" 
+                                    : pain.severity >= 3 
+                                    ? "bg-yellow-500/20 text-yellow-400" 
+                                    : "bg-zinc-800 text-zinc-400"
+                                )}
                               >
-                                Ver Discussão ↗
-                              </a>
+                                Severidade: {pain.severity}/5
+                              </Badge>
+                            </div>
+
+                            {pain.quotes && pain.quotes.length > 0 && (
+                              <div className="space-y-2 border-l-2 border-orange-500/30 pl-3">
+                                {pain.quotes.map((quote: string, qIdx: number) => (
+                                  <p key={qIdx} className="text-xs text-zinc-400 italic">
+                                    &ldquo;{quote}&rdquo;
+                                  </p>
+                                ))}
+                              </div>
+                            )}
+
+                            {pain.source_title && (
+                              <div className="pt-2.5 text-[10px] text-muted-foreground flex justify-between items-center flex-wrap gap-2 border-t border-white/5">
+                                <span className="truncate max-w-[220px]" title={pain.source_title}>
+                                  Origem: {pain.source_title}
+                                </span>
+                                {pain.source_url && (
+                                  <a 
+                                    href={pain.source_url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="text-orange-400 hover:text-orange-300 hover:underline inline-flex items-center gap-0.5"
+                                  >
+                                    Ver Discussão ↗
+                                  </a>
+                                )}
+                              </div>
                             )}
                           </div>
-                        )}
-                      </div>
-                    ))}
+                        ))}
 
-                    <div className="flex justify-end">
-                      <Button
-                        onClick={handleMapRedditPainPoints}
-                        disabled={mappingReddit}
-                        variant="ghost"
-                        className="text-orange-400 hover:text-orange-300 hover:bg-orange-500/5 text-xs font-bold"
-                      >
-                        {mappingReddit ? (
-                          <>
-                            <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Remapeando...
-                          </>
-                        ) : (
-                          <>
-                            Refazer Análise de IA ↗
-                          </>
-                        )}
-                      </Button>
-                    </div>
+                        <div className="flex justify-end border-t border-white/5 pt-2">
+                          <Button
+                            onClick={handleMapRedditPainPoints}
+                            disabled={mappingReddit}
+                            variant="ghost"
+                            className="text-orange-400 hover:text-orange-300 hover:bg-orange-500/5 text-xs font-bold"
+                          >
+                            {mappingReddit ? (
+                              <>
+                                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Remapeando...
+                              </>
+                            ) : (
+                              <>
+                                Refazer Análise de IA ↗
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
 
-              <div>
-                <h4 className="font-bold text-sm text-muted-foreground mb-3 uppercase tracking-wider flex items-center justify-between">
-                  <span>📢 Kit de Lançamento & Marketing (IA)</span>
-                  {marketingKit && Object.keys(marketingKit).length > 0 && showMarketingKit && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6 rounded-full hover:bg-white/10 text-muted-foreground hover:text-white"
-                      onClick={() => setShowMarketingKit(false)}
-                      title="Ocultar"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
+              {/* Kit de Lançamento & Marketing (IA) */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Kit de Lançamento & Marketing (IA)"
+                  isOpen={showMarketingKit}
+                  onToggle={() => setShowMarketingKit(!showMarketingKit)}
+                  icon={<Megaphone className="h-4 w-4 text-purple-400" />}
+                  badge={marketingKit && Object.keys(marketingKit).length > 0 && (
+                    <Badge variant="secondary" className="bg-purple-500/10 text-purple-400 border-none text-[10px] px-1.5 h-4">
+                      Pronto
+                    </Badge>
                   )}
-                </h4>
-                {!marketingKit || Object.keys(marketingKit).length === 0 || !showMarketingKit ? (
-                  marketingKit && Object.keys(marketingKit).length > 0 ? (
-                    <div className="bg-primary/5 p-5 rounded-lg border border-primary/10 text-center space-y-4">
-                      <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                        Kit de Lançamento & Marketing pronto. Deseja visualizar as postagens, tweets, roteiros e emails?
-                      </p>
-                      <div className="flex gap-2 justify-center">
-                        <Button
-                          onClick={() => setShowMarketingKit(true)}
-                          className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
-                        >
-                          <Megaphone className="h-4 w-4 text-white" /> Ver Kit de Marketing
-                        </Button>
+                />
+                {showMarketingKit && (
+                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                    {!marketingKit || Object.keys(marketingKit).length === 0 ? (
+                      <div className="bg-primary/5 p-5 rounded-lg border border-primary/10 text-center space-y-4">
+                        <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                          Dificuldade em vender seu SaaS? Deixe a IA gerar copys prontas em formato de thread do Twitter/X, posts profissionais do LinkedIn, roteiros de vídeos para TikTok/Reels e e-mails de vendas frios.
+                        </p>
                         <Button
                           onClick={handleGenerateMarketingKit}
                           disabled={generatingKit}
-                          variant="outline"
-                          className="border-primary/30 text-primary hover:bg-primary/10 font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
+                          className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
                         >
                           {generatingKit ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" /> Gerando Kit de Marketing...
+                            </>
                           ) : (
-                            "Regerar Kit (IA)"
+                            <>
+                              <Megaphone className="h-4 w-4 text-white" /> Gerar Kit de Marketing (IA)
+                            </>
                           )}
                         </Button>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="bg-primary/5 p-5 rounded-lg border border-primary/10 text-center space-y-4">
-                      <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                        Dificuldade em vender seu SaaS? Deixe a IA gerar copys prontas em formato de thread do Twitter/X, posts profissionais do LinkedIn, roteiros de vídeos para TikTok/Reels e e-mails de vendas frios.
-                      </p>
-                      <Button
-                        onClick={handleGenerateMarketingKit}
-                        disabled={generatingKit}
-                        className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
-                      >
-                        {generatingKit ? (
-                          <>
-                            <Loader2 className="h-4 w-4 animate-spin" /> Gerando Kit de Marketing...
-                          </>
-                        ) : (
-                          <>
-                            <Megaphone className="h-4 w-4 text-white" /> Gerar Kit de Marketing (IA)
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  )
-                ) : (
-                  <div className="space-y-4">
-                    {/* Tab Selector */}
-                    <div className="grid grid-cols-4 p-1 bg-white/5 rounded-xl border border-white/5">
-                      {(["twitter", "linkedin", "tiktok", "email"] as const).map((tab) => (
-                        <button
-                          key={tab}
-                          type="button"
-                          onClick={() => setMarketingTab(tab)}
-                          className={cn(
-                            "py-2 rounded-lg text-xxs font-bold uppercase transition-all duration-300",
-                            marketingTab === tab
-                              ? "bg-primary text-primary-foreground shadow-md"
-                              : "text-muted-foreground hover:text-white"
-                          )}
-                        >
-                          {tab === "twitter" && "Twitter/X"}
-                          {tab === "linkedin" && "LinkedIn"}
-                          {tab === "tiktok" && "TikTok/Reels"}
-                          {tab === "email" && "E-mail"}
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Content display based on active tab */}
-                    <div className="bg-zinc-900/40 border border-white/5 p-5 rounded-xl space-y-3 relative group">
-                      
-                      {/* Twitter Thread Tab */}
-                      {marketingTab === "twitter" && marketingKit.twitter_thread && (
-                        <div className="space-y-4">
-                          <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                            <span className="text-xs font-semibold text-zinc-400">Sequência do Twitter/X (Thread)</span>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
-                              onClick={() => handleCopyMarketingText(marketingKit.twitter_thread.join("\n\n"), "tw-all")}
+                    ) : (
+                      <div className="space-y-4">
+                        {/* Tab Selector */}
+                        <div className="grid grid-cols-4 p-1 bg-white/5 rounded-xl border border-white/5">
+                          {(["twitter", "linkedin", "tiktok", "email"] as const).map((tab) => (
+                            <button
+                              key={tab}
+                              type="button"
+                              onClick={() => setMarketingTab(tab)}
+                              className={cn(
+                                "py-2 rounded-lg text-xxs font-bold uppercase transition-all duration-300 cursor-pointer",
+                                marketingTab === tab
+                                  ? "bg-primary text-primary-foreground shadow-md"
+                                  : "text-muted-foreground hover:text-white"
+                              )}
                             >
-                              {copiedMarketing === "tw-all" ? "Copiado!" : "Copiar Thread Completa"}
-                            </Button>
-                          </div>
-                          <div className="space-y-3">
-                            {marketingKit.twitter_thread.map((tweet: string, idx: number) => (
-                              <div key={idx} className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 relative group/tweet">
-                                <div className="text-xxs text-primary font-bold mb-1">Tweet {idx + 1}/{marketingKit.twitter_thread.length}</div>
-                                <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-wrap">{tweet}</p>
+                              {tab === "twitter" && "Twitter/X"}
+                              {tab === "linkedin" && "LinkedIn"}
+                              {tab === "tiktok" && "TikTok/Reels"}
+                              {tab === "email" && "E-mail"}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* Content display based on active tab */}
+                        <div className="bg-zinc-900/40 border border-white/5 p-5 rounded-xl space-y-3 relative group">
+                          
+                          {/* Twitter Thread Tab */}
+                          {marketingTab === "twitter" && marketingKit.twitter_thread && (
+                            <div className="space-y-4">
+                              <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                                <span className="text-xs font-semibold text-zinc-400">Sequência do Twitter/X (Thread)</span>
                                 <Button
                                   variant="ghost"
-                                  size="icon"
-                                  className="h-6 w-6 absolute top-2.5 right-2.5 opacity-0 group-hover/tweet:opacity-100 transition-opacity"
-                                  onClick={() => handleCopyMarketingText(tweet, `tw-${idx}`)}
+                                  size="sm"
+                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
+                                  onClick={() => handleCopyMarketingText(marketingKit.twitter_thread.join("\n\n"), "tw-all")}
                                 >
-                                  {copiedMarketing === `tw-${idx}` ? <CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
+                                  {copiedMarketing === "tw-all" ? "Copiado!" : "Copiar Thread Completa"}
                                 </Button>
                               </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* LinkedIn Post Tab */}
-                      {marketingTab === "linkedin" && (
-                        <div className="space-y-4">
-                          <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                            <span className="text-xs font-semibold text-zinc-400">Postagem Profissional do LinkedIn</span>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
-                              onClick={() => handleCopyMarketingText(marketingKit.linkedin_post, "li")}
-                            >
-                              {copiedMarketing === "li" ? "Copiado!" : "Copiar Texto"}
-                            </Button>
-                          </div>
-                          <div className="p-4 bg-zinc-950/40 rounded-lg border border-white/5 max-h-[350px] overflow-y-auto pr-2">
-                            <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-line">{marketingKit.linkedin_post}</p>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* TikTok/Reels Script Tab */}
-                      {marketingTab === "tiktok" && marketingKit.tiktok_script && (
-                        <div className="space-y-4">
-                          <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                            <span className="text-xs font-semibold text-zinc-400">Roteiro de Vídeo Curto (TikTok/Reels)</span>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
-                              onClick={() => {
-                                const fullScript = `HOOK:\n"${marketingKit.tiktok_script.hook}"\n\nSCENES:\n${marketingKit.tiktok_script.scenes.map((s: any, i: number) => `CENA ${i+1}:\nVisual: [${s.visual}]\nFala: "${s.voiceover}"`).join("\n\n")}\n\nCTA:\n"${marketingKit.tiktok_script.cta}"`;
-                                handleCopyMarketingText(fullScript, "tk");
-                              }}
-                            >
-                              {copiedMarketing === "tk" ? "Copiado!" : "Copiar Roteiro Completo"}
-                            </Button>
-                          </div>
-                          <div className="space-y-3 text-xs">
-                            <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
-                              <span className="font-bold text-red-400 block mb-1">🧲 O GANCHO (Primeiros 3s):</span>
-                              <p className="italic text-zinc-300">&ldquo;{marketingKit.tiktok_script.hook}&rdquo;</p>
+                              <div className="space-y-3">
+                                {marketingKit.twitter_thread.map((tweet: string, idx: number) => (
+                                  <div key={idx} className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 relative group/tweet">
+                                    <div className="text-xxs text-primary font-bold mb-1">Tweet {idx + 1}/{marketingKit.twitter_thread.length}</div>
+                                    <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-wrap">{tweet}</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-6 w-6 absolute top-2.5 right-2.5 opacity-0 group-hover/tweet:opacity-100 transition-opacity"
+                                      onClick={() => handleCopyMarketingText(tweet, `tw-${idx}`)}
+                                    >
+                                      {copiedMarketing === `tw-${idx}` ? <CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                            
-                            <div className="space-y-2">
-                              <span className="font-bold text-zinc-400 block">🎬 CENAS & NARRATIVA:</span>
-                              {marketingKit.tiktok_script.scenes.map((scene: any, idx: number) => (
-                                <div key={idx} className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 space-y-1">
-                                  <div className="text-[10px] text-zinc-500 uppercase font-bold">Cena {idx + 1}</div>
-                                  <div className="text-zinc-500 font-semibold text-xxs">Vídeo: <span className="font-normal text-zinc-400 italic">[{scene.visual}]</span></div>
-                                  <div className="text-zinc-200">Áudio (Falar): &ldquo;{scene.voiceover}&rdquo;</div>
+                          )}
+
+                          {/* LinkedIn Post Tab */}
+                          {marketingTab === "linkedin" && (
+                            <div className="space-y-4">
+                              <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                                <span className="text-xs font-semibold text-zinc-400">Postagem Profissional do LinkedIn</span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
+                                  onClick={() => handleCopyMarketingText(marketingKit.linkedin_post, "li")}
+                                >
+                                  {copiedMarketing === "li" ? "Copiado!" : "Copiar Texto"}
+                                </Button>
+                              </div>
+                              <div className="p-4 bg-zinc-950/40 rounded-lg border border-white/5 max-h-[350px] overflow-y-auto pr-2">
+                                <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-line">{marketingKit.linkedin_post}</p>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* TikTok/Reels Script Tab */}
+                          {marketingTab === "tiktok" && marketingKit.tiktok_script && (
+                            <div className="space-y-4">
+                              <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                                <span className="text-xs font-semibold text-zinc-400">Roteiro de Vídeo Curto (TikTok/Reels)</span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
+                                  onClick={() => {
+                                    const fullScript = `HOOK:\n"${marketingKit.tiktok_script.hook}"\n\nSCENES:\n${marketingKit.tiktok_script.scenes.map((s: any, i: number) => `CENA ${i+1}:\nVisual: [${s.visual}]\nFala: "${s.voiceover}"`).join("\n\n")}\n\nCTA:\n"${marketingKit.tiktok_script.cta}"`;
+                                    handleCopyMarketingText(fullScript, "tk");
+                                  }}
+                                >
+                                  {copiedMarketing === "tk" ? "Copiado!" : "Copiar Roteiro Completo"}
+                                </Button>
+                              </div>
+                              <div className="space-y-3 text-xs">
+                                <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
+                                  <span className="font-bold text-red-400 block mb-1">🧲 O GANCHO (Primeiros 3s):</span>
+                                  <p className="italic text-zinc-300">&ldquo;{marketingKit.tiktok_script.hook}&rdquo;</p>
                                 </div>
-                              ))}
+                                
+                                <div className="space-y-2">
+                                  <span className="font-bold text-zinc-400 block">🎬 CENAS & NARRATIVA:</span>
+                                  {marketingKit.tiktok_script.scenes.map((scene: any, idx: number) => (
+                                    <div key={idx} className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 space-y-1">
+                                      <div className="text-[10px] text-zinc-500 uppercase font-bold">Cena {idx + 1}</div>
+                                      <div className="text-zinc-500 font-semibold text-xxs">Vídeo: <span className="font-normal text-zinc-400 italic">[{scene.visual}]</span></div>
+                                      <div className="text-zinc-200">Áudio (Falar): &ldquo;{scene.voiceover}&rdquo;</div>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
+                                  <span className="font-bold text-green-400 block mb-1">📢 CHAMADA PARA AÇÃO (CTA):</span>
+                                  <p className="font-semibold text-zinc-300">{marketingKit.tiktok_script.cta}</p>
+                                </div>
+                              </div>
                             </div>
+                          )}
 
-                            <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
-                              <span className="font-bold text-green-400 block mb-1">📢 CHAMADA PARA AÇÃO (CTA):</span>
-                              <p className="font-semibold text-zinc-300">{marketingKit.tiktok_script.cta}</p>
+                          {/* Cold Email Tab */}
+                          {marketingTab === "email" && (
+                            <div className="space-y-4">
+                              <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                                <span className="text-xs font-semibold text-zinc-400">E-mail de Prospecção Fria</span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
+                                  onClick={() => handleCopyMarketingText(marketingKit.cold_email, "em")}
+                                >
+                                  {copiedMarketing === "em" ? "Copiado!" : "Copiar E-mail"}
+                                </Button>
+                              </div>
+                              <div className="p-4 bg-zinc-950/40 rounded-lg border border-white/5 pr-2">
+                                <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-line">{marketingKit.cold_email}</p>
+                              </div>
                             </div>
-                          </div>
+                          )}
+
                         </div>
-                      )}
 
-                      {/* Cold Email Tab */}
-                      {marketingTab === "email" && (
-                        <div className="space-y-4">
-                          <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                            <span className="text-xs font-semibold text-zinc-400">E-mail de Prospecção Fria</span>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
-                              onClick={() => handleCopyMarketingText(marketingKit.cold_email, "em")}
-                            >
-                              {copiedMarketing === "em" ? "Copiado!" : "Copiar E-mail"}
-                            </Button>
-                          </div>
-                          <div className="p-4 bg-zinc-950/40 rounded-lg border border-white/5 pr-2">
-                            <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-line">{marketingKit.cold_email}</p>
-                          </div>
+                        <div className="flex justify-end border-t border-white/5 pt-2">
+                          <Button
+                            onClick={handleGenerateMarketingKit}
+                            disabled={generatingKit}
+                            variant="ghost"
+                            className="text-primary hover:text-primary-foreground hover:bg-primary/5 text-xs font-bold"
+                          >
+                            {generatingKit ? (
+                              <>
+                                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Remontando...
+                              </>
+                            ) : (
+                              <>
+                                Refazer Copys de IA ↗
+                              </>
+                            )}
+                          </Button>
                         </div>
-                      )}
-
-                    </div>
-
-                    <div className="flex justify-end">
-                      <Button
-                        onClick={handleGenerateMarketingKit}
-                        disabled={generatingKit}
-                        variant="ghost"
-                        className="text-primary hover:text-primary-foreground hover:bg-primary/5 text-xs font-bold"
-                      >
-                        {generatingKit ? (
-                          <>
-                            <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Remontando...
-                          </>
-                        ) : (
-                          <>
-                            Refazer Copys de IA ↗
-                          </>
-                        )}
-                      </Button>
-                    </div>
-
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
 
-              {/* SaaS Financial Calculator Section */}
-              <div className="border-t border-white/5 pt-6">
-                <h4 className="font-bold text-sm text-muted-foreground mb-3 uppercase tracking-wider flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-emerald-400" />
-                  📊 Calculadora de Viabilidade Financeira (SaaS)
-                </h4>
-                
-                <div className="bg-zinc-900/40 border border-white/5 p-5 rounded-xl space-y-4">
+{/* SaaS Financial Calculator Section */}
+                            {/* SaaS Financial Calculator Section */}
+              <div className="border-t border-white/5 pt-6 space-y-2">
+                <CollapsibleSectionHeader
+                  title="Calculadora de Viabilidade Financeira (SaaS)"
+                  isOpen={showCalculator}
+                  onToggle={() => setShowCalculator(!showCalculator)}
+                  icon={<TrendingUp className="h-4 w-4 text-emerald-400" />}
+                />
+                {showCalculator && (
+                  <div className="bg-zinc-900/40 border border-white/5 p-5 rounded-xl space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
                   <p className="text-xs text-zinc-400 leading-relaxed">
                     Simule a viabilidade financeira do seu SaaS em tempo real. Altere os parâmetros abaixo para ver as projeções de faturamento e metas de aquisição.
                   </p>
@@ -1055,13 +1061,19 @@ function OpportunityCard({ item }: { item: any }) {
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
+            </div>
 
-              <div>
-                <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider flex items-center justify-between">
-                  Prompts de Construção
-                </h4>
-                <div className="space-y-4">
+              {/* Prompts de Construção */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Prompts de Construção"
+                  isOpen={showPrompts}
+                  onToggle={() => setShowPrompts(!showPrompts)}
+                  icon={<Sparkles className="h-4 w-4 text-yellow-300" />}
+                />
+                {showPrompts && (
+                  <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
                   <div className="relative group">
                     <div className="text-xs font-semibold mb-1 text-purple-500">
                       Para{" "}
@@ -1141,8 +1153,9 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                     </Button>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
+          </div>
             ) : (
               <div className="text-center py-20 text-muted-foreground flex flex-col items-center justify-center gap-3">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />

@@ -20,7 +20,7 @@ export default async function CanvasPage(props: { params: Promise<{ id: string }
     .from('opportunities')
     .select('*')
     .eq('id', params.id)
-    .or(`user_id.is.null,user_id.eq.${user.id}`)
+    .eq('user_id', user.id)
     .single();
 
   if (error || !opportunity) {

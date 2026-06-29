@@ -24,7 +24,7 @@ export default async function OpportunitiesPage(props: { searchParams: Promise<{
   let query = supabase
     .from('opportunities')
     .select('id, saas_name, problem_solved, target_audience, monetization_model, potential_revenue, implementation_difficulty')
-    .or(`user_id.is.null,user_id.eq.${user.id}`)
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
   if (country !== "ALL") {

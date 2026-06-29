@@ -25,7 +25,7 @@ export default async function NichesPage(props: { searchParams: Promise<{ countr
   let query = supabase
     .from('opportunities')
     .select('book_category, viral_opportunity_score, country')
-    .or(`user_id.is.null,user_id.eq.${user.id}`)
+    .eq('user_id', user.id)
     .order('viral_opportunity_score', { ascending: false });
 
   if (country !== "ALL") {

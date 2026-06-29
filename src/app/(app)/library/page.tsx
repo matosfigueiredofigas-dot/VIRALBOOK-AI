@@ -18,7 +18,7 @@ export default async function LibraryPage() {
   const { data: opportunities } = await supabase
     .from('opportunities')
     .select('id, created_at, book_title, book_author, book_category, viral_opportunity_score, country, saas_name, problem_solved')
-    .or(`user_id.is.null,user_id.eq.${user.id}`)
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
   return (

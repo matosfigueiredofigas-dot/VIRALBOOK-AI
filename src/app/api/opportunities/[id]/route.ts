@@ -20,7 +20,7 @@ export async function GET(
       .from('opportunities')
       .select('*')
       .eq('id', id)
-      .or(`user_id.is.null,user_id.eq.${user.id}`)
+      .eq('user_id', user.id)
       .single();
 
     if (error || !opportunity) {

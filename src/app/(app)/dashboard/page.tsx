@@ -30,7 +30,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cou
   let query = supabase
     .from('opportunities')
     .select('id, created_at, saas_name, problem_solved, viral_opportunity_score, country, trends_growth_monthly, reddit_mentions, facebook_ads_count, facebook_groups_count, target_audience, competitive_advantage, suggested_price, book_category')
-    .or(`user_id.is.null,user_id.eq.${user.id}`)
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
   if (country && country !== "ALL") {

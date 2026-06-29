@@ -29,7 +29,7 @@ export default async function AdvisorsPage() {
           Conselho de Mentores (IA)
         </h1>
         <p className="text-muted-foreground mt-2">
-          Reúna opiniões estratégicas, críticas honestas e conselhos práticos de lendas como Paul Graham, Steve Jobs, Pieter Levels e Naval Ravikant.
+          Reúna opiniões estratégicas, críticas honestas e conselhos práticos de lendas como Paul Graham, Steve Jobs, Pieter Levels, Naval Ravikant, Elon Musk, Sam Altman, Mark Zuckerberg e Jeff Bezos.
         </p>
       </div>
 

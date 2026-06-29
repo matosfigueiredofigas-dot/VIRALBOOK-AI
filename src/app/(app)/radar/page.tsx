@@ -25,7 +25,7 @@ export default async function RadarPage(props: { searchParams: Promise<{ country
   let query = supabase
     .from('opportunities')
     .select('id, book_title, book_author, book_category, country, created_at')
-    .or(`user_id.is.null,user_id.eq.${user.id}`)
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
   if (country !== "ALL") {
