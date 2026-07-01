@@ -27,7 +27,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     };
   }
 
-  const name = lp.opportunities?.saas_name || 'SaaS';
+  const name = (Array.isArray(lp.opportunities) ? lp.opportunities[0]?.saas_name : (lp.opportunities as any)?.saas_name) || 'SaaS';
   return {
     title: `${name} | ${lp.headline}`,
     description: lp.subheadline,
@@ -49,7 +49,7 @@ export default async function PublicLandingPage(props: { params: Promise<{ slug:
     notFound();
   }
 
-  const saasName = lp.opportunities?.saas_name || "SaaS App";
+  const saasName = (Array.isArray(lp.opportunities) ? lp.opportunities[0]?.saas_name : (lp.opportunities as any)?.saas_name) || "SaaS App";
   const themeColor = lp.theme_color || "#a855f7";
 
   return (

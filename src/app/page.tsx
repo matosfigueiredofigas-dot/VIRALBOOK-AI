@@ -55,7 +55,7 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Header Simples */}
-      <header className="px-6 lg:px-14 h-24 flex items-center justify-between border-b border-border/40 backdrop-blur-md sticky top-0 z-50">
+      <header className="px-6 lg:px-14 h-24 flex items-center justify-between border-b border-border/40 backdrop-blur-md fixed w-full top-0 z-50">
         <div className="flex items-center gap-3">
           <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/20">
             <Zap className="h-8 w-8 text-white" />
@@ -83,7 +83,7 @@ export default function LandingPage() {
         </nav>
       </header>
 
-      <main className="flex-1">
+      <main className="flex-1 pt-24">
         {/* Hero Section */}
         <section className="w-full py-24 md:py-32 lg:py-40 xl:py-48 flex flex-col items-center justify-center text-center px-4 md:px-6 relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-blue-500/15 dark:bg-blue-500/20 blur-[120px] rounded-full pointer-events-none" />

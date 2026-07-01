@@ -3,10 +3,11 @@ import { redirect } from 'next/navigation'
 import { OpportunitiesList } from '@/components/opportunities-list'
 import { AdvancedFilters } from '@/components/advanced-filters'
 import { Heart } from 'lucide-react'
+import { getFilterDate } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic';
 
-export default async function FavoritesPage(props: { searchParams: Promise<{ search?: string, minScore?: string }> }) {
+export default async function FavoritesPage(props: { searchParams: Promise<{ search?: string, minScore?: string, country?: string, time?: string }> }) {
   const user = await getCachedUser();
 
   if (!user) {
@@ -17,6 +18,9 @@ export default async function FavoritesPage(props: { searchParams: Promise<{ sea
   const searchParams = await props.searchParams;
   const search = searchParams.search || "";
   const minScore = searchParams.minScore ? parseInt(searchParams.minScore) : 0;
+  const country = searchParams.country || "ALL";
+  const time = searchParams.time || "now";
+  const filterDate = getFilterDate(time);
 
   // 2. Busca as oportunidades que foram favoritadas por este usuário
   const { data: userFavorites, error } = await supabase
@@ -49,6 +53,15 @@ export default async function FavoritesPage(props: { searchParams: Promise<{ sea
 
   // Extrai as oportunidades limpas do array retornado
   let favorites = userFavorites?.map((fav: any) => fav.opportunities).filter(Boolean) || [];
+
+  // Filtros Globais (Barra de Topo)
+  if (country !== "ALL") {
+    favorites = favorites.filter((f: any) => f.country === country);
+  }
+
+  if (filterDate) {
+    favorites = favorites.filter((f: any) => f.created_at >= filterDate);
+  }
 
   // Aplica os Filtros Avançados em memória (para a lista de favoritos, é super rápido e evita joins complexos)
   if (minScore > 0) {

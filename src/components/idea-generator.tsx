@@ -127,7 +127,7 @@ export function IdeaGenerator() {
       if (response.ok) {
         router.refresh();
         alert(`Sucesso! SaaS criado a partir de: "${suggestion.name}".`);
-        window.location.href = `/dashboard?country=${country}`;
+        window.location.href = `/dashboard?country=${country}&time=now`;
       } else {
         const errorData = await response.json().catch(() => ({}));
         alert(errorData.error || "Erro ao analisar nicho.");

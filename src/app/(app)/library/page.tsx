@@ -2,10 +2,11 @@ import { Sparkles } from "lucide-react"
 import { LibraryTabs } from "@/components/library-tabs"
 import { createClient, getCachedUser } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
+import { getFilterDate } from "@/lib/utils"
 
 export const dynamic = 'force-dynamic';
 
-export default async function LibraryPage() {
+export default async function LibraryPage(props: { searchParams: Promise<{ country?: string, time?: string }> }) {
   const user = await getCachedUser();
 
   if (!user) {
@@ -14,12 +15,27 @@ export default async function LibraryPage() {
 
   const supabase = await createClient();
 
+  const searchParams = await props.searchParams;
+  const country = searchParams.country || "ALL";
+  const time = searchParams.time || "now";
+  const filterDate = getFilterDate(time);
+
   // Busca as oportunidades mapeadas anteriormente no banco (globais ou do próprio usuário)
-  const { data: opportunities } = await supabase
+  let query = supabase
     .from('opportunities')
     .select('id, created_at, book_title, book_author, book_category, viral_opportunity_score, country, saas_name, problem_solved')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
+
+  if (country !== "ALL") {
+    query = query.eq('country', country);
+  }
+
+  if (filterDate) {
+    query = query.gte('created_at', filterDate);
+  }
+
+  const { data: opportunities } = await query;
 
   return (
     <div className="theme-tech-ai w-full min-h-[calc(100vh-4rem)] p-8 -m-8 bg-background text-foreground transition-colors duration-500 rounded-2xl">

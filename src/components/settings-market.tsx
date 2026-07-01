@@ -28,6 +28,7 @@ const COUNTRIES = [
 ] as const;
 
 const PERIODS: { value: MarketSettings["defaultPeriod"]; label: string }[] = [
+  { value: "now", label: "Agora (1h)" },
   { value: "7d", label: "7 Dias" },
   { value: "30d", label: "30 Dias" },
   { value: "90d", label: "90 Dias" },

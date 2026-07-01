@@ -287,3 +287,16 @@
   --app-sidebar-border: hsl(25 15% 75% / 0.6);
   --app-sidebar-ring: hsl(15 65% 45%);
 }
+
+/* Ticker Animation */
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-ticker {
+  animation: ticker 30s linear infinite;
+  will-change: transform;
+}
+.animate-ticker:hover {
+  animation-play-state: paused;
+}

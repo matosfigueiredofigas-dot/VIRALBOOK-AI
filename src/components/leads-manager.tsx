@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Mail, Download, Users, Copy, Check, ExternalLink, Sparkles } from "lucide-react";
 
 interface Lead {
@@ -45,11 +45,13 @@ export function LeadsManager({ leads, saasName, landingPageUrl }: LeadsManagerPr
 
   return (
     <Sheet>
-      <SheetTrigger asChild>
-        <Button className="flex-1 bg-primary/10 text-primary hover:bg-primary/20 rounded-xl font-bold h-11">
-          <Users className="mr-2 h-4 w-4" /> Ver Leads ({leads.length})
-        </Button>
-      </SheetTrigger>
+      <SheetTrigger 
+        render={
+          <Button className="flex-1 bg-primary/10 text-primary hover:bg-primary/20 rounded-xl font-bold h-11">
+            <Users className="mr-2 h-4 w-4" /> Ver Leads ({leads.length})
+          </Button>
+        } 
+      />
       <SheetContent className="w-full sm:max-w-md overflow-y-auto flex flex-col h-full bg-zinc-950 text-white border-zinc-900">
         <SheetHeader className="pb-4 border-b border-zinc-900">
           <SheetTitle className="text-xl font-black text-white flex items-center gap-2">
@@ -71,11 +73,14 @@ export function LeadsManager({ leads, saasName, landingPageUrl }: LeadsManagerPr
               Divulgue o link da sua Landing Page para começar a receber inscrições!
             </p>
             <div className="pt-2">
-              <Button size="sm" variant="outline" className="border-zinc-800 text-zinc-400 hover:text-white" asChild>
-                <a href={landingPageUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
-                  Abrir Página <ExternalLink className="h-3.5 w-3.5" />
-                </a>
-              </Button>
+              <a 
+                href={landingPageUrl} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className={buttonVariants({ size: "sm", variant: "outline", className: "border-zinc-800 text-zinc-400 hover:text-white flex items-center gap-1" })}
+              >
+                Abrir Página <ExternalLink className="h-3.5 w-3.5" />
+              </a>
             </div>
           </div>
         ) : (

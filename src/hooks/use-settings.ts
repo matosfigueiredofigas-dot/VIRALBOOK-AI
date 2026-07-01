@@ -22,7 +22,7 @@ export interface AIEngineSettings {
 
 export interface MarketSettings {
   defaultCountry: string;
-  defaultPeriod: "7d" | "30d" | "90d" | "all";
+  defaultPeriod: "now" | "7d" | "30d" | "90d" | "all";
   aiOutputLanguage: "pt" | "en" | "es" | "fr";
   minScoreDisplay: number; // 0-100
 }
@@ -60,7 +60,7 @@ export const DEFAULT_SETTINGS: AllSettings = {
   },
   market: {
     defaultCountry: "ALL",
-    defaultPeriod: "all",
+    defaultPeriod: "now",
     aiOutputLanguage: "pt",
     minScoreDisplay: 0,
   },

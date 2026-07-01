@@ -1,16 +1,17 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Globe, Mail, ExternalLink, Calendar, Copy, Layout, Users, FileText, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { LeadsManager } from "@/components/leads-manager";
 import { CopyButton } from "@/components/copy-button";
+import { getFilterDate } from "@/lib/utils";
 
 export const dynamic = 'force-dynamic';
 
-export default async function LandingPagesDashboard() {
+export default async function LandingPagesDashboard(props: { searchParams: Promise<{ country?: string, time?: string }> }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -18,20 +19,36 @@ export default async function LandingPagesDashboard() {
     redirect('/login');
   }
 
+  const searchParams = await props.searchParams;
+  const country = searchParams.country || "ALL";
+  const time = searchParams.time || "now";
+  const filterDate = getFilterDate(time);
+
   // 1. Carregar as Landing Pages do usuário
-  const { data: lps, error } = await supabase
+  let query = supabase
     .from('landing_pages')
-    .select('*, opportunities(saas_name, problem_solved)')
+    .select('*, opportunities(saas_name, problem_solved, country)')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
+
+  if (filterDate) {
+    query = query.gte('created_at', filterDate);
+  }
+
+  const { data: lps, error } = await query;
 
   if (error) {
     console.error("Erro ao buscar landing pages:", error);
   }
 
   // 2. Buscar a contagem de leads de cada uma e montar os resultados
+  let filteredLps = lps || [];
+  if (country !== "ALL") {
+    filteredLps = filteredLps.filter((lp: any) => lp.opportunities?.country === country);
+  }
+
   const landingPagesWithLeads = await Promise.all(
-    (lps || []).map(async (lp: any) => {
+    filteredLps.map(async (lp: any) => {
       // Obter contagem
       const { count } = await supabase
         .from('waitlist_leads')
@@ -94,11 +111,9 @@ export default async function LandingPagesDashboard() {
               Vá para a seção de <strong className="text-foreground">SaaS Opportunities</strong>, abra os detalhes de uma ideia e clique em <strong className="text-foreground">"Gerar Landing Page"</strong> para criar sua primeira página de vendas automática!
             </p>
             <div className="pt-4">
-              <Button asChild className="bg-primary hover:bg-primary/90 rounded-xl font-bold">
-                <a href="/opportunities">
-                  Ver Oportunidades de SaaS <ArrowRight className="ml-2 h-4 w-4" />
-                </a>
-              </Button>
+              <a href="/opportunities" className={buttonVariants({ className: "bg-primary hover:bg-primary/90 rounded-xl font-bold" })}>
+                Ver Oportunidades de SaaS <ArrowRight className="ml-2 h-4 w-4" />
+              </a>
             </div>
           </CardContent>
         </Card>
@@ -120,26 +135,18 @@ export default async function LandingPagesDashboard() {
                     {new Date(lp.created_at).toLocaleDateString('pt-BR')}
                   </Badge>
                   <div className="flex gap-2">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-8 w-8 text-muted-foreground hover:text-white"
-                      title="Copiar URL Pública"
-                      asChild
-                    >
+                    <div className={buttonVariants({ variant: "ghost", size: "icon", className: "h-8 w-8 text-muted-foreground hover:text-white" })} title="Copiar URL Pública">
                       <CopyButton text={`${typeof window !== 'undefined' ? window.location.origin : ''}/l/${lp.slug}`} />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-8 w-8 text-muted-foreground hover:text-primary"
+                    </div>
+                    <a 
+                      href={`/l/${lp.slug}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className={buttonVariants({ variant: "ghost", size: "icon", className: "h-8 w-8 text-muted-foreground hover:text-primary" })}
                       title="Abrir Landing Page"
-                      asChild
                     >
-                      <a href={`/l/${lp.slug}`} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="h-4 w-4" />
-                      </a>
-                    </Button>
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
                   </div>
                 </div>
                 <CardTitle className="text-xl font-black text-white">
