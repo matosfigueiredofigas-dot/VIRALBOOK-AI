@@ -2,10 +2,11 @@ import { createClient, getCachedUser } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import { Users } from "lucide-react"
 import { AdvisorsClient } from "@/components/advisors-client"
+import { getFilterDate } from "@/lib/utils"
 
 export const dynamic = 'force-dynamic';
 
-export default async function AdvisorsPage() {
+export default async function AdvisorsPage(props: { searchParams: Promise<{ time?: string }> }) {
   const user = await getCachedUser();
 
   if (!user) {
@@ -14,12 +15,22 @@ export default async function AdvisorsPage() {
 
   const supabase = await createClient();
 
+  const searchParams = await props.searchParams;
+  const time = searchParams.time || "now";
+  const filterDate = getFilterDate(time);
+
   // Buscar as oportunidades criadas pelo próprio usuário
-  const { data: opportunities } = await supabase
+  let query = supabase
     .from('opportunities')
     .select('id, saas_name, target_audience, problem_solved, book_title, advisor_advice')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
+
+  if (filterDate) {
+    query = query.gte('created_at', filterDate);
+  }
+
+  const { data: opportunities } = await query;
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">

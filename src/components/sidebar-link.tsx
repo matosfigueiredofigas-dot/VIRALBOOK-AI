@@ -11,9 +11,10 @@ interface SidebarLinkProps {
   icon: React.ComponentType<{ className?: string }>;
   title: string;
   variant?: "default" | "welcome" | "favorite" | "admin";
+  dataTour?: string;
 }
 
-export function SidebarLink({ href, icon: Icon, title, variant = "default" }: SidebarLinkProps) {
+export function SidebarLink({ href, icon: Icon, title, variant = "default", dataTour }: SidebarLinkProps) {
   const pathname = usePathname();
   const isActive = pathname === href;
 
@@ -45,6 +46,7 @@ export function SidebarLink({ href, icon: Icon, title, variant = "default" }: Si
           "h-11 transition-all duration-300 rounded-lg group",
           isActive ? activeClass : hoverClass
         )}
+        data-tour={dataTour}
       >
         <Icon className={cn("h-5 w-5 transition-colors duration-300", isActive ? "!text-white" : "text-muted-foreground group-hover:text-primary")} />
         <span className="font-medium text-sm">{title}</span>

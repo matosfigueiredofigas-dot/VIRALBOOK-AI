@@ -25,11 +25,13 @@ export function SidebarMenuClient() {
       title: "Biblioteca de Ideias",
       url: "/library",
       icon: Sparkles,
+      dataTour: "sidebar-library"
     },
     {
       title: "Ebooks Radar",
       url: "/radar",
       icon: BookOpen,
+      dataTour: "sidebar-radar"
     },
     {
       title: "Emerging Niches",
@@ -83,6 +85,7 @@ export function SidebarMenuClient() {
           href="/dashboard"
           icon={LayoutDashboard}
           title="Dashboard"
+          dataTour="sidebar-dashboard"
         />
       </SidebarMenu>
 
@@ -98,6 +101,7 @@ export function SidebarMenuClient() {
               href={item.url}
               icon={item.icon}
               title={item.title}
+              dataTour={(item as any).dataTour}
             />
           ))}
         </SidebarMenu>

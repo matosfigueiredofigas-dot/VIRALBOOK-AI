@@ -11,6 +11,7 @@ import { OnboardingTracker } from "@/components/onboarding-tracker";
 import { ShareButton } from "@/components/share-button";
 import { UserNav } from "@/components/user-nav";
 import { Suspense } from "react";
+import { TutorialProvider } from "@/components/tutorial-provider";
 import { createClient, getCachedUser } from "@/utils/supabase/server";
 import { checkAdmin } from "@/utils/supabase/admin";
 import { redirect } from "next/navigation";
@@ -57,13 +58,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               <div className="hidden sm:block h-5 w-px bg-border/40" />
 
               {/* Filters */}
-              <ThemeToggle />
-              <Suspense fallback={<div className="h-8 w-[120px] bg-muted animate-pulse rounded-full" />}>
-                <TimeSelect />
-              </Suspense>
-              <Suspense fallback={<div className="h-8 w-[150px] bg-muted animate-pulse rounded-full" />}>
-                <CountrySelect />
-              </Suspense>
+              <div className="flex items-center gap-2" data-tour="global-filters">
+                <ThemeToggle />
+                <Suspense fallback={<div className="h-8 w-[120px] bg-muted animate-pulse rounded-full" />}>
+                  <TimeSelect />
+                </Suspense>
+                <Suspense fallback={<div className="h-8 w-[150px] bg-muted animate-pulse rounded-full" />}>
+                  <CountrySelect />
+                </Suspense>
+              </div>
 
               {/* Divider */}
               <div className="hidden sm:block h-5 w-px bg-border/40" />
@@ -81,6 +84,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </div>
         </main>
       </SidebarProvider>
+      <TutorialProvider />
     </TooltipProvider>
   );
 }

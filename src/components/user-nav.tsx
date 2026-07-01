@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { User, Settings, LogOut, ChevronDown, Shield } from "lucide-react";
+import { User, Settings, LogOut, ChevronDown, Shield, PlayCircle } from "lucide-react";
+import { startTutorial } from "@/components/tutorial-provider";
 
 interface UserNavProps {
   email: string;
@@ -69,6 +70,17 @@ export function UserNav({ email, isAdmin = false }: UserNavProps) {
               <Settings className="h-4 w-4 text-muted-foreground shrink-0" />
               Configurações
             </a>
+
+            <button
+              onClick={() => {
+                setOpen(false);
+                startTutorial();
+              }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm hover:bg-muted/70 transition-colors text-foreground text-left"
+            >
+              <PlayCircle className="h-4 w-4 text-muted-foreground shrink-0" />
+              Refazer Tutorial
+            </button>
 
             {isAdmin && (
               <a
