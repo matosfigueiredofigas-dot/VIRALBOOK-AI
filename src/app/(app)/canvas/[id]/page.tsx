@@ -2,6 +2,7 @@ import { createClient, getCachedUser } from "@/utils/supabase/server"
 import { notFound, redirect } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import { PrintButton } from "@/components/print-button"
+import { LivePreviewModal } from "@/components/live-preview-modal"
 
 export const dynamic = 'force-dynamic';
 
@@ -37,6 +38,7 @@ export default async function CanvasPage(props: { params: Promise<{ id: string }
         </a>
         <div className="flex items-center gap-4">
           <p className="text-sm text-gray-500">Dica: Salve como PDF na janela de impressão.</p>
+          <LivePreviewModal opportunity={opportunity} />
           <PrintButton />
         </div>
       </div>
