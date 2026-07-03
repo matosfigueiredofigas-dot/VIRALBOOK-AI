@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import { PrintButton } from "@/components/print-button"
 import { LivePreviewModal } from "@/components/live-preview-modal"
+import { LaunchpadManager } from "@/components/launchpad-manager"
 
 export const dynamic = 'force-dynamic';
 
@@ -27,6 +28,12 @@ export default async function CanvasPage(props: { params: Promise<{ id: string }
   if (error || !opportunity) {
     notFound();
   }
+
+  const { data: initialLeads } = await supabase
+    .from('opportunity_leads')
+    .select('*')
+    .eq('opportunity_id', opportunity.id)
+    .order('created_at', { ascending: false });
 
   return (
     <div className="min-h-screen bg-white text-black p-8 font-sans">
@@ -123,6 +130,8 @@ export default async function CanvasPage(props: { params: Promise<{ id: string }
         </div>
 
       </div>
+
+      <LaunchpadManager opportunity={opportunity} initialLeads={initialLeads || []} />
 
     </div>
   )
