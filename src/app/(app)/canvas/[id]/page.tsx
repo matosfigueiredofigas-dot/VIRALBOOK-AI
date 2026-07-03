@@ -48,6 +48,9 @@ export default async function CanvasPage(props: { params: Promise<{ id: string }
           <a href={`/teardown/${opportunity.id}`} className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2">
             📊 Dossiê de Mercado
           </a>
+          <a href={`/hunter/${opportunity.id}`} className="bg-rose-600 hover:bg-rose-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2">
+            🎯 Hunter AI (Leads)
+          </a>
           <LivePreviewModal opportunity={opportunity} />
           <PrintButton />
         </div>
