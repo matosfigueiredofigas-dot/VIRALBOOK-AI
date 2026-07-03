@@ -40,23 +40,29 @@ DIRETRIZES DE DESIGN ESTRITAS (Siga todas!):
    - Todos os botões, links da sidebar e cards de métricas DEVEM ter \`transition-all duration-200\`.
    - No hover de cards: \`hover:border-zinc-700 hover:bg-[#202024]\`.
 
-3. **Estrutura de Layout Obrigatória (Grid/Flex) e SPA (Single Page Application):**
-   - \`h-screen w-full flex text-sm font-sans antialiased overflow-hidden\`
-   - **Sidebar** (Largura fixa ex: \`w-64 flex flex-col p-4\`): Logo estilizada no topo. Menu de navegação vertical com IDs nos links (ex: id="btn-dashboard", id="btn-analytics", id="btn-config"). IMPORTANTE: Os links DEVEM ser totalmente clicáveis (\`w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-zinc-400 hover:text-white cursor-pointer transition-colors\`). A tab ativa deve ter \`bg-white/10 text-white font-medium\`.
-   - **Main Content** (\`flex-1 flex flex-col\`):
-     - **Topbar**: Breadcrumbs dinâmicos, Barra de Busca, Ícone de Sino, Avatar.
-     - **Views (Telas Interativas)**: Você DEVE criar 3 "Telas" (seções div) diferentes dentro da Content Area:
-       1. **Dashboard** (id="view-dashboard"): A tela principal com os 4 Cards de Métricas, Gráfico e Tabela de Atividades Recentes.
-       2. **Analytics** (id="view-analytics", oculta por padrão \`hidden\`): Uma tela simulando relatórios detalhados.
-       3. **Configurações** (id="view-config", oculta por padrão \`hidden\`): Uma tela simulando formulários de perfil, preferências de notificação e faturamento.
-     - **JavaScript (Vanilla)**: Inclua uma tag \`<script>\` no final do body com a lógica para fazer a transição entre essas telas. Ao clicar em um link da sidebar, esconda as outras telas, mostre a selecionada, e atualize o estilo visual do link ativo na sidebar. Mude também o texto do Breadcrumb na Topbar.
+3. **Estrutura de Layout Obrigatória (Grid de 3 Colunas) e SPA:**
+   - O Body deve ser \`h-screen w-full flex bg-[#09090b] text-sm font-sans antialiased overflow-hidden text-zinc-100\`
+   - **Coluna 1: Sidebar Esquerda** (\`w-64 flex flex-col p-4 border-r border-[#27272a]\`): Logo estilizada. Menu de navegação (Dashboard, Analytics, Configurações). Botões de ação rápida.
+   - **Coluna 2: Main Content** (\`flex-1 flex flex-col overflow-y-auto relative\`):
+     - **Header**: Barra de busca, Breadcrumbs.
+     - **Banner de Boas-Vindas**: Uma div larga no topo com um mesh gradient incrivelmente vibrante (ex: \`bg-gradient-to-r from-violet-600 via-fuchsia-600 to-orange-600\`), texto de boas vindas, e um botão "Upgrade to Pro".
+     - **Grid de Métricas (3 ou 4 colunas)**: Cards com Glassmorphism (\`bg-[#18181b]/80 backdrop-blur border border-[#27272a] shadow-xl\`).
+     - **Gráfico Real (Chart.js)**: Uma área grande contendo um \`<canvas id="mainChart"></canvas>\` para renderizar um gráfico de crescimento.
+     - **Tabela de Dados**: Tabela complexa de "Últimas Transações" ou "Ações" com avatares, nomes, datas e badges de status coloridos.
+   - **Coluna 3: Right Panel / Feed** (\`w-80 border-l border-[#27272a] bg-[#0c0c0e] p-6 hidden lg:block overflow-y-auto\`): 
+     - **Perfil Rápido**: Avatar grande, nome, email.
+     - **Uso de Quota (Progress Bar)**: Ex: "80% do limite mensal atingido".
+     - **Activity Feed**: Uma timeline vertical de eventos recentes (ex: "Novo usuário cadastrado há 5 min", com bolinhas conectadas por uma linha).
 
-4. **Regras Técnicas:**
-   - Use <script src="https://cdn.tailwindcss.com"></script>
-   - Importe fonte: <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+4. **Regras Técnicas e Bibliotecas (ESSENCIAL PARA FUNCIONAR):**
+   - Importe TailwindCSS: <script src="https://cdn.tailwindcss.com"></script>
    - Importe FontAwesome: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-   - Aplique CSS na tag body: \`style="font-family: 'Inter', sans-serif;"\`
-   - Popule o Dashboard com **DADOS FICTÍCIOS REAIS** que façam total sentido para o nicho de ${saasName}. Nada de Lorem Ipsum.
+   - Importe Chart.js: <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   - Importe Google Fonts (Inter).
+   - **JavaScript (Vanilla)**: No final do arquivo, adicione um \`<script>\` que:
+     1. Faça a lógica de abas (SPA) para esconder/mostrar as seções.
+     2. Inicialize o \`mainChart\` usando \`new Chart(ctx, { ... })\` criando um belo Line Chart escuro com preenchimento (fill) violeta/gradiente, simulando o crescimento da métrica principal do SaaS.
+   - Popule com dados MÁXIMOS. Não deixe grandes espaços vazios. Preencha a tabela com 5-6 linhas reais. Preencha o feed com 4 eventos. Faça parecer um sistema corporativo de alto nível lotado de dados.
 
 Retorne APENAS CÓDIGO HTML VÁLIDO. Sem markdown (\`\`\`), sem introduções, sem saudações. Comece no <!DOCTYPE html> e termine no </html>.
 `;
