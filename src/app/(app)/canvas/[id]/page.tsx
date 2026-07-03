@@ -45,6 +45,9 @@ export default async function CanvasPage(props: { params: Promise<{ id: string }
         </a>
         <div className="flex items-center gap-4">
           <p className="text-sm text-gray-500">Dica: Salve como PDF na janela de impressão.</p>
+          <a href={`/teardown/${opportunity.id}`} className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2">
+            📊 Dossiê de Mercado
+          </a>
           <LivePreviewModal opportunity={opportunity} />
           <PrintButton />
         </div>
