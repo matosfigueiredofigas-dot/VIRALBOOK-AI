@@ -31,8 +31,8 @@ export async function POST(req: Request) {
     }
 
     if (redirect_to) {
-      // Redireciona o usuário de volta para a Landing Page, geralmente com ?success=true
-      return NextResponse.redirect(new URL(redirect_to, req.url));
+      // Redireciona o usuário de volta para a Landing Page com status 303 para forçar um GET
+      return NextResponse.redirect(new URL(redirect_to, req.url), 303);
     }
 
     return NextResponse.json({ success: true, message: 'Cadastrado com sucesso!' });
