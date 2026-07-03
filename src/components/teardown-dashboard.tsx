@@ -79,16 +79,16 @@ export function TeardownDashboard({ opportunity }: TeardownDashboardProps) {
   if (!data) return null;
 
   return (
-    <div className="max-w-6xl mx-auto py-8 font-sans">
+    <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8 font-sans w-full">
       <Link href={`/canvas/${opportunity.id}`} className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-black mb-8 transition-colors">
         <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para o Canvas
       </Link>
 
       <div className="mb-12">
-        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900 mb-4">
-          Dossiê Competitivo: <span className="text-indigo-600">{opportunity.saas_name}</span>
+        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-gray-900 mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+          Dossiê Competitivo: <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">{opportunity.saas_name}</span>
         </h1>
-        <p className="text-xl text-gray-500">Market Teardown & Estratégia de Go-to-Market</p>
+        <p className="text-lg text-gray-500">Market Teardown & Estratégia de Go-to-Market</p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-8 mb-12">
@@ -155,24 +155,27 @@ export function TeardownDashboard({ opportunity }: TeardownDashboardProps) {
             </h2>
             <div className="grid sm:grid-cols-2 gap-4">
               {data.competitors?.map((comp: any, i: number) => (
-                <div key={i} className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm relative overflow-hidden group hover:border-red-200 transition-colors">
-                  <div className="absolute top-0 right-0 bg-gray-100 text-gray-500 text-xs font-bold px-3 py-1 rounded-bl-lg">
-                    {comp.pricing}
-                  </div>
+                <div key={i} className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md hover:border-red-200 transition-all flex flex-col">
                   <h3 className="text-lg font-bold text-gray-900 mb-4">{comp.name}</h3>
-                  <div className="space-y-3 text-sm">
+                  <div className="space-y-4 text-sm flex-1">
                     <div>
-                      <span className="font-bold text-emerald-600 block mb-1">FORÇA DELES:</span>
-                      <p className="text-gray-600">{comp.strength}</p>
+                      <span className="font-bold text-emerald-600 flex items-center gap-1 mb-1"><TrendingUp className="h-4 w-4"/> FORÇA DELES:</span>
+                      <p className="text-gray-700 leading-relaxed">{comp.strength}</p>
                     </div>
                     <div>
-                      <span className="font-bold text-red-500 block mb-1">FRAQUEZA:</span>
-                      <p className="text-gray-600">{comp.weakness}</p>
+                      <span className="font-bold text-red-500 flex items-center gap-1 mb-1"><Target className="h-4 w-4"/> FRAQUEZA:</span>
+                      <p className="text-gray-700 leading-relaxed">{comp.weakness}</p>
                     </div>
-                    <div className="pt-3 border-t border-gray-100">
+                    <div className="pt-4 border-t border-gray-100 mt-auto">
                       <span className="font-bold text-indigo-600 block mb-1">NOSSA VANTAGEM INJUSTA:</span>
-                      <p className="font-medium text-gray-900">{comp.our_edge}</p>
+                      <p className="font-semibold text-gray-900">{comp.our_edge}</p>
                     </div>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-600 text-xs font-semibold px-2.5 py-1.5 rounded-lg w-full">
+                      <Zap className="h-3 w-3 text-amber-500 shrink-0" />
+                      <span className="truncate" title={comp.pricing}>{comp.pricing}</span>
+                    </span>
                   </div>
                 </div>
               ))}
