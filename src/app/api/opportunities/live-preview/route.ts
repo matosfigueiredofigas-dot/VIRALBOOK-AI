@@ -18,22 +18,28 @@ export async function POST(req: Request) {
     }
 
     const prompt = `
-Você é um desenvolvedor Frontend Sênior e UI/UX Designer.
-Sua missão é gerar um único arquivo HTML que represente a tela principal (Dashboard) de um Micro-SaaS.
+Você é um desenvolvedor Frontend Sênior e Lead UI/UX Designer de uma empresa bilionária do Vale do Silício.
+Sua missão é gerar um ÚNICO arquivo HTML perfeito que represente a tela principal (Dashboard) de um Micro-SaaS.
+O design DEVE SER ABSURDAMENTE PREMIUM, sofisticado, sério e de cair o queixo, no nível da Vercel, Stripe ou Linear.
 
 Nome do SaaS: ${saasName}
 Público Alvo: ${audience}
 Problema que resolve: ${problem}
-Funcionalidades Principais (MVP): ${features}
+Funcionalidades (MVP): ${features}
 
-REGRAS OBRIGATÓRIAS:
-1. Retorne APENAS CÓDIGO HTML válido, sem blocos de markdown (\`\`\`), sem introdução ou explicação.
-2. Use Tailwind CSS via CDN: <script src="https://cdn.tailwindcss.com"></script>
-3. Use Lucide Icons (ou FontAwesome) e uma fonte moderna (Inter ou Roboto) do Google Fonts.
-4. Crie uma interface ultra-moderna, "dark mode" ou clean B2B, com Sidebar lateral, Header superior, e métricas em "Cards" bonitos (dashboard).
-5. O texto na tela deve estar em Português do Brasil e ser realista (sem Lorem Ipsum).
-6. O layout DEVE SER RESPONSIVO (flexbox, grid).
-7. Simule um ambiente "logado" do SaaS com dados fictícios interessantes baseados no propósito do sistema.
+REGRAS DE DESIGN (OBRIGATÓRIAS):
+1. **Premium Dark Mode**: Use um background complexo, como 'bg-zinc-950' com toques de gradientes radiantes extremamente sutis para dar profundidade (ex: círculos borrados ao fundo).
+2. **Componentes Modernos**: Use Glassmorphism (bg-white/5, backdrop-blur-md, border border-white/10).
+3. **Layout Complexo de Dashboard**: 
+   - Sidebar lateral fina e elegante com navegação rica.
+   - Header superior com barra de busca, ícone de notificações (com badge vermelho) e um Avatar circular do usuário (use https://i.pravatar.cc/150?img=11).
+   - Grid principal contendo: 4 Cards de Métricas (com números grandes, subtítulos de crescimento ex: "+14% esse mês" verde).
+   - Uma seção grande central simulando um Gráfico de barras ou linhas (você pode usar SVG inline ou divs estilizadas para simular um gráfico bonito).
+   - Uma seção inferior com uma Tabela de "Atividades Recentes" ou "Últimos Clientes" contendo colunas, badges de Status (ex: Concluído, Pendente com cores) e dados realistas.
+4. **Tipografia e Ícones**: Use a fonte 'Inter' do Google Fonts. Importe o Tailwind via CDN. Importe ícones do FontAwesome via CDN (<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">). Use ícones consistentes.
+5. **Realismo**: NADA de "Lorem Ipsum". Use dados totalmente fictícios mas que façam sentido absoluto para o nicho de ${saasName}. Pareça um sistema em pleno funcionamento.
+
+Retorne APENAS CÓDIGO HTML válido e minificado se possível, começando em <html> e terminando em </html>. SEM blocos de markdown, sem explicações extras. Apenas o código.
 `;
 
     const chatCompletion = await groq.chat.completions.create({
