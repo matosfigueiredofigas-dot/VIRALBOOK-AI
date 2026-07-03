@@ -42,7 +42,7 @@ DIRETRIZES DE DESIGN ESTRITAS (Siga todas!):
 
 3. **Estrutura de Layout Obrigatória (Grid/Flex):**
    - \`h-screen w-full flex text-sm font-sans antialiased overflow-hidden\`
-   - **Sidebar** (Largura fixa ex: \`w-64\`): Logo estilizada no topo, menu de navegação vertical com ícones FontAwesome (ex: Dashboard, Campanhas, Analytics, Configurações), perfil de usuário reduzido no rodapé.
+   - **Sidebar** (Largura fixa ex: \`w-64 flex flex-col p-4\`): Logo estilizada no topo. Menu de navegação vertical com ícones FontAwesome (ex: Dashboard, Campanhas, Analytics, Configurações). IMPORTANTE: Os links do menu DEVEM ser totalmente clicáveis em toda a sua área (\`w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-zinc-400 hover:text-white cursor-pointer transition-colors\`). Perfil de usuário reduzido no rodapé.
    - **Main Content** (\`flex-1 flex flex-col\`):
      - **Topbar** (\`h-16 flex items-center justify-between px-8 border-b border-[#27272a]\`): Breadcrumbs (Home > Dashboard), Barra de Busca estilizada (\`bg-[#18181b] border border-[#27272a] rounded-lg\`), Ícone de Sino (com ponto vermelho absolute), e Avatar (https://i.pravatar.cc/150?img=11).
      - **Content Area** (\`flex-1 p-8 overflow-y-auto\`):
