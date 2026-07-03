@@ -31,10 +31,11 @@ interface Opportunity {
   advisor_advice: AdvisorAdvice | null;
 }
 
-export function AdvisorsClient({ initialOpportunities }: { initialOpportunities: Opportunity[] }) {
+export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { initialOpportunities: Opportunity[], initialSelectedId?: string }) {
   const router = useRouter();
   const [opportunities, setOpportunities] = useState<Opportunity[]>(initialOpportunities);
-  const [selectedId, setSelectedId] = useState<string>(initialOpportunities[0]?.id || "");
+  const validInitialId = initialSelectedId && initialOpportunities.some(o => o.id === initialSelectedId) ? initialSelectedId : initialOpportunities[0]?.id || "";
+  const [selectedId, setSelectedId] = useState<string>(validInitialId);
   const [generating, setGenerating] = useState<boolean>(false);
   const [activeAdvisorIdx, setActiveAdvisorIdx] = useState<number>(0);
 

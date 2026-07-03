@@ -6,7 +6,7 @@ import { getFilterDate } from "@/lib/utils"
 
 export const dynamic = 'force-dynamic';
 
-export default async function AdvisorsPage(props: { searchParams: Promise<{ time?: string }> }) {
+export default async function AdvisorsPage(props: { searchParams: Promise<{ time?: string, oppId?: string }> }) {
   const user = await getCachedUser();
 
   if (!user) {
@@ -17,6 +17,7 @@ export default async function AdvisorsPage(props: { searchParams: Promise<{ time
 
   const searchParams = await props.searchParams;
   const time = searchParams.time || "now";
+  const oppId = searchParams.oppId;
   const filterDate = getFilterDate(time);
 
   // Buscar as oportunidades criadas pelo próprio usuário
@@ -44,7 +45,7 @@ export default async function AdvisorsPage(props: { searchParams: Promise<{ time
         </p>
       </div>
 
-      <AdvisorsClient initialOpportunities={opportunities || []} />
+      <AdvisorsClient initialOpportunities={opportunities || []} initialSelectedId={oppId} />
     </div>
   )
 }

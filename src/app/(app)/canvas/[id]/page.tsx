@@ -54,6 +54,9 @@ export default async function CanvasPage(props: { params: Promise<{ id: string }
           <a href={`/ads/${opportunity.id}`} className="bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600 text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 shadow-sm">
             📢 Ads (Anúncios)
           </a>
+          <a href={`/advisors?oppId=${opportunity.id}`} className="bg-zinc-900 hover:bg-black text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2">
+            🎓 Mentores
+          </a>
           <LivePreviewModal opportunity={opportunity} />
           <PrintButton />
         </div>
