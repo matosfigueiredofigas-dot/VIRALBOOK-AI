@@ -40,16 +40,16 @@ DIRETRIZES DE DESIGN ESTRITAS (Siga todas!):
    - Todos os botões, links da sidebar e cards de métricas DEVEM ter \`transition-all duration-200\`.
    - No hover de cards: \`hover:border-zinc-700 hover:bg-[#202024]\`.
 
-3. **Estrutura de Layout Obrigatória (Grid/Flex):**
+3. **Estrutura de Layout Obrigatória (Grid/Flex) e SPA (Single Page Application):**
    - \`h-screen w-full flex text-sm font-sans antialiased overflow-hidden\`
-   - **Sidebar** (Largura fixa ex: \`w-64 flex flex-col p-4\`): Logo estilizada no topo. Menu de navegação vertical com ícones FontAwesome (ex: Dashboard, Campanhas, Analytics, Configurações). IMPORTANTE: Os links do menu DEVEM ser totalmente clicáveis em toda a sua área (\`w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-zinc-400 hover:text-white cursor-pointer transition-colors\`). Perfil de usuário reduzido no rodapé.
+   - **Sidebar** (Largura fixa ex: \`w-64 flex flex-col p-4\`): Logo estilizada no topo. Menu de navegação vertical com IDs nos links (ex: id="btn-dashboard", id="btn-analytics", id="btn-config"). IMPORTANTE: Os links DEVEM ser totalmente clicáveis (\`w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-zinc-400 hover:text-white cursor-pointer transition-colors\`). A tab ativa deve ter \`bg-white/10 text-white font-medium\`.
    - **Main Content** (\`flex-1 flex flex-col\`):
-     - **Topbar** (\`h-16 flex items-center justify-between px-8 border-b border-[#27272a]\`): Breadcrumbs (Home > Dashboard), Barra de Busca estilizada (\`bg-[#18181b] border border-[#27272a] rounded-lg\`), Ícone de Sino (com ponto vermelho absolute), e Avatar (https://i.pravatar.cc/150?img=11).
-     - **Content Area** (\`flex-1 p-8 overflow-y-auto\`):
-       - Título da página (H1 gigante, fonte semi-bold) e botão primário ("+ Nova Ação") com gradiente.
-       - **Grid de Métricas (4 colunas):** 4 cards com o nome da métrica, um valor numérico grande, e um badge verde de crescimento (ex: <span class="text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full text-xs">+12%</span>).
-       - **Seção Central:** Crie uma área de "Visão Geral" contendo barras horizontais usando divs coloridas (\`bg-indigo-500\`) para simular um belo gráfico de performance ou funil.
-       - **Tabela Inferior:** Uma tabela rica de "Atividades Recentes". Cabeçalhos cinzas (\`text-xs uppercase\`), linhas com hover (\`hover:bg-white/5\`), avatares redondos pequenos, e badges de status (Concluído, Pendente, Falhou).
+     - **Topbar**: Breadcrumbs dinâmicos, Barra de Busca, Ícone de Sino, Avatar.
+     - **Views (Telas Interativas)**: Você DEVE criar 3 "Telas" (seções div) diferentes dentro da Content Area:
+       1. **Dashboard** (id="view-dashboard"): A tela principal com os 4 Cards de Métricas, Gráfico e Tabela de Atividades Recentes.
+       2. **Analytics** (id="view-analytics", oculta por padrão \`hidden\`): Uma tela simulando relatórios detalhados.
+       3. **Configurações** (id="view-config", oculta por padrão \`hidden\`): Uma tela simulando formulários de perfil, preferências de notificação e faturamento.
+     - **JavaScript (Vanilla)**: Inclua uma tag \`<script>\` no final do body com a lógica para fazer a transição entre essas telas. Ao clicar em um link da sidebar, esconda as outras telas, mostre a selecionada, e atualize o estilo visual do link ativo na sidebar. Mude também o texto do Breadcrumb na Topbar.
 
 4. **Regras Técnicas:**
    - Use <script src="https://cdn.tailwindcss.com"></script>
