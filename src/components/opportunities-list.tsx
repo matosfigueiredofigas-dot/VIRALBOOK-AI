@@ -806,13 +806,13 @@ function OpportunityCard({ item }: { item: any }) {
                           size="sm"
                           variant="secondary"
                           className="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white border-none backdrop-blur-sm z-10"
-                          onClick={() => copyToClipboard(cursorRules, 'cursor')}
+                          onClick={() => copyToClipboard(typeof cursorRules === 'string' ? cursorRules : JSON.stringify(cursorRules, null, 2), 'cursor')}
                         >
                           {copiedPrompt === 'cursor' ? <CheckCircle2 className="h-4 w-4 mr-1 text-green-400" /> : <Copy className="h-4 w-4 mr-1" />}
                           Copiar Regras
                         </Button>
-                        <pre className="text-[10px] text-emerald-400 bg-black p-4 rounded-lg overflow-x-auto max-h-[300px]">
-                          <code>{cursorRules}</code>
+                        <pre className="text-[10px] text-emerald-400 bg-black p-4 rounded-lg overflow-x-auto max-h-[300px] whitespace-pre-wrap">
+                          <code>{typeof cursorRules === 'string' ? cursorRules : JSON.stringify(cursorRules, null, 2)}</code>
                         </pre>
                       </div>
                     )}
