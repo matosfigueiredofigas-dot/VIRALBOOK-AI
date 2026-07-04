@@ -168,9 +168,9 @@ export function NichesClient({ niches, opportunities, country }: NichesClientPro
                     <div className="relative w-10 h-10 flex items-center justify-center rounded-full border-2 border-white/5 bg-black/50 overflow-hidden shrink-0">
                       <div 
                         className="absolute bottom-0 left-0 right-0 bg-primary/20"
-                        style={{ height: \`\${niche.maxScore}%\` }}
+                        style={{ height: `${niche.maxScore}%` }}
                       ></div>
-                      <span className={\`relative text-[10px] font-black \${getScoreColor(niche.maxScore)}\`}>
+                      <span className={`relative text-[10px] font-black ${getScoreColor(niche.maxScore)}`}>
                         {niche.maxScore}
                       </span>
                     </div>
@@ -207,14 +207,14 @@ export function NichesClient({ niches, opportunities, country }: NichesClientPro
                     className="flex items-center gap-3 p-3 border-b border-white/5 hover:bg-white/5 transition-colors"
                   >
                     <div className="w-6 font-mono font-black text-xs text-muted-foreground text-center">
-                      {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : \`\${idx+1}\`}
+                      {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx+1}`}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-bold text-sm text-foreground truncate">{opp.saas_name}</div>
                       <div className="text-[10px] text-muted-foreground uppercase tracking-wider truncate">{opp.book_category}</div>
                     </div>
                     <div className="text-right">
-                      <Badge variant="outline" className={\`font-black \${getScoreGlow(opp.viral_opportunity_score)}\`}>
+                      <Badge variant="outline" className={`font-black ${getScoreGlow(opp.viral_opportunity_score)}`}>
                         {opp.viral_opportunity_score}
                       </Badge>
                     </div>
