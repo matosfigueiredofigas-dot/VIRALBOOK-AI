@@ -1,11 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Play, ArrowRight, Zap, Target, BookOpen, Lock, CheckCircle2, Crosshair, Briefcase, Mail, TerminalSquare } from "lucide-react";
+import { ArrowRight, Zap, Target, BookOpen, Lock, CheckCircle2, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ContactModal } from "@/components/contact-modal";
 import { AuthModal } from "@/components/auth-modal";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { ProductSimulator } from "@/components/product-simulator";
 
 const LEMON_SQUEEZY_CHECKOUT_URLS = {
   USD: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_USD_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-usd-id",
@@ -15,210 +19,284 @@ const LEMON_SQUEEZY_CHECKOUT_URLS = {
 
 export default function LandingPage() {
   const router = useRouter();
-  const [currency, setCurrency] = useState<'USD' | 'BRL' | 'EUR'>('BRL');
+  const [currency, setCurrency] = useState<'USD' | 'BRL' | 'EUR'>('USD');
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authTab, setAuthTab] = useState<"login" | "signup" | "forgot">("login");
-
-  // Force dark mode on this page to guarantee the Ultra Premium look
-  useEffect(() => {
-    document.documentElement.classList.add('dark');
-  }, []);
 
   const openAuth = (tab: "login" | "signup" | "forgot" = "login") => {
     setAuthTab(tab);
     setIsAuthOpen(true);
   };
 
-  const getPrice = (type: 'original' | 'discount') => {
-    if (type === 'original') {
-      if (currency === 'USD') return '$ 897 único';
-      if (currency === 'EUR') return '897 € único';
-      return 'R$ 2.997 único';
+  const getPrice = (plan: 'annual' | 'lifetime', type: 'original' | 'discount') => {
+    if (plan === 'annual') {
+      if (type === 'original') {
+        if (currency === 'USD') return '$ 49/ano';
+        if (currency === 'EUR') return '49 €/ano';
+        return 'R$ 197/ano';
+      } else {
+        if (currency === 'USD') return '$ 19';
+        if (currency === 'EUR') return '19 €';
+        return 'R$ 97';
+      }
     } else {
-      if (currency === 'USD') return '$ 297';
-      if (currency === 'EUR') return '297 €';
-      return 'R$ 997';
+      if (type === 'original') {
+        if (currency === 'USD') return '$ 129 único';
+        if (currency === 'EUR') return '129 € único';
+        return 'R$ 497 único';
+      } else {
+        if (currency === 'USD') return '$ 39';
+        if (currency === 'EUR') return '39 €';
+        return 'R$ 197';
+      }
     }
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-950 text-zinc-50 font-sans selection:bg-cyan-500/30">
-      {/* Background Glows */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden flex justify-center z-0">
-        <div className="absolute top-[-10%] left-1/4 w-[50vw] h-[50vw] bg-cyan-500/10 rounded-full blur-[120px]" />
-        <div className="absolute top-[20%] right-1/4 w-[40vw] h-[40vw] bg-fuchsia-500/10 rounded-full blur-[120px]" />
-      </div>
-
-      <div className="fixed inset-0 pointer-events-none bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] z-0" />
-
-      {/* Header */}
-      <header className="px-6 lg:px-14 h-24 flex items-center justify-between border-b border-white/5 backdrop-blur-md fixed w-full top-0 z-50">
+    <div className="flex flex-col min-h-screen bg-background">
+      {/* Header Simples */}
+      <header className="px-6 lg:px-14 h-24 flex items-center justify-between border-b border-border/40 backdrop-blur-md fixed w-full top-0 z-50">
         <div className="flex items-center gap-3">
-          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-[0_0_20px_rgba(34,211,238,0.3)]">
-            <Zap className="h-6 w-6 text-white" />
+          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/20">
+            <Zap className="h-8 w-8 text-white" />
           </div>
-          <span className="font-extrabold text-2xl tracking-tight text-white">Viralbook AI</span>
+          <span className="font-extrabold text-3xl md:text-4xl tracking-tight text-foreground">ViralBook AI</span>
         </div>
-        <nav className="flex items-center gap-4">
+        <nav className="flex items-center gap-4 sm:gap-6">
+          <Link href="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
+            Funcionalidades
+          </Link>
+          <Link href="#pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
+            Preços
+          </Link>
+          <Link href="/docs" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
+            Documentação
+          </Link>
+          <div className="h-4 w-px bg-border hidden sm:block" />
           <button
             onClick={() => openAuth("login")}
-            className="text-sm font-semibold text-zinc-400 hover:text-white transition-colors flex items-center px-5 py-2.5 rounded-full hover:bg-white/5 border border-white/10 cursor-pointer"
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center px-4 py-2 rounded-full hover:bg-muted border border-border/50 cursor-pointer"
           >
             Acesso Restrito
           </button>
+          <ThemeToggle />
         </nav>
       </header>
 
-      <main className="flex-1 pt-32 pb-24 relative z-10 flex flex-col items-center px-4 md:px-6">
-        
-        {/* VSL Hero Section */}
-        <section className="w-full max-w-5xl flex flex-col items-center justify-center text-center space-y-8 mt-10">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-1.5 text-sm font-bold text-cyan-400 uppercase tracking-widest shadow-[0_0_15px_rgba(34,211,238,0.2)]"
-          >
-            ⚡ Fechando em Breve: Vagas de Fundador
-          </motion.div>
+      <main className="flex-1 pt-24">
+        {/* Hero Section */}
+        <section className="w-full py-24 md:py-32 lg:py-40 xl:py-48 flex flex-col items-center justify-center text-center px-4 md:px-6 relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-blue-500/15 dark:bg-blue-500/20 blur-[120px] rounded-full pointer-events-none" />
           
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white drop-shadow-lg leading-[1.1]"
-          >
-            Roube as ideias bilionárias de <br className="hidden md:block"/>
-            <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-fuchsia-500 bg-clip-text text-transparent">
-              livros Best-Sellers em 5 segundos.
-            </span>
-          </motion.h1>
-          
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mx-auto max-w-3xl text-zinc-400 md:text-xl font-medium mt-4"
-          >
-            O primeiro "SaaS in a Box" alimentado por inteligência artificial militar. Encontre oceanos azuis, gere código SQL, crie anúncios e lance funis de e-mail antes do seu concorrente acordar.
-          </motion.p>
-
-          {/* VSL Placeholder */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, type: "spring" }}
-            className="w-full max-w-4xl mt-12 aspect-video rounded-[32px] p-2 bg-gradient-to-b from-white/10 to-transparent border border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] relative group overflow-hidden"
-          >
-            <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm flex flex-col items-center justify-center z-10 rounded-[30px] border border-white/5 transition-all group-hover:bg-zinc-950/60">
-              <div className="h-24 w-24 rounded-full bg-cyan-500/20 flex items-center justify-center border border-cyan-500/40 cursor-pointer shadow-[0_0_40px_rgba(34,211,238,0.4)] transition-transform hover:scale-110">
-                <Play className="h-10 w-10 text-cyan-400 ml-2" />
+          <div className="space-y-6 max-w-4xl relative z-10">
+            <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-4 animate-pulse">
+              ✨ O Primeiro Radar Anti-Achismos do Brasil
+            </div>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground drop-shadow-sm leading-[1.1]">
+              Pare de construir <br className="hidden md:block"/>
+              <span className="bg-gradient-to-r from-blue-400 via-primary to-purple-500 bg-clip-text text-transparent">
+                produtos que ninguém quer.
+              </span>
+            </h1>
+            <p className="mx-auto max-w-[800px] text-foreground/95 md:text-2xl/relaxed font-medium mt-8 px-6 py-4 rounded-2xl bg-muted/30 border border-border/50 backdrop-blur-md shadow-inner">
+              Transforme os insights de <span className="bg-gradient-to-r from-blue-400 to-primary bg-clip-text text-transparent font-extrabold">livros virais</span> e <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent font-extrabold">ideias já validadas</span> em aplicativos, SaaS e Micro-SaaS com potencial real de mercado.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
+              <button 
+                onClick={() => openAuth("signup")}
+                className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/80 h-14 px-8 text-lg font-bold rounded-full shadow-[0_0_40px_-10px_rgba(59,130,246,0.6)] transition-all hover:scale-105 hover:shadow-[0_0_60px_-15px_rgba(59,130,246,0.8)] cursor-pointer"
+              >
+                Encontre sua próxima ideia <ArrowRight className="ml-2 h-5 w-5" />
+              </button>
+              <Link 
+                href="#pricing" 
+                className="group/button inline-flex shrink-0 items-center justify-center bg-muted text-foreground hover:bg-muted/80 h-14 px-8 text-lg font-bold rounded-full border border-border/50 transition-all hover:scale-105"
+              >
+                Ver Preços
+              </Link>
+            </div>
+            
+            {/* Trust Badges */}
+            <div className="mt-16 pt-8 border-t border-border/40 flex flex-col items-center">
+              <p className="text-sm font-medium text-muted-foreground mb-6 uppercase tracking-widest">Tecnologia de ponta alimentada por</p>
+              <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+                <div className="flex items-center gap-2 font-bold text-xl"><Zap className="h-6 w-6"/> Groq AI</div>
+                <div className="flex items-center gap-2 font-bold text-xl"><BookOpen className="h-6 w-6"/> Google Books</div>
+                <div className="flex items-center gap-2 font-bold text-xl"><Lock className="h-6 w-6"/> Supabase</div>
               </div>
-              <p className="mt-6 font-bold text-lg text-white">Clique para ver a Mágica na Prática (VSL)</p>
-              <p className="text-sm text-zinc-500 mt-2">Duração: 05:42 • Assista antes que saia do ar</p>
-            </div>
-            {/* Faux Interface Background */}
-            <div className="absolute inset-2 rounded-[28px] bg-zinc-900 border border-white/5 opacity-50 flex items-center justify-center">
-              {/* This represents what the user will put here (a screen recording of the app) */}
-              <div className="animate-pulse w-3/4 h-3/4 bg-white/5 rounded-2xl border border-white/5" />
-            </div>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="w-full max-w-4xl mt-8 pt-8"
-          >
-            <Link 
-              href="#pricing"
-              className="group inline-flex shrink-0 items-center justify-center bg-white text-zinc-950 hover:bg-zinc-200 h-16 px-10 text-xl font-extrabold rounded-full shadow-[0_0_40px_-10px_rgba(255,255,255,0.4)] transition-all hover:scale-105"
-            >
-              Quero Acesso Vitalício Agora <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </motion.div>
-        </section>
-
-        {/* Show Don't Tell - Feature Showcase */}
-        <section className="w-full max-w-6xl mt-40 space-y-24">
-          <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white">Não é um "Chatbot". É o seu CTO.</h2>
-            <p className="text-zinc-400 text-lg">Um ecossistema fechado de ferramentas operacionais.</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="order-2 md:order-1 space-y-6">
-              <div className="h-14 w-14 rounded-2xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/30">
-                <Crosshair className="h-7 w-7 text-cyan-400" />
-              </div>
-              <h3 className="text-3xl font-bold text-white">Hunter AI: Prospecção B2B</h3>
-              <p className="text-zinc-400 text-lg leading-relaxed">
-                Deixe o Hunter AI raspar a internet por você. Ele gera Google Dorks hackers, scripts de LinkedIn e Cold Emails impossíveis de serem ignorados. Tudo perfeitamente formatado para o seu exato micro-nicho.
-              </p>
-            </div>
-            <div className="order-1 md:order-2 aspect-square rounded-[32px] bg-zinc-900 border border-white/10 p-6 flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group">
-               <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/10 to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
-               <div className="w-full h-full bg-zinc-950 border border-white/5 rounded-2xl p-6 flex flex-col gap-4 font-mono text-sm text-cyan-400 shadow-inner">
-                  <div className="flex gap-2 items-center border-b border-white/10 pb-4"><TerminalSquare className="w-5 h-5"/> <span>Terminal de Busca</span></div>
-                  <p className="text-zinc-500">Executing Dork...</p>
-                  <p className="text-green-400">&gt; site:linkedin.com/in/ "Diretor" AND "SaaS"</p>
-                  <div className="mt-6 p-4 bg-white/5 rounded-lg border border-white/10">
-                    <p className="text-zinc-300">"Subject: A dor do iFood..."</p>
-                    <p className="text-zinc-500 mt-2">Corpo gerado. Focado em conversão brutal.</p>
-                  </div>
-               </div>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="aspect-square rounded-[32px] bg-zinc-900 border border-white/10 p-6 flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group">
-               <div className="absolute inset-0 bg-gradient-to-tr from-fuchsia-500/10 to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
-               <div className="w-full h-full bg-zinc-950 border border-white/5 rounded-2xl p-6 flex flex-col gap-4 shadow-inner">
-                  <div className="w-full h-32 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center">
-                    <span className="font-bold text-fuchsia-400 font-mono">Meta Ads Mockup</span>
-                  </div>
-                  <div className="w-full flex-1 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center">
-                    <span className="font-bold text-fuchsia-400 font-mono">TikTok Script Block</span>
-                  </div>
-               </div>
-            </div>
-            <div className="space-y-6">
-              <div className="h-14 w-14 rounded-2xl bg-fuchsia-500/10 flex items-center justify-center border border-fuchsia-500/30">
-                <Briefcase className="h-7 w-7 text-fuchsia-400" />
-              </div>
-              <h3 className="text-3xl font-bold text-white">Ad Factory Pro</h3>
-              <p className="text-zinc-400 text-lg leading-relaxed">
-                Você nunca mais vai sofrer com "página em branco". A IA desenha a cópia exata do seu anúncio no Facebook e estrutura o roteiro segundo a segundo para reter atenção máxima no TikTok/Reels.
-              </p>
             </div>
           </div>
         </section>
 
-        {/* Pricing: The Lifetime Deal */}
-        <section id="pricing" className="w-full py-32 mt-20 relative">
-          <div className="max-w-4xl mx-auto text-center relative z-10">
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">
-              Acesso Antecipado. <br />
-              <span className="text-zinc-500">Pague uma vez. Use para sempre.</span>
+        {/* Pain & Solution Section */}
+        <section className="w-full py-20 bg-muted/10 border-t border-border/50 px-4 md:px-6 relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[250px] bg-red-500/5 dark:bg-red-500/10 blur-[100px] rounded-full pointer-events-none" />
+          <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[500px] h-[250px] bg-emerald-500/5 dark:bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none" />
+          
+          <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 items-stretch relative z-10">
+            {/* Pain Column */}
+            <div className="p-8 md:p-10 rounded-3xl bg-red-500/5 border border-red-500/10 flex flex-col justify-between transition-all hover:border-red-500/20">
+              <div>
+                <h3 className="text-2xl md:text-3xl font-extrabold text-foreground mb-6 flex items-center gap-2">
+                  <span className="text-red-500">Você sofre com isso?</span>
+                </h3>
+                <ul className="space-y-4">
+                  {[
+                    "Não sabe qual produto criar.",
+                    "Tem medo de perder meses desenvolvendo.",
+                    "Nunca encontra uma ideia realmente boa.",
+                    "Fica preso pesquisando tendências."
+                  ].map((pain, i) => (
+                    <li key={i} className="flex items-start gap-3 text-muted-foreground text-base">
+                      <span className="text-red-500 font-bold text-lg mt-0.5">✕</span>
+                      <span>{pain}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Relief Column */}
+            <div className="p-8 md:p-10 rounded-3xl bg-emerald-500/5 border border-emerald-500/10 flex flex-col justify-between transition-all hover:border-emerald-500/20">
+              <div>
+                <h3 className="text-2xl md:text-3xl font-extrabold text-foreground mb-6 flex items-center gap-2">
+                  <span className="text-emerald-500">A ViralBook resolve isso para você.</span>
+                </h3>
+                <ul className="space-y-4">
+                  {[
+                    { emoji: "📚", text: "Analisa livros virais" },
+                    { emoji: "🧠", text: "Descobre problemas recorrentes" },
+                    { emoji: "💡", text: "Gera ideias de SaaS" },
+                    { emoji: "🚀", text: "Cria um roadmap para o MVP" }
+                  ].map((sol, i) => (
+                    <li key={i} className="flex items-center gap-3 text-foreground font-semibold text-base">
+                      <span className="text-2xl shrink-0">{sol.emoji}</span>
+                      <span>{sol.text}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Product Simulator Section */}
+        <section className="w-full py-16 md:py-24 px-4 md:px-6 relative overflow-hidden">
+          <div className="max-w-6xl mx-auto text-center mb-12 space-y-4">
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground">
+              Veja a IA Varrendo o Mercado em Tempo Real
             </h2>
-            <p className="text-xl text-zinc-400 mb-12 max-w-2xl mx-auto">
-              Estamos fechando o grupo de fundadores em breve. Depois disso, o Viralbook passará a custar R$ 297/mês.
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Simule a análise de viralidade de um crossover agora mesmo. Descubra a dor, o nível de saturação e o canvas da ideia selecionada.
+            </p>
+          </div>
+          <ProductSimulator />
+        </section>
+
+        {/* Features Section */}
+        <section id="features" className="w-full py-24 bg-muted/20 border-y border-border/50 px-4 md:px-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16 space-y-4">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">Tudo que você precisa para dominar o mercado</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Nós construímos as ferramentas exatas que os grandes fundadores usam para encontrar oceanos azuis.</p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="p-8 rounded-3xl glass-card transition-all hover:-translate-y-1">
+                <div className="h-14 w-14 rounded-2xl bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center mb-6 border border-blue-500/20 dark:border-blue-500/30">
+                  <Target className="h-7 w-7 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className="text-2xl font-bold mb-3 text-foreground">Radar de Sinais</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Algoritmo que analisa conversas no Reddit, produtos da Amazon e tendências em tempo real para encontrar as maiores dores não resolvidas.
+                </p>
+              </div>
+
+              <div className="p-8 rounded-3xl glass-card transition-all hover:-translate-y-1">
+                <div className="h-14 w-14 rounded-2xl bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center mb-6 border border-purple-500/20 dark:border-purple-500/30">
+                  <BookOpen className="h-7 w-7 text-purple-600 dark:text-purple-400" />
+                </div>
+                <h3 className="text-2xl font-bold mb-3 text-foreground">Biblioteca Infinita</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Gerador de ideias que cruza mais de 10 milhões de combinações entre públicos, tecnologias e monetizações para revelar oceanos azuis imediatos.
+                </p>
+              </div>
+
+              <div className="p-8 rounded-3xl glass-card transition-all hover:-translate-y-1">
+                <div className="h-14 w-14 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center mb-6 border border-emerald-500/20 dark:border-emerald-500/30">
+                  <Lock className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <h3 className="text-2xl font-bold mb-3 text-foreground">Cofre de Nichos</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Tenha sua própria gaveta de oportunidades salvas. Monitore o custo de desenvolvimento, o nível de saturação e o potencial de receita de cada ideia.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section className="w-full py-24 px-4 md:px-6 relative overflow-hidden">
+          <div className="absolute top-1/2 right-0 w-[400px] h-[400px] bg-purple-500/10 blur-[100px] rounded-full pointer-events-none" />
+          <div className="max-w-6xl mx-auto relative z-10">
+            <div className="text-center mb-16 space-y-4">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">O que dizem os Fundadores</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Quem parou de adivinhar nichos já está construindo negócios de verdade.</p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-6">
+              {[
+                { name: "Lucas M.", role: "Indie Hacker", text: "Eu perdia semanas tentando validar ideias. O ViralBook encontrou uma dor latente em livros de 'Foco' e eu construí um micro-SaaS em 4 dias. Já tenho meus primeiros 10 clientes pagantes!" },
+                { name: "Sofia T.", role: "Desenvolvedora Web", text: "A integração com o Groq é absurdamente rápida. O Lean Canvas que ele gera é tão detalhado que a Vantagem Injusta sugerida virou o slogan da minha nova startup." },
+                { name: "Rafael C.", role: "Empreendedor", text: "O melhor investimento do ano. Usar a base do Google Books para achar dores pelas quais as pessoas já pagam para resolver mudou completamente a minha visão de negócios." }
+              ].map((testimonial, i) => (
+                <div key={i} className="p-8 rounded-3xl bg-card/30 border border-border/50 hover:bg-card/50 transition-colors relative shadow-sm">
+                  <div className="flex gap-1 mb-6 text-yellow-500">
+                    {[...Array(5)].map((_, j) => <svg key={j} className="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>)}
+                  </div>
+                  <p className="text-muted-foreground leading-relaxed italic mb-6">"{testimonial.text}"</p>
+                  <div className="flex items-center gap-3 mt-auto">
+                    <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-lg">
+                      {testimonial.name[0]}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-foreground text-sm">{testimonial.name}</h4>
+                      <p className="text-xs text-muted-foreground">{testimonial.role}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+        {/* Pricing Section */}
+        <section id="pricing" className="w-full py-24 md:py-32 px-4 md:px-6 relative">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-blue-500/5 dark:bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
+
+          <div className="max-w-5xl mx-auto text-center relative z-10">
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-foreground">
+              Escolha seu plano de acesso. <br className="hidden md:block"/>
+              Gere seus SaaS com dados.
+            </h2>
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Selecione o plano ideal para você validar seus projetos. Aproveite nossa oferta especial de lançamento.
             </p>
 
-            {/* Moedas */}
+            {/* Toggle USD / BRL / EUR */}
             <div className="flex justify-center mb-12">
-              <div className="inline-flex p-1 bg-white/5 backdrop-blur-md rounded-full border border-white/10 shadow-lg">
+              <div className="inline-flex p-1 bg-muted/50 backdrop-blur-md rounded-full border border-border/50 shadow-lg">
                 {[
-                  { code: 'BRL', label: 'BRL (R$)' },
                   { code: 'USD', label: 'USD ($)' },
+                  { code: 'BRL', label: 'BRL (R$)' },
                   { code: 'EUR', label: 'EUR (€)' }
                 ].map((c) => (
                   <button
                     key={c.code}
                     onClick={() => setCurrency(c.code as 'USD' | 'BRL' | 'EUR')}
-                    className={`px-6 py-2.5 rounded-full text-xs font-bold transition-all duration-300 uppercase tracking-wider ${
+                    className={`px-5 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
                       currency === c.code
-                        ? 'bg-white text-zinc-950 shadow-[0_0_15px_rgba(255,255,255,0.3)] scale-105'
-                        : 'text-zinc-500 hover:text-white'
+                        ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-105'
+                        : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     {c.label}
@@ -227,90 +305,157 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* O Card do LTD */}
-            <div className="mx-auto w-full max-w-2xl p-[2px] rounded-[40px] bg-gradient-to-b from-white/20 via-white/5 to-transparent relative group">
-              <div className="absolute inset-0 bg-white/5 blur-2xl rounded-[40px] -z-10 transition-all duration-700 group-hover:bg-white/10"/>
-              
-              <div className="bg-zinc-950/90 backdrop-blur-3xl rounded-[38px] p-8 md:p-14 border border-white/10 text-left relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-8 opacity-10">
-                   <Zap className="w-48 h-48 text-cyan-400" />
-                </div>
-                <div className="relative z-10">
-                    <div className="flex justify-between items-start mb-8">
-                    <div>
-                        <h3 className="text-3xl font-extrabold text-white">Lifetime Deal</h3>
-                        <p className="text-cyan-400 mt-2 font-bold text-sm uppercase tracking-widest">Passe de Fundador VIP</p>
-                    </div>
-                    <div className="text-right">
-                        <span className="text-xs font-bold px-3 py-1 bg-red-500/20 text-red-400 rounded-full border border-red-500/30 uppercase animate-pulse">
-                            🔥 17 VAGAS RESTANTES
-                        </span>
-                    </div>
+            <div className="max-w-2xl mx-auto text-left">
+              {/* Card: Plano Fundador Vitalício */}
+              <div className="p-[2px] rounded-[32px] bg-gradient-to-b from-primary via-primary/50 to-transparent relative group flex flex-col justify-between shadow-2xl">
+                <div className="absolute inset-0 bg-primary/10 blur-2xl rounded-[32px] -z-10 group-hover:bg-primary/25 transition-all duration-700"/>
+                <div className="bg-card/90 backdrop-blur-xl rounded-[30px] p-8 md:p-12 flex flex-col justify-between h-full border border-border/50">
+                  <div className="space-y-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-3xl font-bold text-foreground flex items-center gap-2">
+                          Membro Vitalício
+                        </h3>
+                        <p className="text-sm text-primary mt-1.5 font-semibold">Oferta especial e definitiva de lançamento</p>
+                      </div>
+                      <span className="text-[10px] font-bold px-3 py-1 bg-primary/20 text-primary rounded-full uppercase tracking-wider">OFERTA LIMITADA</span>
                     </div>
                     
-                    <div className="py-6 border-y border-white/10 mb-8">
-                    <span className="text-zinc-600 line-through text-lg font-medium block">
-                        {getPrice('original')}
-                    </span>
-                    <div className="flex items-baseline gap-2 mt-2">
-                        <span className="text-6xl font-extrabold text-white tracking-tight">
-                        {getPrice('discount')}
+                    <div className="py-4 border-y border-border/40 my-6">
+                      <span className="text-muted-foreground line-through text-lg font-medium block">
+                        {getPrice('lifetime', 'original')}
+                      </span>
+                      <div className="flex items-baseline gap-2 mt-1">
+                        <span className="text-6xl font-extrabold text-foreground tracking-tight">
+                          {getPrice('lifetime', 'discount')}
                         </span>
-                    </div>
-                    <p className="text-sm font-medium text-emerald-400 mt-3 flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4"/> Pagamento único. Sem surpresas mensais.
-                    </p>
+                        <span className="text-muted-foreground text-sm font-medium">pagamento único</span>
+                      </div>
                     </div>
 
-                    <ul className="grid gap-4 mb-10">
-                    {[
-                        'Radar 3D & Nichos Globais Ilimitados',
-                        'SaaS Canvas (Geração Inteligente via Groq)',
-                        'Hunter B2B (Dorks & Cold Emails)',
-                        'Ad Factory Pro (Meta & TikTok)',
-                        'Email Matrix Funnels',
-                        'Acesso ao Conselho de Holo-Mentores',
-                        'Atualizações Vitalícias Inclusas',
-                    ].map((item, i) => (
-                        <li key={i} className="flex items-center gap-3 text-zinc-300 font-medium">
-                        <Zap className="h-5 w-5 text-cyan-400 shrink-0" />
-                        <span>{item}</span>
+                    <ul className="grid sm:grid-cols-2 gap-4">
+                      {[
+                        'Acesso vitalício ilimitado (Sem mensalidades)',
+                        'Gerador de Oportunidades & Biblioteca',
+                        'Validação em tempo real (Reddit e FB)',
+                        'Filtros Globais e Inteligência Groq',
+                        'Exportação de relatórios em CSV',
+                        'Suporte prioritário e badge fundador',
+                        'Acesso permanente a atualizações',
+                        'Garantia incondicional de 7 dias'
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-center gap-3 text-muted-foreground text-sm font-medium">
+                          <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+                          <span className={i === 0 || i === 7 ? "text-foreground font-bold" : ""}>{item}</span>
                         </li>
-                    ))}
+                      ))}
                     </ul>
+                  </div>
 
-                    <a 
-                    href={LEMON_SQUEEZY_CHECKOUT_URLS[currency]}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full flex items-center justify-center bg-white text-zinc-950 hover:bg-zinc-200 h-16 text-lg font-extrabold rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-transform hover:-translate-y-1"
-                    >
-                    Garantir Acesso Vitalício
-                    </a>
-                    
-                    <div className="mt-6 flex items-center justify-center gap-2 text-xs text-zinc-600 font-medium">
-                    <Lock className="h-4 w-4" />
-                    <span>Criptografia SSL de 256 bits via Lemon Squeezy</span>
+                  <div className="mt-10 pt-6 border-t border-border/50 space-y-4">
+                    <div className="text-xs font-bold text-yellow-500/90 text-center bg-yellow-500/10 py-2 px-4 rounded-lg border border-yellow-500/20">
+                      ⚡ Restam apenas 17 vagas com este preço promocional!
                     </div>
+                    <a 
+                      href={LEMON_SQUEEZY_CHECKOUT_URLS[currency]}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/85 w-full h-14 text-lg font-bold rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5 cursor-pointer text-center font-bold text-md"
+                    >
+                      Garantir Acesso Vitalício
+                    </a>
+                    <div className="text-[11px] text-muted-foreground text-center">Pagamento único e permanente. Processado de forma segura via Lemon Squeezy.</div>
+                  </div>
                 </div>
               </div>
+            </div>
+            
+            <div className="mt-12 flex items-center justify-center gap-2 text-sm text-muted-foreground font-medium">
+              <Lock className="h-4 w-4" />
+              <span>Pagamento 100% seguro processado via criptografia SSL oficial</span>
             </div>
           </div>
         </section>
 
+        {/* FAQ Section */}
+        <section className="w-full py-24 border-t border-border/50 px-4 md:px-6 bg-muted/20">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-16 space-y-4">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">Perguntas Frequentes</h2>
+              <p className="text-muted-foreground text-lg">Tudo que você precisa saber antes de adquirir o ViralBook AI.</p>
+            </div>
+            
+            <div className="space-y-4">
+              {[
+                { q: "Eu preciso saber programar para usar o ViralBook?", a: "Não para encontrar a ideia! O ViralBook vai te dar a ideia de negócio estruturada (O Lean Canvas). Se você não sabe programar, as ideias classificadas como 'Custo de Construção: Baixo' podem ser criadas com ferramentas No-Code (Bubble, FlutterFlow) sem escrever uma linha de código." },
+                { q: "O pagamento é mensal ou anual?", a: "Nenhum dos dois. O pagamento é ÚNICO. Você paga uma vez e tem acesso vitalício ao Radar, ao Cofre de Favoritos e a todas as futuras atualizações da plataforma." },
+                { q: "Quantas ideias eu posso gerar por dia?", a: "O seu acesso permite a geração ILIMITADA de ideias. Pesquise quantos nichos quiser, leia centenas de livros virtuais e gere infinitos planos de negócios." },
+                { q: "E se eu não gostar da ferramenta?", a: "Você está coberto pela nossa Garantia Incondicional de 7 Dias. Se você entrar, rodar o radar e achar que o software não vai colocar dinheiro no seu bolso, basta nos enviar um único e-mail e devolveremos 100% do seu dinheiro, sem perguntas." }
+              ].map((faq, i) => (
+                <details key={i} className="group p-6 rounded-2xl bg-card/30 border border-border/50 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-colors hover:bg-card/50">
+                  <summary className="flex items-center justify-between font-bold text-lg text-foreground outline-none">
+                    {faq.q}
+                    <span className="transition group-open:rotate-180">
+                      <svg fill="none" height="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                    </span>
+                  </summary>
+                  <p className="text-muted-foreground mt-4 leading-relaxed group-open:animate-in group-open:fade-in group-open:slide-in-from-top-1">
+                    {faq.a}
+                  </p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
       </main>
 
-      <footer className="border-t border-white/5 pt-12 pb-12 px-6 lg:px-14 bg-zinc-950">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-zinc-500 font-medium">
-           <div className="flex items-center gap-2">
-            <Zap className="w-5 h-5 text-zinc-700"/>
-            <span>© {new Date().getFullYear()} Viralbook AI. Reservados.</span>
-           </div>
-           <div className="flex gap-6">
-             <Link href="/terms" className="hover:text-white transition-colors">Termos</Link>
-             <Link href="/privacy" className="hover:text-white transition-colors">Privacidade</Link>
-             <a href="mailto:ceo@viralbook.ai" className="hover:text-white transition-colors">Contato</a>
-           </div>
+      <footer className="border-t border-border/50 bg-background pt-20 pb-12 px-6 lg:px-14">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-16">
+          <div className="md:col-span-1 space-y-4">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
+                <Zap className="h-4 w-4 text-white" />
+              </div>
+              <span className="font-bold text-xl tracking-tight text-foreground">ViralBook AI</span>
+            </div>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              Descubra os oceanos azuis do mercado de software antes que eles fiquem saturados.
+            </p>
+          </div>
+          
+          <div>
+            <h4 className="font-bold text-foreground mb-6 uppercase text-sm tracking-wider">Produto</h4>
+            <ul className="space-y-4 text-sm text-muted-foreground">
+              <li><Link href="#features" className="hover:text-primary transition-colors">Funcionalidades</Link></li>
+              <li><Link href="#pricing" className="hover:text-primary transition-colors">Preços & Planos</Link></li>
+              <li><Link href="/docs" className="hover:text-primary transition-colors">Documentação (Docs)</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-foreground mb-6 uppercase text-sm tracking-wider">Empresa</h4>
+            <ul className="space-y-4 text-sm text-muted-foreground">
+              <li><Link href="/terms" className="hover:text-primary transition-colors">Termos de Uso</Link></li>
+              <li><Link href="/privacy" className="hover:text-primary transition-colors">Política de Privacidade</Link></li>
+              <li><button onClick={() => openAuth("login")} className="hover:text-primary transition-colors text-left cursor-pointer">Área de Membros</button></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-foreground mb-6 uppercase text-sm tracking-wider">Contato</h4>
+            <ul className="space-y-4 text-sm text-muted-foreground">
+              <li><ContactModal /></li>
+              <li><a href="mailto:suporte@viralbook.ai" className="hover:text-primary transition-colors font-medium text-foreground hover:text-primary transition-colors">suporte@viralbook.ai</a></li>
+              <li className="pt-2 text-xs">Atendimento de Seg a Sex, das 09h às 18h.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+          <p>© {new Date().getFullYear()} ViralBook AI. Todos os direitos reservados.</p>
+          <div className="flex gap-4">
+            <span>Desenvolvido por Indie Hackers para Indie Hackers.</span>
+          </div>
         </div>
       </footer>
 
