@@ -8,8 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import { Search, Loader2, Sparkles, Copy, CheckCircle2, TrendingUp, Heart, Share2, FileText, Bell, LayoutGrid, List, MessageSquare, Users, Trash2, Globe, Megaphone, DollarSign, Percent, HelpCircle, X, ChevronDown, ChevronUp } from "lucide-react";
+import { Search, Loader2, Sparkles, Copy, CheckCircle2, TrendingUp, Heart, Share2, FileText, Bell, LayoutGrid, List, MessageSquare, Users, Trash2, Globe, Megaphone, DollarSign, Percent, HelpCircle, X, ChevronDown, ChevronUp, BarChart3, Database, Layers, Crosshair, Presentation } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
 // Ícone personalizado do Facebook para evitar incompatibilidade de versão do lucide-react
 function FacebookIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -61,6 +62,36 @@ function CollapsibleSectionHeader({ title, isOpen, onToggle, icon, badge }: Coll
   );
 }
 
+function ScoreGauge({ score }: { score: number }) {
+  const radius = 16;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (score / 100) * circumference;
+  const color = score >= 80 ? "text-green-500" : score >= 60 ? "text-yellow-500" : "text-orange-500";
+  const strokeColor = score >= 80 ? "stroke-green-500" : score >= 60 ? "stroke-yellow-500" : "stroke-orange-500";
+  
+  return (
+    <div className="relative flex items-center justify-center w-11 h-11 bg-zinc-950 rounded-full border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.5)] shrink-0" title={`Score de Viralidade: ${score}`}>
+      <svg className="w-11 h-11 transform -rotate-90 absolute">
+        <circle cx="22" cy="22" r={radius} className="stroke-white/5" strokeWidth="3" fill="none" />
+        <circle cx="22" cy="22" r={radius} className={cn("transition-all duration-1000", strokeColor)} strokeWidth="3" fill="none" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round" />
+      </svg>
+      <span className={cn("absolute text-[11px] font-bold font-mono tracking-tighter", color)}>{score}</span>
+    </div>
+  );
+}
+
+const getCountryFlag = (code: string) => {
+  if (code === 'BR') return '🇧🇷';
+  if (code === 'US') return '🇺🇸';
+  if (code === 'PT') return '🇵🇹';
+  if (code === 'UK' || code === 'GB') return '🇬🇧';
+  if (code === 'ES') return '🇪🇸';
+  if (code === 'FR') return '🇫🇷';
+  if (code === 'DE') return '🇩🇪';
+  if (code === 'IN') return '🇮🇳';
+  return '🌐';
+};
+
 // Sub-componente para isolar os estados individuais (como expandir a sheet)
 function OpportunityCard({ item }: { item: any }) {
   const router = useRouter();
@@ -83,6 +114,12 @@ function OpportunityCard({ item }: { item: any }) {
   const [showMarketingKit, setShowMarketingKit] = useState(false);
   const [showCalculator, setShowCalculator] = useState(false);
   const [showPrompts, setShowPrompts] = useState(false);
+  const [showGtmRoadmap, setShowGtmRoadmap] = useState(false);
+  const [showTechStack, setShowTechStack] = useState(false);
+  const [showCompetitors, setShowCompetitors] = useState(false);
+  const [showPitchDeck, setShowPitchDeck] = useState(false);
+  const [showSqlSchema, setShowSqlSchema] = useState(false);
+  const [generatingModule, setGeneratingModule] = useState<string | null>(null);
 
   const [details, setDetails] = useState<any>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
@@ -122,6 +159,20 @@ function OpportunityCard({ item }: { item: any }) {
   const [calcLeadsTarget, setCalcLeadsTarget] = useState<number>(1000);
   const [calcConversion, setCalcConversion] = useState<number>(2.0);
   const [calcChurn, setCalcChurn] = useState<number>(5.0);
+
+  const generateMrrData = (priceStr: string) => {
+    const price = priceStr ? parseFloat(priceStr.match(/\d+([.,]\d+)?/)?.[0]?.replace(',', '.') || '49') : 49;
+    const data = [];
+    let currentCustomers = 0;
+    for (let i = 1; i <= 12; i++) {
+      currentCustomers = Math.floor(currentCustomers + (5 * i) + Math.random() * 5);
+      data.push({
+        month: `Mês ${i}`,
+        mrr: Math.floor(currentCustomers * price)
+      });
+    }
+    return data;
+  };
 
   const handleCopyMarketingText = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -173,6 +224,49 @@ function OpportunityCard({ item }: { item: any }) {
     }
   };
 
+  const handleGeneratePremiumModule = async (moduleType: 'gtm' | 'tech' | 'competitor' | 'pitch' | 'sql') => {
+    setGeneratingModule(moduleType);
+    try {
+      const res = await fetch("/api/opportunities/premium-modules", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          opportunityId: item.id,
+          moduleType,
+          saasName: item.saas_name,
+          problem: item.problem_solved,
+          audience: item.target_audience,
+          features: item.mvp_features
+        }),
+      });
+      
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Erro ao gerar o módulo");
+      
+      const colMap: any = {
+        'gtm': 'gtm_roadmap',
+        'tech': 'tech_stack',
+        'competitor': 'competitor_analysis',
+        'pitch': 'pitch_deck',
+        'sql': 'sql_schema'
+      };
+      
+      setDetails((prev: any) => ({ ...prev, [colMap[moduleType]]: json.data }));
+      
+      // Auto open the generated section
+      if (moduleType === 'gtm') setShowGtmRoadmap(true);
+      if (moduleType === 'tech') setShowTechStack(true);
+      if (moduleType === 'competitor') setShowCompetitors(true);
+      if (moduleType === 'pitch') setShowPitchDeck(true);
+      if (moduleType === 'sql') setShowSqlSchema(true);
+      
+    } catch (err: any) {
+      alert(err.message || "Erro de conexão ao gerar módulo avançado.");
+    } finally {
+      setGeneratingModule(null);
+    }
+  };
+
   const handleMapRedditPainPoints = async () => {
     setMappingReddit(true);
     try {
@@ -212,22 +306,22 @@ function OpportunityCard({ item }: { item: any }) {
       <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-primary to-blue-600" />
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start mb-2">
-          <div className="flex flex-wrap gap-2">
-            <Badge variant={item.viral_opportunity_score >= 80 ? "default" : "secondary"}>
-              Score: {item.viral_opportunity_score}
-            </Badge>
-            <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
-              {(() => {
-                const s = item.viral_opportunity_score || 0;
-                if (s >= 95) return "🌟🌟🌟🌟🌟🌟 (>5 Estrelas)";
-                if (s >= 80) return "⭐⭐⭐⭐⭐ (5 Estrelas)";
-                if (s >= 60) return "⭐⭐⭐⭐ (4 Estrelas)";
-                if (s >= 40) return "⭐⭐⭐ (3 Estrelas)";
-                if (s >= 20) return "⭐⭐ (2 Estrelas)";
-                return "⭐ (1 Estrela)";
-              })()}
-            </Badge>
-            <Badge variant="outline">{item.country}</Badge>
+          <div className="flex items-center gap-3">
+            <ScoreGauge score={item.viral_opportunity_score || 0} />
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                <span className="text-sm cursor-help" title={`Alvo: ${item.country}`}>{getCountryFlag(item.country)}</span>
+                <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20 text-[9px] h-5 px-1.5 font-bold uppercase tracking-wider">
+                  {(() => {
+                    const s = item.viral_opportunity_score || 0;
+                    if (s >= 95) return "🌟 Unicórnio (>95)";
+                    if (s >= 80) return "⭐ Premium (>80)";
+                    if (s >= 60) return "👍 Bom (>60)";
+                    return "⚠️ Risco";
+                  })()}
+                </Badge>
+              </div>
+            </div>
           </div>
           <div className="flex items-center gap-1">
             <Button 
@@ -445,6 +539,27 @@ function OpportunityCard({ item }: { item: any }) {
                       <span className="text-muted-foreground">Potencial:</span>
                       <span className="font-bold">{details.potential_revenue?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
                     </div>
+
+                    <div className="mt-6">
+                      <div className="text-xs font-bold text-zinc-400 mb-4 flex items-center gap-2">
+                        <BarChart3 className="h-4 w-4 text-green-500" /> Projeção de MRR (12 Meses)
+                      </div>
+                      <div className="h-48 w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={generateMrrData(details.suggested_price)}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
+                            <XAxis dataKey="month" stroke="rgba(255,255,255,0.3)" fontSize={10} tickMargin={10} />
+                            <YAxis stroke="rgba(255,255,255,0.3)" fontSize={10} tickFormatter={(val) => `$${val}`} />
+                            <Tooltip 
+                              contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                              itemStyle={{ color: '#22c55e', fontWeight: 'bold' }}
+                              formatter={(value) => [`$${value}`, 'MRR']}
+                            />
+                            <Line type="monotone" dataKey="mrr" stroke="#22c55e" strokeWidth={3} dot={{ fill: '#22c55e', r: 4 }} activeDot={{ r: 6 }} />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -464,6 +579,190 @@ function OpportunityCard({ item }: { item: any }) {
                       <Badge variant="outline" className="bg-background">⏱️ {details.development_time}</Badge>
                       <Badge variant="outline" className="bg-background">🧠 {details.implementation_difficulty}</Badge>
                     </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Plano de Ação GTM (30 Dias) */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Roadmap Go-To-Market (30 Dias)"
+                  isOpen={showGtmRoadmap}
+                  onToggle={() => setShowGtmRoadmap(!showGtmRoadmap)}
+                  icon={<Crosshair className="h-4 w-4 text-orange-400" />}
+                />
+                {showGtmRoadmap && (
+                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                    {!details?.gtm_roadmap ? (
+                      <div className="text-center p-4">
+                        <Button 
+                          onClick={() => handleGeneratePremiumModule('gtm')} 
+                          disabled={generatingModule === 'gtm'}
+                          className="bg-orange-600 hover:bg-orange-500 text-white"
+                        >
+                          {generatingModule === 'gtm' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                          Gerar Roadmap GTM (IA)
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {details.gtm_roadmap.weeks?.map((week: any, i: number) => (
+                          <div key={i} className="bg-zinc-950/50 p-3 rounded-lg border border-white/5">
+                            <h4 className="text-sm font-bold text-orange-400 mb-2">Semana {week.week}: {week.focus}</h4>
+                            <ul className="list-disc pl-5 text-xs text-zinc-300 space-y-1">
+                              {week.actions?.map((action: string, j: number) => <li key={j}>{action}</li>)}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Tech Stack Sugerida */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Tech Stack Recomendada"
+                  isOpen={showTechStack}
+                  onToggle={() => setShowTechStack(!showTechStack)}
+                  icon={<Layers className="h-4 w-4 text-blue-400" />}
+                />
+                {showTechStack && (
+                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                    {!details?.tech_stack ? (
+                      <div className="text-center p-4">
+                        <Button 
+                          onClick={() => handleGeneratePremiumModule('tech')} 
+                          disabled={generatingModule === 'tech'}
+                          className="bg-blue-600 hover:bg-blue-500 text-white"
+                        >
+                          {generatingModule === 'tech' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Layers className="mr-2 h-4 w-4" />}
+                          Descobrir Stack Ideal
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-3">
+                        {Object.entries(details.tech_stack).map(([key, tech]: any) => (
+                          <div key={key} className="bg-zinc-950/50 p-3 rounded-lg border border-white/5">
+                            <span className="text-[10px] text-zinc-500 uppercase font-bold block mb-1">{key.replace('_', ' ')}</span>
+                            <div className="font-bold text-blue-400 text-sm">{tech.name}</div>
+                            <div className="text-xs text-zinc-400 mt-1">{tech.reason}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Análise de Concorrentes */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Análise de Concorrentes & Brechas"
+                  isOpen={showCompetitors}
+                  onToggle={() => setShowCompetitors(!showCompetitors)}
+                  icon={<Crosshair className="h-4 w-4 text-red-400" />}
+                />
+                {showCompetitors && (
+                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                    {!details?.competitor_analysis ? (
+                      <div className="text-center p-4">
+                        <Button 
+                          onClick={() => handleGeneratePremiumModule('competitor')} 
+                          disabled={generatingModule === 'competitor'}
+                          className="bg-red-600 hover:bg-red-500 text-white"
+                        >
+                          {generatingModule === 'competitor' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
+                          Analisar Concorrentes (IA)
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {details.competitor_analysis.competitors?.map((comp: any, i: number) => (
+                          <div key={i} className="bg-zinc-950/50 p-3 rounded-lg border border-red-500/10">
+                            <div className="font-bold text-red-400 text-sm mb-1">{comp.name}</div>
+                            <div className="text-xs text-zinc-300"><strong>Fraqueza:</strong> {comp.weakness}</div>
+                            <div className="text-xs text-green-400 mt-1"><strong>Nossa Vantagem:</strong> {comp.our_advantage}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Pitch Deck HTML */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Pitch Deck (Apresentação)"
+                  isOpen={showPitchDeck}
+                  onToggle={() => setShowPitchDeck(!showPitchDeck)}
+                  icon={<Presentation className="h-4 w-4 text-indigo-400" />}
+                />
+                {showPitchDeck && (
+                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                    {!details?.pitch_deck ? (
+                      <div className="text-center p-4">
+                        <Button 
+                          onClick={() => handleGeneratePremiumModule('pitch')} 
+                          disabled={generatingModule === 'pitch'}
+                          className="bg-indigo-600 hover:bg-indigo-500 text-white"
+                        >
+                          {generatingModule === 'pitch' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Presentation className="mr-2 h-4 w-4" />}
+                          Gerar Slides do Pitch
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex overflow-x-auto gap-4 pb-4 snap-x">
+                        {details.pitch_deck.slides?.map((slide: any, i: number) => (
+                          <div key={i} className="min-w-[280px] w-[280px] h-[160px] bg-white text-black p-5 rounded-xl shadow-lg flex flex-col justify-center snap-center shrink-0">
+                            <h3 className="font-extrabold text-lg mb-2 text-indigo-900 text-center">{slide.title}</h3>
+                            <p className="text-xs text-slate-700 text-center leading-relaxed">{slide.content}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* SQL Schema */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Arquitetura de Banco de Dados (SQL)"
+                  isOpen={showSqlSchema}
+                  onToggle={() => setShowSqlSchema(!showSqlSchema)}
+                  icon={<Database className="h-4 w-4 text-emerald-400" />}
+                />
+                {showSqlSchema && (
+                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                    {!details?.sql_schema ? (
+                      <div className="text-center p-4">
+                        <Button 
+                          onClick={() => handleGeneratePremiumModule('sql')} 
+                          disabled={generatingModule === 'sql'}
+                          className="bg-emerald-600 hover:bg-emerald-500 text-white"
+                        >
+                          {generatingModule === 'sql' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Database className="mr-2 h-4 w-4" />}
+                          Gerar Tabelas Supabase
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="relative group">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                          onClick={() => navigator.clipboard.writeText(details.sql_schema)}
+                        >
+                          Copiar SQL
+                        </Button>
+                        <pre className="text-[10px] text-emerald-400 bg-black p-4 rounded-lg overflow-x-auto max-h-[300px]">
+                          <code>{details.sql_schema}</code>
+                        </pre>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
