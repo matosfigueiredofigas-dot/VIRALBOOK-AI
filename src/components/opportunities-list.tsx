@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { Search, Loader2, Sparkles, Copy, CheckCircle2, TrendingUp, Heart, Share2, FileText, Bell, LayoutGrid, List, MessageSquare, Users, Trash2, Globe, Megaphone, DollarSign, Percent, HelpCircle, X, ChevronDown, ChevronUp, BarChart3, Database, Layers, Crosshair, Presentation, Bot } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
 // Ícone personalizado do Facebook para evitar incompatibilidade de versão do lucide-react
@@ -95,6 +95,7 @@ const getCountryFlag = (code: string) => {
 // Sub-componente para isolar os estados individuais (como expandir a sheet)
 function OpportunityCard({ item }: { item: any }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [copiedPrompt, setCopiedPrompt] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -344,9 +345,9 @@ function OpportunityCard({ item }: { item: any }) {
             <Button 
               variant="ghost" 
               size="icon" 
-              className={`h-8 w-8 ${typeof window !== 'undefined' && window.location.pathname.includes('/favorites') ? "text-red-500 hover:bg-red-500/10" : "text-muted-foreground hover:text-red-500 hover:bg-red-500/10"}`}
+              className={`h-8 w-8 ${pathname?.includes('/favorites') ? "text-red-500 hover:bg-red-500/10" : "text-muted-foreground hover:text-red-500 hover:bg-red-500/10"}`}
               onClick={async () => {
-                const isFavoritePage = typeof window !== 'undefined' && window.location.pathname.includes('/favorites');
+                const isFavoritePage = pathname?.includes('/favorites');
                 if (isFavoritePage) {
                   if (confirm("Deseja remover esta oportunidade dos favoritos?")) {
                     const res = await fetch('/api/favorites', {
@@ -374,9 +375,9 @@ function OpportunityCard({ item }: { item: any }) {
                   }
                 }
               }}
-              title={typeof window !== 'undefined' && window.location.pathname.includes('/favorites') ? "Remover dos Favoritos" : "Favoritar"}
+              title={pathname?.includes('/favorites') ? "Remover dos Favoritos" : "Favoritar"}
             >
-              <Heart className={`h-4 w-4 ${typeof window !== 'undefined' && window.location.pathname.includes('/favorites') ? "fill-red-500 text-red-500" : ""}`} />
+              <Heart className={`h-4 w-4 ${pathname?.includes('/favorites') ? "fill-red-500 text-red-500" : ""}`} />
             </Button>
             <Button 
               variant="ghost" 
