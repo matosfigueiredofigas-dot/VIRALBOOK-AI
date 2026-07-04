@@ -15,10 +15,10 @@ export function TimeSelect() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   
-  const currentTime = searchParams.get("time") || "all";
+  const currentTime = searchParams.get("time") || "7d";
 
   const handleTimeChange = (time: string | null) => {
-    const val = time || "all";
+    const val = time || "7d";
     const params = new URLSearchParams(searchParams);
     params.set("time", val);
     router.push(`${pathname}?${params.toString()}`);

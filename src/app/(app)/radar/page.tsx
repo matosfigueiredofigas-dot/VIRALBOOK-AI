@@ -19,7 +19,7 @@ export default async function RadarPage(props: { searchParams: Promise<{ country
 
   const searchParams = await props.searchParams;
   const country = searchParams.country || "ALL";
-  const time = searchParams.time || "now";
+  const time = searchParams.time || "7d";
   const filterDate = getFilterDate(time);
 
   let query = supabase
