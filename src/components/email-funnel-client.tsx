@@ -28,10 +28,11 @@ interface Opportunity {
   email_funnel: EmailFunnel | null;
 }
 
-export function EmailFunnelClient({ initialOpportunities }: { initialOpportunities: Opportunity[] }) {
+export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: { initialOpportunities: Opportunity[], initialSelectedId?: string }) {
   const router = useRouter();
   const [opportunities, setOpportunities] = useState<Opportunity[]>(initialOpportunities);
-  const [selectedId, setSelectedId] = useState<string>(initialOpportunities[0]?.id || "");
+  const validInitialId = initialSelectedId && initialOpportunities.some(o => o.id === initialSelectedId) ? initialSelectedId : initialOpportunities[0]?.id || "";
+  const [selectedId, setSelectedId] = useState<string>(validInitialId);
   const [tone, setTone] = useState<string>("persuasivo");
   const [discount, setDiscount] = useState<string>("20%");
   const [generating, setGenerating] = useState<boolean>(false);

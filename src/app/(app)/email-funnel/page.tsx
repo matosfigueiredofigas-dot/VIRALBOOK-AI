@@ -5,7 +5,7 @@ import { EmailFunnelClient } from "@/components/email-funnel-client"
 
 export const dynamic = 'force-dynamic';
 
-export default async function EmailFunnelPage() {
+export default async function EmailFunnelPage(props: { searchParams: Promise<{ oppId?: string }> }) {
   const user = await getCachedUser();
 
   if (!user) {
@@ -13,6 +13,9 @@ export default async function EmailFunnelPage() {
   }
 
   const supabase = await createClient();
+
+  const searchParams = await props.searchParams;
+  const oppId = searchParams.oppId;
 
   // Buscar as oportunidades criadas pelo próprio usuário
   const { data: opportunities } = await supabase
@@ -33,7 +36,7 @@ export default async function EmailFunnelPage() {
         </p>
       </div>
 
-      <EmailFunnelClient initialOpportunities={opportunities || []} />
+      <EmailFunnelClient initialOpportunities={opportunities || []} initialSelectedId={oppId} />
     </div>
   )
 }
