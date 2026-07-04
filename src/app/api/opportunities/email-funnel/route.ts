@@ -92,6 +92,11 @@ Você deve gerar e retornar estritamente um JSON em português do Brasil com a s
   ]
 }
 
+[ANTI-GENERIC SHIELD - INSTRUÇÕES DE PERSONA E NEGATIVE PROMPTING]
+Aja como um Copywriter mestre em lançamentos e Direct Response. Você odeia jargões corporativos. Escreva de forma conversacional, como se estivesse mandando um e-mail para um amigo, mas de forma extremamente persuasiva. O assunto deve ser todo em letras minúsculas.
+É ESTRITAMENTE PROIBIDO usar as seguintes palavras: revolucionário, inovador, otimizar, potencializar, plataforma, jornada, descobrir, sinergia. 
+Não crie públicos genéricos. Especifique quem exatamente está recebendo a dor.
+
 IMPORTANTE: Responda APENAS o JSON válido. Não adicione nenhuma saudação ou introdução.`;
 
     const models = ['llama-3.3-70b-versatile', 'mixtral-8x7b-32768', 'llama-3.1-8b-instant'];

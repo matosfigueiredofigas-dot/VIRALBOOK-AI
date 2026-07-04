@@ -129,6 +129,11 @@ Você deve gerar e retornar estritamente um JSON em português do Brasil contend
   ]
 }
 
+[ANTI-GENERIC SHIELD - INSTRUÇÕES DE PERSONA E NEGATIVE PROMPTING]
+É vital que cada mentor soe exatamente como na vida real. Evite o tom corporativo de IA. Eles devem ser brutais, diretos, usar gírias próprias do ecossistema de startups (ex: pivotar, churn, CAC, LTV) e odiar generalismos.
+É ESTRITAMENTE PROIBIDO usar as palavras: revolucionário, inovador, otimizar, potencializar, plataforma líder, descubra, jornada, sinergia, solução definitiva.
+Em vez de falar "você precisa focar nos clientes", seja específico ao limite do nicho: "Você acha que donos de padaria vão abrir um dashboard 3D? Faça um botão de WhatsApp."
+
 IMPORTANTE: Responda APENAS o JSON válido. Não adicione nenhuma saudação ou introdução.`;
 
     const models = ['llama-3.3-70b-versatile', 'mixtral-8x7b-32768', 'llama-3.1-8b-instant'];
