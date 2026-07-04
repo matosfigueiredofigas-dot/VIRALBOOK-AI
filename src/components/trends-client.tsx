@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { BarChart3, TrendingUp, MessageSquare, Star, Flame, Sparkles, LayoutGrid, Map as MapIcon, Loader2 } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { cn } from "@/lib/utils";
+import { MarketMarquee } from "@/components/market-marquee";
 
 function getStarRating(growth: number, mentions: number) {
   const score = (Math.min(growth, 100) / 100) * 50 + (Math.min(mentions, 50) / 50) * 50;
@@ -67,38 +68,8 @@ export function TrendsClient({ trends, country }: { trends: any[], country: stri
 
   return (
     <div className="space-y-6">
-      {/* CSS animado para o Marquee */}
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes marquee {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-          animation: marquee 25s linear infinite;
-        }
-        .animate-marquee:hover {
-          animation-play-state: paused;
-        }
-      `}} />
-
       {/* Real-time Ticker (Marquee) */}
-      {trends.length > 0 && (
-        <div className="w-full bg-zinc-950/80 border-y border-white/10 overflow-hidden relative flex items-center h-10 shadow-[0_0_15px_rgba(34,197,94,0.1)]">
-          <div className="absolute left-0 w-20 h-full bg-gradient-to-r from-background to-transparent z-10" />
-          <div className="absolute right-0 w-20 h-full bg-gradient-to-l from-background to-transparent z-10" />
-          
-          <div className="flex animate-marquee whitespace-nowrap min-w-max">
-            {/* Duplicate the list to make infinite scroll smooth */}
-            {[...trends, ...trends].slice(0, 20).map((t, i) => (
-              <div key={i} className="flex items-center gap-3 px-6 border-r border-white/5">
-                <span className="text-xs font-bold text-white">{t.saas_name}</span>
-                <span className="text-xs font-mono font-bold text-green-500">+{t.trends_growth_monthly}%</span>
-                {i < 3 && <Flame className="h-3 w-3 text-orange-500" />}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <MarketMarquee opportunities={trends} />
 
       {/* AI Market Insight */}
       <Card className="border-primary/20 bg-primary/5 shadow-lg relative overflow-hidden">

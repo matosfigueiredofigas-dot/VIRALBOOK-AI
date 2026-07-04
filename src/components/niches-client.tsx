@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts"
 import { Activity, Sparkles, Loader2, Target, Crown, Zap } from "lucide-react"
+import { MarketMarquee } from "@/components/market-marquee"
 
 interface Niche {
   name: string
@@ -80,6 +81,9 @@ export function NichesClient({ niches, opportunities, country }: NichesClientPro
 
   return (
     <div className="space-y-8">
+      {/* Market Marquee */}
+      <MarketMarquee opportunities={opportunities} />
+
       {/* AI Synthesis Header */}
       <Card className="glass-card border-primary/20 overflow-hidden relative">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />

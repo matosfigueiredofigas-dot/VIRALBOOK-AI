@@ -5,6 +5,7 @@ import { BookOpen } from "lucide-react"
 import { getFilterDate } from "@/lib/utils"
 import { BookSearcher } from "@/components/book-searcher"
 import { ProcessedBooks } from "@/components/processed-books"
+import { MarketMarquee } from "@/components/market-marquee"
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +25,7 @@ export default async function RadarPage(props: { searchParams: Promise<{ country
 
   let query = supabase
     .from('opportunities')
-    .select('id, book_title, book_author, book_category, country, created_at')
+    .select('id, book_title, book_author, book_category, country, created_at, viral_opportunity_score, trends_growth_monthly, saas_name')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
@@ -49,6 +50,8 @@ export default async function RadarPage(props: { searchParams: Promise<{ country
           Base literária de {country === 'ALL' ? 'TODOS PAÍSES' : country} escaneada.
         </p>
       </div>
+
+      <MarketMarquee opportunities={books || []} />
 
       <BookSearcher />
 

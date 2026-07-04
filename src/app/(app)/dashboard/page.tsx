@@ -4,6 +4,7 @@ import { OpportunitiesList } from "@/components/opportunities-list"
 import { AdvancedFilters } from "@/components/advanced-filters"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Globe, TrendingUp, Zap } from "lucide-react"
+import { MarketMarquee } from "@/components/market-marquee"
 
 import { getFilterDate } from "@/lib/utils"
 
@@ -83,6 +84,9 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cou
             </a>
           </div>
         </div>
+
+      {/* Marquee Global Trends */}
+      <MarketMarquee opportunities={opportunities || []} />
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="glass-card">

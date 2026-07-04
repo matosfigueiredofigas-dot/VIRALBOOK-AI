@@ -23,7 +23,7 @@ export default async function NichesPage(props: { searchParams: Promise<{ countr
 
   let query = supabase
     .from('opportunities')
-    .select('saas_name, book_category, viral_opportunity_score, country')
+    .select('saas_name, book_category, viral_opportunity_score, country, trends_growth_monthly')
     .eq('user_id', user.id)
     .order('viral_opportunity_score', { ascending: false });
 
