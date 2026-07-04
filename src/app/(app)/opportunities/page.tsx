@@ -18,7 +18,7 @@ export default async function OpportunitiesPage(props: { searchParams: Promise<{
 
   const searchParams = await props.searchParams;
   const country = searchParams.country || "ALL";
-  const time = searchParams.time || "now";
+  const time = searchParams.time || "all";
   const filterDate = getFilterDate(time);
 
   let query = supabase

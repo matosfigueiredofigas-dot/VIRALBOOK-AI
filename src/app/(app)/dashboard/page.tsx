@@ -20,7 +20,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cou
 
   const searchParams = await props.searchParams;
   const country = searchParams.country || "ALL";
-  const time = searchParams.time || "now";
+  const time = searchParams.time || "all";
   const search = searchParams.search || "";
   const minScore = searchParams.minScore ? parseInt(searchParams.minScore) : 0;
   
