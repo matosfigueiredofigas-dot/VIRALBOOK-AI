@@ -1,12 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Loader2, Sparkles, Users, UserCheck, MessageSquare, AlertTriangle, Lightbulb, TrendingUp, CheckCircle } from "lucide-react";
+import { 
+  Loader2, Sparkles, Users, UserCheck, AlertTriangle, Lightbulb, TrendingUp, CheckCircle,
+  Smartphone, Code, Laptop, Brain, Rocket, Sparkles as BotSparkles, Users as Network, Package,
+  Volume2, Send, MessageSquare
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 
+// --- TYPEWRITER COMPONENT ---
+function TypewriterText({ text, speed = 15, onComplete }: { text: string, speed?: number, onComplete?: () => void }) {
+  const [displayedText, setDisplayedText] = useState("");
+
+  useEffect(() => {
+    setDisplayedText("");
+    let i = 0;
+    const interval = setInterval(() => {
+      setDisplayedText(text.substring(0, i + 1));
+      i++;
+      if (i >= text.length) {
+        clearInterval(interval);
+        if (onComplete) onComplete();
+      }
+    }, speed);
+    return () => clearInterval(interval);
+  }, [text, speed, onComplete]);
+
+  return <span>{displayedText}</span>;
+}
+
+// --- MAIN COMPONENT ---
 interface Advisor {
   name: string;
   avatar_style: string;
@@ -38,8 +64,37 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
   const [selectedId, setSelectedId] = useState<string>(validInitialId);
   const [generating, setGenerating] = useState<boolean>(false);
   const [activeAdvisorIdx, setActiveAdvisorIdx] = useState<number>(0);
+  
+  // TTS State
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  
+  // Chat State
+  const [chatMessage, setChatMessage] = useState("");
+  const [isSendingChat, setIsSendingChat] = useState(false);
+  const [chatHistory, setChatHistory] = useState<Record<number, { role: 'user' | 'assistant', content: string }[]>>({});
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   const selectedOpp = opportunities.find(opp => opp.id === selectedId);
+
+  // Scroll to bottom of chat when it changes
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatHistory, activeAdvisorIdx]);
+
+  // Stop TTS when changing advisor or unmounting
+  useEffect(() => {
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    setIsPlayingAudio(false);
+    return () => {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [activeAdvisorIdx]);
 
   const handleGenerate = async () => {
     if (!selectedId) return;
@@ -55,7 +110,6 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
         throw new Error(data.error || "Erro ao reunir o conselho.");
       }
 
-      // Atualizar lista local com os conselhos
       const updatedOpps = opportunities.map(opp => {
         if (opp.id === selectedId) {
           return { ...opp, advisor_advice: data.advisorAdvice };
@@ -64,11 +118,75 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
       });
       setOpportunities(updatedOpps);
       setActiveAdvisorIdx(0);
+      setChatHistory({}); // Reset chats
       router.refresh();
     } catch (err: any) {
       alert(err.message || "Erro ao consultar o conselho de mentores.");
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const playAudio = (text: string) => {
+    if (!window.speechSynthesis) {
+      alert("Seu navegador não suporta síntese de voz.");
+      return;
+    }
+    if (isPlayingAudio) {
+      window.speechSynthesis.cancel();
+      setIsPlayingAudio(false);
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'pt-BR';
+    utterance.rate = 1.1;
+    
+    utterance.onend = () => setIsPlayingAudio(false);
+    utterance.onerror = () => setIsPlayingAudio(false);
+    
+    setIsPlayingAudio(true);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const handleSendChat = async () => {
+    if (!chatMessage.trim() || !selectedOpp?.advisor_advice) return;
+    
+    const advisor = selectedOpp.advisor_advice.advisors[activeAdvisorIdx];
+    const currentHist = chatHistory[activeAdvisorIdx] || [];
+    
+    // Optimistic update
+    const newHist = [...currentHist, { role: 'user' as const, content: chatMessage }];
+    setChatHistory(prev => ({ ...prev, [activeAdvisorIdx]: newHist }));
+    const msgToSend = chatMessage;
+    setChatMessage("");
+    setIsSendingChat(true);
+
+    try {
+      const res = await fetch("/api/opportunities/advisors/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          opportunityId: selectedId,
+          advisorName: advisor.name,
+          advisorRole: advisor.role,
+          message: msgToSend
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setChatHistory(prev => ({
+        ...prev,
+        [activeAdvisorIdx]: [...newHist, { role: 'assistant', content: data.reply }]
+      }));
+    } catch (err: any) {
+      alert(err.message || "Erro ao enviar mensagem.");
+      // Rollback
+      setChatHistory(prev => ({ ...prev, [activeAdvisorIdx]: currentHist }));
+      setChatMessage(msgToSend);
+    } finally {
+      setIsSendingChat(false);
     }
   };
 
@@ -82,6 +200,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
     switch (style) {
       case "pg":
         return {
+          icon: Code,
           bg: "bg-amber-500/5 border-amber-500/20 hover:border-amber-500/40",
           text: "text-amber-400",
           activeBg: "bg-amber-500/10 border-amber-500 text-white",
@@ -91,6 +210,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
         };
       case "jobs":
         return {
+          icon: Smartphone,
           bg: "bg-zinc-800/10 border-zinc-700/30 hover:border-zinc-500/50",
           text: "text-zinc-200",
           activeBg: "bg-zinc-800/50 border-white text-white",
@@ -100,6 +220,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
         };
       case "levels":
         return {
+          icon: Laptop,
           bg: "bg-fuchsia-500/5 border-fuchsia-500/20 hover:border-fuchsia-500/40",
           text: "text-fuchsia-400",
           activeBg: "bg-fuchsia-500/10 border-fuchsia-500 text-white",
@@ -109,6 +230,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
         };
       case "naval":
         return {
+          icon: Brain,
           bg: "bg-teal-500/5 border-teal-500/20 hover:border-teal-500/40",
           text: "text-teal-400",
           activeBg: "bg-teal-500/10 border-teal-500 text-white",
@@ -118,6 +240,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
         };
       case "musk":
         return {
+          icon: Rocket,
           bg: "bg-rose-500/5 border-rose-500/20 hover:border-rose-500/40",
           text: "text-rose-400",
           activeBg: "bg-rose-500/10 border-rose-500 text-white",
@@ -127,6 +250,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
         };
       case "altman":
         return {
+          icon: BotSparkles,
           bg: "bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40",
           text: "text-emerald-400",
           activeBg: "bg-emerald-500/10 border-emerald-500 text-white",
@@ -136,6 +260,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
         };
       case "zuck":
         return {
+          icon: Network,
           bg: "bg-blue-500/5 border-blue-500/20 hover:border-blue-500/40",
           text: "text-blue-400",
           activeBg: "bg-blue-500/10 border-blue-500 text-white",
@@ -145,6 +270,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
         };
       case "bezos":
         return {
+          icon: Package,
           bg: "bg-orange-500/5 border-orange-500/20 hover:border-orange-500/40",
           text: "text-orange-400",
           activeBg: "bg-orange-500/10 border-orange-500 text-white",
@@ -154,6 +280,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
         };
       default:
         return {
+          icon: Users,
           bg: "bg-primary/5 border-primary/20",
           text: "text-primary",
           activeBg: "bg-primary/10 border-primary text-white",
@@ -255,7 +382,6 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
             <CardContent className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
               
               <div className="flex items-center gap-5">
-                {/* Placar Circular */}
                 <div className={cn(
                   "h-16 w-16 rounded-full flex flex-col items-center justify-center font-black text-xl border shrink-0",
                   getScoreColor(selectedOpp.advisor_advice.board_score)
@@ -291,21 +417,22 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
                 {selectedOpp.advisor_advice.advisors.map((advisor, idx) => {
                   const theme = getAdvisorTheme(advisor.avatar_style);
                   const isActive = activeAdvisorIdx === idx;
+                  const Icon = theme.icon;
                   
                   return (
                     <button
                       key={idx}
                       onClick={() => setActiveAdvisorIdx(idx)}
                       className={cn(
-                        "p-3 rounded-xl border text-left flex items-center gap-3 transition-all duration-300 relative group",
+                         "p-3 rounded-xl border text-left flex items-center gap-3 transition-all duration-300 relative group",
                         isActive ? theme.activeBg + " " + theme.glow : theme.bg
                       )}
                     >
                       <div className={cn(
-                        "h-8 w-8 rounded-full border flex items-center justify-center font-black text-xs shrink-0",
+                        "h-8 w-8 rounded-full border flex items-center justify-center shrink-0",
                         theme.avatarBg
                       )}>
-                        {advisor.name.split(' ').map(n => n[0]).join('')}
+                        <Icon className="h-4 w-4" />
                       </div>
                       
                       <div className="truncate pr-2">
@@ -325,19 +452,21 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
             {/* Sabatina do Advisor Ativo */}
             <div className="lg:col-span-3">
               {(() => {
-                const advisor = selectedOpp.advisor_advice.advisors[activeAdvisorIdx];
+                const advisor = selectedOpp.advisor_advice!.advisors[activeAdvisorIdx];
                 const theme = getAdvisorTheme(advisor.avatar_style);
+                const Icon = theme.icon;
+                const activeChat = chatHistory[activeAdvisorIdx] || [];
                 
                 return (
-                  <Card className="border border-white/5 bg-zinc-900/20 backdrop-blur-md">
-                    <CardHeader className="border-b border-white/5 pb-4 flex flex-row items-center justify-between flex-wrap gap-4">
+                  <Card className="border border-white/5 bg-zinc-900/20 backdrop-blur-md overflow-hidden flex flex-col">
+                    <CardHeader className="border-b border-white/5 pb-4 flex flex-row items-center justify-between flex-wrap gap-4 bg-zinc-900/40">
                       
                       <div className="flex items-center gap-4">
                         <div className={cn(
-                          "h-12 w-12 rounded-full border flex items-center justify-center font-black text-sm",
+                          "h-12 w-12 rounded-full border flex items-center justify-center",
                           theme.avatarBg
                         )}>
-                          {advisor.name.split(' ').map(n => n[0]).join('')}
+                          <Icon className="h-6 w-6" />
                         </div>
                         <div>
                           <CardTitle className="text-lg font-bold text-white">{advisor.name}</CardTitle>
@@ -345,21 +474,35 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
                         </div>
                       </div>
 
-                      <span className="text-[11px] font-bold uppercase tracking-wider bg-white/5 border border-white/10 text-zinc-300 px-3 py-1 rounded-full">
-                        Veredito: <span className={theme.text}>{advisor.verdict}</span>
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => playAudio(advisor.critical_review)}
+                          className={cn(
+                            "h-8 text-xs font-bold transition-all border-white/10 hover:border-white/20 hover:bg-white/5",
+                            isPlayingAudio ? "text-primary border-primary bg-primary/10" : "text-zinc-300 bg-zinc-900"
+                          )}
+                        >
+                          <Volume2 className={cn("h-4 w-4 mr-2", isPlayingAudio && "animate-pulse")} />
+                          {isPlayingAudio ? "Ouvindo..." : "Ouvir Conselho"}
+                        </Button>
+                        <span className="text-[11px] font-bold uppercase tracking-wider bg-white/5 border border-white/10 text-zinc-300 px-3 py-1.5 rounded-md">
+                          Veredito: <span className={theme.text}>{advisor.verdict}</span>
+                        </span>
+                      </div>
 
                     </CardHeader>
                     
-                    <CardContent className="p-6 space-y-6">
+                    <CardContent className="p-6 space-y-6 flex-grow">
                       
-                      {/* Crítica Severa */}
+                      {/* Crítica Severa (Typewriter) */}
                       <div className="space-y-2.5">
                         <span className="text-xs font-bold text-red-400/80 uppercase tracking-wider flex items-center gap-1.5">
                           <AlertTriangle className="h-4 w-4" /> Crítica Sincera (Sabatina)
                         </span>
-                        <div className="p-5 bg-red-500/5 rounded-xl border border-red-500/10 text-sm text-zinc-300 leading-relaxed italic whitespace-pre-line">
-                          &ldquo;{advisor.critical_review}&rdquo;
+                        <div className="p-5 bg-red-500/5 rounded-xl border border-red-500/10 text-sm text-zinc-300 leading-relaxed italic whitespace-pre-line min-h-[100px]">
+                          &ldquo;<TypewriterText text={advisor.critical_review} speed={12} />&rdquo;
                         </div>
                       </div>
 
@@ -372,9 +515,62 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
                           <CheckCircle className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
                           <div>
                             <span className="font-extrabold text-white block mb-1">Como agir hoje:</span>
-                            {advisor.actionable_advice}
+                            <TypewriterText text={advisor.actionable_advice} speed={8} />
                           </div>
                         </div>
+                      </div>
+                      
+                      {/* Área de Chat Interativo */}
+                      <div className="pt-6 border-t border-white/10">
+                        <span className="text-xs font-bold text-blue-400/80 uppercase tracking-wider flex items-center gap-1.5 mb-4">
+                          <MessageSquare className="h-4 w-4" /> Bate-Papo com {advisor.name.split(' ')[0]}
+                        </span>
+                        
+                        {activeChat.length > 0 && (
+                          <div className="space-y-4 mb-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                            {activeChat.map((msg, i) => (
+                              <div key={i} className={cn("flex w-full", msg.role === 'user' ? "justify-end" : "justify-start")}>
+                                <div className={cn(
+                                  "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
+                                  msg.role === 'user' 
+                                    ? "bg-blue-600 text-white rounded-br-sm" 
+                                    : cn("bg-zinc-800 text-zinc-200 rounded-bl-sm border border-zinc-700", theme.glow)
+                                )}>
+                                  {msg.role === 'assistant' ? <TypewriterText text={msg.content} speed={10} /> : msg.content}
+                                </div>
+                              </div>
+                            ))}
+                            {isSendingChat && (
+                              <div className="flex justify-start">
+                                <div className="bg-zinc-800 text-zinc-400 border border-zinc-700 max-w-[85%] rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm flex items-center gap-2">
+                                  <Loader2 className="h-4 w-4 animate-spin" /> {advisor.name.split(' ')[0]} está digitando...
+                                </div>
+                              </div>
+                            )}
+                            <div ref={chatEndRef} />
+                          </div>
+                        )}
+
+                        <form 
+                          onSubmit={(e) => { e.preventDefault(); handleSendChat(); }}
+                          className="flex gap-2"
+                        >
+                          <input
+                            type="text"
+                            value={chatMessage}
+                            onChange={(e) => setChatMessage(e.target.value)}
+                            placeholder={`Escreva sua defesa para ${advisor.name.split(' ')[0]}...`}
+                            className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors h-12"
+                            disabled={isSendingChat}
+                          />
+                          <Button 
+                            type="submit" 
+                            disabled={!chatMessage.trim() || isSendingChat}
+                            className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-5 h-12"
+                          >
+                            <Send className="h-4 w-4" />
+                          </Button>
+                        </form>
                       </div>
 
                     </CardContent>
