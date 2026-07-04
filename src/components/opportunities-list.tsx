@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import { Search, Loader2, Sparkles, Copy, CheckCircle2, TrendingUp, Heart, Share2, FileText, Bell, LayoutGrid, List, MessageSquare, Users, Trash2, Globe, Megaphone, DollarSign, Percent, HelpCircle, X, ChevronDown, ChevronUp, BarChart3, Database, Layers, Crosshair, Presentation } from "lucide-react";
+import { Search, Loader2, Sparkles, Copy, CheckCircle2, TrendingUp, Heart, Share2, FileText, Bell, LayoutGrid, List, MessageSquare, Users, Trash2, Globe, Megaphone, DollarSign, Percent, HelpCircle, X, ChevronDown, ChevronUp, BarChart3, Database, Layers, Crosshair, Presentation, Bot } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
@@ -119,6 +119,8 @@ function OpportunityCard({ item }: { item: any }) {
   const [showCompetitors, setShowCompetitors] = useState(false);
   const [showPitchDeck, setShowPitchDeck] = useState(false);
   const [showSqlSchema, setShowSqlSchema] = useState(false);
+  const [showCursorRules, setShowCursorRules] = useState(false);
+  const [cursorRules, setCursorRules] = useState<string | null>(null);
   const [generatingModule, setGeneratingModule] = useState<string | null>(null);
 
   const [details, setDetails] = useState<any>(null);
@@ -224,7 +226,7 @@ function OpportunityCard({ item }: { item: any }) {
     }
   };
 
-  const handleGeneratePremiumModule = async (moduleType: 'gtm' | 'tech' | 'competitor' | 'pitch' | 'sql') => {
+  const handleGeneratePremiumModule = async (moduleType: 'gtm' | 'tech' | 'competitor' | 'pitch' | 'sql' | 'cursor') => {
     setGeneratingModule(moduleType);
     try {
       const res = await fetch("/api/opportunities/premium-modules", {
@@ -242,6 +244,12 @@ function OpportunityCard({ item }: { item: any }) {
       
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Erro ao gerar o módulo");
+      
+      if (moduleType === 'cursor') {
+        setCursorRules(json.data);
+        setShowCursorRules(true);
+        return;
+      }
       
       const colMap: any = {
         'gtm': 'gtm_roadmap',
@@ -760,6 +768,50 @@ function OpportunityCard({ item }: { item: any }) {
                         </Button>
                         <pre className="text-[10px] text-emerald-400 bg-black p-4 rounded-lg overflow-x-auto max-h-[300px]">
                           <code>{details.sql_schema}</code>
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Exportação para Cursor AI / V0 */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Exportar Engenharia (Cursor AI)"
+                  isOpen={showCursorRules}
+                  onToggle={() => setShowCursorRules(!showCursorRules)}
+                  icon={<Bot className="h-4 w-4 text-emerald-400" />}
+                />
+                {showCursorRules && (
+                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                    {!cursorRules ? (
+                      <div className="text-center p-4">
+                        <Button 
+                          onClick={() => handleGeneratePremiumModule('cursor')} 
+                          disabled={generatingModule === 'cursor'}
+                          className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
+                        >
+                          {generatingModule === 'cursor' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Bot className="mr-2 h-4 w-4" />}
+                          Gerar .cursorrules Mágico
+                        </Button>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          Gera as regras exatas de stack, estilos e db para colar no Cursor AI ou v0.dev.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="relative group/sql">
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white border-none backdrop-blur-sm z-10"
+                          onClick={() => copyToClipboard(cursorRules, 'cursor')}
+                        >
+                          {copiedPrompt === 'cursor' ? <CheckCircle2 className="h-4 w-4 mr-1 text-green-400" /> : <Copy className="h-4 w-4 mr-1" />}
+                          Copiar Regras
+                        </Button>
+                        <pre className="text-[10px] text-emerald-400 bg-black p-4 rounded-lg overflow-x-auto max-h-[300px]">
+                          <code>{cursorRules}</code>
                         </pre>
                       </div>
                     )}

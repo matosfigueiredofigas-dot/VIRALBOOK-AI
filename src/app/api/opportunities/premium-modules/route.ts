@@ -56,6 +56,17 @@ Inclua RLS policies básicas se necessário. Use uuid como chave primária padr�
 Formato OBRIGATÓRIO de saída (JSON puro):
 {
   "sql_code": "CREATE TABLE users (\\n id UUID... \\n); \\n\\n CREATE TABLE..."
+}`,
+
+  cursor: (name: string, problem: string, audience: string, features: string) => `Você é um Arquiteto Sênior e Especialista em Cursor AI. Crie o arquivo .cursorrules perfeito para o SaaS "${name}".
+O problema resolvido é: ${problem}.
+O público é: ${audience}.
+As funcionalidades principais são: ${features}.
+O projeto usará: Next.js (App Router), Tailwind CSS, TypeScript, Supabase e Lucide Icons.
+Escreva regras rigorosas, estilo de arquitetura de pastas (features folder), padronização de nomenclatura, uso do shadcn/ui e práticas de clean code para React Server Components.
+Formato OBRIGATÓRIO de saída (JSON puro):
+{
+  "cursor_rules": "Você é um expert AI Assistant focado em Typescript e Next.js... [INSERIR O CONTEUDO DO .cursorrules AQUI]"
 }`
 };
 
@@ -114,10 +125,17 @@ export async function POST(req: Request) {
       'tech': 'tech_stack',
       'competitor': 'competitor_analysis',
       'pitch': 'pitch_deck',
-      'sql': 'sql_schema'
+      'sql': 'sql_schema',
+      'cursor': 'cursor_rules'
     };
 
     const targetColumn = columnMap[moduleType];
+    
+    // Bypass for modules that don't have a column in Supabase yet (like cursor)
+    if (moduleType === 'cursor') {
+      return NextResponse.json({ data: resultData.cursor_rules });
+    }
+
     const updateData: any = {};
     updateData[targetColumn] = moduleType === 'sql' ? resultData.sql_code : resultData;
 
