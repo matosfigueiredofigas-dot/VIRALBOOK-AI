@@ -1,6 +1,7 @@
 "use client";
 
 import { Flame } from "lucide-react";
+import Link from "next/link";
 
 interface Opportunity {
   saas_name?: string;
@@ -43,11 +44,16 @@ export function MarketMarquee({ opportunities }: MarketMarqueeProps) {
             const isHot = score >= 80 || i < 3;
 
             return (
-              <div key={i} className="flex items-center gap-3 px-6 border-r border-white/5">
-                <span className="text-xs font-bold text-white">{name}</span>
+              <Link 
+                key={i} 
+                href={`/dashboard?search=${encodeURIComponent(name)}`}
+                className="group flex items-center gap-3 px-6 border-r border-white/5 hover:bg-white/5 cursor-pointer transition-colors"
+                title={`Analisar ${name}`}
+              >
+                <span className="text-xs font-bold text-white group-hover:text-primary transition-colors">{name}</span>
                 <span className="text-xs font-mono font-bold text-green-500">+{growth}%</span>
-                {isHot && <Flame className="h-3 w-3 text-orange-500" />}
-              </div>
+                {isHot && <Flame className="h-3 w-3 text-orange-500 group-hover:scale-110 transition-transform" />}
+              </Link>
             );
           })}
         </div>
