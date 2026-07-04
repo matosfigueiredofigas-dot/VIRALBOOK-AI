@@ -111,6 +111,31 @@ export function ProcessedBooks({ initialBooks }: ProcessedBooksProps) {
       </div>
 
       {/* Render based on selected view mode */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .book-mosaic-card {
+          perspective: 1200px;
+        }
+        .book-mosaic-inner {
+          transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          transform-style: preserve-3d;
+        }
+        .book-mosaic-card:hover .book-mosaic-inner {
+          transform: rotateY(15deg) rotateX(2deg) scale(1.02);
+        }
+        .book-glare {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(105deg, transparent 15%, rgba(255,255,255,0.3) 25%, transparent 35%);
+          transform: translateX(-150%);
+          transition: transform 0.7s ease-in-out;
+          pointer-events: none;
+          z-index: 50;
+        }
+        .book-mosaic-card:hover .book-glare {
+          transform: translateX(150%);
+        }
+      `}} />
+
       {viewMode === "mosaic" ? (
         /* MOSAIC VIEW (Library Bookshelf Aesthetic) */
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-in fade-in duration-500">
@@ -119,13 +144,16 @@ export function ProcessedBooks({ initialBooks }: ProcessedBooksProps) {
             return (
               <div 
                 key={idx} 
-                className="group relative flex flex-col justify-between overflow-hidden bg-card/30 border border-border/40 backdrop-blur-md hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 rounded-2xl p-4"
+                className="group relative flex flex-col justify-between overflow-visible bg-card/30 border border-border/40 backdrop-blur-md transition-all duration-300 rounded-2xl p-4 book-mosaic-card h-[320px]"
               >
                 {/* 3D simulated book cover preview */}
-                <div className={`relative h-48 rounded-xl bg-gradient-to-br ${capGradient} flex flex-col justify-between p-4 text-white shadow-md overflow-hidden transition-all duration-300 group-hover:shadow-lg group-hover:scale-[1.02]`}>
+                <div className={`book-mosaic-inner relative h-48 rounded-r-xl bg-gradient-to-br ${capGradient} flex flex-col justify-between p-4 text-white shadow-md overflow-hidden transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-primary/20`}>
+                  {/* Book Glare Effect */}
+                  <div className="book-glare"></div>
+
                   {/* Book spine overlay */}
-                  <div className="absolute left-0 top-0 bottom-0 w-2 bg-black/20" />
-                  <div className="absolute left-2 top-0 bottom-0 w-px bg-white/10" />
+                  <div className="absolute left-0 top-0 bottom-0 w-3 bg-gradient-to-r from-black/80 to-transparent -translate-x-full transform-origin-right rotate-y-90"></div>
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-black/30 shadow-[1px_0_2px_rgba(255,255,255,0.2)]"></div>
 
                   {/* Header info */}
                   <div className="flex justify-between items-center pl-2 w-full z-20">

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Book, Loader2, Sparkles, AlertCircle } from "lucide-react"
+import { Search, Book, Loader2, Sparkles, AlertCircle, ScanLine, Crown, Star } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -16,6 +16,8 @@ export function BookSearcher() {
   const [books, setBooks] = useState<any[]>([])
   const [error, setError] = useState("")
   const [currentPage, setCurrentPage] = useState(0)
+  const [scanningId, setScanningId] = useState<string | null>(null)
+  const [scannedKeywords, setScannedKeywords] = useState<Record<string, string[]>>({})
   
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -87,6 +89,20 @@ export function BookSearcher() {
     }
   }
 
+  const handleDeepScan = (book: any) => {
+    setScanningId(book.id);
+    // Simula o tempo do scan (3 segundos)
+    setTimeout(() => {
+      // Extrai palavras grandes aleatórias da descrição ou título
+      const text = (book.title + " " + book.description).replace(/[^a-zA-Z\s]/g, "");
+      const words = text.split(/\s+/).filter((w: string) => w.length > 5);
+      const keywords = [...new Set(words)].sort(() => 0.5 - Math.random()).slice(0, 3).map((w: string) => w.toUpperCase());
+      
+      setScannedKeywords(prev => ({ ...prev, [book.id]: keywords }));
+      setScanningId(null);
+    }, 2500);
+  };
+
   return (
     <div className="space-y-6 mb-12">
       <div className="glass-card p-6 rounded-2xl border border-primary/20 bg-primary/5">
@@ -133,40 +149,177 @@ export function BookSearcher() {
         )}
       </div>
 
-      {books.length > 0 && (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {books.map((book) => (
-            <Card key={book.id} className="glass-card flex flex-col overflow-hidden">
-              <div className="h-40 bg-muted/30 relative flex justify-center items-center overflow-hidden border-b border-border/50">
-                {book.thumbnail ? (
-                  <img src={book.thumbnail} alt={book.title} className="h-full object-cover blur-sm absolute inset-0 w-full opacity-30" />
-                ) : null}
-                {book.thumbnail ? (
-                  <img src={book.thumbnail} alt={book.title} className="h-36 shadow-lg z-10" />
-                ) : (
-                  <Book className="h-12 w-12 text-muted-foreground/50" />
-                )}
-              </div>
-              <CardHeader className="pb-3">
-                <CardTitle className="line-clamp-2 text-lg">{book.title}</CardTitle>
-                <CardDescription className="line-clamp-1">{book.authors.join(", ")}</CardDescription>
-              </CardHeader>
-              <CardContent className="mt-auto pt-0 flex flex-col gap-4">
-                <p className="text-xs text-muted-foreground line-clamp-3">{book.description}</p>
-                <Button 
-                  onClick={() => generateSaaS(book.title)}
-                  disabled={!!generatingFor}
-                  className="w-full font-bold shadow-md shadow-primary/20"
-                >
-                  {generatingFor === book.title ? (
-                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Analisando com IA...</>
-                  ) : (
-                    <><Sparkles className="mr-2 h-4 w-4" /> Gerar SaaS deste Livro</>
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes radar-sweep {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        .radar-bg {
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          border: 1px solid rgba(34,197,94,0.2);
+          box-shadow: 0 0 40px rgba(34,197,94,0.1) inset;
+          overflow: hidden;
+          z-index: 0;
+        }
+        .radar-sweep {
+          position: absolute;
+          top: 0; left: 50%;
+          width: 50%; height: 50%;
+          background: linear-gradient(90deg, rgba(34,197,94,0) 0%, rgba(34,197,94,0.5) 100%);
+          transform-origin: bottom left;
+          animation: radar-sweep 2s linear infinite;
+          z-index: 1;
+        }
+        .radar-circle {
+          position: absolute;
+          top: 50%; left: 50%;
+          transform: translate(-50%, -50%);
+          border-radius: 50%;
+          border: 1px solid rgba(34,197,94,0.3);
+        }
+        @keyframes laser-scan {
+          0% { top: 0%; opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { top: 100%; opacity: 0; }
+        }
+        .laser-line {
+          position: absolute;
+          left: 0; right: 0;
+          height: 2px;
+          background: #0ea5e9;
+          box-shadow: 0 0 10px 2px #0ea5e9, 0 0 20px 4px #38bdf8;
+          z-index: 50;
+          animation: laser-scan 2.5s ease-in-out forwards;
+        }
+        .book-3d-card {
+          perspective: 1200px;
+        }
+        .book-3d-inner {
+          transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          transform-style: preserve-3d;
+        }
+        .book-3d-card:hover .book-3d-inner {
+          transform: rotateY(18deg) rotateX(4deg) scale(1.05);
+        }
+      `}} />
+
+      {loading && !books.length && (
+        <div className="relative w-full h-[400px] flex items-center justify-center overflow-hidden bg-black/40 rounded-3xl border border-green-500/20">
+          <div className="absolute w-[300px] h-[300px]">
+            <div className="radar-bg"></div>
+            <div className="radar-circle w-3/4 h-3/4"></div>
+            <div className="radar-circle w-1/2 h-1/2"></div>
+            <div className="radar-circle w-1/4 h-1/4 bg-green-500/20"></div>
+            <div className="radar-sweep"></div>
+          </div>
+          <p className="z-10 text-green-400 font-mono font-bold uppercase tracking-widest bg-black/50 px-4 py-2 rounded-lg border border-green-500/30">
+            Escaneando Satélites...
+          </p>
+        </div>
+      )}
+
+      {books.length > 0 && !loading && (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {books.map((book, index) => {
+            const isScanned = !!scannedKeywords[book.id];
+            const isScanning = scanningId === book.id;
+            // Fake metrics baseadas no ID
+            const fakeReviews = (book.id.length * 123) % 15000;
+            const fakeRating = (4 + (book.id.length % 10) / 10).toFixed(1);
+            const isBestseller = index === 0 || index === 2; // Simula bestsellers
+
+            return (
+              <div key={book.id} className="book-3d-card group h-full">
+                <Card className="book-3d-inner glass-card flex flex-col overflow-visible h-full bg-black/40 border-white/10 hover:border-primary/50 relative">
+                  
+                  {isBestseller && (
+                    <div className="absolute -top-3 -right-3 z-50 bg-yellow-500 text-black text-[10px] font-black uppercase px-3 py-1 rounded-full shadow-[0_0_15px_rgba(234,179,8,0.5)] flex items-center gap-1 transform translate-z-10">
+                      <Crown className="h-3 w-3" /> Bestseller #1
+                    </div>
                   )}
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+
+                  <div className="h-56 relative flex justify-center items-center overflow-visible mt-6 px-4">
+                    {/* Laser Scanner */}
+                    {isScanning && <div className="laser-line" />}
+                    
+                    {/* 3D Book Cover Cover */}
+                    <div className="relative h-full w-2/3 shadow-2xl transition-transform duration-500 group-hover:shadow-primary/20">
+                      {book.thumbnail ? (
+                        <img src={book.thumbnail} alt={book.title} className="w-full h-full object-cover rounded-r-md border-y border-r border-white/10" />
+                      ) : (
+                        <div className="w-full h-full bg-slate-800 flex items-center justify-center rounded-r-md border-y border-r border-white/10">
+                          <Book className="h-12 w-12 text-muted-foreground/50" />
+                        </div>
+                      )}
+                      
+                      {/* Spine simulation */}
+                      <div className="absolute left-0 top-0 bottom-0 w-3 bg-gradient-to-r from-black/80 to-transparent -translate-x-full transform-origin-right rotate-y-90"></div>
+                      
+                      {/* Holographic Keywords */}
+                      {isScanned && (
+                        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm rounded-r-md flex flex-col items-center justify-center gap-2 p-2 z-20 animate-in fade-in duration-300">
+                          <div className="text-[10px] text-sky-400 font-mono font-bold uppercase tracking-widest mb-1">Keywords Fixadas</div>
+                          {scannedKeywords[book.id].map((kw, i) => (
+                            <span key={i} className="text-xs font-black text-white bg-sky-500/20 border border-sky-400/50 px-2 py-0.5 rounded shadow-[0_0_10px_rgba(56,189,248,0.5)] w-full text-center truncate">
+                              {kw}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <CardHeader className="pb-2 pt-6">
+                    <CardTitle className="line-clamp-2 text-lg group-hover:text-primary transition-colors">{book.title}</CardTitle>
+                    <CardDescription className="line-clamp-1 text-xs">{book.authors.join(", ")}</CardDescription>
+                  </CardHeader>
+                  
+                  <CardContent className="mt-auto pt-0 flex flex-col gap-4">
+                    {/* Fake Metrics */}
+                    <div className="flex items-center gap-3 text-xs bg-black/40 p-2 rounded-lg border border-white/5">
+                      <div className="flex items-center gap-1 text-yellow-500 font-bold">
+                        {fakeRating} <Star className="h-3 w-3 fill-yellow-500" />
+                      </div>
+                      <div className="w-px h-3 bg-white/20"></div>
+                      <div className="text-muted-foreground font-mono">{fakeReviews.toLocaleString()} reviews</div>
+                    </div>
+
+                    <p className="text-xs text-muted-foreground line-clamp-2">{book.description}</p>
+                    
+                    {!isScanned ? (
+                      <Button 
+                        onClick={() => handleDeepScan(book)}
+                        disabled={isScanning}
+                        variant="outline"
+                        className="w-full font-bold border-sky-500/50 text-sky-400 hover:bg-sky-500/10 hover:text-sky-300"
+                      >
+                        {isScanning ? (
+                          <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Escaneando Tópicos...</>
+                        ) : (
+                          <><ScanLine className="mr-2 h-4 w-4" /> Deep Scan (Extrair Dados)</>
+                        )}
+                      </Button>
+                    ) : (
+                      <Button 
+                        onClick={() => generateSaaS(book.title)}
+                        disabled={!!generatingFor}
+                        className="w-full font-bold shadow-[0_0_15px_rgba(var(--primary),0.3)] bg-primary text-primary-foreground hover:bg-primary/90"
+                      >
+                        {generatingFor === book.title ? (
+                          <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Convertendo em SaaS...</>
+                        ) : (
+                          <><Sparkles className="mr-2 h-4 w-4" /> Gerar SaaS deste Livro</>
+                        )}
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            )
+          })}
         </div>
       )}
 
