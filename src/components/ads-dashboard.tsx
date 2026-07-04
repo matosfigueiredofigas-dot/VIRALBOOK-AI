@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowLeft, Megaphone, Copy, Check, Video, Image as ImageIcon, Loader2, XCircle, Layout } from "lucide-react";
+import { ArrowLeft, Megaphone, Copy, Check, Video, Image as ImageIcon, Loader2, XCircle, Layout, Flame, Zap } from "lucide-react";
 import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface AdsDashboardProps {
   opportunity: {
@@ -57,15 +59,16 @@ export function AdsDashboard({ opportunity }: AdsDashboardProps) {
   if (loading) {
     return (
       <div className="min-h-[80vh] flex flex-col items-center justify-center text-center">
-        <div className="relative w-24 h-24 mb-8">
-          <div className="absolute inset-0 border-4 border-indigo-200 rounded-full animate-ping opacity-75"></div>
-          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full shadow-2xl">
-            <Megaphone className="h-10 w-10 text-white animate-pulse" />
+        <div className="relative w-32 h-32 mb-8">
+          <div className="absolute inset-0 border-4 border-indigo-500/30 rounded-full animate-ping opacity-75"></div>
+          <div className="absolute inset-2 border-4 border-fuchsia-500/50 rounded-full animate-spin direction-reverse"></div>
+          <div className="absolute inset-0 flex items-center justify-center bg-zinc-950 rounded-full shadow-[0_0_50px_rgba(99,102,241,0.4)] border border-indigo-500/20">
+            <Megaphone className="h-12 w-12 text-indigo-400 animate-pulse" />
           </div>
         </div>
-        <h2 className="text-3xl font-bold mb-4 text-gray-900">Fábrica de Anúncios Trabalhando...</h2>
-        <p className="text-gray-500 max-w-md mx-auto">
-          Nossa equipe de Copywriters AI está escrevendo textos que convertem e roteiros magnéticos para o seu SaaS. Isso pode levar alguns segundos.
+        <h2 className="text-3xl font-bold mb-4 text-white">Ad Factory Ativada...</h2>
+        <p className="text-muted-foreground max-w-md mx-auto">
+          Nossos Copywriters IA estão extraindo os gatilhos emocionais mais letais do mercado e escrevendo criativos virais.
         </p>
       </div>
     );
@@ -74,11 +77,11 @@ export function AdsDashboard({ opportunity }: AdsDashboardProps) {
   if (error) {
     return (
       <div className="min-h-[80vh] flex flex-col items-center justify-center text-center">
-        <XCircle className="h-16 w-16 text-red-500 mb-4" />
-        <h2 className="text-2xl font-bold mb-2">Ops! Falha na Criação</h2>
-        <p className="text-gray-600 mb-6">{error}</p>
-        <button onClick={generateAds} className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800">
-          Tentar Novamente
+        <XCircle className="h-16 w-16 text-indigo-500 mb-4 animate-bounce" />
+        <h2 className="text-2xl font-bold mb-2 text-white">Ops! Falha na Criação</h2>
+        <p className="text-muted-foreground mb-6">{error}</p>
+        <button onClick={generateAds} className="bg-indigo-600/20 border border-indigo-500/50 text-indigo-400 font-bold px-6 py-2 rounded-lg hover:bg-indigo-600/40 transition-colors">
+          Reiniciar Fábrica
         </button>
       </div>
     );
@@ -87,123 +90,169 @@ export function AdsDashboard({ opportunity }: AdsDashboardProps) {
   if (!data) return null;
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8 font-sans w-full">
-      <Link href={`/canvas/${opportunity.id}`} className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-black mb-8 transition-colors">
-        <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para o Canvas
+    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 font-sans w-full space-y-8 animate-in fade-in zoom-in-95 duration-700">
+      <Link href={`/canvas/${opportunity.id}`} className="inline-flex items-center text-sm font-bold text-muted-foreground hover:text-white transition-colors bg-zinc-900/50 px-4 py-2 rounded-full border border-white/5 w-fit">
+        <ArrowLeft className="mr-2 h-4 w-4" /> Retornar à Base (Canvas)
       </Link>
 
-      <div className="mb-8">
-        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-gray-900 mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          Fábrica de <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-orange-400">Anúncios Virais</span>
-        </h1>
-        <p className="text-lg text-gray-500">Copywriting e Roteiros para a campanha de: <span className="font-bold text-indigo-600">{opportunity.saas_name}</span></p>
+      <div className="relative">
+        <div className="absolute -inset-1 bg-gradient-to-r from-indigo-600 to-fuchsia-600 rounded-lg blur opacity-25"></div>
+        <div className="relative bg-zinc-950/80 border border-white/10 rounded-2xl p-8 backdrop-blur-xl">
+          <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 uppercase">
+            <Megaphone className="h-10 w-10 text-indigo-500" />
+            Ad Factory Pro
+          </h1>
+          <p className="text-lg text-zinc-400 font-medium">Textos de alta conversão e roteiros virais injetados para: <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-fuchsia-500">{opportunity.saas_name}</span></p>
+        </div>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
         
         {/* Coluna Esquerda: Abas de Conteúdo */}
-        <div className="lg:w-2/3 space-y-6">
+        <div className="lg:w-2/3 space-y-8">
           
-          <div className="flex p-1 bg-gray-100 rounded-xl max-w-md">
+          <div className="flex p-1.5 bg-zinc-900/50 border border-white/5 rounded-xl max-w-md shadow-inner backdrop-blur-md">
             <button
               onClick={() => setActiveTab('facebook')}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-bold transition-all ${activeTab === 'facebook' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-bold transition-all",
+                activeTab === 'facebook' ? "bg-indigo-600 text-white shadow-[0_0_15px_rgba(79,70,229,0.3)]" : "text-muted-foreground hover:text-white"
+              )}
             >
-              <Layout className="h-4 w-4" /> Meta Ads (Texto)
+              <Layout className="h-4 w-4" /> Meta Ads
             </button>
             <button
               onClick={() => setActiveTab('tiktok')}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-bold transition-all ${activeTab === 'tiktok' ? 'bg-black text-white shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-bold transition-all",
+                activeTab === 'tiktok' ? "bg-fuchsia-600 text-white shadow-[0_0_15px_rgba(192,38,211,0.3)]" : "text-muted-foreground hover:text-white"
+              )}
             >
               <Video className="h-4 w-4" /> TikTok / Reels
             </button>
           </div>
 
           {activeTab === 'facebook' && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
               {data.facebook_ads?.map((ad: any, i: number) => (
-                <div key={i} className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                  <div className="bg-blue-50 border-b border-blue-100 px-6 py-3 flex justify-between items-center">
-                    <span className="text-blue-700 font-bold text-sm">Ângulo: {ad.angle}</span>
+                <Card key={i} className="glass-card border-indigo-500/20 overflow-hidden relative group">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none group-hover:bg-indigo-500/20 transition-colors" />
+                  
+                  <CardHeader className="bg-indigo-500/5 border-b border-indigo-500/10 flex flex-row justify-between items-center py-4">
+                    <span className="text-[10px] uppercase font-black tracking-widest text-indigo-400 bg-indigo-500/10 px-3 py-1.5 rounded-full border border-indigo-500/20 shadow-[0_0_10px_rgba(99,102,241,0.1)]">
+                      Ângulo: {ad.angle}
+                    </span>
                     <button 
                       onClick={() => copyToClipboard(`${ad.primary_text}\n\nTítulo: ${ad.headline}\nBotão: ${ad.call_to_action}`, `fb-${i}`)}
-                      className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors font-medium"
+                      className="text-xs font-bold bg-zinc-900 border border-white/10 hover:border-indigo-500/50 text-indigo-400 px-4 py-1.5 rounded-full flex items-center gap-2 transition-all"
                     >
-                      {copiedId === `fb-${i}` ? <><Check className="h-4 w-4" /> Copiado</> : <><Copy className="h-4 w-4" /> Copiar Ad</>}
+                      {copiedId === `fb-${i}` ? <><Check className="h-3.5 w-3.5 text-emerald-500" /> COPIADO</> : <><Copy className="h-3.5 w-3.5" /> COPIAR AD</>}
                     </button>
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-start gap-4 mb-4">
-                      <div className="w-10 h-10 rounded-full bg-gray-200 shrink-0"></div>
-                      <div>
-                        <p className="font-bold text-sm">{opportunity.saas_name}</p>
-                        <p className="text-xs text-gray-500">Patrocinado · 🌍</p>
+                  </CardHeader>
+
+                  <CardContent className="p-6 md:p-8">
+                    {/* Mockup do Facebook (Dark Mode) */}
+                    <div className="max-w-lg mx-auto bg-[#18191A] border border-[#3E4042] rounded-xl overflow-hidden shadow-2xl">
+                      {/* Header do Mockup */}
+                      <div className="p-4 flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-fuchsia-500 shrink-0 flex items-center justify-center shadow-lg">
+                          <Zap className="h-5 w-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-[#E4E6EB] text-[15px] leading-tight">{opportunity.saas_name}</p>
+                          <p className="text-xs text-[#B0B3B8] font-medium mt-0.5">Patrocinado · 🌍</p>
+                        </div>
+                      </div>
+                      
+                      {/* Primary Text */}
+                      <div className="px-4 pb-3 text-[#E4E6EB] whitespace-pre-wrap text-[15px] leading-snug">
+                        {ad.primary_text}
+                      </div>
+
+                      {/* Criativo */}
+                      <div className="bg-[#242526] h-64 w-full flex flex-col items-center justify-center text-[#B0B3B8] border-y border-[#3E4042] relative overflow-hidden group/img cursor-pointer">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-0"></div>
+                        <ImageIcon className="h-12 w-12 mb-3 opacity-30 z-10 group-hover/img:scale-110 transition-transform" />
+                        <span className="text-sm font-semibold z-10 drop-shadow-md">[ Espaço para seu Vídeo/Imagem ]</span>
+                      </div>
+
+                      {/* CTA Section */}
+                      <div className="bg-[#242526] p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div className="flex-1">
+                          <p className="text-[11px] text-[#B0B3B8] uppercase tracking-wider font-semibold mb-1">FORMULÁRIO</p>
+                          <p className="font-bold text-[#E4E6EB] text-[15px] leading-tight">{ad.headline}</p>
+                        </div>
+                        <button className="bg-[#3A3B3C] hover:bg-[#4E4F50] text-[#E4E6EB] font-bold py-2 px-6 rounded-lg text-[15px] transition-colors shrink-0">
+                          {ad.call_to_action}
+                        </button>
                       </div>
                     </div>
-                    <div className="text-gray-800 whitespace-pre-wrap text-sm leading-relaxed mb-4">
-                      {ad.primary_text}
-                    </div>
-                    <div className="bg-gray-100 h-48 rounded-lg mb-4 flex flex-col items-center justify-center text-gray-400 border-2 border-dashed border-gray-200">
-                      <ImageIcon className="h-8 w-8 mb-2 opacity-50" />
-                      <span className="text-xs font-medium">(Coloque seu vídeo ou imagem aqui)</span>
-                    </div>
-                    <div className="bg-gray-100 px-4 py-3 rounded-b-lg flex justify-between items-center border-t border-gray-200">
-                      <div>
-                        <p className="text-[10px] text-gray-500 uppercase tracking-wider font-bold mb-0.5">FORMULÁRIO</p>
-                        <p className="font-bold text-gray-900 text-sm truncate max-w-[200px]">{ad.headline}</p>
-                      </div>
-                      <button className="bg-gray-300 hover:bg-gray-400 text-gray-900 font-bold py-1.5 px-4 rounded text-sm transition-colors">
-                        {ad.call_to_action}
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           )}
 
           {activeTab === 'tiktok' && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
               {data.tiktok_scripts?.map((script: any, i: number) => (
-                <div key={i} className="bg-[#111827] text-white rounded-2xl border border-gray-800 shadow-xl overflow-hidden relative">
-                  <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-                    <Video className="w-24 h-24" />
+                <Card key={i} className="bg-[#050505] border-white/5 overflow-hidden relative group shadow-2xl">
+                  {/* Neons verticais simulando a interface do TikTok */}
+                  <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#00f2fe] via-[#4facfe] to-[#f093fb]"></div>
+                  
+                  <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
+                    <Video className="w-32 h-32 text-fuchsia-500" />
                   </div>
-                  <div className="px-6 py-4 border-b border-gray-800 flex justify-between items-center">
-                    <div>
-                      <span className="text-pink-500 font-bold text-sm bg-pink-500/10 px-2.5 py-1 rounded-md mr-2">{script.style}</span>
-                      <span className="text-gray-400 text-sm">⏱ {script.duration}</span>
+
+                  <CardHeader className="bg-zinc-900/30 border-b border-white/5 py-5 flex flex-row justify-between items-center">
+                    <div className="flex items-center gap-4">
+                      <span className="text-[10px] uppercase font-black tracking-widest text-[#00f2fe] bg-[#00f2fe]/10 px-3 py-1.5 rounded-md border border-[#00f2fe]/20 shadow-[0_0_15px_rgba(0,242,254,0.15)]">
+                        {script.style}
+                      </span>
+                      <span className="text-zinc-400 text-xs font-mono font-bold flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                        {script.duration}
+                      </span>
                     </div>
                     <button 
                       onClick={() => {
                         const text = script.script_blocks.map((b: any) => `[${b.time}] VISUAL: ${b.visual}\nAUDIO: ${b.audio}`).join('\n\n');
                         copyToClipboard(text, `tk-${i}`);
                       }}
-                      className="text-sm text-gray-400 hover:text-white flex items-center gap-1 transition-colors"
+                      className="text-xs font-bold bg-zinc-900 border border-white/10 hover:border-fuchsia-500/50 text-fuchsia-400 px-4 py-1.5 rounded-full flex items-center gap-2 transition-all"
                     >
-                      {copiedId === `tk-${i}` ? <><Check className="h-4 w-4 text-emerald-400" /> Copiado</> : <><Copy className="h-4 w-4" /> Copiar Script</>}
+                      {copiedId === `tk-${i}` ? <><Check className="h-3.5 w-3.5 text-emerald-500" /> COPIADO</> : <><Copy className="h-3.5 w-3.5" /> COPIAR SCRIPT</>}
                     </button>
-                  </div>
-                  <div className="p-6">
-                    <div className="space-y-4">
+                  </CardHeader>
+                  
+                  <CardContent className="p-8">
+                    <div className="space-y-6">
                       {script.script_blocks?.map((block: any, j: number) => (
-                        <div key={j} className="flex gap-4">
-                          <div className="w-16 shrink-0 text-right">
-                            <span className="text-xs font-mono text-cyan-400 font-bold">{block.time}</span>
+                        <div key={j} className="flex gap-6 relative">
+                          {/* Timeline vertical */}
+                          {j !== script.script_blocks.length - 1 && (
+                            <div className="absolute top-10 left-8 w-px h-[calc(100%-10px)] bg-gradient-to-b from-white/10 to-transparent"></div>
+                          )}
+                          
+                          <div className="w-20 shrink-0 text-right pt-1.5 z-10">
+                            <span className="text-[11px] font-mono text-cyan-400 font-bold bg-cyan-400/10 px-2 py-1 rounded border border-cyan-400/20">{block.time}</span>
                           </div>
-                          <div className="flex-1 space-y-1.5 pb-4 border-b border-gray-800 last:border-0 last:pb-0">
-                            <div className="bg-gray-800/50 rounded p-2 text-xs text-gray-300">
-                              <span className="font-bold text-gray-500 mr-2">CÂMERA/TELA:</span> {block.visual}
+
+                          <div className="flex-1 space-y-3 pb-6 border-b border-white/5 last:border-0 last:pb-0">
+                            <div className="bg-zinc-900/60 rounded-xl p-4 text-xs text-zinc-300 border border-white/5 leading-relaxed shadow-inner">
+                              <span className="text-[10px] font-black uppercase text-zinc-500 tracking-wider mr-2 bg-black px-1.5 py-0.5 rounded">🎥 VISUAL</span> 
+                              {block.visual}
                             </div>
-                            <div className="text-sm font-medium leading-relaxed">
-                              <span className="font-bold text-pink-500 mr-2">FALA:</span> "{block.audio}"
+                            <div className="text-[15px] font-semibold leading-relaxed text-white pl-4 border-l-2 border-fuchsia-500">
+                              <span className="text-[10px] font-black uppercase text-fuchsia-500 tracking-wider mr-2 bg-fuchsia-500/10 px-1.5 py-0.5 rounded">🎙️ FALA</span> 
+                              "{block.audio}"
                             </div>
                           </div>
                         </div>
                       ))}
                     </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           )}
@@ -212,33 +261,36 @@ export function AdsDashboard({ opportunity }: AdsDashboardProps) {
 
         {/* Coluna Direita: Ideias Criativas */}
         <div className="lg:w-1/3">
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sticky top-6">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="bg-orange-100 p-2 rounded-lg">
-                <ImageIcon className="h-5 w-5 text-orange-600" />
-              </div>
-              <h2 className="text-lg font-bold text-gray-900">Ideias para Imagens</h2>
-            </div>
-            
-            <p className="text-sm text-gray-500 mb-6">Não sabe qual imagem usar no Meta Ads? Crie essas opções no Canva:</p>
-
-            <div className="space-y-6">
-              {data.creative_ideas?.map((idea: any, i: number) => (
-                <div key={i} className="group">
-                  <h3 className="font-bold text-gray-900 text-sm mb-1 group-hover:text-orange-600 transition-colors flex items-center gap-2">
-                    <span className="flex items-center justify-center bg-gray-100 text-gray-500 rounded-full h-5 w-5 text-xs">
-                      {i + 1}
-                    </span>
-                    {idea.concept}
-                  </h3>
-                  <p className="text-sm text-gray-600 pl-7 leading-relaxed">
-                    {idea.description}
-                  </p>
+          <Card className="glass-card border-orange-500/20 sticky top-6 shadow-2xl overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+            <CardHeader className="border-b border-white/5">
+              <CardTitle className="text-xl font-bold flex items-center gap-3 text-white">
+                <div className="bg-orange-500/20 p-2 rounded-lg border border-orange-500/30">
+                  <ImageIcon className="h-5 w-5 text-orange-400" />
                 </div>
-              ))}
-            </div>
+                Inspiração Visual
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <p className="text-sm text-zinc-400 mb-6 font-medium">Buscando o gancho perfeito? Gere essas ideias no Canva ou Midjourney para parar o scroll instantaneamente:</p>
 
-          </div>
+              <div className="space-y-6">
+                {data.creative_ideas?.map((idea: any, i: number) => (
+                  <div key={i} className="group relative pl-10">
+                    <div className="absolute left-0 top-0 flex items-center justify-center bg-zinc-900 border border-white/10 text-orange-400 font-black rounded-xl h-7 w-7 text-xs shadow-inner group-hover:border-orange-500/50 group-hover:bg-orange-500/10 group-hover:text-orange-500 transition-all">
+                      {i + 1}
+                    </div>
+                    <h3 className="font-bold text-white text-sm mb-1.5 group-hover:text-orange-400 transition-colors">
+                      {idea.concept}
+                    </h3>
+                    <p className="text-xs text-zinc-400 leading-relaxed group-hover:text-zinc-300 transition-colors">
+                      {idea.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
       </div>
