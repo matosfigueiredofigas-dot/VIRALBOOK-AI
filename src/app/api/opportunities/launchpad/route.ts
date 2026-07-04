@@ -25,7 +25,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Chave da API da Groq não configurada' }, { status: 500 });
     }
 
-    const { opportunityId, saasName, problem, audience, features } = await req.json();
+    const { opportunityId, saasName, problem, audience, features, theme = 'cyberpunk' } = await req.json();
 
     if (!opportunityId || !saasName || !problem) {
       return NextResponse.json({ error: 'Faltam parâmetros obrigatórios' }, { status: 400 });
@@ -46,6 +46,40 @@ export async function POST(req: Request) {
     // Se já tiver um slug, reutiliza, caso contrário cria um novo
     const slug = opp.published_slug || generateSlug(saasName);
 
+    const themes: any = {
+      cyberpunk: {
+        bg: '#09090b', text: '#f4f4f5',
+        navBg: 'bg-black/50 backdrop-blur-md border-b border-white/5',
+        primaryColor: 'indigo-500', 
+        primaryHover: 'indigo-400',
+        cardBg: 'bg-[#18181b]/50 border border-white/5 hover:bg-[#18181b] hover:border-white/10',
+        formBg: 'bg-[#18181b] border border-white/10',
+        titleGradient: 'bg-gradient-to-b from-white to-white/60',
+        pillBg: 'bg-white/5 border border-white/10 text-indigo-400'
+      },
+      minimalist: {
+        bg: '#ffffff', text: '#171717',
+        navBg: 'bg-white/80 backdrop-blur-md border-b border-black/5',
+        primaryColor: 'black',
+        primaryHover: 'zinc-800',
+        cardBg: 'bg-zinc-50 border border-zinc-200 hover:bg-zinc-100 hover:border-zinc-300',
+        formBg: 'bg-white border border-zinc-200',
+        titleGradient: 'bg-gradient-to-b from-black to-zinc-600',
+        pillBg: 'bg-zinc-100 border border-zinc-200 text-zinc-800'
+      },
+      corporate: {
+        bg: '#0f172a', text: '#f8fafc',
+        navBg: 'bg-slate-900/80 backdrop-blur-md border-b border-white/10',
+        primaryColor: 'blue-600',
+        primaryHover: 'blue-500',
+        cardBg: 'bg-slate-800/50 border border-slate-700 hover:bg-slate-800 hover:border-slate-600',
+        formBg: 'bg-slate-800 border border-slate-700',
+        titleGradient: 'bg-gradient-to-b from-white to-blue-200',
+        pillBg: 'bg-blue-900/30 border border-blue-500/30 text-blue-300'
+      }
+    };
+    const t = themes[theme] || themes.cyberpunk;
+
     const prompt = `
 Você é o melhor Desenvolvedor Frontend e Especialista em Copywriting de Conversão do mundo.
 Sua missão é criar uma Landing Page HTML de altíssima conversão para coletar leads (Lista de Espera) para um novo SaaS.
@@ -58,11 +92,11 @@ Funcionalidades: ${features}
 
 DIRETRIZES DE DESIGN E CONVERSÃO (NÍVEL PREMIUM VERCEL/STRIPE):
 1. **Design Moderno**: Você não vai criar a estrutura do zero. VOCÊ DEVE USAR EXATAMENTE O SEGUINTE BOILERPLATE HTML, apenas substituindo os textos, ícones e títulos marcados com colchetes \`[ ]\`.
-2. O Boilerplate abaixo já possui todos os estilos Tailwind "Ultra Premium" (Glow, Glassmorphism, Gradients, Dark Mode absoluto). NÃO mude as classes de layout, apenas preencha com o copywriting do SaaS.
+2. O Boilerplate abaixo já possui todos os estilos Tailwind "Ultra Premium". NÃO mude as classes de layout, apenas preencha com o copywriting do SaaS. Se for alterar ícones, use nomes do FontAwesome 6 (ex: fa-solid fa-chart-line).
 
 BOILERPLATE HTML (Siga esta estrutura rigorosamente):
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -70,59 +104,59 @@ BOILERPLATE HTML (Siga esta estrutura rigorosamente):
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>body { font-family: 'Inter', sans-serif; background-color: #09090b; color: #f4f4f5; }</style>
+    <style>body { font-family: 'Inter', sans-serif; background-color: ${t.bg}; color: ${t.text}; }</style>
 </head>
-<body class="relative min-h-screen overflow-x-hidden selection:bg-indigo-500/30">
+<body class="relative min-h-screen overflow-x-hidden selection:bg-${t.primaryColor}/30">
     <!-- Efeitos de Fundo (Glow e Grid) -->
     <div class="absolute inset-0 z-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-    <div class="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-500/20 blur-[120px] rounded-full z-0 pointer-events-none"></div>
+    <div class="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-${t.primaryColor}/20 blur-[120px] rounded-full z-0 pointer-events-none"></div>
 
-    <nav class="relative z-10 border-b border-white/5 bg-black/50 backdrop-blur-md">
+    <nav class="relative z-10 ${t.navBg}">
         <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
             <div class="font-bold text-xl tracking-tight flex items-center gap-2">
-                <i class="fa-solid fa-rocket text-indigo-500"></i> [NOME DO SAAS]
+                <i class="fa-solid fa-rocket text-${t.primaryColor}"></i> [NOME DO SAAS]
             </div>
-            <div class="text-sm text-zinc-400 font-medium">Lançamento em Breve</div>
+            <div class="text-sm opacity-60 font-medium">Lançamento em Breve</div>
         </div>
     </nav>
 
     <main class="relative z-10 flex flex-col items-center justify-center pt-32 pb-20 px-6 text-center max-w-4xl mx-auto">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-indigo-400 mb-8 backdrop-blur-md">
-            <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span></span>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full ${t.pillBg} text-xs font-medium mb-8 backdrop-blur-md">
+            <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-${t.primaryColor} opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-${t.primaryColor}"></span></span>
             [SUBHEADLINE CURTA OU TEXTO DE DESTAQUE]
         </div>
         
-        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent ${t.titleGradient}">
             [HEADLINE PRINCIPAL GIGANTE E PERSUASIVA]
         </h1>
         
-        <p class="text-lg md:text-xl text-zinc-400 mb-10 max-w-2xl leading-relaxed">
+        <p class="text-lg md:text-xl opacity-70 mb-10 max-w-2xl leading-relaxed mx-auto">
             [PARÁGRAFO DE COPYWRITING FOCADO NA DOR DO CLIENTE. EXPLIQUE O QUE É E POR QUE É INCRÍVEL]
         </p>
 
         <!-- Formulário (MANTENHA A ESTRUTURA INTACTA) -->
-        <div id="form-container" class="w-full max-w-md relative">
-            <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl blur opacity-30"></div>
-            <form action="/api/leads" method="POST" class="relative bg-[#18181b] border border-white/10 p-2 rounded-2xl flex flex-col sm:flex-row gap-2 shadow-2xl">
+        <div id="form-container" class="w-full max-w-md relative mx-auto">
+            <div class="absolute -inset-1 bg-gradient-to-r from-${t.primaryColor} to-${t.primaryHover} rounded-2xl blur opacity-30"></div>
+            <form action="/api/leads" method="POST" class="relative ${t.formBg} p-2 rounded-2xl flex flex-col sm:flex-row gap-2 shadow-2xl">
                 <input type="hidden" name="opportunity_id" value="${opportunityId}">
                 <input type="hidden" name="redirect_to" value="/p/${slug}?success=true">
-                <input type="email" name="email" required placeholder="Seu melhor e-mail corporativo..." class="flex-1 bg-transparent text-white px-4 py-3 outline-none border-none placeholder-zinc-500 text-sm">
-                <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-6 py-3 rounded-xl transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] whitespace-nowrap">
+                <input type="email" name="email" required placeholder="Seu melhor e-mail corporativo..." class="flex-1 bg-transparent px-4 py-3 outline-none border-none opacity-80 text-sm">
+                <button type="submit" class="bg-${t.primaryColor} hover:bg-${t.primaryHover} text-white font-medium px-6 py-3 rounded-xl transition-all whitespace-nowrap">
                     Garantir Acesso
                 </button>
             </form>
         </div>
 
-        <div id="success-msg" class="hidden mt-6 px-6 py-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl flex items-center gap-3">
+        <div id="success-msg" class="hidden mt-6 px-6 py-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 rounded-xl flex items-center gap-3">
             <i class="fa-solid fa-check-circle text-xl"></i>
             <span class="font-medium">Inscrição confirmada! Fique de olho no seu e-mail.</span>
         </div>
 
-        <div class="mt-8 flex items-center gap-4 text-xs text-zinc-500 font-medium">
+        <div class="mt-8 flex items-center justify-center gap-4 text-xs opacity-60 font-medium">
             <div class="flex -space-x-2">
-                <img src="https://i.pravatar.cc/100?img=1" class="w-6 h-6 rounded-full border-2 border-[#09090b]">
-                <img src="https://i.pravatar.cc/100?img=2" class="w-6 h-6 rounded-full border-2 border-[#09090b]">
-                <img src="https://i.pravatar.cc/100?img=3" class="w-6 h-6 rounded-full border-2 border-[#09090b]">
+                <img src="https://i.pravatar.cc/100?img=1" class="w-6 h-6 rounded-full border-2 border-[${t.bg}]">
+                <img src="https://i.pravatar.cc/100?img=2" class="w-6 h-6 rounded-full border-2 border-[${t.bg}]">
+                <img src="https://i.pravatar.cc/100?img=3" class="w-6 h-6 rounded-full border-2 border-[${t.bg}]">
             </div>
             <span>Junte-se a +2.000 profissionais</span>
         </div>
@@ -132,28 +166,28 @@ BOILERPLATE HTML (Siga esta estrutura rigorosamente):
     <section class="relative z-10 max-w-6xl mx-auto px-6 pb-32">
         <div class="grid md:grid-cols-3 gap-6">
             <!-- Card 1 -->
-            <div class="bg-[#18181b]/50 border border-white/5 p-8 rounded-3xl hover:bg-[#18181b] hover:border-white/10 transition-colors">
-                <div class="w-12 h-12 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl flex items-center justify-center text-indigo-400 mb-6 text-xl">
+            <div class="${t.cardBg} p-8 rounded-3xl transition-colors">
+                <div class="w-12 h-12 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl flex items-center justify-center text-indigo-500 mb-6 text-xl">
                     <i class="fa-solid [ÍCONE 1]"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-3 text-white">[BENEFÍCIO 1]</h3>
-                <p class="text-zinc-400 text-sm leading-relaxed">[DESCRIÇÃO DO BENEFÍCIO 1]</p>
+                <h3 class="text-xl font-bold mb-3">[BENEFÍCIO 1]</h3>
+                <p class="opacity-70 text-sm leading-relaxed">[DESCRIÇÃO DO BENEFÍCIO 1]</p>
             </div>
             <!-- Card 2 -->
-            <div class="bg-[#18181b]/50 border border-white/5 p-8 rounded-3xl hover:bg-[#18181b] hover:border-white/10 transition-colors">
-                <div class="w-12 h-12 bg-purple-500/10 border border-purple-500/20 rounded-2xl flex items-center justify-center text-purple-400 mb-6 text-xl">
+            <div class="${t.cardBg} p-8 rounded-3xl transition-colors">
+                <div class="w-12 h-12 bg-purple-500/10 border border-purple-500/20 rounded-2xl flex items-center justify-center text-purple-500 mb-6 text-xl">
                     <i class="fa-solid [ÍCONE 2]"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-3 text-white">[BENEFÍCIO 2]</h3>
-                <p class="text-zinc-400 text-sm leading-relaxed">[DESCRIÇÃO DO BENEFÍCIO 2]</p>
+                <h3 class="text-xl font-bold mb-3">[BENEFÍCIO 2]</h3>
+                <p class="opacity-70 text-sm leading-relaxed">[DESCRIÇÃO DO BENEFÍCIO 2]</p>
             </div>
             <!-- Card 3 -->
-            <div class="bg-[#18181b]/50 border border-white/5 p-8 rounded-3xl hover:bg-[#18181b] hover:border-white/10 transition-colors">
-                <div class="w-12 h-12 bg-pink-500/10 border border-pink-500/20 rounded-2xl flex items-center justify-center text-pink-400 mb-6 text-xl">
+            <div class="${t.cardBg} p-8 rounded-3xl transition-colors">
+                <div class="w-12 h-12 bg-pink-500/10 border border-pink-500/20 rounded-2xl flex items-center justify-center text-pink-500 mb-6 text-xl">
                     <i class="fa-solid [ÍCONE 3]"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-3 text-white">[BENEFÍCIO 3]</h3>
-                <p class="text-zinc-400 text-sm leading-relaxed">[DESCRIÇÃO DO BENEFÍCIO 3]</p>
+                <h3 class="text-xl font-bold mb-3">[BENEFÍCIO 3]</h3>
+                <p class="opacity-70 text-sm leading-relaxed">[DESCRIÇÃO DO BENEFÍCIO 3]</p>
             </div>
         </div>
     </section>

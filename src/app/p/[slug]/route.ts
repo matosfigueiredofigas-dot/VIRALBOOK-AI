@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: Request,
   props: { params: Promise<{ slug: string }> }
@@ -14,7 +16,7 @@ export async function GET(
     // Buscar a oportunidade pelo slug
     const { data: opp, error } = await supabase
       .from('opportunities')
-      .select('landing_page_html, saas_name')
+      .select('id, landing_page_html, saas_name, launchpad_views')
       .eq('published_slug', slug)
       .single();
 
@@ -25,12 +27,17 @@ export async function GET(
       );
     }
 
+    // Incrementa Views (background)
+    supabase.from('opportunities')
+      .update({ launchpad_views: (opp.launchpad_views || 0) + 1 })
+      .eq('id', opp.id)
+      .then(); // não bloqueia a resposta
+
     // Retorna o HTML puro salvo no banco
     return new NextResponse(opp.landing_page_html, {
       status: 200,
       headers: {
         'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 's-maxage=60, stale-while-revalidate',
       },
     });
   } catch (error) {

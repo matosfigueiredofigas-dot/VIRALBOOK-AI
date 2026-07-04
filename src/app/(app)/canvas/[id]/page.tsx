@@ -60,6 +60,9 @@ export default async function CanvasPage(props: { params: Promise<{ id: string }
           <a href={`/email-funnel?oppId=${opportunity.id}`} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 shadow-sm">
             📧 E-mails (Lançamento)
           </a>
+          <a href="#launchpad" className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 shadow-sm">
+            🚀 Launchpad (Página)
+          </a>
           <LivePreviewModal opportunity={opportunity} />
           <PrintButton />
         </div>
