@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Zap, Target, BookOpen, Lock, CheckCircle2, Eye, EyeOff, Loader2 } from "lucide-react";
+import { ArrowRight, Zap, Target, BookOpen, Lock, CheckCircle2, Eye, EyeOff, Loader2, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContactModal } from "@/components/contact-modal";
 import { AuthModal } from "@/components/auth-modal";
@@ -180,17 +180,30 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Product Simulator Section */}
-        <section className="w-full py-16 md:py-24 px-4 md:px-6 relative overflow-hidden">
+        {/* Video Sales Letter Section */}
+        <section className="w-full py-16 md:py-24 px-4 md:px-6 relative overflow-hidden flex flex-col items-center">
           <div className="max-w-6xl mx-auto text-center mb-12 space-y-4">
             <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground">
               Veja a IA Varrendo o Mercado em Tempo Real
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Simule a análise de viralidade de um crossover agora mesmo. Descubra a dor, o nível de saturação e o canvas da ideia selecionada.
+              Assista a demonstração e descubra como extraímos dores ocultas, cruzamos públicos e geramos aplicativos validados em segundos.
             </p>
           </div>
-          <ProductSimulator />
+          
+          <div className="w-full max-w-4xl aspect-video rounded-3xl p-2 bg-gradient-to-b from-primary/10 to-transparent border border-primary/20 shadow-2xl relative group overflow-hidden">
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-md flex flex-col items-center justify-center z-10 rounded-[22px] transition-all group-hover:bg-background/60 cursor-pointer">
+              <div className="h-20 w-20 rounded-full bg-primary/20 flex items-center justify-center border border-primary/40 shadow-lg shadow-primary/20 transition-transform group-hover:scale-110">
+                <Play className="h-8 w-8 text-primary ml-1" />
+              </div>
+              <p className="mt-6 font-bold text-lg text-foreground">Clique para assistir à demonstração</p>
+              <p className="text-sm text-muted-foreground mt-2">Duração: 05:00</p>
+            </div>
+            {/* Faux Interface Background */}
+            <div className="absolute inset-2 rounded-[22px] bg-muted border border-border/50 flex items-center justify-center opacity-50">
+              <div className="w-3/4 h-3/4 bg-background rounded-2xl shadow-sm border border-border/50" />
+            </div>
+          </div>
         </section>
 
         {/* Features Section */}
