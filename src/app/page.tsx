@@ -145,7 +145,8 @@ export default function LandingPage() {
                     "Não sabe qual produto criar.",
                     "Tem medo de perder meses desenvolvendo.",
                     "Nunca encontra uma ideia realmente boa.",
-                    "Fica preso pesquisando tendências."
+                    "Fica preso pesquisando tendências.",
+                    "Não tem acesso a mentores de alto nível?"
                   ].map((pain, i) => (
                     <li key={i} className="flex items-start gap-3 text-muted-foreground text-base">
                       <span className="text-red-500 font-bold text-lg mt-0.5">✕</span>
@@ -167,7 +168,8 @@ export default function LandingPage() {
                     { emoji: "📚", text: "Analisa livros virais" },
                     { emoji: "🧠", text: "Descobre problemas recorrentes" },
                     { emoji: "💡", text: "Gera ideias de SaaS" },
-                    { emoji: "🚀", text: "Cria um roadmap para o MVP" }
+                    { emoji: "🚀", text: "Cria um roadmap para o MVP" },
+                    { emoji: "🤝", text: "Oferece mentoria de alto nível a custo zero" }
                   ].map((sol, i) => (
                     <li key={i} className="flex items-center gap-3 text-foreground font-semibold text-base">
                       <span className="text-2xl shrink-0">{sol.emoji}</span>
