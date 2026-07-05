@@ -96,7 +96,9 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
     const link = document.createElement("a");
     link.href = url;
     link.download = `funil-email-${selectedOpp.saas_name.toLowerCase().replace(/\s+/g, "-")}.txt`;
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
 

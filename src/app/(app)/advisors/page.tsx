@@ -23,7 +23,7 @@ export default async function AdvisorsPage(props: { searchParams: Promise<{ time
   // Buscar as oportunidades criadas pelo próprio usuário
   let query = supabase
     .from('opportunities')
-    .select('id, saas_name, target_audience, problem_solved, book_title, advisor_advice')
+    .select('id, saas_name, target_audience, problem_solved, book_title, advisor_advice, advisor_chat_history')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 

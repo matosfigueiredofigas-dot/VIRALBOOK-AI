@@ -56,6 +56,7 @@ interface Opportunity {
   problem_solved: string;
   book_title: string;
   advisor_advice: AdvisorAdvice | null;
+  advisor_chat_history: Record<string, { role: 'user' | 'assistant', content: string }[]> | null;
 }
 
 export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { initialOpportunities: Opportunity[], initialSelectedId?: string }) {
@@ -72,16 +73,20 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
   // Chat State
   const [chatMessage, setChatMessage] = useState("");
   const [isSendingChat, setIsSendingChat] = useState(false);
-  const [chatHistory, setChatHistory] = useState<Record<number, { role: 'user' | 'assistant', content: string }[]>>({});
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const selectedOpp = opportunities.find(opp => opp.id === selectedId);
+
+  // Derive chat history directly from the opportunity data
+  const currentChatHistory = selectedOpp?.advisor_chat_history || {};
+  const activeAdvisor = selectedOpp?.advisor_advice?.advisors[activeAdvisorIdx];
+  const activeChat = activeAdvisor ? (currentChatHistory[activeAdvisor.name] || []) : [];
 
   useEffect(() => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [chatHistory, activeAdvisorIdx]);
+  }, [activeChat, activeAdvisorIdx]);
 
   useEffect(() => {
     if (window.speechSynthesis) {
@@ -117,7 +122,6 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
       });
       setOpportunities(updatedOpps);
       setActiveAdvisorIdx(0);
-      setChatHistory({});
       router.refresh();
     } catch (err: any) {
       alert(err.message || "Erro ao consultar o conselho de mentores.");
@@ -149,14 +153,26 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
   };
 
   const handleSendChat = async () => {
-    if (!chatMessage.trim() || !selectedOpp?.advisor_advice) return;
+    if (!chatMessage.trim() || !selectedOpp?.advisor_advice || !activeAdvisor) return;
     
-    const advisor = selectedOpp.advisor_advice.advisors[activeAdvisorIdx];
-    const currentHist = chatHistory[activeAdvisorIdx] || [];
-    
-    const newHist = [...currentHist, { role: 'user' as const, content: chatMessage }];
-    setChatHistory(prev => ({ ...prev, [activeAdvisorIdx]: newHist }));
     const msgToSend = chatMessage;
+    const currentHist = currentChatHistory[activeAdvisor.name] || [];
+    const newHist = [...currentHist, { role: 'user' as const, content: msgToSend }];
+    
+    // Optimistic update
+    setOpportunities(prev => prev.map(opp => {
+      if (opp.id === selectedId) {
+        return {
+          ...opp,
+          advisor_chat_history: {
+            ...opp.advisor_chat_history,
+            [activeAdvisor.name]: newHist
+          }
+        };
+      }
+      return opp;
+    }));
+    
     setChatMessage("");
     setIsSendingChat(true);
 
@@ -166,21 +182,42 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           opportunityId: selectedId,
-          advisorName: advisor.name,
-          advisorRole: advisor.role,
+          advisorName: activeAdvisor.name,
+          advisorRole: activeAdvisor.role,
           message: msgToSend
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setChatHistory(prev => ({
-        ...prev,
-        [activeAdvisorIdx]: [...newHist, { role: 'assistant', content: data.reply }]
+      // Update with assistant reply
+      setOpportunities(prev => prev.map(opp => {
+        if (opp.id === selectedId) {
+          return {
+            ...opp,
+            advisor_chat_history: {
+              ...opp.advisor_chat_history,
+              [activeAdvisor.name]: [...newHist, { role: 'assistant' as const, content: data.reply }]
+            }
+          };
+        }
+        return opp;
       }));
     } catch (err: any) {
       alert(err.message || "Erro ao enviar mensagem.");
-      setChatHistory(prev => ({ ...prev, [activeAdvisorIdx]: currentHist }));
+      // Rollback
+      setOpportunities(prev => prev.map(opp => {
+        if (opp.id === selectedId) {
+          return {
+            ...opp,
+            advisor_chat_history: {
+              ...opp.advisor_chat_history,
+              [activeAdvisor.name]: currentHist
+            }
+          };
+        }
+        return opp;
+      }));
       setChatMessage(msgToSend);
     } finally {
       setIsSendingChat(false);
@@ -471,7 +508,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
                 const advisor = selectedOpp.advisor_advice!.advisors[activeAdvisorIdx];
                 const theme = getAdvisorTheme(advisor.avatar_style);
                 const Icon = theme.icon;
-                const activeChat = chatHistory[activeAdvisorIdx] || [];
+                
                 
                 return (
                   <Card className={cn("glass-card overflow-hidden flex flex-col relative", theme.glow, `border-${theme.text.split('-')[1]}-500/30`)}>

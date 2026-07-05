@@ -6,10 +6,6 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY || 'placeholder_key',
 });
 
-// Cache simples em memória para histórico de chat efêmero por sessão
-// Em produção, isso iria para um Redis ou tabela real do Supabase
-const chatHistoryMap: Record<string, { role: 'user' | 'assistant', content: string }[]> = {};
-
 export async function POST(req: Request) {
   try {
     const supabase = await createClient();
@@ -25,10 +21,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Parâmetros incompletos' }, { status: 400 });
     }
 
-    // Carregar Oportunidade
+    // Carregar Oportunidade com o histórico de chat
     const { data: opportunity, error: fetchErr } = await supabase
       .from('opportunities')
-      .select('saas_name, problem_solved, target_audience, competitive_advantage')
+      .select('saas_name, problem_solved, target_audience, competitive_advantage, advisor_chat_history')
       .eq('id', opportunityId)
       .eq('user_id', user.id)
       .single();
@@ -37,11 +33,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Oportunidade não encontrada' }, { status: 404 });
     }
 
-    const sessionId = `${user.id}-${opportunityId}-${advisorName}`;
-    
-    if (!chatHistoryMap[sessionId]) {
-      chatHistoryMap[sessionId] = [];
-    }
+    // Inicializar o histórico a partir do BD
+    const allChats = opportunity.advisor_chat_history || {};
+    const advisorHistory = allChats[advisorName] || [];
 
     const systemPrompt = `Você está interpretando o conselheiro: ${advisorName} (${advisorRole}).
 Você NUNCA deve sair do personagem. Responda sempre em primeira pessoa como se fosse o próprio bilionário/empreendedor.
@@ -67,7 +61,7 @@ O usuário vai se defender ou fazer uma pergunta. Responda à altura, de forma c
 
     const messages = [
       { role: 'system', content: systemPrompt },
-      ...chatHistoryMap[sessionId],
+      ...advisorHistory,
       { role: 'user', content: message }
     ] as any;
 
@@ -80,9 +74,28 @@ O usuário vai se defender ou fazer uma pergunta. Responda à altura, de forma c
 
     const reply = chatCompletion.choices[0]?.message?.content || 'Sem resposta...';
 
-    // Salva no histórico efêmero
-    chatHistoryMap[sessionId].push({ role: 'user', content: message });
-    chatHistoryMap[sessionId].push({ role: 'assistant', content: reply });
+    // Adiciona as novas mensagens ao histórico local
+    const newAdvisorHistory = [
+      ...advisorHistory,
+      { role: 'user', content: message },
+      { role: 'assistant', content: reply }
+    ];
+
+    // Salva o histórico persistente no Supabase
+    const updatedChatHistory = {
+      ...allChats,
+      [advisorName]: newAdvisorHistory
+    };
+
+    const { error: updateErr } = await supabase
+      .from('opportunities')
+      .update({ advisor_chat_history: updatedChatHistory })
+      .eq('id', opportunityId)
+      .eq('user_id', user.id);
+
+    if (updateErr) {
+      console.error('[Advisors Chat] Erro ao salvar histórico:', updateErr);
+    }
 
     return NextResponse.json({ reply });
   } catch (error: any) {
