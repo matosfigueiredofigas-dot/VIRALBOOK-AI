@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Zap, Target, BookOpen, Lock, CheckCircle2, Eye, EyeOff, Loader2, Play } from "lucide-react";
+import { ArrowRight, Zap, Target, BookOpen, Lock, CheckCircle2, Eye, EyeOff, Loader2, Play, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContactModal } from "@/components/contact-modal";
 import { AuthModal } from "@/components/auth-modal";
@@ -28,28 +28,56 @@ export default function LandingPage() {
     setIsAuthOpen(true);
   };
 
-  const getPrice = (plan: 'annual' | 'lifetime', type: 'original' | 'discount') => {
-    if (plan === 'annual') {
+  const [timeLeft, setTimeLeft] = useState(15 * 60);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
+
+  const getPrice = (tier: 'basic' | 'pro' | 'vip', type: 'original' | 'discount') => {
+    if (tier === 'basic') {
       if (type === 'original') {
-        if (currency === 'USD') return '$ 49/ano';
-        if (currency === 'EUR') return '49 €/ano';
-        return 'R$ 197/ano';
+        if (currency === 'USD') return '$ 29 único';
+        if (currency === 'EUR') return '29 € único';
+        return 'R$ 147 único';
+      } else {
+        if (currency === 'USD') return '$ 9';
+        if (currency === 'EUR') return '9 €';
+        return 'R$ 47';
+      }
+    }
+    if (tier === 'pro') {
+      if (type === 'original') {
+        if (currency === 'USD') return '$ 49 único';
+        if (currency === 'EUR') return '49 € único';
+        return 'R$ 297 único';
       } else {
         if (currency === 'USD') return '$ 19';
         if (currency === 'EUR') return '19 €';
         return 'R$ 97';
       }
-    } else {
+    }
+    if (tier === 'vip') {
       if (type === 'original') {
-        if (currency === 'USD') return '$ 129 único';
-        if (currency === 'EUR') return '129 € único';
+        if (currency === 'USD') return '$ 89 único';
+        if (currency === 'EUR') return '89 € único';
         return 'R$ 497 único';
       } else {
-        if (currency === 'USD') return '$ 39';
-        if (currency === 'EUR') return '39 €';
-        return 'R$ 197';
+        if (currency === 'USD') return '$ 29';
+        if (currency === 'EUR') return '29 €';
+        return 'R$ 147';
       }
     }
+    return '';
   };
 
   return (
@@ -182,31 +210,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Video Sales Letter Section */}
-        <section className="w-full py-16 md:py-24 px-4 md:px-6 relative overflow-hidden flex flex-col items-center">
-          <div className="max-w-6xl mx-auto text-center mb-12 space-y-4">
-            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground">
-              Veja a IA Varrendo o Mercado em Tempo Real
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Assista a demonstração e descubra como extraímos dores ocultas, cruzamos públicos e geramos aplicativos validados em segundos.
-            </p>
-          </div>
-          
-          <div className="w-full max-w-4xl aspect-video rounded-3xl p-2 bg-gradient-to-b from-primary/10 to-transparent border border-primary/20 shadow-2xl relative group overflow-hidden">
-            <div className="absolute inset-0 bg-background/80 backdrop-blur-md flex flex-col items-center justify-center z-10 rounded-[22px] transition-all group-hover:bg-background/60 cursor-pointer">
-              <div className="h-20 w-20 rounded-full bg-primary/20 flex items-center justify-center border border-primary/40 shadow-lg shadow-primary/20 transition-transform group-hover:scale-110">
-                <Play className="h-8 w-8 text-primary ml-1" />
-              </div>
-              <p className="mt-6 font-bold text-lg text-foreground">Clique para assistir à demonstração</p>
-              <p className="text-sm text-muted-foreground mt-2">Duração: 05:00</p>
-            </div>
-            {/* Faux Interface Background */}
-            <div className="absolute inset-2 rounded-[22px] bg-muted border border-border/50 flex items-center justify-center opacity-50">
-              <div className="w-3/4 h-3/4 bg-background rounded-2xl shadow-sm border border-border/50" />
-            </div>
-          </div>
-        </section>
+
 
         {/* Features Section */}
         <section id="features" className="w-full py-24 bg-muted/20 border-y border-border/50 px-4 md:px-6">
@@ -320,66 +324,159 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="max-w-2xl mx-auto text-left">
-              {/* Card: Plano Fundador Vitalício */}
-              <div className="p-[2px] rounded-[32px] bg-gradient-to-b from-primary via-primary/50 to-transparent relative group flex flex-col justify-between shadow-2xl">
-                <div className="absolute inset-0 bg-primary/10 blur-2xl rounded-[32px] -z-10 group-hover:bg-primary/25 transition-all duration-700"/>
-                <div className="bg-card/90 backdrop-blur-xl rounded-[30px] p-8 md:p-12 flex flex-col justify-between h-full border border-border/50">
+            <div className="max-w-6xl mx-auto text-left grid md:grid-cols-3 gap-8">
+              {/* Card 1: Basic */}
+              <div className="rounded-[32px] bg-card border border-border/50 relative flex flex-col justify-between shadow-lg transition-transform hover:-translate-y-1">
+                <div className="p-8 md:p-10 flex flex-col justify-between h-full">
                   <div className="space-y-6">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-3xl font-bold text-foreground flex items-center gap-2">
-                          Membro Vitalício
-                        </h3>
-                        <p className="text-sm text-primary mt-1.5 font-semibold">Oferta especial e definitiva de lançamento</p>
-                      </div>
-                      <span className="text-[10px] font-bold px-3 py-1 bg-primary/20 text-primary rounded-full uppercase tracking-wider">OFERTA LIMITADA</span>
+                    <div>
+                      <h3 className="text-2xl font-bold text-foreground">Basic</h3>
+                      <p className="text-sm text-muted-foreground mt-1">Para o iniciante curioso</p>
                     </div>
                     
                     <div className="py-4 border-y border-border/40 my-6">
-                      <span className="text-muted-foreground line-through text-lg font-medium block">
-                        {getPrice('lifetime', 'original')}
+                      <span className="text-muted-foreground line-through text-md font-medium block">
+                        {getPrice('basic', 'original')}
                       </span>
                       <div className="flex items-baseline gap-2 mt-1">
-                        <span className="text-6xl font-extrabold text-foreground tracking-tight">
-                          {getPrice('lifetime', 'discount')}
+                        <span className="text-4xl font-extrabold text-foreground tracking-tight">
+                          {getPrice('basic', 'discount')}
                         </span>
-                        <span className="text-muted-foreground text-sm font-medium">pagamento único</span>
                       </div>
+                      <span className="text-muted-foreground text-xs font-medium uppercase tracking-widest block mt-2">Pagamento Único</span>
                     </div>
 
-                    <ul className="grid sm:grid-cols-2 gap-4">
+                    <ul className="space-y-4">
                       {[
-                        'Acesso vitalício ilimitado (Sem mensalidades)',
-                        'Gerador de Oportunidades & Biblioteca',
-                        'Validação em tempo real (Reddit e FB)',
-                        'Filtros Globais e Inteligência Groq',
-                        'Exportação de relatórios em CSV',
-                        'Suporte prioritário e badge fundador',
-                        'Acesso permanente a atualizações',
-                        'Garantia incondicional de 7 dias'
+                        'Acesso ao Ebooks Radar',
+                        '50 pesquisas manuais por mês',
+                        'Visualização de Tendências Globais',
+                        'Sem geração de Lean Canvas'
                       ].map((item, i) => (
-                        <li key={i} className="flex items-center gap-3 text-muted-foreground text-sm font-medium">
-                          <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                          <span className={i === 0 || i === 7 ? "text-foreground font-bold" : ""}>{item}</span>
+                        <li key={i} className="flex items-start gap-3 text-muted-foreground text-sm font-medium">
+                          <CheckCircle2 className="h-5 w-5 text-primary shrink-0 opacity-70" />
+                          <span>{item}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="mt-10 pt-6 border-t border-border/50 space-y-4">
-                    <div className="text-xs font-bold text-yellow-500/90 text-center bg-yellow-500/10 py-2 px-4 rounded-lg border border-yellow-500/20">
-                      ⚡ Restam apenas 17 vagas com este preço promocional!
-                    </div>
+                  <div className="mt-10 pt-6 border-t border-border/50">
                     <a 
                       href={LEMON_SQUEEZY_CHECKOUT_URLS[currency]}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/85 w-full h-14 text-lg font-bold rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5 cursor-pointer text-center font-bold text-md"
+                      className="group/button inline-flex shrink-0 items-center justify-center bg-muted text-foreground hover:bg-muted/80 w-full h-12 text-md font-bold rounded-xl border border-border/50 transition-colors"
                     >
-                      Garantir Acesso Vitalício
+                      Começar com Basic
                     </a>
-                    <div className="text-[11px] text-muted-foreground text-center">Pagamento único e permanente. Processado de forma segura via Lemon Squeezy.</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 2: Pro */}
+              <div className="p-[2px] rounded-[32px] bg-gradient-to-b from-primary via-primary/50 to-transparent relative group flex flex-col justify-between shadow-2xl scale-105 z-10">
+                <div className="absolute inset-0 bg-primary/10 blur-2xl rounded-[32px] -z-10 group-hover:bg-primary/25 transition-all duration-700"/>
+                <div className="bg-card/95 backdrop-blur-xl rounded-[30px] p-8 md:p-10 flex flex-col justify-between h-full border border-border/50">
+                  <div className="space-y-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">Pro</h3>
+                        <p className="text-sm text-primary mt-1 font-semibold">O Mais Recomendado</p>
+                      </div>
+                      <span className="text-[10px] font-bold px-2 py-1 bg-primary/20 text-primary rounded-full uppercase tracking-wider">Lançamento</span>
+                    </div>
+                    
+                    <div className="py-4 border-y border-border/40 my-6">
+                      <span className="text-muted-foreground line-through text-md font-medium block">
+                        {getPrice('pro', 'original')}
+                      </span>
+                      <div className="flex items-baseline gap-2 mt-1">
+                        <span className="text-5xl font-extrabold text-foreground tracking-tight">
+                          {getPrice('pro', 'discount')}
+                        </span>
+                      </div>
+                      <span className="text-primary text-xs font-bold uppercase tracking-widest block mt-2">Pagamento Único Vitalício</span>
+                    </div>
+
+                    <ul className="space-y-4">
+                      {[
+                        'Tudo do plano Basic',
+                        'Pesquisas ilimitadas no Radar',
+                        'Acesso à Biblioteca de Ideias',
+                        'Geração ilimitada de Lean Canvas',
+                        'Acesso ao Chat com CTO IA',
+                        'Conselho de Mentores (IA Avançada)',
+                        'Filtros Globais e Inteligência Groq'
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-start gap-3 text-muted-foreground text-sm font-medium">
+                          <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+                          <span className={i === 0 ? "text-foreground font-bold" : ""}>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="mt-10 pt-6 border-t border-border/50 space-y-3">
+                    <a 
+                      href={LEMON_SQUEEZY_CHECKOUT_URLS[currency]}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/85 w-full h-12 text-md font-bold rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5"
+                    >
+                      Garantir Acesso Pro
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 3: VIP */}
+              <div className="rounded-[32px] bg-card border border-border/50 relative flex flex-col justify-between shadow-lg transition-transform hover:-translate-y-1">
+                <div className="p-8 md:p-10 flex flex-col justify-between h-full">
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-2xl font-bold text-foreground">All-Access VIP</h3>
+                      <p className="text-sm text-muted-foreground mt-1">Para fundadores sérios</p>
+                    </div>
+                    
+                    <div className="py-4 border-y border-border/40 my-6">
+                      <span className="text-muted-foreground line-through text-md font-medium block">
+                        {getPrice('vip', 'original')}
+                      </span>
+                      <div className="flex items-baseline gap-2 mt-1">
+                        <span className="text-4xl font-extrabold text-foreground tracking-tight">
+                          {getPrice('vip', 'discount')}
+                        </span>
+                      </div>
+                      <span className="text-muted-foreground text-xs font-medium uppercase tracking-widest block mt-2">Pagamento Único</span>
+                    </div>
+
+                    <ul className="space-y-4">
+                      {[
+                        'Tudo do plano Pro',
+                        'Acesso antecipado: Landing Pages IA',
+                        'Acesso antecipado: E-mails IA',
+                        'Exportação de relatórios (CSV)',
+                        'Suporte prioritário via WhatsApp',
+                        <span key="timer" className="text-red-500 font-bold flex items-center gap-1.5"><Clock className="w-4 h-4 animate-pulse" /> Oferta expira em: {formatTime(timeLeft)}</span>
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-start gap-3 text-muted-foreground text-sm font-medium">
+                          <CheckCircle2 className="h-5 w-5 text-purple-500 shrink-0" />
+                          <div className={i === 0 ? "text-foreground font-bold" : ""}>{item}</div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="mt-10 pt-6 border-t border-border/50">
+                    <a 
+                      href={LEMON_SQUEEZY_CHECKOUT_URLS[currency]}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group/button inline-flex shrink-0 items-center justify-center bg-purple-600 text-white hover:bg-purple-700 w-full h-12 text-md font-bold rounded-xl transition-colors"
+                    >
+                      Tornar-se VIP
+                    </a>
                   </div>
                 </div>
               </div>
