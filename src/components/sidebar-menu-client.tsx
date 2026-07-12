@@ -32,25 +32,10 @@ export function SidebarMenuClient() {
       url: "/radar",
       icon: BookOpen,
       dataTour: "sidebar-radar"
-    },
-    {
-      title: "Emerging Niches",
-      url: "/niches",
-      icon: Activity,
-    },
-    {
-      title: "Global Trends",
-      url: "/trends",
-      icon: BarChart3,
-    },
+    }
   ];
 
   const validacaoItems = [
-    {
-      title: "SaaS Opportunities",
-      url: "/opportunities",
-      icon: Lightbulb,
-    },
     {
       title: "Landing Pages",
       url: "/landing-pages",
