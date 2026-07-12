@@ -123,7 +123,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cou
       {/* Advanced Filters */}
       <AdvancedFilters />
 
-      <OpportunitiesList initialData={opportunities || []} />
+      <OpportunitiesList initialData={opportunities || []} hideSearch={true} />
     </div>
   )
 }

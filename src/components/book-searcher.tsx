@@ -226,9 +226,10 @@ export function BookSearcher() {
           {books.map((book, index) => {
             const isScanned = !!scannedKeywords[book.id];
             const isScanning = scanningId === book.id;
-            // Fake metrics baseadas no ID
-            const fakeReviews = (book.id.length * 123) % 15000;
-            const fakeRating = (4 + (book.id.length % 10) / 10).toFixed(1);
+            // Fake metrics baseadas no ID (agora dinâmico baseado no conteúdo do ID)
+            const idHash = book.id.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+            const fakeReviews = (idHash * 37) % 15000 + 120;
+            const fakeRating = (4 + (idHash % 10) / 10).toFixed(1);
             const isBestseller = index === 0 || index === 2; // Simula bestsellers
 
             return (

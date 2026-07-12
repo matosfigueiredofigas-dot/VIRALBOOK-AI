@@ -139,7 +139,7 @@ Output language MUST be in the native language of the requested country (if coun
 
 Instructions:
 1. Based on the business analyst's findings (problem, audience, and competitive advantage) and the requested technology or angle, design a Micro-SaaS.
-2. Provide a catchy SaaS Name, MVP Features (buildable in 30 days), Development Time estimation, and Implementation Difficulty (Low/Medium/High).
+2. Provide a catchy SaaS Name, MVP Features (buildable in 30 days), Development Time estimation, and Implementation Difficulty (Assess this strictly based on technical complexity, integrations required, and data processing. MUST be either: "Baixa", "Média", or "Alta").
 3. Write highly detailed, step-by-step technical prompts for an AI code generator like Lovable and Bolt.new to build the MVP.
 
 JSON Schema: { "saas_name": "string", "mvp_features": "string", "development_time": "string", "implementation_difficulty": "string", "prompt_lovable": "string", "prompt_bolt": "string" }`;

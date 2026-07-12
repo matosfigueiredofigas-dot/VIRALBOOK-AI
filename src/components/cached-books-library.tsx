@@ -298,13 +298,13 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                         >
                           {isExpanded ? "🗗" : "🗖"}
                         </button>
-                        <SheetTitle className="text-2xl font-extrabold text-primary flex items-center gap-4 flex-wrap">
+                        <SheetTitle className="text-2xl font-extrabold text-primary flex flex-col sm:flex-row sm:items-center gap-4 flex-wrap">
                           {activeItem.saas_name}
-                          <div className="flex gap-2">
+                          <div className="flex flex-wrap gap-2">
                             <Button 
                               variant="outline" 
                               size="sm" 
-                              className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground border-none"
+                              className="bg-white text-black hover:bg-zinc-100 hover:text-black border-none"
                               onClick={() => window.open(`/canvas/${activeItem.id}`, '_blank')}
                             >
                               <FileText className="h-4 w-4 mr-2" /> Lean Canvas
@@ -312,7 +312,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                             <Button 
                               variant="outline" 
                               size="sm" 
-                              className="bg-blue-600 text-white hover:bg-blue-700 hover:text-white border-none"
+                              className="bg-emerald-600 text-white hover:bg-emerald-700 hover:text-white border-none"
                               onClick={() => setIsChatOpen(true)}
                             >
                               <MessageSquare className="h-4 w-4 mr-2" /> Falar com CTO (IA)
