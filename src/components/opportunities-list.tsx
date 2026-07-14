@@ -1249,7 +1249,7 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                 </div>
               )}
             </div>
-
+          </div>
               {/* ═══════════════════════════════════════════ */}
               {/* FASE 4: LANÇAMENTO — Go-to-market e escala */}
               {/* ═══════════════════════════════════════════ */}
