@@ -12,9 +12,21 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { ProductSimulator } from "@/components/product-simulator";
 
 const LEMON_SQUEEZY_CHECKOUT_URLS = {
-  USD: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_USD_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-usd-id",
-  BRL: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BRL_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-brl-id",
-  EUR: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_EUR_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-eur-id"
+  basic: {
+    USD: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BASIC_USD_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_USD_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-usd-id",
+    BRL: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BASIC_BRL_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BRL_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-brl-id",
+    EUR: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BASIC_EUR_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_EUR_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-eur-id"
+  },
+  pro: {
+    USD: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_PRO_USD_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_USD_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-usd-id",
+    BRL: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_PRO_BRL_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BRL_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-brl-id",
+    EUR: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_PRO_EUR_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_EUR_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-eur-id"
+  },
+  vip: {
+    USD: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_VIP_USD_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_USD_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-usd-id",
+    BRL: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_VIP_BRL_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BRL_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-brl-id",
+    EUR: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_VIP_EUR_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_EUR_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-eur-id"
+  }
 };
 
 export default function LandingPage() {
@@ -363,7 +375,7 @@ export default function LandingPage() {
 
                   <div className="mt-10 pt-6 border-t border-border/50">
                     <a 
-                      href={LEMON_SQUEEZY_CHECKOUT_URLS[currency]}
+                      href={LEMON_SQUEEZY_CHECKOUT_URLS.basic[currency]}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group/button inline-flex shrink-0 items-center justify-center bg-muted text-foreground hover:bg-muted/80 w-full h-12 text-md font-bold rounded-xl border border-border/50 transition-colors"
@@ -407,11 +419,12 @@ export default function LandingPage() {
                         'Geração ilimitada de Lean Canvas',
                         'Acesso ao Chat com CTO IA',
                         'Conselho de Mentores (IA Avançada)',
-                        'Filtros Globais e Inteligência Groq'
+                        'Filtros Globais e Inteligência Groq',
+                        <span key="timer" className="text-red-500 font-bold flex items-center gap-1.5"><Clock className="w-4 h-4 animate-pulse" /> Oferta expira em: {formatTime(timeLeft)}</span>
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-3 text-muted-foreground text-sm font-medium">
                           <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                          <span className={i === 0 ? "text-foreground font-bold" : ""}>{item}</span>
+                          <div className={i === 0 ? "text-foreground font-bold" : ""}>{item}</div>
                         </li>
                       ))}
                     </ul>
@@ -419,7 +432,7 @@ export default function LandingPage() {
 
                   <div className="mt-10 pt-6 border-t border-border/50 space-y-3">
                     <a 
-                      href={LEMON_SQUEEZY_CHECKOUT_URLS[currency]}
+                      href={LEMON_SQUEEZY_CHECKOUT_URLS.pro[currency]}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/85 w-full h-12 text-md font-bold rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5"
@@ -470,7 +483,7 @@ export default function LandingPage() {
 
                   <div className="mt-10 pt-6 border-t border-border/50">
                     <a 
-                      href={LEMON_SQUEEZY_CHECKOUT_URLS[currency]}
+                      href={LEMON_SQUEEZY_CHECKOUT_URLS.vip[currency]}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group/button inline-flex shrink-0 items-center justify-center bg-purple-600 text-white hover:bg-purple-700 w-full h-12 text-md font-bold rounded-xl transition-colors"

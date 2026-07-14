@@ -528,299 +528,11 @@ function OpportunityCard({ item }: { item: any }) {
               </div>
             ) : details ? (
             <div className="space-y-4">
-              {/* Como Monetizar */}
-              <div className="space-y-2">
-                <CollapsibleSectionHeader
-                  title="Como Monetizar"
-                  isOpen={showMonetization}
-                  onToggle={() => setShowMonetization(!showMonetization)}
-                  icon={<DollarSign className="h-4 w-4 text-green-400" />}
-                />
-                {showMonetization && (
-                  <div className="bg-muted/50 p-4 rounded-xl border border-border/50 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <p className="text-foreground text-sm">{details.monetization_model}</p>
-                    <Separator className="my-3" />
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-muted-foreground">Preço Sugerido:</span>
-                      <span className="font-bold text-green-500">{details.suggested_price?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm mt-2">
-                      <span className="text-muted-foreground">Potencial:</span>
-                      <span className="font-bold">{details.potential_revenue?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
-                    </div>
+              {/* ═══════════════════════════════════════════ */}
+              {/* FASE 1: VALIDAÇÃO — Entender se há demanda */}
+              {/* ═══════════════════════════════════════════ */}
 
-                    <div className="mt-6">
-                      <div className="text-xs font-bold text-zinc-400 mb-4 flex items-center gap-2">
-                        <BarChart3 className="h-4 w-4 text-green-500" /> Projeção de MRR (12 Meses)
-                      </div>
-                      <div className="h-48 w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <LineChart data={generateMrrData(details.suggested_price)}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
-                            <XAxis dataKey="month" stroke="rgba(255,255,255,0.3)" fontSize={10} tickMargin={10} />
-                            <YAxis stroke="rgba(255,255,255,0.3)" fontSize={10} tickFormatter={(val) => `$${val}`} />
-                            <Tooltip 
-                              contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
-                              itemStyle={{ color: '#22c55e', fontWeight: 'bold' }}
-                              formatter={(value) => [`$${value}`, 'MRR']}
-                            />
-                            <Line type="monotone" dataKey="mrr" stroke="#22c55e" strokeWidth={3} dot={{ fill: '#22c55e', r: 4 }} activeDot={{ r: 6 }} />
-                          </LineChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Plano do MVP */}
-              <div className="space-y-2">
-                <CollapsibleSectionHeader
-                  title="Plano do MVP"
-                  isOpen={showMvpPlan}
-                  onToggle={() => setShowMvpPlan(!showMvpPlan)}
-                  icon={<List className="h-4 w-4 text-blue-400" />}
-                />
-                {showMvpPlan && (
-                  <div className="bg-primary/5 p-4 rounded-xl border border-primary/20 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <p className="text-foreground text-sm leading-relaxed">{details.mvp_features}</p>
-                    <div className="flex gap-2 mt-4 text-xs">
-                      <Badge variant="outline" className="bg-background">⏱️ {details.development_time}</Badge>
-                      <Badge variant="outline" className="bg-background">🧠 {details.implementation_difficulty}</Badge>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Plano de Ação GTM (30 Dias) */}
-              <div className="space-y-2">
-                <CollapsibleSectionHeader
-                  title="Roadmap Go-To-Market (30 Dias)"
-                  isOpen={showGtmRoadmap}
-                  onToggle={() => setShowGtmRoadmap(!showGtmRoadmap)}
-                  icon={<Crosshair className="h-4 w-4 text-orange-400" />}
-                />
-                {showGtmRoadmap && (
-                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
-                    {!details?.gtm_roadmap ? (
-                      <div className="text-center p-4">
-                        <Button 
-                          onClick={() => handleGeneratePremiumModule('gtm')} 
-                          disabled={generatingModule === 'gtm'}
-                          className="bg-orange-600 hover:bg-orange-500 text-white"
-                        >
-                          {generatingModule === 'gtm' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                          Gerar Roadmap GTM (IA)
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        {details.gtm_roadmap.weeks?.map((week: any, i: number) => (
-                          <div key={i} className="bg-zinc-950/50 p-3 rounded-lg border border-white/5">
-                            <h4 className="text-sm font-bold text-orange-400 mb-2">Semana {week.week}: {week.focus}</h4>
-                            <ul className="list-disc pl-5 text-xs text-zinc-300 space-y-1">
-                              {week.actions?.map((action: string, j: number) => <li key={j}>{action}</li>)}
-                            </ul>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Tech Stack Sugerida */}
-              <div className="space-y-2">
-                <CollapsibleSectionHeader
-                  title="Tech Stack Recomendada"
-                  isOpen={showTechStack}
-                  onToggle={() => setShowTechStack(!showTechStack)}
-                  icon={<Layers className="h-4 w-4 text-blue-400" />}
-                />
-                {showTechStack && (
-                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
-                    {!details?.tech_stack ? (
-                      <div className="text-center p-4">
-                        <Button 
-                          onClick={() => handleGeneratePremiumModule('tech')} 
-                          disabled={generatingModule === 'tech'}
-                          className="bg-blue-600 hover:bg-blue-500 text-white"
-                        >
-                          {generatingModule === 'tech' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Layers className="mr-2 h-4 w-4" />}
-                          Descobrir Stack Ideal
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-2 gap-3">
-                        {Object.entries(details.tech_stack).map(([key, tech]: any) => (
-                          <div key={key} className="bg-zinc-950/50 p-3 rounded-lg border border-white/5">
-                            <span className="text-[10px] text-zinc-500 uppercase font-bold block mb-1">{key.replace('_', ' ')}</span>
-                            <div className="font-bold text-blue-400 text-sm">{tech.name}</div>
-                            <div className="text-xs text-zinc-400 mt-1">{tech.reason}</div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Análise de Concorrentes */}
-              <div className="space-y-2">
-                <CollapsibleSectionHeader
-                  title="Análise de Concorrentes & Brechas"
-                  isOpen={showCompetitors}
-                  onToggle={() => setShowCompetitors(!showCompetitors)}
-                  icon={<Crosshair className="h-4 w-4 text-red-400" />}
-                />
-                {showCompetitors && (
-                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
-                    {!details?.competitor_analysis ? (
-                      <div className="text-center p-4">
-                        <Button 
-                          onClick={() => handleGeneratePremiumModule('competitor')} 
-                          disabled={generatingModule === 'competitor'}
-                          className="bg-red-600 hover:bg-red-500 text-white"
-                        >
-                          {generatingModule === 'competitor' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
-                          Analisar Concorrentes (IA)
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        {details.competitor_analysis.competitors?.map((comp: any, i: number) => (
-                          <div key={i} className="bg-zinc-950/50 p-3 rounded-lg border border-red-500/10">
-                            <div className="font-bold text-red-400 text-sm mb-1">{comp.name}</div>
-                            <div className="text-xs text-zinc-300"><strong>Fraqueza:</strong> {comp.weakness}</div>
-                            <div className="text-xs text-green-400 mt-1"><strong>Nossa Vantagem:</strong> {comp.our_advantage}</div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Pitch Deck HTML */}
-              <div className="space-y-2">
-                <CollapsibleSectionHeader
-                  title="Pitch Deck (Apresentação)"
-                  isOpen={showPitchDeck}
-                  onToggle={() => setShowPitchDeck(!showPitchDeck)}
-                  icon={<Presentation className="h-4 w-4 text-indigo-400" />}
-                />
-                {showPitchDeck && (
-                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
-                    {!details?.pitch_deck ? (
-                      <div className="text-center p-4">
-                        <Button 
-                          onClick={() => handleGeneratePremiumModule('pitch')} 
-                          disabled={generatingModule === 'pitch'}
-                          className="bg-indigo-600 hover:bg-indigo-500 text-white"
-                        >
-                          {generatingModule === 'pitch' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Presentation className="mr-2 h-4 w-4" />}
-                          Gerar Slides do Pitch
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="flex overflow-x-auto gap-4 pb-4 snap-x">
-                        {details.pitch_deck.slides?.map((slide: any, i: number) => (
-                          <div key={i} className="min-w-[280px] w-[280px] h-[160px] bg-white text-black p-5 rounded-xl shadow-lg flex flex-col justify-center snap-center shrink-0">
-                            <h3 className="font-extrabold text-lg mb-2 text-indigo-900 text-center">{slide.title}</h3>
-                            <p className="text-xs text-slate-700 text-center leading-relaxed">{slide.content}</p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* SQL Schema */}
-              <div className="space-y-2">
-                <CollapsibleSectionHeader
-                  title="Arquitetura de Banco de Dados (SQL)"
-                  isOpen={showSqlSchema}
-                  onToggle={() => setShowSqlSchema(!showSqlSchema)}
-                  icon={<Database className="h-4 w-4 text-emerald-400" />}
-                />
-                {showSqlSchema && (
-                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
-                    {!details?.sql_schema ? (
-                      <div className="text-center p-4">
-                        <Button 
-                          onClick={() => handleGeneratePremiumModule('sql')} 
-                          disabled={generatingModule === 'sql'}
-                          className="bg-emerald-600 hover:bg-emerald-500 text-white"
-                        >
-                          {generatingModule === 'sql' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Database className="mr-2 h-4 w-4" />}
-                          Gerar Tabelas Supabase
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="relative group">
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                          onClick={() => navigator.clipboard.writeText(details.sql_schema)}
-                        >
-                          Copiar SQL
-                        </Button>
-                        <pre className="text-[10px] text-emerald-400 bg-black p-4 rounded-lg overflow-x-auto max-h-[300px]">
-                          <code>{details.sql_schema}</code>
-                        </pre>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Exportação para Cursor AI / V0 */}
-              <div className="space-y-2">
-                <CollapsibleSectionHeader
-                  title="Exportar Engenharia (Cursor AI)"
-                  isOpen={showCursorRules}
-                  onToggle={() => setShowCursorRules(!showCursorRules)}
-                  icon={<Bot className="h-4 w-4 text-emerald-400" />}
-                />
-                {showCursorRules && (
-                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
-                    {!cursorRules ? (
-                      <div className="text-center p-4">
-                        <Button 
-                          onClick={() => handleGeneratePremiumModule('cursor')} 
-                          disabled={generatingModule === 'cursor'}
-                          className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
-                        >
-                          {generatingModule === 'cursor' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Bot className="mr-2 h-4 w-4" />}
-                          Gerar .cursorrules Mágico
-                        </Button>
-                        <p className="text-xs text-muted-foreground mt-2">
-                          Gera as regras exatas de stack, estilos e db para colar no Cursor AI ou v0.dev.
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="relative group/sql">
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          className="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white border-none backdrop-blur-sm z-10"
-                          onClick={() => copyToClipboard(typeof cursorRules === 'string' ? cursorRules : JSON.stringify(cursorRules, null, 2), 'cursor')}
-                        >
-                          {copiedPrompt === 'cursor' ? <CheckCircle2 className="h-4 w-4 mr-1 text-green-400" /> : <Copy className="h-4 w-4 mr-1" />}
-                          Copiar Regras
-                        </Button>
-                        <pre className="text-[10px] text-emerald-400 bg-black p-4 rounded-lg overflow-x-auto max-h-[300px] whitespace-pre-wrap">
-                          <code>{typeof cursorRules === 'string' ? cursorRules : JSON.stringify(cursorRules, null, 2)}</code>
-                        </pre>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Validação Social & Canais */}
+              {/* 1. Validação Social & Canais */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
                   title="Validação Social & Canais"
@@ -884,7 +596,7 @@ function OpportunityCard({ item }: { item: any }) {
                 )}
               </div>
 
-              {/* Dores Reais do Reddit (Mapeador de IA) */}
+              {/* 2. Dores Reais do Reddit (Mapeador de IA) */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
                   title="Dores Reais do Reddit (Mapeador de IA)"
@@ -997,213 +709,93 @@ function OpportunityCard({ item }: { item: any }) {
                 )}
               </div>
 
-              {/* Kit de Lançamento & Marketing (IA) */}
+              {/* 3. Análise de Concorrentes */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
-                  title="Kit de Lançamento & Marketing (IA)"
-                  isOpen={showMarketingKit}
-                  onToggle={() => setShowMarketingKit(!showMarketingKit)}
-                  icon={<Megaphone className="h-4 w-4 text-purple-400" />}
-                  badge={marketingKit && Object.keys(marketingKit).length > 0 && (
-                    <Badge variant="secondary" className="bg-purple-500/10 text-purple-400 border-none text-[10px] px-1.5 h-4">
-                      Pronto
-                    </Badge>
-                  )}
+                  title="Análise de Concorrentes & Brechas"
+                  isOpen={showCompetitors}
+                  onToggle={() => setShowCompetitors(!showCompetitors)}
+                  icon={<Crosshair className="h-4 w-4 text-red-400" />}
                 />
-                {showMarketingKit && (
-                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
-                    {!marketingKit || Object.keys(marketingKit).length === 0 ? (
-                      <div className="bg-primary/5 p-5 rounded-lg border border-primary/10 text-center space-y-4">
-                        <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                          Dificuldade em vender seu SaaS? Deixe a IA gerar copys prontas em formato de thread do Twitter/X, posts profissionais do LinkedIn, roteiros de vídeos para TikTok/Reels e e-mails de vendas frios.
-                        </p>
-                        <Button
-                          onClick={handleGenerateMarketingKit}
-                          disabled={generatingKit}
-                          className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
+                {showCompetitors && (
+                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                    {!details?.competitor_analysis ? (
+                      <div className="text-center p-4">
+                        <Button 
+                          onClick={() => handleGeneratePremiumModule('competitor')} 
+                          disabled={generatingModule === 'competitor'}
+                          className="bg-red-600 hover:bg-red-500 text-white"
                         >
-                          {generatingKit ? (
-                            <>
-                              <Loader2 className="h-4 w-4 animate-spin" /> Gerando Kit de Marketing...
-                            </>
-                          ) : (
-                            <>
-                              <Megaphone className="h-4 w-4 text-white" /> Gerar Kit de Marketing (IA)
-                            </>
-                          )}
+                          {generatingModule === 'competitor' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
+                          Analisar Concorrentes (IA)
                         </Button>
                       </div>
                     ) : (
-                      <div className="space-y-4">
-                        {/* Tab Selector */}
-                        <div className="grid grid-cols-4 p-1 bg-white/5 rounded-xl border border-white/5">
-                          {(["twitter", "linkedin", "tiktok", "email"] as const).map((tab) => (
-                            <button
-                              key={tab}
-                              type="button"
-                              onClick={() => setMarketingTab(tab)}
-                              className={cn(
-                                "py-2 rounded-lg text-xxs font-bold uppercase transition-all duration-300 cursor-pointer",
-                                marketingTab === tab
-                                  ? "bg-primary text-primary-foreground shadow-md"
-                                  : "text-muted-foreground hover:text-white"
-                              )}
-                            >
-                              {tab === "twitter" && "Twitter/X"}
-                              {tab === "linkedin" && "LinkedIn"}
-                              {tab === "tiktok" && "TikTok/Reels"}
-                              {tab === "email" && "E-mail"}
-                            </button>
-                          ))}
-                        </div>
-
-                        {/* Content display based on active tab */}
-                        <div className="bg-zinc-900/40 border border-white/5 p-5 rounded-xl space-y-3 relative group">
-                          
-                          {/* Twitter Thread Tab */}
-                          {marketingTab === "twitter" && marketingKit.twitter_thread && (
-                            <div className="space-y-4">
-                              <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                                <span className="text-xs font-semibold text-zinc-400">Sequência do Twitter/X (Thread)</span>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
-                                  onClick={() => handleCopyMarketingText(marketingKit.twitter_thread.join("\n\n"), "tw-all")}
-                                >
-                                  {copiedMarketing === "tw-all" ? "Copiado!" : "Copiar Thread Completa"}
-                                </Button>
-                              </div>
-                              <div className="space-y-3">
-                                {marketingKit.twitter_thread.map((tweet: string, idx: number) => (
-                                  <div key={idx} className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 relative group/tweet">
-                                    <div className="text-xxs text-primary font-bold mb-1">Tweet {idx + 1}/{marketingKit.twitter_thread.length}</div>
-                                    <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-wrap">{tweet}</p>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-6 w-6 absolute top-2.5 right-2.5 opacity-0 group-hover/tweet:opacity-100 transition-opacity"
-                                      onClick={() => handleCopyMarketingText(tweet, `tw-${idx}`)}
-                                    >
-                                      {copiedMarketing === `tw-${idx}` ? <CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
-                                    </Button>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* LinkedIn Post Tab */}
-                          {marketingTab === "linkedin" && (
-                            <div className="space-y-4">
-                              <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                                <span className="text-xs font-semibold text-zinc-400">Postagem Profissional do LinkedIn</span>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
-                                  onClick={() => handleCopyMarketingText(marketingKit.linkedin_post, "li")}
-                                >
-                                  {copiedMarketing === "li" ? "Copiado!" : "Copiar Texto"}
-                                </Button>
-                              </div>
-                              <div className="p-4 bg-zinc-950/40 rounded-lg border border-white/5 max-h-[350px] overflow-y-auto pr-2">
-                                <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-line">{marketingKit.linkedin_post}</p>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* TikTok/Reels Script Tab */}
-                          {marketingTab === "tiktok" && marketingKit.tiktok_script && (
-                            <div className="space-y-4">
-                              <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                                <span className="text-xs font-semibold text-zinc-400">Roteiro de Vídeo Curto (TikTok/Reels)</span>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
-                                  onClick={() => {
-                                    const fullScript = `HOOK:\n"${marketingKit.tiktok_script.hook}"\n\nSCENES:\n${marketingKit.tiktok_script.scenes.map((s: any, i: number) => `CENA ${i+1}:\nVisual: [${s.visual}]\nFala: "${s.voiceover}"`).join("\n\n")}\n\nCTA:\n"${marketingKit.tiktok_script.cta}"`;
-                                    handleCopyMarketingText(fullScript, "tk");
-                                  }}
-                                >
-                                  {copiedMarketing === "tk" ? "Copiado!" : "Copiar Roteiro Completo"}
-                                </Button>
-                              </div>
-                              <div className="space-y-3 text-xs">
-                                <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
-                                  <span className="font-bold text-red-400 block mb-1">🧲 O GANCHO (Primeiros 3s):</span>
-                                  <p className="italic text-zinc-300">&ldquo;{marketingKit.tiktok_script.hook}&rdquo;</p>
-                                </div>
-                                
-                                <div className="space-y-2">
-                                  <span className="font-bold text-zinc-400 block">🎬 CENAS & NARRATIVA:</span>
-                                  {marketingKit.tiktok_script.scenes.map((scene: any, idx: number) => (
-                                    <div key={idx} className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 space-y-1">
-                                      <div className="text-[10px] text-zinc-500 uppercase font-bold">Cena {idx + 1}</div>
-                                      <div className="text-zinc-500 font-semibold text-xxs">Vídeo: <span className="font-normal text-zinc-400 italic">[{scene.visual}]</span></div>
-                                      <div className="text-zinc-200">Áudio (Falar): &ldquo;{scene.voiceover}&rdquo;</div>
-                                    </div>
-                                  ))}
-                                </div>
-
-                                <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
-                                  <span className="font-bold text-green-400 block mb-1">📢 CHAMADA PARA AÇÃO (CTA):</span>
-                                  <p className="font-semibold text-zinc-300">{marketingKit.tiktok_script.cta}</p>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Cold Email Tab */}
-                          {marketingTab === "email" && (
-                            <div className="space-y-4">
-                              <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                                <span className="text-xs font-semibold text-zinc-400">E-mail de Prospecção Fria</span>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
-                                  onClick={() => handleCopyMarketingText(marketingKit.cold_email, "em")}
-                                >
-                                  {copiedMarketing === "em" ? "Copiado!" : "Copiar E-mail"}
-                                </Button>
-                              </div>
-                              <div className="p-4 bg-zinc-950/40 rounded-lg border border-white/5 pr-2">
-                                <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-line">{marketingKit.cold_email}</p>
-                              </div>
-                            </div>
-                          )}
-
-                        </div>
-
-                        <div className="flex justify-end border-t border-white/5 pt-2">
-                          <Button
-                            onClick={handleGenerateMarketingKit}
-                            disabled={generatingKit}
-                            variant="ghost"
-                            className="text-primary hover:text-primary-foreground hover:bg-primary/5 text-xs font-bold"
-                          >
-                            {generatingKit ? (
-                              <>
-                                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Remontando...
-                              </>
-                            ) : (
-                              <>
-                                Refazer Copys de IA ↗
-                              </>
-                            )}
-                          </Button>
-                        </div>
+                      <div className="space-y-3">
+                        {details.competitor_analysis.competitors?.map((comp: any, i: number) => (
+                          <div key={i} className="bg-zinc-950/50 p-3 rounded-lg border border-red-500/10">
+                            <div className="font-bold text-red-400 text-sm mb-1">{comp.name}</div>
+                            <div className="text-xs text-zinc-300"><strong>Fraqueza:</strong> {comp.weakness}</div>
+                            <div className="text-xs text-green-400 mt-1"><strong>Nossa Vantagem:</strong> {comp.our_advantage}</div>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
                 )}
               </div>
 
-{/* SaaS Financial Calculator Section */}
-                            {/* SaaS Financial Calculator Section */}
-              <div className="border-t border-white/5 pt-6 space-y-2">
+              {/* ═══════════════════════════════════════════ */}
+              {/* FASE 2: NEGÓCIO — Definir modelo e números */}
+              {/* ═══════════════════════════════════════════ */}
+
+              {/* 4. Como Monetizar */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Como Monetizar"
+                  isOpen={showMonetization}
+                  onToggle={() => setShowMonetization(!showMonetization)}
+                  icon={<DollarSign className="h-4 w-4 text-green-400" />}
+                />
+                {showMonetization && (
+                  <div className="bg-muted/50 p-4 rounded-xl border border-border/50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <p className="text-foreground text-sm">{details.monetization_model}</p>
+                    <Separator className="my-3" />
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-muted-foreground">Preço Sugerido:</span>
+                      <span className="font-bold text-green-500">{details.suggested_price?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm mt-2">
+                      <span className="text-muted-foreground">Potencial:</span>
+                      <span className="font-bold">{details.potential_revenue?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
+                    </div>
+
+                    <div className="mt-6">
+                      <div className="text-xs font-bold text-zinc-400 mb-4 flex items-center gap-2">
+                        <BarChart3 className="h-4 w-4 text-green-500" /> Projeção de MRR (12 Meses)
+                      </div>
+                      <div className="h-48 w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={generateMrrData(details.suggested_price)}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
+                            <XAxis dataKey="month" stroke="rgba(255,255,255,0.3)" fontSize={10} tickMargin={10} />
+                            <YAxis stroke="rgba(255,255,255,0.3)" fontSize={10} tickFormatter={(val) => `$${val}`} />
+                            <Tooltip 
+                              contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                              itemStyle={{ color: '#22c55e', fontWeight: 'bold' }}
+                              formatter={(value) => [`$${value}`, 'MRR']}
+                            />
+                            <Line type="monotone" dataKey="mrr" stroke="#22c55e" strokeWidth={3} dot={{ fill: '#22c55e', r: 4 }} activeDot={{ r: 6 }} />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 5. Calculadora de Viabilidade Financeira */}
+              <div className="space-y-2">
                 <CollapsibleSectionHeader
                   title="Calculadora de Viabilidade Financeira (SaaS)"
                   isOpen={showCalculator}
@@ -1416,7 +1008,150 @@ function OpportunityCard({ item }: { item: any }) {
               )}
             </div>
 
-              {/* Prompts de Construção */}
+              {/* ═══════════════════════════════════════════ */}
+              {/* FASE 3: CONSTRUÇÃO — Planejar e desenvolver */}
+              {/* ═══════════════════════════════════════════ */}
+
+              {/* 6. Plano do MVP */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Plano do MVP"
+                  isOpen={showMvpPlan}
+                  onToggle={() => setShowMvpPlan(!showMvpPlan)}
+                  icon={<List className="h-4 w-4 text-blue-400" />}
+                />
+                {showMvpPlan && (
+                  <div className="bg-primary/5 p-4 rounded-xl border border-primary/20 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <p className="text-foreground text-sm leading-relaxed">{details.mvp_features}</p>
+                    <div className="flex gap-2 mt-4 text-xs">
+                      <Badge variant="outline" className="bg-background">⏱️ {details.development_time}</Badge>
+                      <Badge variant="outline" className="bg-background">🧠 {details.implementation_difficulty}</Badge>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 7. Tech Stack Recomendada */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Tech Stack Recomendada"
+                  isOpen={showTechStack}
+                  onToggle={() => setShowTechStack(!showTechStack)}
+                  icon={<Layers className="h-4 w-4 text-blue-400" />}
+                />
+                {showTechStack && (
+                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                    {!details?.tech_stack ? (
+                      <div className="text-center p-4">
+                        <Button 
+                          onClick={() => handleGeneratePremiumModule('tech')} 
+                          disabled={generatingModule === 'tech'}
+                          className="bg-blue-600 hover:bg-blue-500 text-white"
+                        >
+                          {generatingModule === 'tech' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Layers className="mr-2 h-4 w-4" />}
+                          Descobrir Stack Ideal
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-3">
+                        {Object.entries(details.tech_stack).map(([key, tech]: any) => (
+                          <div key={key} className="bg-zinc-950/50 p-3 rounded-lg border border-white/5">
+                            <span className="text-[10px] text-zinc-500 uppercase font-bold block mb-1">{key.replace('_', ' ')}</span>
+                            <div className="font-bold text-blue-400 text-sm">{tech.name}</div>
+                            <div className="text-xs text-zinc-400 mt-1">{tech.reason}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* 8. Arquitetura de Banco de Dados (SQL) */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Arquitetura de Banco de Dados (SQL)"
+                  isOpen={showSqlSchema}
+                  onToggle={() => setShowSqlSchema(!showSqlSchema)}
+                  icon={<Database className="h-4 w-4 text-emerald-400" />}
+                />
+                {showSqlSchema && (
+                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                    {!details?.sql_schema ? (
+                      <div className="text-center p-4">
+                        <Button 
+                          onClick={() => handleGeneratePremiumModule('sql')} 
+                          disabled={generatingModule === 'sql'}
+                          className="bg-emerald-600 hover:bg-emerald-500 text-white"
+                        >
+                          {generatingModule === 'sql' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Database className="mr-2 h-4 w-4" />}
+                          Gerar Tabelas Supabase
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="relative group">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                          onClick={() => navigator.clipboard.writeText(details.sql_schema)}
+                        >
+                          Copiar SQL
+                        </Button>
+                        <pre className="text-[10px] text-emerald-400 bg-black p-4 rounded-lg overflow-x-auto max-h-[300px]">
+                          <code>{details.sql_schema}</code>
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* 9. Exportar Engenharia (Cursor AI) */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Exportar Engenharia (Cursor AI)"
+                  isOpen={showCursorRules}
+                  onToggle={() => setShowCursorRules(!showCursorRules)}
+                  icon={<Bot className="h-4 w-4 text-emerald-400" />}
+                />
+                {showCursorRules && (
+                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                    {!cursorRules ? (
+                      <div className="text-center p-4">
+                        <Button 
+                          onClick={() => handleGeneratePremiumModule('cursor')} 
+                          disabled={generatingModule === 'cursor'}
+                          className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
+                        >
+                          {generatingModule === 'cursor' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Bot className="mr-2 h-4 w-4" />}
+                          Gerar .cursorrules Mágico
+                        </Button>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          Gera as regras exatas de stack, estilos e db para colar no Cursor AI ou v0.dev.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="relative group/sql">
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white border-none backdrop-blur-sm z-10"
+                          onClick={() => copyToClipboard(typeof cursorRules === 'string' ? cursorRules : JSON.stringify(cursorRules, null, 2), 'cursor')}
+                        >
+                          {copiedPrompt === 'cursor' ? <CheckCircle2 className="h-4 w-4 mr-1 text-green-400" /> : <Copy className="h-4 w-4 mr-1" />}
+                          Copiar Regras
+                        </Button>
+                        <pre className="text-[10px] text-emerald-400 bg-black p-4 rounded-lg overflow-x-auto max-h-[300px] whitespace-pre-wrap">
+                          <code>{typeof cursorRules === 'string' ? cursorRules : JSON.stringify(cursorRules, null, 2)}</code>
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* 10. Prompts de Construção */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
                   title="Prompts de Construção"
@@ -1507,6 +1242,286 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                 </div>
               )}
             </div>
+
+              {/* ═══════════════════════════════════════════ */}
+              {/* FASE 4: LANÇAMENTO — Go-to-market e escala */}
+              {/* ═══════════════════════════════════════════ */}
+
+              {/* 11. Roadmap Go-To-Market (30 Dias) */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Roadmap Go-To-Market (30 Dias)"
+                  isOpen={showGtmRoadmap}
+                  onToggle={() => setShowGtmRoadmap(!showGtmRoadmap)}
+                  icon={<Crosshair className="h-4 w-4 text-orange-400" />}
+                />
+                {showGtmRoadmap && (
+                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                    {!details?.gtm_roadmap ? (
+                      <div className="text-center p-4">
+                        <Button 
+                          onClick={() => handleGeneratePremiumModule('gtm')} 
+                          disabled={generatingModule === 'gtm'}
+                          className="bg-orange-600 hover:bg-orange-500 text-white"
+                        >
+                          {generatingModule === 'gtm' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                          Gerar Roadmap GTM (IA)
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {details.gtm_roadmap.weeks?.map((week: any, i: number) => (
+                          <div key={i} className="bg-zinc-950/50 p-3 rounded-lg border border-white/5">
+                            <h4 className="text-sm font-bold text-orange-400 mb-2">Semana {week.week}: {week.focus}</h4>
+                            <ul className="list-disc pl-5 text-xs text-zinc-300 space-y-1">
+                              {week.actions?.map((action: string, j: number) => <li key={j}>{action}</li>)}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* 12. Kit de Lançamento & Marketing (IA) */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Kit de Lançamento & Marketing (IA)"
+                  isOpen={showMarketingKit}
+                  onToggle={() => setShowMarketingKit(!showMarketingKit)}
+                  icon={<Megaphone className="h-4 w-4 text-purple-400" />}
+                  badge={marketingKit && Object.keys(marketingKit).length > 0 && (
+                    <Badge variant="secondary" className="bg-purple-500/10 text-purple-400 border-none text-[10px] px-1.5 h-4">
+                      Pronto
+                    </Badge>
+                  )}
+                />
+                {showMarketingKit && (
+                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                    {!marketingKit || Object.keys(marketingKit).length === 0 ? (
+                      <div className="bg-primary/5 p-5 rounded-lg border border-primary/10 text-center space-y-4">
+                        <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                          Dificuldade em vender seu SaaS? Deixe a IA gerar copys prontas em formato de thread do Twitter/X, posts profissionais do LinkedIn, roteiros de vídeos para TikTok/Reels e e-mails de vendas frios.
+                        </p>
+                        <Button
+                          onClick={handleGenerateMarketingKit}
+                          disabled={generatingKit}
+                          className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
+                        >
+                          {generatingKit ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" /> Gerando Kit de Marketing...
+                            </>
+                          ) : (
+                            <>
+                              <Megaphone className="h-4 w-4 text-white" /> Gerar Kit de Marketing (IA)
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {/* Tab Selector */}
+                        <div className="grid grid-cols-4 p-1 bg-white/5 rounded-xl border border-white/5">
+                          {(["twitter", "linkedin", "tiktok", "email"] as const).map((tab) => (
+                            <button
+                              key={tab}
+                              type="button"
+                              onClick={() => setMarketingTab(tab)}
+                              className={cn(
+                                "py-2 rounded-lg text-xxs font-bold uppercase transition-all duration-300 cursor-pointer",
+                                marketingTab === tab
+                                  ? "bg-primary text-primary-foreground shadow-md"
+                                  : "text-muted-foreground hover:text-white"
+                              )}
+                            >
+                              {tab === "twitter" && "Twitter/X"}
+                              {tab === "linkedin" && "LinkedIn"}
+                              {tab === "tiktok" && "TikTok/Reels"}
+                              {tab === "email" && "E-mail"}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* Content display based on active tab */}
+                        <div className="bg-zinc-900/40 border border-white/5 p-5 rounded-xl space-y-3 relative group">
+                          
+                          {/* Twitter Thread Tab */}
+                          {marketingTab === "twitter" && marketingKit.twitter_thread && (
+                            <div className="space-y-4">
+                              <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                                <span className="text-xs font-semibold text-zinc-400">Sequência do Twitter/X (Thread)</span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
+                                  onClick={() => handleCopyMarketingText(marketingKit.twitter_thread.join("\n\n"), "tw-all")}
+                                >
+                                  {copiedMarketing === "tw-all" ? "Copiado!" : "Copiar Thread Completa"}
+                                </Button>
+                              </div>
+                              <div className="space-y-3">
+                                {marketingKit.twitter_thread.map((tweet: string, idx: number) => (
+                                  <div key={idx} className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 relative group/tweet">
+                                    <div className="text-xxs text-primary font-bold mb-1">Tweet {idx + 1}/{marketingKit.twitter_thread.length}</div>
+                                    <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-wrap">{tweet}</p>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-6 w-6 absolute top-2.5 right-2.5 opacity-0 group-hover/tweet:opacity-100 transition-opacity"
+                                      onClick={() => handleCopyMarketingText(tweet, `tw-${idx}`)}
+                                    >
+                                      {copiedMarketing === `tw-${idx}` ? <CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* LinkedIn Post Tab */}
+                          {marketingTab === "linkedin" && (
+                            <div className="space-y-4">
+                              <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                                <span className="text-xs font-semibold text-zinc-400">Postagem Profissional do LinkedIn</span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
+                                  onClick={() => handleCopyMarketingText(marketingKit.linkedin_post, "li")}
+                                >
+                                  {copiedMarketing === "li" ? "Copiado!" : "Copiar Texto"}
+                                </Button>
+                              </div>
+                              <div className="p-4 bg-zinc-950/40 rounded-lg border border-white/5 max-h-[350px] overflow-y-auto pr-2">
+                                <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-line">{marketingKit.linkedin_post}</p>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* TikTok/Reels Script Tab */}
+                          {marketingTab === "tiktok" && marketingKit.tiktok_script && (
+                            <div className="space-y-4">
+                              <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                                <span className="text-xs font-semibold text-zinc-400">Roteiro de Vídeo Curto (TikTok/Reels)</span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
+                                  onClick={() => {
+                                    const fullScript = `HOOK:\n"${marketingKit.tiktok_script.hook}"\n\nSCENES:\n${marketingKit.tiktok_script.scenes.map((s: any, i: number) => `CENA ${i+1}:\nVisual: [${s.visual}]\nFala: "${s.voiceover}"`).join("\n\n")}\n\nCTA:\n"${marketingKit.tiktok_script.cta}"`;
+                                    handleCopyMarketingText(fullScript, "tk");
+                                  }}
+                                >
+                                  {copiedMarketing === "tk" ? "Copiado!" : "Copiar Roteiro Completo"}
+                                </Button>
+                              </div>
+                              <div className="space-y-3 text-xs">
+                                <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
+                                  <span className="font-bold text-red-400 block mb-1">🧲 O GANCHO (Primeiros 3s):</span>
+                                  <p className="italic text-zinc-300">&ldquo;{marketingKit.tiktok_script.hook}&rdquo;</p>
+                                </div>
+                                
+                                <div className="space-y-2">
+                                  <span className="font-bold text-zinc-400 block">🎬 CENAS & NARRATIVA:</span>
+                                  {marketingKit.tiktok_script.scenes.map((scene: any, idx: number) => (
+                                    <div key={idx} className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 space-y-1">
+                                      <div className="text-[10px] text-zinc-500 uppercase font-bold">Cena {idx + 1}</div>
+                                      <div className="text-zinc-500 font-semibold text-xxs">Vídeo: <span className="font-normal text-zinc-400 italic">[{scene.visual}]</span></div>
+                                      <div className="text-zinc-200">Áudio (Falar): &ldquo;{scene.voiceover}&rdquo;</div>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
+                                  <span className="font-bold text-green-400 block mb-1">📢 CHAMADA PARA AÇÃO (CTA):</span>
+                                  <p className="font-semibold text-zinc-300">{marketingKit.tiktok_script.cta}</p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Cold Email Tab */}
+                          {marketingTab === "email" && (
+                            <div className="space-y-4">
+                              <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                                <span className="text-xs font-semibold text-zinc-400">E-mail de Prospecção Fria</span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
+                                  onClick={() => handleCopyMarketingText(marketingKit.cold_email, "em")}
+                                >
+                                  {copiedMarketing === "em" ? "Copiado!" : "Copiar E-mail"}
+                                </Button>
+                              </div>
+                              <div className="p-4 bg-zinc-950/40 rounded-lg border border-white/5 pr-2">
+                                <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-line">{marketingKit.cold_email}</p>
+                              </div>
+                            </div>
+                          )}
+
+                        </div>
+
+                        <div className="flex justify-end border-t border-white/5 pt-2">
+                          <Button
+                            onClick={handleGenerateMarketingKit}
+                            disabled={generatingKit}
+                            variant="ghost"
+                            className="text-primary hover:text-primary-foreground hover:bg-primary/5 text-xs font-bold"
+                          >
+                            {generatingKit ? (
+                              <>
+                                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Remontando...
+                              </>
+                            ) : (
+                              <>
+                                Refazer Copys de IA ↗
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* 13. Pitch Deck (Apresentação) */}
+              <div className="space-y-2">
+                <CollapsibleSectionHeader
+                  title="Pitch Deck (Apresentação)"
+                  isOpen={showPitchDeck}
+                  onToggle={() => setShowPitchDeck(!showPitchDeck)}
+                  icon={<Presentation className="h-4 w-4 text-indigo-400" />}
+                />
+                {showPitchDeck && (
+                  <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                    {!details?.pitch_deck ? (
+                      <div className="text-center p-4">
+                        <Button 
+                          onClick={() => handleGeneratePremiumModule('pitch')} 
+                          disabled={generatingModule === 'pitch'}
+                          className="bg-indigo-600 hover:bg-indigo-500 text-white"
+                        >
+                          {generatingModule === 'pitch' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Presentation className="mr-2 h-4 w-4" />}
+                          Gerar Slides do Pitch
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex overflow-x-auto gap-4 pb-4 snap-x">
+                        {details.pitch_deck.slides?.map((slide: any, i: number) => (
+                          <div key={i} className="min-w-[280px] w-[280px] h-[160px] bg-white text-black p-5 rounded-xl shadow-lg flex flex-col justify-center snap-center shrink-0">
+                            <h3 className="font-extrabold text-lg mb-2 text-indigo-900 text-center">{slide.title}</h3>
+                            <p className="text-xs text-slate-700 text-center leading-relaxed">{slide.content}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
           </div>
             ) : (
               <div className="text-center py-20 text-muted-foreground flex flex-col items-center justify-center gap-3">
