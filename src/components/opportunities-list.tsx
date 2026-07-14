@@ -114,7 +114,7 @@ function OpportunityCard({ item }: { item: any }) {
   const [showRedditPainPoints, setShowRedditPainPoints] = useState(false);
   const [showMarketingKit, setShowMarketingKit] = useState(false);
   const [showCalculator, setShowCalculator] = useState(false);
-  const [showPrompts, setShowPrompts] = useState(false);
+  const [showPrompts, setShowPrompts] = useState(true);
   const [showGtmRoadmap, setShowGtmRoadmap] = useState(false);
   const [showTechStack, setShowTechStack] = useState(false);
   const [showCompetitors, setShowCompetitors] = useState(false);
@@ -1152,16 +1152,23 @@ function OpportunityCard({ item }: { item: any }) {
               </div>
 
               {/* 10. Prompts de Construção */}
-              <div className="space-y-2">
-                <CollapsibleSectionHeader
-                  title="Prompts de Construção"
-                  isOpen={showPrompts}
-                  onToggle={() => setShowPrompts(!showPrompts)}
-                  icon={<Sparkles className="h-4 w-4 text-yellow-300" />}
-                />
-                {showPrompts && (
-                  <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <div className="relative group">
+              <div className="space-y-2 relative rounded-xl overflow-hidden p-[1px] my-4 shadow-lg shadow-purple-500/20">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 animate-pulse opacity-60" />
+                <div className="relative bg-zinc-950/90 rounded-xl backdrop-blur-sm">
+                  <CollapsibleSectionHeader
+                    title="Prompts de Construção"
+                    isOpen={showPrompts}
+                    onToggle={() => setShowPrompts(!showPrompts)}
+                    icon={<Sparkles className="h-5 w-5 text-purple-400 animate-pulse" />}
+                    badge={
+                      <span className="flex h-6 items-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-3 text-[10px] font-bold text-white shadow-lg border border-white/20 uppercase tracking-wider">
+                        Ação Principal
+                      </span>
+                    }
+                  />
+                  {showPrompts && (
+                    <div className="p-4 pt-0 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="relative group">
                     <div className="text-xs font-semibold mb-1 text-purple-500">
                       Para{" "}
                       <a href="https://chatgpt.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-purple-400 transition-colors">ChatGPT</a>
