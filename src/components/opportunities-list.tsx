@@ -492,6 +492,14 @@ function OpportunityCard({ item }: { item: any }) {
                   <Button 
                     variant="outline" 
                     size="sm" 
+                    className="bg-purple-600 text-white hover:bg-purple-700 hover:text-white dark:bg-purple-600 dark:text-white dark:hover:bg-purple-700 border-none"
+                    onClick={() => router.push(`/advisors?oppId=${item.id}`)}
+                  >
+                    <Users className="h-4 w-4 mr-2" /> Falar com Mentores
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
                     className="bg-emerald-600 text-white hover:bg-emerald-700 hover:text-white dark:bg-emerald-600 dark:text-white dark:hover:bg-emerald-700 border-none"
                     onClick={() => setIsChatOpen(true)}
                   >

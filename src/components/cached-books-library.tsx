@@ -312,6 +312,14 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                             <Button 
                               variant="outline" 
                               size="sm" 
+                              className="bg-purple-600 text-white hover:bg-purple-700 hover:text-white border-none"
+                              onClick={() => router.push(`/advisors?oppId=${activeItem.id}`)}
+                            >
+                              <Users className="h-4 w-4 mr-2" /> Falar com Mentores
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
                               className="bg-emerald-600 text-white hover:bg-emerald-700 hover:text-white border-none"
                               onClick={() => setIsChatOpen(true)}
                             >

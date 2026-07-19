@@ -16,7 +16,7 @@ export default async function AdvisorsPage(props: { searchParams: Promise<{ time
   const supabase = await createClient();
 
   const searchParams = await props.searchParams;
-  const time = searchParams.time || "now";
+  const time = searchParams.time || "all";
   const oppId = searchParams.oppId;
   const filterDate = getFilterDate(time);
 

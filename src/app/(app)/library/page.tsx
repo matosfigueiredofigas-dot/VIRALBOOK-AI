@@ -17,7 +17,7 @@ export default async function LibraryPage(props: { searchParams: Promise<{ count
 
   const searchParams = await props.searchParams;
   const country = searchParams.country || "ALL";
-  const time = searchParams.time || "now";
+  const time = searchParams.time || "all";
   const filterDate = getFilterDate(time);
 
   // Busca as oportunidades mapeadas anteriormente no banco (globais ou do próprio usuário)

@@ -21,7 +21,7 @@ export default async function LandingPagesDashboard(props: { searchParams: Promi
 
   const searchParams = await props.searchParams;
   const country = searchParams.country || "ALL";
-  const time = searchParams.time || "now";
+  const time = searchParams.time || "all";
   const filterDate = getFilterDate(time);
 
   // 1. Carregar as Landing Pages do usuário

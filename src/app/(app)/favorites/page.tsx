@@ -19,7 +19,7 @@ export default async function FavoritesPage(props: { searchParams: Promise<{ sea
   const search = searchParams.search || "";
   const minScore = searchParams.minScore ? parseInt(searchParams.minScore) : 0;
   const country = searchParams.country || "ALL";
-  const time = searchParams.time || "now";
+  const time = searchParams.time || "all";
   const filterDate = getFilterDate(time);
 
   // 2. Busca as oportunidades que foram favoritadas por este usuário
