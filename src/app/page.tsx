@@ -168,6 +168,7 @@ export default function LandingPage() {
           </div>
         </section>
 
+
         {/* Pain & Solution Section */}
         <section className="w-full py-20 bg-muted/10 border-t border-border/50 px-4 md:px-6 relative overflow-hidden">
           <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[250px] bg-red-500/5 dark:bg-red-500/10 blur-[100px] rounded-full pointer-events-none" />
@@ -178,18 +179,25 @@ export default function LandingPage() {
             <div className="p-8 md:p-10 rounded-3xl bg-red-500/5 border border-red-500/10 flex flex-col justify-between transition-all hover:border-red-500/20">
               <div>
                 <h3 className="text-2xl md:text-3xl font-extrabold text-foreground mb-6 flex items-center gap-2">
-                  <span className="text-red-500">Você sofre com isso?</span>
+                  <span className="text-red-500">😩 Você sofre com isto?</span>
                 </h3>
                 <ul className="space-y-4">
                   {[
-                    "Não sabe qual produto criar.",
-                    "Tem medo de perder meses desenvolvendo.",
-                    "Nunca encontra uma ideia realmente boa.",
-                    "Fica preso pesquisando tendências.",
-                    "Não tem acesso a mentores de alto nível?"
+                    "Não sabe qual produto criar",
+                    "Tem medo de perder meses construindo algo que ninguém quer",
+                    "Nunca encontra uma ideia realmente boa",
+                    "Não sabe por onde começar",
+                    "Não sabe quais funcionalidades incluir",
+                    "Não sabe quem será o cliente ideal",
+                    "Não sabe como ganhar dinheiro com a ideia",
+                    "Tem receio de construir algo que já existe",
+                    "Não sabe como organizar o desenvolvimento",
+                    "Não sabe como explicar a ideia para uma IA ou programador",
+                    "Não sabe como lançar o produto",
+                    "Não tem acesso a mentores experientes"
                   ].map((pain, i) => (
-                    <li key={i} className="flex items-start gap-3 text-muted-foreground text-base">
-                      <span className="text-red-500 font-bold text-lg mt-0.5">✕</span>
+                    <li key={i} className="flex items-start gap-3 text-muted-foreground text-sm md:text-base leading-snug min-h-[44px] pt-1.5">
+                      <span className="text-lg shrink-0">❌</span>
                       <span>{pain}</span>
                     </li>
                   ))}
@@ -201,19 +209,26 @@ export default function LandingPage() {
             <div className="p-8 md:p-10 rounded-3xl bg-emerald-500/5 border border-emerald-500/10 flex flex-col justify-between transition-all hover:border-emerald-500/20">
               <div>
                 <h3 className="text-2xl md:text-3xl font-extrabold text-foreground mb-6 flex items-center gap-2">
-                  <span className="text-emerald-500">A ViralBook resolve isso para você.</span>
+                  <span className="text-emerald-500">🚀 O ViralBook AI faz isto por você</span>
                 </h3>
                 <ul className="space-y-4">
                   {[
-                    { emoji: "📚", text: "Analisa livros virais" },
-                    { emoji: "🧠", text: "Descobre problemas recorrentes" },
-                    { emoji: "💡", text: "Gera ideias de SaaS" },
-                    { emoji: "🚀", text: "Cria um roadmap para o MVP" },
-                    { emoji: "🤝", text: "Oferece mentoria de alto nível a custo zero" }
+                    "Analisa livros de sucesso e encontra oportunidades reais",
+                    "Identifica problemas validados antes de começar a desenvolver",
+                    "Gera ideias de SaaS e Startups baseadas em conhecimento comprovado",
+                    "Cria um Startup Blueprint completo do projeto",
+                    "Define o MVP e prioriza as funcionalidades essenciais",
+                    "Identifica o público-alvo",
+                    "Estrutura o modelo de negócio e a estratégia de monetização",
+                    "Analisa concorrentes e encontra oportunidades de diferenciação",
+                    "Cria roadmap, arquitetura funcional e fluxo do utilizador",
+                    "Gera prompts profissionais prontos para IA de desenvolvimento",
+                    "Cria um plano de lançamento e uma estratégia de marketing",
+                    "Disponibiliza 8 mentores digitais experientes"
                   ].map((sol, i) => (
-                    <li key={i} className="flex items-center gap-3 text-foreground font-semibold text-base">
-                      <span className="text-2xl shrink-0">{sol.emoji}</span>
-                      <span>{sol.text}</span>
+                    <li key={i} className="flex items-start gap-3 text-foreground font-semibold text-sm md:text-base leading-snug min-h-[44px] pt-1.5">
+                      <span className="text-lg shrink-0">✅</span>
+                      <span>{sol}</span>
                     </li>
                   ))}
                 </ul>
@@ -221,7 +236,6 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
-
 
 
         {/* Features Section */}
@@ -279,7 +293,10 @@ export default function LandingPage() {
               {[
                 { name: "Lucas M.", role: "Indie Hacker", text: "Eu perdia semanas tentando validar ideias. O ViralBook encontrou uma dor latente em livros de 'Foco' e eu construí um micro-SaaS em 4 dias. Já tenho meus primeiros 10 clientes pagantes!" },
                 { name: "Sofia T.", role: "Desenvolvedora Web", text: "A integração com o Groq é absurdamente rápida. O Lean Canvas que ele gera é tão detalhado que a Vantagem Injusta sugerida virou o slogan da minha nova startup." },
-                { name: "Rafael C.", role: "Empreendedor", text: "O melhor investimento do ano. Usar a base do Google Books para achar dores pelas quais as pessoas já pagam para resolver mudou completamente a minha visão de negócios." }
+                { name: "Rafael C.", role: "Empreendedor", text: "O melhor investimento do ano. Usar a base do Google Books para achar dores pelas quais as pessoas já pagam para resolver mudou completamente a minha visão de negócios." },
+                { name: "Filosofia do Produto", role: "Manifesto", text: "Hoje, criar software é mais fácil do que nunca. O verdadeiro desafio continua a ser saber o que vale a pena construir. É aí que entra o ViralBook AI." },
+                { name: "Posicionamento", role: "Ecossistema de IA", text: "O ViralBook AI não concorre com ChatGPT, Claude, Gemini, Cursor, Bolt, Lovable, Replit, Antigravity ou Abacus." },
+                { name: "Foco Estratégico", role: "Nosso Propósito", text: "O ViralBook não cria código, cria ideias, cria estratégias para novos milionários." }
               ].map((testimonial, i) => (
                 <div key={i} className="p-8 rounded-3xl bg-card/30 border border-border/50 hover:bg-card/50 transition-colors relative shadow-sm">
                   <div className="flex gap-1 mb-6 text-yellow-500">
@@ -360,14 +377,18 @@ export default function LandingPage() {
 
                     <ul className="space-y-4">
                       {[
-                        'Acesso ao Ebooks Radar',
-                        '50 pesquisas manuais por mês',
-                        'Visualização de Tendências Globais',
-                        'Sem geração de Lean Canvas'
+                        { active: true, text: 'Acesso ao Ebooks Radar' },
+                        { active: true, text: '50 pesquisas manuais por mês' },
+                        { active: true, text: 'Visualização de Tendências Globais' },
+                        { active: false, text: 'Sem geração de Lean Canvas' }
                       ].map((item, i) => (
-                        <li key={i} className="flex items-start gap-3 text-muted-foreground text-sm font-medium">
-                          <CheckCircle2 className="h-5 w-5 text-primary shrink-0 opacity-70" />
-                          <span>{item}</span>
+                        <li key={i} className={`flex items-start gap-3 text-sm font-medium ${item.active ? 'text-muted-foreground' : 'text-muted-foreground/45 line-through'}`}>
+                          {item.active ? (
+                            <CheckCircle2 className="h-5 w-5 text-primary shrink-0 opacity-70" />
+                          ) : (
+                            <span className="text-muted-foreground/35 font-extrabold text-lg leading-none shrink-0 w-5 text-center">×</span>
+                          )}
+                          <span>{item.text}</span>
                         </li>
                       ))}
                     </ul>
