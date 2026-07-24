@@ -415,16 +415,16 @@ export default function LandingPage() {
           </div>
 
           <div>
-            <h4 className="font-bold text-foreground mb-6 uppercase text-sm tracking-wider">Legal</h4>
+            <h4 className="font-bold text-foreground mb-6 uppercase text-sm tracking-wider">{isEn ? "Legal" : isEs ? "Legal" : "Legal"}</h4>
             <ul className="space-y-4 text-sm text-muted-foreground">
-              <li><Link href="/terms" className="hover:text-primary transition-colors">Termos</Link></li>
-              <li><Link href="/privacy" className="hover:text-primary transition-colors">Privacidade</Link></li>
+              <li><Link href="/terms" className="hover:text-primary transition-colors">{isEn ? "Terms of Use" : isEs ? "Términos de Uso" : "Termos de Uso"}</Link></li>
+              <li><Link href="/privacy" className="hover:text-primary transition-colors">{isEn ? "Privacy Policy" : isEs ? "Política de Privacidad" : "Política de Privacidade"}</Link></li>
               <li><button onClick={() => openAuth("login")} className="hover:text-primary transition-colors text-left cursor-pointer">{t.landing.restrictedAccess}</button></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-bold text-foreground mb-6 uppercase text-sm tracking-wider">Contato</h4>
+            <h4 className="font-bold text-foreground mb-6 uppercase text-sm tracking-wider">{isEn ? "Contact" : isEs ? "Contacto" : "Contato"}</h4>
             <ul className="space-y-4 text-sm text-muted-foreground">
               <li><ContactModal /></li>
               <li><a href="mailto:suporte@viralbook.ai" className="hover:text-primary transition-colors font-medium text-foreground">suporte@viralbook.ai</a></li>
