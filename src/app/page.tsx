@@ -28,7 +28,9 @@ const LEMON_SQUEEZY_CHECKOUT_URLS = {
 
 export default function LandingPage() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
+  const isEn = language === 'en';
+  const isEs = language === 'es';
   const [currency, setCurrency] = useState<'USD' | 'BRL' | 'EUR'>('USD');
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authTab, setAuthTab] = useState<"login" | "signup" | "forgot">("login");
