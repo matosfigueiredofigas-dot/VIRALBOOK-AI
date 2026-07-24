@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { User, Settings, LogOut, ChevronDown, Shield, PlayCircle } from "lucide-react";
 import { startTutorial } from "@/components/tutorial-provider";
+import { LanguageToggle } from "@/components/language-toggle";
 
 interface UserNavProps {
   email: string;
@@ -70,6 +71,11 @@ export function UserNav({ email, isAdmin = false }: UserNavProps) {
               <Settings className="h-4 w-4 text-muted-foreground shrink-0" />
               Configurações
             </a>
+
+            <div className="flex items-center justify-between px-3 py-2 rounded-lg text-sm hover:bg-muted/70 transition-colors text-foreground">
+              <span className="text-xs font-medium text-muted-foreground">Idioma</span>
+              <LanguageToggle />
+            </div>
 
             <button
               onClick={() => {

@@ -81,7 +81,7 @@ export class GroqService {
   /**
    * Pipeline Multi-Agente para descobrir e projetar SaaS
    */
-  static async generateOpportunity(book: any, trendsData: any, redditData: any, facebookData: any, country: string, ideaOrAudience?: any) {
+  static async generateOpportunity(book: any, trendsData: any, redditData: any, facebookData: any, country: string, ideaOrAudience?: any, targetLanguage: string = 'pt') {
     try {
       const isIdeaObject = ideaOrAudience && typeof ideaOrAudience === 'object';
       const targetAudience = isIdeaObject ? ideaOrAudience.audience : (typeof ideaOrAudience === 'string' ? ideaOrAudience : undefined);
@@ -89,12 +89,15 @@ export class GroqService {
       const targetTechnology = isIdeaObject ? ideaOrAudience.technology : undefined;
       const targetMonetization = isIdeaObject ? ideaOrAudience.monetization : undefined;
 
+      const langMap: Record<string, string> = { en: 'English', es: 'Spanish', pt: 'Portuguese' };
+      const languageName = langMap[targetLanguage] || 'Portuguese';
+
       // ---------------------------------------------------------
       // AGENTE 1: O ANALISTA DE NEGÓCIOS & CONCORRÊNCIA
       // Objetivo: Entender a dor, avaliar concorrência e achar o diferencial.
       // ---------------------------------------------------------
       const systemAnalyst = `You are a brilliant Business Analyst. Return a valid JSON.
-Output language MUST be in the native language of the requested country (if country is ALL, output in Portuguese).
+Output language MUST be in ${languageName} (if country is specific, prioritize localized market context in ${languageName}).
 
 Instructions:
 1. Analyze the book metadata, Google Trends data, Reddit pain points, and Facebook signals provided in the user prompt.
@@ -135,7 +138,7 @@ ${targetProblem ? `### Target Problem (You MUST use this problem)\n${targetProbl
       // Objetivo: Criar a solução SaaS e os prompts de código.
       // ---------------------------------------------------------
       const systemArchitect = `You are a brilliant SaaS Technical Architect. Return a valid JSON.
-Output language MUST be in the native language of the requested country (if country is ALL, output in Portuguese).
+Output language MUST be in ${languageName}.
 
 Instructions:
 1. Based on the business analyst's findings (problem, audience, and competitive advantage) and the requested technology or angle, design a Micro-SaaS.
@@ -161,7 +164,7 @@ ${targetTechnology ? `### Target Technology/Angle (You MUST utilize this technol
       // Objetivo: Definir preço e estimativa de MRR.
       // ---------------------------------------------------------
       const systemGrowth = `You are a brilliant SaaS Growth Marketer. Return a valid JSON.
-Output language MUST be in the native language of the requested country (if country is ALL, output in Portuguese), EXCEPT for pricing and revenue values (suggested_price and potential_revenue), which MUST always be specified in USD ($) currency.
+Output language MUST be in ${languageName}, EXCEPT for pricing and revenue values (suggested_price and potential_revenue), which MUST always be specified in USD ($) currency.
 
 Instructions:
 1. Based on the designed SaaS (name, audience, and features) and the requested monetization model, define the business monetization model, suggested price, and potential revenue.
