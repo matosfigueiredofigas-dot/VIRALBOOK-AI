@@ -39,10 +39,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               <SidebarTrigger />
             </div>
 
-            {/* ── CENTER: Trend ticker + Command palette ── */}
+            {/* ── CENTER: Trend ticker ── */}
             <div className="flex flex-1 items-center gap-3 min-w-0 overflow-hidden">
               <TrendTicker />
-              <CommandPaletteTrigger />
             </div>
 
             {/* ── RIGHT: Quick actions + Filters + Profile ── */}
