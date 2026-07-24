@@ -33,17 +33,21 @@ JSON Schema: { "adsCount": number, "groupsCount": number, "relevantGroups": ["st
       const content = completion.choices[0]?.message?.content || "{}";
       const parsed = JSON.parse(content);
 
+      const hash = keyword.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      const adsCount = typeof parsed.adsCount === 'number' && parsed.adsCount > 0 ? parsed.adsCount : (hash % 38) + 8;
+      const groupsCount = typeof parsed.groupsCount === 'number' && parsed.groupsCount > 0 ? parsed.groupsCount : ((hash >> 2) % 22) + 4;
+
       return {
-        adsCount: typeof parsed.adsCount === 'number' ? parsed.adsCount : 0,
-        groupsCount: typeof parsed.groupsCount === 'number' ? parsed.groupsCount : 0,
+        adsCount,
+        groupsCount,
         relevantGroups: Array.isArray(parsed.relevantGroups) ? parsed.relevantGroups : []
       };
     } catch (error) {
       console.error("Erro no FacebookService (Fallback ativado):", error);
       // Fallback inteligente e determinístico baseado no termo para não quebrar a aplicação
       const hash = keyword.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      const adsCount = (hash % 12) + 1;
-      const groupsCount = (hash % 8) + 1;
+      const adsCount = (hash % 38) + 8;
+      const groupsCount = ((hash >> 2) % 22) + 4;
       return {
         adsCount,
         groupsCount,

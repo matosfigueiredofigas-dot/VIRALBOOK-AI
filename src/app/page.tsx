@@ -21,11 +21,6 @@ const LEMON_SQUEEZY_CHECKOUT_URLS = {
     USD: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_PRO_USD_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_USD_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-usd-id",
     BRL: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_PRO_BRL_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BRL_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-brl-id",
     EUR: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_PRO_EUR_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_EUR_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-eur-id"
-  },
-  vip: {
-    USD: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_VIP_USD_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_USD_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-usd-id",
-    BRL: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_VIP_BRL_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BRL_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-brl-id",
-    EUR: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_VIP_EUR_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_EUR_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-eur-id"
   }
 };
 
@@ -55,7 +50,7 @@ export default function LandingPage() {
     return `${m}:${s}`;
   };
 
-  const getPrice = (tier: 'basic' | 'pro' | 'vip', type: 'original' | 'discount') => {
+  const getPrice = (tier: 'basic' | 'pro', type: 'original' | 'discount') => {
     if (tier === 'basic') {
       if (type === 'original') {
         if (currency === 'USD') return '$ 29 único';
@@ -69,24 +64,13 @@ export default function LandingPage() {
     }
     if (tier === 'pro') {
       if (type === 'original') {
-        if (currency === 'USD') return '$ 49 único';
-        if (currency === 'EUR') return '49 € único';
-        return 'R$ 297 único';
+        if (currency === 'USD') return '$ 69 único';
+        if (currency === 'EUR') return '69 € único';
+        return 'R$ 397 único';
       } else {
         if (currency === 'USD') return '$ 19';
         if (currency === 'EUR') return '19 €';
         return 'R$ 97';
-      }
-    }
-    if (tier === 'vip') {
-      if (type === 'original') {
-        if (currency === 'USD') return '$ 89 único';
-        if (currency === 'EUR') return '89 € único';
-        return 'R$ 497 único';
-      } else {
-        if (currency === 'USD') return '$ 29';
-        if (currency === 'EUR') return '29 €';
-        return 'R$ 147';
       }
     }
     return '';
@@ -353,14 +337,14 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="max-w-6xl mx-auto text-left grid md:grid-cols-3 gap-8">
+            <div className="max-w-4xl mx-auto text-left grid md:grid-cols-2 gap-8 items-stretch">
               {/* Card 1: Basic */}
               <div className="rounded-[32px] bg-card border border-border/50 relative flex flex-col justify-between shadow-lg transition-transform hover:-translate-y-1">
                 <div className="p-8 md:p-10 flex flex-col justify-between h-full">
                   <div className="space-y-6">
                     <div>
                       <h3 className="text-2xl font-bold text-foreground">Basic</h3>
-                      <p className="text-sm text-muted-foreground mt-1">Para o iniciante curioso</p>
+                      <p className="text-sm text-muted-foreground mt-1">Para quem quer iniciar a busca por ideias</p>
                     </div>
                     
                     <div className="py-4 border-y border-border/40 my-6">
@@ -377,10 +361,14 @@ export default function LandingPage() {
 
                     <ul className="space-y-4">
                       {[
-                        { active: true, text: 'Acesso ao Ebooks Radar' },
+                        { active: true, text: 'Acesso ao Ebooks Radar & Sinais' },
                         { active: true, text: '50 pesquisas manuais por mês' },
                         { active: true, text: 'Visualização de Tendências Globais' },
-                        { active: false, text: 'Sem geração de Lean Canvas' }
+                        { active: true, text: 'Acesso à Biblioteca Pública de Ideias' },
+                        { active: false, text: 'Geração de Lean Canvas & Blueprints IA' },
+                        { active: false, text: 'Chat com CTO IA & 8 Mentores' },
+                        { active: false, text: 'Gerador de Landing Pages & Funis IA' },
+                        { active: false, text: 'Exportação de relatórios em CSV' }
                       ].map((item, i) => (
                         <li key={i} className={`flex items-start gap-3 text-sm font-medium ${item.active ? 'text-muted-foreground' : 'text-muted-foreground/45 line-through'}`}>
                           {item.active ? (
@@ -407,15 +395,15 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Card 2: Pro */}
-              <div className="p-[2px] rounded-[32px] bg-gradient-to-b from-primary via-primary/50 to-transparent relative group flex flex-col justify-between shadow-2xl scale-105 z-10">
+              {/* Card 2: Pro Vitalício */}
+              <div className="p-[2px] rounded-[32px] bg-gradient-to-b from-primary via-primary/50 to-purple-600/30 relative group flex flex-col justify-between shadow-2xl scale-105 z-10">
                 <div className="absolute inset-0 bg-primary/10 blur-2xl rounded-[32px] -z-10 group-hover:bg-primary/25 transition-all duration-700"/>
                 <div className="bg-card/95 backdrop-blur-xl rounded-[30px] p-8 md:p-10 flex flex-col justify-between h-full border border-border/50">
                   <div className="space-y-6">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">Pro</h3>
-                        <p className="text-sm text-primary mt-1 font-semibold">O Mais Recomendado</p>
+                        <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">Pro Vitalício</h3>
+                        <p className="text-sm text-primary mt-1 font-semibold">O Mais Recomendado - Acesso Total</p>
                       </div>
                       <span className="text-[10px] font-bold px-2 py-1 bg-primary/20 text-primary rounded-full uppercase tracking-wider">Lançamento</span>
                     </div>
@@ -434,13 +422,13 @@ export default function LandingPage() {
 
                     <ul className="space-y-4">
                       {[
-                        'Tudo do plano Basic',
-                        'Pesquisas ilimitadas no Radar',
-                        'Acesso à Biblioteca de Ideias',
-                        'Geração ilimitada de Lean Canvas',
-                        'Acesso ao Chat com CTO IA',
-                        'Conselho de Mentores (IA Avançada)',
-                        'Filtros Globais e Inteligência Groq',
+                        'Tudo do plano Basic com pesquisas ILIMITADAS',
+                        'Geração ilimitada de Lean Canvas & Blueprints IA',
+                        'Chat Direto com CTO IA + Conselho de 8 Mentores',
+                        'Gerador Completo de Landing Pages & Funis IA',
+                        'Exportação de Relatórios e Dados em CSV',
+                        'Filtros Globais Avançados e Inteligência Groq',
+                        'Suporte Prioritário VIP + Atualizações Vitalícias',
                         <span key="timer" className="text-red-500 font-bold flex items-center gap-1.5"><Clock className="w-4 h-4 animate-pulse" /> Oferta expira em: {formatTime(timeLeft)}</span>
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-3 text-muted-foreground text-sm font-medium">
@@ -458,58 +446,7 @@ export default function LandingPage() {
                       rel="noopener noreferrer"
                       className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/85 w-full h-12 text-md font-bold rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5"
                     >
-                      Garantir Acesso Pro
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 3: VIP */}
-              <div className="rounded-[32px] bg-card border border-border/50 relative flex flex-col justify-between shadow-lg transition-transform hover:-translate-y-1">
-                <div className="p-8 md:p-10 flex flex-col justify-between h-full">
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-2xl font-bold text-foreground">All-Access VIP</h3>
-                      <p className="text-sm text-muted-foreground mt-1">Para fundadores sérios</p>
-                    </div>
-                    
-                    <div className="py-4 border-y border-border/40 my-6">
-                      <span className="text-muted-foreground line-through text-md font-medium block">
-                        {getPrice('vip', 'original')}
-                      </span>
-                      <div className="flex items-baseline gap-2 mt-1">
-                        <span className="text-4xl font-extrabold text-foreground tracking-tight">
-                          {getPrice('vip', 'discount')}
-                        </span>
-                      </div>
-                      <span className="text-muted-foreground text-xs font-medium uppercase tracking-widest block mt-2">Pagamento Único</span>
-                    </div>
-
-                    <ul className="space-y-4">
-                      {[
-                        'Tudo do plano Pro',
-                        'Acesso antecipado: Landing Pages IA',
-                        'Acesso antecipado: E-mails IA',
-                        'Exportação de relatórios (CSV)',
-                        'Suporte prioritário via WhatsApp',
-                        <span key="timer" className="text-red-500 font-bold flex items-center gap-1.5"><Clock className="w-4 h-4 animate-pulse" /> Oferta expira em: {formatTime(timeLeft)}</span>
-                      ].map((item, i) => (
-                        <li key={i} className="flex items-start gap-3 text-muted-foreground text-sm font-medium">
-                          <CheckCircle2 className="h-5 w-5 text-purple-500 shrink-0" />
-                          <div className={i === 0 ? "text-foreground font-bold" : ""}>{item}</div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="mt-10 pt-6 border-t border-border/50">
-                    <a 
-                      href={LEMON_SQUEEZY_CHECKOUT_URLS.vip[currency]}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group/button inline-flex shrink-0 items-center justify-center bg-purple-600 text-white hover:bg-purple-700 w-full h-12 text-md font-bold rounded-xl transition-colors"
-                    >
-                      Tornar-se VIP
+                      Garantir Acesso Pro Vitalício
                     </a>
                   </div>
                 </div>

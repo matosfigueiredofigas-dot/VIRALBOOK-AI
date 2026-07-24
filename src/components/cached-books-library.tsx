@@ -10,6 +10,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { Separator } from "@/components/ui/separator"
 import { AIChatModal } from "@/components/ai-chat-modal"
 import { useRouter } from "next/navigation"
+import { getSocialMetrics } from "@/lib/utils"
 
 // Ícone personalizado do Facebook
 function FacebookIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -353,49 +354,54 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                           {/* Canais de Validação */}
                           <div>
                             <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Validação Social & Canais</h4>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                              <div className="bg-orange-500/5 p-4 rounded-lg border border-orange-500/10">
-                                <div className="flex items-center gap-2 text-orange-500 font-bold mb-2">
-                                  <Search className="h-4 w-4" />
-                                  Validação Reddit
-                                </div>
-                                <div className="text-xl font-extrabold text-foreground mb-1">
-                                  {details.reddit_mentions || 0}
-                                  <span className="text-xs font-normal text-muted-foreground ml-1">menções</span>
-                                </div>
-                                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                                  Discussões de dores ativas identificadas em fóruns do Reddit.
-                                </p>
-                              </div>
-   
-                              <div className="bg-blue-600/5 p-4 rounded-lg border border-blue-600/10">
-                                <div className="flex items-center gap-2 text-blue-500 font-bold mb-2">
-                                  <FacebookIcon className="h-4 w-4" />
-                                  Validação Facebook
-                                </div>
-                                <div className="space-y-1">
-                                  <a
-                                    href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}&media_type=all`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-[13px] font-bold text-foreground hover:text-blue-500 hover:underline transition-colors block"
-                                  >
-                                    Anúncios Ativos: <span className="text-blue-500">{details.facebook_ads_count || 0} ads ↗</span>
-                                  </a>
-                                  <a
-                                    href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-[13px] font-bold text-foreground hover:text-indigo-400 hover:underline transition-colors block"
-                                  >
-                                    Grupos do Nicho: <span className="text-indigo-400">{details.facebook_groups_count || 0} ativos ↗</span>
-                                  </a>
-                                </div>
-                                <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
-                                  Presença comercial e audiência mapeada no Facebook.
-                                </p>
-                              </div>
-                            </div>
+                             {(() => {
+                               const detailMetrics = getSocialMetrics(details);
+                               return (
+                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                                   <div className="bg-orange-500/5 p-4 rounded-lg border border-orange-500/10">
+                                     <div className="flex items-center gap-2 text-orange-500 font-bold mb-2">
+                                       <Search className="h-4 w-4" />
+                                       Validação Reddit
+                                     </div>
+                                     <div className="text-xl font-extrabold text-foreground mb-1">
+                                       {detailMetrics.reddit_mentions}
+                                       <span className="text-xs font-normal text-muted-foreground ml-1">menções</span>
+                                     </div>
+                                     <p className="text-[11px] text-muted-foreground leading-relaxed">
+                                       Discussões de dores ativas identificadas em fóruns do Reddit.
+                                     </p>
+                                   </div>
+        
+                                   <div className="bg-blue-600/5 p-4 rounded-lg border border-blue-600/10">
+                                     <div className="flex items-center gap-2 text-blue-500 font-bold mb-2">
+                                       <FacebookIcon className="h-4 w-4" />
+                                       Validação Facebook
+                                     </div>
+                                     <div className="space-y-1">
+                                       <a
+                                         href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}&media_type=all`}
+                                         target="_blank"
+                                         rel="noopener noreferrer"
+                                         className="text-[13px] font-bold text-foreground hover:text-blue-500 hover:underline transition-colors block"
+                                       >
+                                         Anúncios Ativos: <span className="text-blue-500">{detailMetrics.facebook_ads_count} ads ↗</span>
+                                       </a>
+                                       <a
+                                         href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}`}
+                                         target="_blank"
+                                         rel="noopener noreferrer"
+                                         className="text-[13px] font-bold text-foreground hover:text-indigo-400 hover:underline transition-colors block"
+                                       >
+                                         Grupos do Nicho: <span className="text-indigo-400">{detailMetrics.facebook_groups_count} ativos ↗</span>
+                                       </a>
+                                     </div>
+                                     <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
+                                       Presença comercial e audiência mapeada no Facebook.
+                                     </p>
+                                   </div>
+                                 </div>
+                               );
+                             })()}
                           </div>
    
                           {/* Monetização */}

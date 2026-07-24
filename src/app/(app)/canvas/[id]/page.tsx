@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react"
 import { PrintButton } from "@/components/print-button"
 import { LivePreviewModal } from "@/components/live-preview-modal"
 import { LaunchpadManager } from "@/components/launchpad-manager"
+import { getSocialMetrics } from "@/lib/utils"
 
 export const dynamic = 'force-dynamic';
 
@@ -28,6 +29,8 @@ export default async function CanvasPage(props: { params: Promise<{ id: string }
   if (error || !opportunity) {
     notFound();
   }
+
+  const metrics = getSocialMetrics(opportunity);
 
   const { data: initialLeads } = await supabase
     .from('opportunity_leads')
@@ -102,7 +105,7 @@ export default async function CanvasPage(props: { params: Promise<{ id: string }
         {/* Vantagem Injusta (Col 4, Row 1) */}
         <div className="border-r border-b border-border print:border-r-2 print:border-b-2 print:border-black p-4">
           <h2 className="font-bold flex items-center gap-2 mb-2 uppercase text-foreground print:text-black">9. Vantagem Injusta</h2>
-          <p className="text-muted-foreground print:text-gray-700">Primeiro a chegar ao mercado impulsionado por alta demanda no Reddit ({opportunity.reddit_mentions} menções) e crescimento no Google (+{opportunity.trends_growth_monthly}%).</p>
+          <p className="text-muted-foreground print:text-gray-700">Primeiro a chegar ao mercado impulsionado por alta demanda no Reddit ({metrics.reddit_mentions} menções) e crescimento no Google (+{opportunity.trends_growth_monthly}%).</p>
         </div>
 
         {/* Segmento de Clientes (Col 5, Row 1-2) */}

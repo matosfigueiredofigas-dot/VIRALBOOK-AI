@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn, getSocialMetrics } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -421,42 +421,47 @@ function OpportunityCard({ item }: { item: any }) {
       </CardHeader>
       
       <CardContent className="flex-1">
-        <div className="flex flex-wrap gap-4 text-xs sm:text-sm text-muted-foreground mb-4">
-          <div className="flex items-center gap-1" title="Crescimento Mensal (Trends)">
-            <TrendingUp className="h-4 w-4 text-green-500" />
-            <span className="font-semibold text-green-500">+{item.trends_growth_monthly}%</span>
-          </div>
-          <a
-            href={`https://www.reddit.com/search/?q=${encodeURIComponent(item.target_audience || item.saas_name)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 hover:underline hover:text-orange-500 transition-colors"
-            title="Buscar no Reddit"
-          >
-            <Search className="h-4 w-4 text-orange-500" />
-            <span className="font-semibold text-orange-500">{item.reddit_mentions} refs</span>
-          </a>
-          <a
-            href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(item.search_keyword || item.target_audience || item.saas_name)}&media_type=all`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 hover:underline hover:text-blue-600 transition-colors"
-            title="Buscar na Biblioteca de Anúncios do Facebook"
-          >
-            <FacebookIcon className="h-4 w-4 text-blue-600" />
-            <span className="font-semibold text-blue-600">{item.facebook_ads_count || 0} ads</span>
-          </a>
-          <a
-            href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(item.search_keyword || item.target_audience || item.saas_name)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 hover:underline hover:text-indigo-400 transition-colors"
-            title="Buscar Grupos no Facebook"
-          >
-            <Users className="h-4 w-4 text-indigo-400" />
-            <span className="font-semibold text-indigo-400">{item.facebook_groups_count || 0} grps</span>
-          </a>
-        </div>
+        {(() => {
+          const metrics = getSocialMetrics(item);
+          return (
+            <div className="flex flex-wrap gap-4 text-xs sm:text-sm text-muted-foreground mb-4">
+              <div className="flex items-center gap-1" title="Crescimento Mensal (Trends)">
+                <TrendingUp className="h-4 w-4 text-green-500" />
+                <span className="font-semibold text-green-500">+{item.trends_growth_monthly}%</span>
+              </div>
+              <a
+                href={`https://www.reddit.com/search/?q=${encodeURIComponent(item.target_audience || item.saas_name)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 hover:underline hover:text-orange-500 transition-colors"
+                title="Buscar no Reddit"
+              >
+                <Search className="h-4 w-4 text-orange-500" />
+                <span className="font-semibold text-orange-500">{metrics.reddit_mentions} refs</span>
+              </a>
+              <a
+                href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(item.search_keyword || item.target_audience || item.saas_name)}&media_type=all`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 hover:underline hover:text-blue-600 transition-colors"
+                title="Buscar na Biblioteca de Anúncios do Facebook"
+              >
+                <FacebookIcon className="h-4 w-4 text-blue-600" />
+                <span className="font-semibold text-blue-600">{metrics.facebook_ads_count} ads</span>
+              </a>
+              <a
+                href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(item.search_keyword || item.target_audience || item.saas_name)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 hover:underline hover:text-indigo-400 transition-colors"
+                title="Buscar Grupos no Facebook"
+              >
+                <Users className="h-4 w-4 text-indigo-400" />
+                <span className="font-semibold text-indigo-400">{metrics.facebook_groups_count} grps</span>
+              </a>
+            </div>
+          );
+        })()}
 
         <div className="text-sm font-medium mb-1">Diferencial:</div>
         <p className="text-sm text-muted-foreground line-clamp-2">
@@ -549,58 +554,63 @@ function OpportunityCard({ item }: { item: any }) {
                   icon={<Globe className="h-4 w-4 text-teal-400" />}
                 />
                 {showValidation && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <a
-                      href={`https://www.reddit.com/search/?q=${encodeURIComponent(details.target_audience || details.saas_name)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-orange-500/5 p-4 rounded-xl border border-orange-500/10 hover:border-orange-500/30 transition-all block group/reddit"
-                    >
-                      <div className="flex items-center gap-2 text-orange-500 font-bold mb-2">
-                        <Search className="h-5 w-5" />
-                        Validação Reddit
-                      </div>
-                      <div className="text-2xl font-extrabold text-foreground mb-1 group-hover/reddit:text-orange-500 transition-colors">
-                        {details.reddit_mentions || 0}
-                        <span className="text-xs font-normal text-muted-foreground ml-1 underline decoration-muted-foreground/30 group-hover/reddit:decoration-orange-500">menções ↗</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        Representa a quantidade de discussões ativas e manifestações de dores de usuários em subreddits relevantes.
-                      </p>
-                    </a>
+                  (() => {
+                    const detailMetrics = getSocialMetrics(details);
+                    return (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <a
+                          href={`https://www.reddit.com/search/?q=${encodeURIComponent(details.target_audience || details.saas_name)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-orange-500/5 p-4 rounded-xl border border-orange-500/10 hover:border-orange-500/30 transition-all block group/reddit"
+                        >
+                          <div className="flex items-center gap-2 text-orange-500 font-bold mb-2">
+                            <Search className="h-5 w-5" />
+                            Validação Reddit
+                          </div>
+                          <div className="text-2xl font-extrabold text-foreground mb-1 group-hover/reddit:text-orange-500 transition-colors">
+                            {detailMetrics.reddit_mentions}
+                            <span className="text-xs font-normal text-muted-foreground ml-1 underline decoration-muted-foreground/30 group-hover/reddit:decoration-orange-500">menções ↗</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground leading-relaxed">
+                            Representa a quantidade de discussões ativas e manifestações de dores de usuários em subreddits relevantes.
+                          </p>
+                        </a>
 
-                    <div className="bg-blue-600/5 p-4 rounded-xl border border-blue-600/10 flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center gap-2 text-blue-500 font-bold mb-2">
-                          <FacebookIcon className="h-5 w-5" />
-                          Validação Facebook
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <a
-                            href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}&media_type=all`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-sm font-bold text-foreground hover:text-blue-500 transition-colors flex items-center justify-between group/link border-b border-border/20 pb-1"
-                          >
-                            <span>Anúncios Ativos:</span>
-                            <span className="text-blue-500 underline decoration-blue-500/30 group-hover/link:decoration-blue-500">{details.facebook_ads_count || 0} campanhas ↗</span>
-                          </a>
-                          <a
-                            href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-sm font-bold text-foreground hover:text-indigo-400 transition-colors flex items-center justify-between group/link"
-                          >
-                            <span>Grupos do Nicho:</span>
-                            <span className="text-indigo-400 underline decoration-indigo-400/30 group-hover/link:decoration-indigo-400">{details.facebook_groups_count || 0} ativos ↗</span>
-                          </a>
+                        <div className="bg-blue-600/5 p-4 rounded-xl border border-blue-600/10 flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-center gap-2 text-blue-500 font-bold mb-2">
+                              <FacebookIcon className="h-5 w-5" />
+                              Validação Facebook
+                            </div>
+                            <div className="flex flex-col gap-2">
+                              <a
+                                href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}&media_type=all`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm font-bold text-foreground hover:text-blue-500 transition-colors flex items-center justify-between group/link border-b border-border/20 pb-1"
+                              >
+                                <span>Anúncios Ativos:</span>
+                                <span className="text-blue-500 underline decoration-blue-500/30 group-hover/link:decoration-blue-500">{detailMetrics.facebook_ads_count} campanhas ↗</span>
+                              </a>
+                              <a
+                                href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm font-bold text-foreground hover:text-indigo-400 transition-colors flex items-center justify-between group/link"
+                              >
+                                <span>Grupos do Nicho:</span>
+                                <span className="text-indigo-400 underline decoration-indigo-400/30 group-hover/link:decoration-indigo-400">{detailMetrics.facebook_groups_count} ativos ↗</span>
+                              </a>
+                            </div>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
+                            Presença comercial de anúncios concorrentes e grupos ativos ideais para tráfego orgânico e prospecção.
+                          </p>
                         </div>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
-                        Presença comercial de anúncios concorrentes e grupos ativos ideais para tráfego orgânico e prospecção.
-                      </p>
-                    </div>
-                  </div>
+                    );
+                  })()
                 )}
               </div>
 

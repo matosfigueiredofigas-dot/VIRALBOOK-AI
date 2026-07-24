@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { TrendingUp, MessageSquare, Sparkles, Globe, Lock } from "lucide-react"
+import { getSocialMetrics } from "@/lib/utils"
 
 export const dynamic = 'force-dynamic';
 
@@ -22,6 +23,7 @@ export default async function SharedOpportunityPage(props: { params: Promise<{ i
   }
 
   const score = opportunity.viral_opportunity_score || 0;
+  const metrics = getSocialMetrics(opportunity);
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 py-12">
@@ -69,7 +71,7 @@ export default async function SharedOpportunityPage(props: { params: Promise<{ i
               </div>
               <div className="bg-black/5 dark:bg-black/20 p-4 rounded-xl border border-border/50 flex flex-col items-center justify-center text-center">
                 <MessageSquare className="h-6 w-6 text-orange-500 mb-2" />
-                <span className="text-2xl font-bold text-orange-500">{opportunity.reddit_mentions} refs</span>
+                <span className="text-2xl font-bold text-orange-500">{metrics.reddit_mentions} refs</span>
                 <span className="text-sm text-muted-foreground">Validação Reddit</span>
               </div>
             </div>
