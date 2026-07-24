@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn, getSocialMetrics } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,7 @@ function FacebookIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 import { AIChatModal } from "@/components/ai-chat-modal";
+import { useLanguage } from "@/contexts/language-context";
 
 interface CollapsibleHeaderProps {
   title: string;
@@ -95,6 +96,9 @@ const getCountryFlag = (code: string) => {
 // Sub-componente para isolar os estados individuais (como expandir a sheet)
 function OpportunityCard({ item }: { item: any }) {
   const router = useRouter();
+  const { language, t } = useLanguage();
+  const isEn = language === 'en';
+  const isEs = language === 'es';
   const pathname = usePathname();
   const [copiedPrompt, setCopiedPrompt] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -104,7 +108,7 @@ function OpportunityCard({ item }: { item: any }) {
   const [mappingReddit, setMappingReddit] = useState(false);
   const [marketingKit, setMarketingKit] = useState<any>(item.marketing_kit || {});
   const [generatingKit, setGeneratingKit] = useState(false);
-  const [marketingTab, setMarketingTab] = useState<"twitter" | "linkedin" | "tiktok" | "email">("twitter");
+  const [marketingTab, setMarketingTab] = useState<"twitter" | "linkedin" | "tiktok" | "facebook" | "instagram" | "google" | "email">("twitter");
   const [copiedMarketing, setCopiedMarketing] = useState<string | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   // Collapsible section states - start collapsed (false) to prevent infinite scrolling
@@ -125,7 +129,48 @@ function OpportunityCard({ item }: { item: any }) {
   const [generatingModule, setGeneratingModule] = useState<string | null>(null);
 
   const [details, setDetails] = useState<any>(null);
+  const [displayDetails, setDisplayDetails] = useState<any>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
+
+  useEffect(() => {
+    if (!details) {
+      setDisplayDetails(null);
+      return;
+    }
+    if (language === 'pt') {
+      setDisplayDetails(details);
+      return;
+    }
+
+    const detailsStr = JSON.stringify(details);
+    const cacheKey = `vbook_trans_det_full_${details.id}_${language}_${detailsStr.length}`;
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) {
+      try {
+        setDisplayDetails(JSON.parse(cached));
+        return;
+      } catch (e) {}
+    }
+
+    fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        targetLanguage: language,
+        payload: details
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.translatedPayload) {
+          sessionStorage.setItem(cacheKey, JSON.stringify(data.translatedPayload));
+          setDisplayDetails(data.translatedPayload);
+        } else {
+          setDisplayDetails(details);
+        }
+      })
+      .catch(() => setDisplayDetails(details));
+  }, [details, language]);
 
   const handleSheetOpen = async (open: boolean) => {
     setIsSheetOpen(open);
@@ -189,17 +234,20 @@ function OpportunityCard({ item }: { item: any }) {
       const res = await fetch("/api/opportunities/marketing-kit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ opportunityId: item.id }),
+        body: JSON.stringify({ opportunityId: item.id, language, forceRegenerate: true }),
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Erro ao gerar o Kit de Marketing.");
+        throw new Error(data.error || (isEn ? "Error generating Marketing Kit." : isEs ? "Error al generar el Kit de Marketing." : "Erro ao gerar o Kit de Marketing."));
       }
-      setMarketingKit(data.marketingKit || {});
+      const newKit = data.marketingKit || {};
+      setMarketingKit(newKit);
+      setDetails((prev: any) => prev ? { ...prev, marketing_kit: newKit } : prev);
+      setDisplayDetails((prev: any) => prev ? { ...prev, marketing_kit: newKit } : prev);
       setShowMarketingKit(true);
       router.refresh();
     } catch (err: any) {
-      alert(err.message || "Erro de conexão ao gerar o Kit de Marketing.");
+      alert(err.message || (isEn ? "Connection error generating Marketing Kit." : isEs ? "Error de conexión al generar el Kit de Marketing." : "Erro de conexão ao gerar o Kit de Marketing."));
     } finally {
       setGeneratingKit(false);
     }
@@ -239,12 +287,13 @@ function OpportunityCard({ item }: { item: any }) {
           saasName: item.saas_name,
           problem: item.problem_solved,
           audience: item.target_audience,
-          features: item.mvp_features
+          features: item.mvp_features,
+          language
         }),
       });
       
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Erro ao gerar o módulo");
+      if (!res.ok) throw new Error(json.error || (isEn ? "Error generating module" : isEs ? "Error al generar módulo" : "Erro ao gerar o módulo"));
       
       if (moduleType === 'cursor') {
         setCursorRules(json.data);
@@ -260,7 +309,8 @@ function OpportunityCard({ item }: { item: any }) {
         'sql': 'sql_schema'
       };
       
-      setDetails((prev: any) => ({ ...prev, [colMap[moduleType]]: json.data }));
+      setDetails((prev: any) => prev ? ({ ...prev, [colMap[moduleType]]: json.data }) : { [colMap[moduleType]]: json.data });
+      setDisplayDetails((prev: any) => prev ? ({ ...prev, [colMap[moduleType]]: json.data }) : { [colMap[moduleType]]: json.data });
       
       // Auto open the generated section
       if (moduleType === 'gtm') setShowGtmRoadmap(true);
@@ -270,7 +320,7 @@ function OpportunityCard({ item }: { item: any }) {
       if (moduleType === 'sql') setShowSqlSchema(true);
       
     } catch (err: any) {
-      alert(err.message || "Erro de conexão ao gerar módulo avançado.");
+      alert(err.message || (isEn ? "Connection error generating advanced module." : isEs ? "Error de conexión al generar módulo avanzado." : "Erro de conexão ao gerar módulo avançado."));
     } finally {
       setGeneratingModule(null);
     }
@@ -282,13 +332,16 @@ function OpportunityCard({ item }: { item: any }) {
       const res = await fetch("/api/opportunities/reddit-pain-points", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ opportunityId: item.id }),
+        body: JSON.stringify({ opportunityId: item.id, language }),
       });
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.error || "Erro ao mapear dores.");
       }
-      setRedditPainPoints(data.painPoints || []);
+      const newPoints = data.painPoints || [];
+      setRedditPainPoints(newPoints);
+      setDetails((prev: any) => prev ? { ...prev, reddit_pain_points: newPoints } : prev);
+      setDisplayDetails((prev: any) => prev ? { ...prev, reddit_pain_points: newPoints } : prev);
       setShowRedditPainPoints(true);
       router.refresh();
     } catch (err: any) {
@@ -338,7 +391,7 @@ function OpportunityCard({ item }: { item: any }) {
               size="icon" 
               className="h-8 w-8 text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10"
               onClick={() => handleShare(item.id)}
-              title="Copiar Link Secreto"
+              title={isEn ? "Copy Secret Link" : isEs ? "Copiar Enlace Secreto" : "Copiar Link Secreto"}
             >
               <Share2 className="h-4 w-4" />
             </Button>
@@ -349,17 +402,17 @@ function OpportunityCard({ item }: { item: any }) {
               onClick={async () => {
                 const isFavoritePage = pathname?.includes('/favorites');
                 if (isFavoritePage) {
-                  if (confirm("Deseja remover esta oportunidade dos favoritos?")) {
+                  if (confirm(isEn ? "Remove this opportunity from favorites?" : isEs ? "¿Quitar de favoritos?" : "Deseja remover esta oportunidade dos favoritos?")) {
                     const res = await fetch('/api/favorites', {
                       method: 'DELETE',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ opportunityId: item.id })
                     });
                     if (res.ok) {
-                      alert('Removido dos favoritos!');
+                      alert(isEn ? "Removed from favorites!" : isEs ? "¡Eliminado de favoritos!" : "Removido dos favoritos!");
                       router.refresh();
                     } else {
-                      alert('Erro ao remover.');
+                      alert(isEn ? "Error removing." : isEs ? "Error al eliminar." : "Erro ao remover.");
                     }
                   }
                 } else {
@@ -371,11 +424,11 @@ function OpportunityCard({ item }: { item: any }) {
                   if (res.status === 401) {
                     router.push('/login');
                   } else if (res.ok) {
-                    alert('Adicionado aos favoritos!');
+                    alert(isEn ? "Added to favorites!" : isEs ? "¡Añadido a favoritos!" : "Adicionado aos favoritos!");
                   }
                 }
               }}
-              title={pathname?.includes('/favorites') ? "Remover dos Favoritos" : "Favoritar"}
+              title={pathname?.includes('/favorites') ? (isEn ? "Remove from Favorites" : isEs ? "Quitar de Favoritos" : "Remover dos Favoritos") : (isEn ? "Favorite" : isEs ? "Favorito" : "Favoritar")}
             >
               <Heart className={`h-4 w-4 ${pathname?.includes('/favorites') ? "fill-red-500 text-red-500" : ""}`} />
             </Button>
@@ -383,8 +436,8 @@ function OpportunityCard({ item }: { item: any }) {
               variant="ghost" 
               size="icon" 
               className="h-8 w-8 text-muted-foreground hover:text-yellow-500 hover:bg-yellow-500/10"
-              onClick={() => alert("Alerta de Monitoramento ativado! Avisaremos se este nicho explodir.")}
-              title="Monitorar Alerta"
+              onClick={() => alert(isEn ? "Monitoring alert activated! We will notify you if this niche explodes." : isEs ? "¡Alerta de monitoreo activada!" : "Alerta de Monitoramento ativado! Avisaremos se este nicho explodir.")}
+              title={isEn ? "Monitor Alert" : isEs ? "Monitorear Alerta" : "Monitorar Alerta"}
             >
               <Bell className="h-4 w-4" />
             </Button>
@@ -393,22 +446,22 @@ function OpportunityCard({ item }: { item: any }) {
               size="icon" 
               className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-500/10"
               onClick={async () => {
-                if (confirm(`Tem certeza que deseja excluir permanentemente a oportunidade "${item.saas_name}"?`)) {
+                if (confirm(isEn ? `Are you sure you want to permanently delete "${item.saas_name}"?` : isEs ? `¿Está seguro de eliminar "${item.saas_name}"?` : `Tem certeza que deseja excluir permanentemente a oportunidade "${item.saas_name}"?`)) {
                   const res = await fetch('/api/radar', {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: item.id })
                   });
                   if (res.ok) {
-                    alert('Oportunidade excluída com sucesso!');
+                    alert(isEn ? "Opportunity deleted successfully!" : isEs ? "¡Oportunidad eliminada con éxito!" : "Oportunidade excluída com sucesso!");
                     router.refresh();
                   } else {
                     const errData = await res.json().catch(() => ({}));
-                    alert(errData.error || 'Erro ao excluir oportunidade.');
+                    alert(errData.error || (isEn ? "Error deleting opportunity." : isEs ? "Error al eliminar la oportunidad." : "Erro ao excluir oportunidade."));
                   }
                 }
               }}
-              title="Excluir Oportunidade"
+              title={isEn ? "Delete Opportunity" : isEs ? "Eliminar Oportunidad" : "Excluir Oportunidade"}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -425,7 +478,7 @@ function OpportunityCard({ item }: { item: any }) {
           const metrics = getSocialMetrics(item);
           return (
             <div className="flex flex-wrap gap-4 text-xs sm:text-sm text-muted-foreground mb-4">
-              <div className="flex items-center gap-1" title="Crescimento Mensal (Trends)">
+              <div className="flex items-center gap-1" title={isEn ? "Monthly Growth (Trends)" : isEs ? "Crecimiento Mensual (Trends)" : "Crescimento Mensual (Trends)"}>
                 <TrendingUp className="h-4 w-4 text-green-500" />
                 <span className="font-semibold text-green-500">+{item.trends_growth_monthly}%</span>
               </div>
@@ -434,7 +487,7 @@ function OpportunityCard({ item }: { item: any }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 hover:underline hover:text-orange-500 transition-colors"
-                title="Buscar no Reddit"
+                title={isEn ? "Search on Reddit" : isEs ? "Buscar en Reddit" : "Buscar no Reddit"}
               >
                 <Search className="h-4 w-4 text-orange-500" />
                 <span className="font-semibold text-orange-500">{metrics.reddit_mentions} refs</span>
@@ -444,7 +497,7 @@ function OpportunityCard({ item }: { item: any }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 hover:underline hover:text-blue-600 transition-colors"
-                title="Buscar na Biblioteca de Anúncios do Facebook"
+                title={isEn ? "Search on Meta Ads Library" : isEs ? "Buscar en Meta Ads Library" : "Buscar na Biblioteca de Anúncios do Facebook"}
               >
                 <FacebookIcon className="h-4 w-4 text-blue-600" />
                 <span className="font-semibold text-blue-600">{metrics.facebook_ads_count} ads</span>
@@ -489,57 +542,62 @@ function OpportunityCard({ item }: { item: any }) {
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="bg-white text-black hover:bg-zinc-100 hover:text-black dark:bg-white dark:text-black dark:hover:bg-zinc-200 border-none"
+                    className="bg-white text-black hover:bg-zinc-100 hover:text-black dark:bg-white dark:text-black dark:hover:bg-zinc-200 border-none cursor-pointer"
                     onClick={() => window.open(`/canvas/${item.id}`, '_blank')}
                   >
-                    <FileText className="h-4 w-4 mr-2" /> Gerar Lean Canvas
+                    <FileText className="h-4 w-4 mr-2" /> {t.blueprint.btnLeanCanvas}
                   </Button>
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="bg-purple-600 text-white hover:bg-purple-700 hover:text-white dark:bg-purple-600 dark:text-white dark:hover:bg-purple-700 border-none"
+                    className="bg-purple-600 text-white hover:bg-purple-700 hover:text-white dark:bg-purple-600 dark:text-white dark:hover:bg-purple-700 border-none cursor-pointer"
                     onClick={() => router.push(`/advisors?oppId=${item.id}`)}
                   >
-                    <Users className="h-4 w-4 mr-2" /> Falar com Mentores
+                    <Users className="h-4 w-4 mr-2" /> {t.blueprint.btnMentors}
                   </Button>
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="bg-emerald-600 text-white hover:bg-emerald-700 hover:text-white dark:bg-emerald-600 dark:text-white dark:hover:bg-emerald-700 border-none"
+                    className="bg-emerald-600 text-white hover:bg-emerald-700 hover:text-white dark:bg-emerald-600 dark:text-white dark:hover:bg-emerald-700 border-none cursor-pointer"
                     onClick={() => setIsChatOpen(true)}
                   >
-                    <MessageSquare className="h-4 w-4 mr-2" /> Falar com CTO (IA)
+                    <MessageSquare className="h-4 w-4 mr-2" /> {t.blueprint.btnCto}
                   </Button>
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="bg-yellow-500 text-black hover:bg-yellow-600 hover:text-black dark:bg-yellow-500 dark:text-black dark:hover:bg-yellow-600 border-none"
+                    className="bg-yellow-500 text-black hover:bg-yellow-600 hover:text-black dark:bg-yellow-500 dark:text-black dark:hover:bg-yellow-600 border-none cursor-pointer"
                     onClick={handleGenerateLandingPage}
                     disabled={generatingLP}
                   >
                     {generatingLP ? (
                       <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Gerando...
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" /> {t.blueprint.generatingLp}
                       </>
                     ) : (
                       <>
-                        <Globe className="h-4 w-4 mr-2" /> Gerar Landing Page
+                        <Globe className="h-4 w-4 mr-2" /> {t.blueprint.btnLandingPage}
                       </>
                     )}
                   </Button>
                 </div>
               </SheetTitle>
               <SheetDescription className="text-base text-foreground mt-2">
-                {item.problem_solved}
+                {displayDetails?.problem_solved || item.problem_solved}
               </SheetDescription>
             </SheetHeader>
             
             {loadingDetails ? (
               <div className="flex flex-col items-center justify-center py-20 gap-3 text-muted-foreground">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className="text-sm font-medium">Carregando detalhes e prompts...</p>
+                <p className="text-sm font-medium">{t.blueprint.loadingDetails}</p>
               </div>
             ) : details ? (
+            (() => {
+              const activeDetails = displayDetails || details;
+              const activeRedditPainPoints = (redditPainPoints && redditPainPoints.length > 0) ? redditPainPoints : (activeDetails?.reddit_pain_points || []);
+              const activeMarketingKit = (marketingKit && Object.keys(marketingKit).length > 0) ? marketingKit : (activeDetails?.marketing_kit || {});
+              return (
             <div className="space-y-4">
               {/* ═══════════════════════════════════════════ */}
               {/* FASE 1: VALIDAÇÃO — Entender se há demanda */}
@@ -548,32 +606,38 @@ function OpportunityCard({ item }: { item: any }) {
               {/* 1. Validação Social & Canais */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
-                  title="Validação Social & Canais"
+                  title={t.blueprint.socialValidation}
                   isOpen={showValidation}
                   onToggle={() => setShowValidation(!showValidation)}
                   icon={<Globe className="h-4 w-4 text-teal-400" />}
                 />
                 {showValidation && (
                   (() => {
-                    const detailMetrics = getSocialMetrics(details);
+                    const detailMetrics = getSocialMetrics(activeDetails);
                     return (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
                         <a
-                          href={`https://www.reddit.com/search/?q=${encodeURIComponent(details.target_audience || details.saas_name)}`}
+                          href={`https://www.reddit.com/search/?q=${encodeURIComponent(activeDetails.target_audience || activeDetails.saas_name)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="bg-orange-500/5 p-4 rounded-xl border border-orange-500/10 hover:border-orange-500/30 transition-all block group/reddit"
                         >
                           <div className="flex items-center gap-2 text-orange-500 font-bold mb-2">
                             <Search className="h-5 w-5" />
-                            Validação Reddit
+                            {isEn ? "Reddit Validation" : isEs ? "Validación de Reddit" : "Validação Reddit"}
                           </div>
                           <div className="text-2xl font-extrabold text-foreground mb-1 group-hover/reddit:text-orange-500 transition-colors">
                             {detailMetrics.reddit_mentions}
-                            <span className="text-xs font-normal text-muted-foreground ml-1 underline decoration-muted-foreground/30 group-hover/reddit:decoration-orange-500">menções ↗</span>
+                            <span className="text-xs font-normal text-muted-foreground ml-1 underline decoration-muted-foreground/30 group-hover/reddit:decoration-orange-500">
+                              {isEn ? "mentions ↗" : isEs ? "menciones ↗" : "menções ↗"}
+                            </span>
                           </div>
                           <p className="text-xs text-muted-foreground leading-relaxed">
-                            Representa a quantidade de discussões ativas e manifestações de dores de usuários em subreddits relevantes.
+                            {isEn 
+                              ? "Represents active user discussions and pain point expressions across relevant subreddits." 
+                              : isEs 
+                              ? "Representa la cantidad de discusiones activas y manifestaciones de dolores de usuarios en subreddits relevantes." 
+                              : "Representa a quantidade de discussões ativas e manifestações de dores de usuários em subreddits relevantes."}
                           </p>
                         </a>
 
@@ -581,31 +645,39 @@ function OpportunityCard({ item }: { item: any }) {
                           <div>
                             <div className="flex items-center gap-2 text-blue-500 font-bold mb-2">
                               <FacebookIcon className="h-5 w-5" />
-                              Validação Facebook
+                              {isEn ? "Facebook Validation" : isEs ? "Validación de Facebook" : "Validação Facebook"}
                             </div>
                             <div className="flex flex-col gap-2">
                               <a
-                                href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}&media_type=all`}
+                                href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(activeDetails.search_keyword || activeDetails.target_audience || activeDetails.saas_name)}&media_type=all`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-sm font-bold text-foreground hover:text-blue-500 transition-colors flex items-center justify-between group/link border-b border-border/20 pb-1"
                               >
-                                <span>Anúncios Ativos:</span>
-                                <span className="text-blue-500 underline decoration-blue-500/30 group-hover/link:decoration-blue-500">{detailMetrics.facebook_ads_count} campanhas ↗</span>
+                                <span>{isEn ? "Active Ads:" : isEs ? "Anuncios Activos:" : "Anúncios Ativos:"}</span>
+                                <span className="text-blue-500 underline decoration-blue-500/30 group-hover/link:decoration-blue-500">
+                                  {detailMetrics.facebook_ads_count} {isEn ? "campaigns ↗" : isEs ? "campañas ↗" : "campanhas ↗"}
+                                </span>
                               </a>
                               <a
-                                href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}`}
+                                href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(activeDetails.search_keyword || activeDetails.target_audience || activeDetails.saas_name)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-sm font-bold text-foreground hover:text-indigo-400 transition-colors flex items-center justify-between group/link"
                               >
-                                <span>Grupos do Nicho:</span>
-                                <span className="text-indigo-400 underline decoration-indigo-400/30 group-hover/link:decoration-indigo-400">{detailMetrics.facebook_groups_count} ativos ↗</span>
+                                <span>{isEn ? "Niche Groups:" : isEs ? "Grupos del Nicho:" : "Grupos do Nicho:"}</span>
+                                <span className="text-indigo-400 underline decoration-indigo-400/30 group-hover/link:decoration-indigo-400">
+                                  {detailMetrics.facebook_groups_count} {isEn ? "active ↗" : isEs ? "activos ↗" : "ativos ↗"}
+                                </span>
                               </a>
                             </div>
                           </div>
                           <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
-                            Presença comercial de anúncios concorrentes e grupos ativos ideais para tráfego orgânico e prospecção.
+                            {isEn 
+                              ? "Commercial presence of competitor ads and active community groups ideal for organic traffic and outreach." 
+                              : isEs 
+                              ? "Presencia comercial de anuncios competidores y grupos activos ideales para tráfico orgánico y prospección." 
+                              : "Presença comercial de anúncios concorrentes e grupos ativos ideais para tráfego orgânico e prospecção."}
                           </p>
                         </div>
                       </div>
@@ -617,42 +689,46 @@ function OpportunityCard({ item }: { item: any }) {
               {/* 2. Dores Reais do Reddit (Mapeador de IA) */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
-                  title="Dores Reais do Reddit (Mapeador de IA)"
+                  title={isEn ? "REAL REDDIT PAIN POINTS (AI MAPPER)" : isEs ? "DOLORES REALES DE REDDIT (MAPEADOR IA)" : "DORES REAIS DO REDDIT (MAPEADOR DE IA)"}
                   isOpen={showRedditPainPoints}
                   onToggle={() => setShowRedditPainPoints(!showRedditPainPoints)}
                   icon={<Search className="h-4 w-4 text-orange-500" />}
-                  badge={redditPainPoints.length > 0 && (
+                  badge={activeRedditPainPoints.length > 0 && (
                     <Badge variant="secondary" className="bg-orange-500/10 text-orange-400 border-none text-[10px] px-1.5 h-4">
-                      {redditPainPoints.length}
+                      {activeRedditPainPoints.length}
                     </Badge>
                   )}
                 />
                 {showRedditPainPoints && (
                   <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
-                    {redditPainPoints.length === 0 ? (
+                    {activeRedditPainPoints.length === 0 ? (
                       <div className="bg-orange-500/5 p-5 rounded-lg border border-orange-500/10 text-center space-y-4">
                         <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                          Ainda não mapeado. Deixe a IA analisar as discussões e desabafos dos usuários no Reddit para extrair dores críticas e reais do seu público-alvo.
+                          {isEn 
+                            ? "Not mapped yet. Let AI analyze Reddit user discussions and rants to extract real critical pain points from your target audience." 
+                            : isEs 
+                            ? "Aún no mapeado. Deje que la IA analice las discusiones y desahogos de los usuarios en Reddit para extraer dolores críticos y reales de su público objetivo." 
+                            : "Ainda não mapeado. Deixe a IA analisar as discussões e desabafos dos usuários no Reddit para extrair dores críticas e reais do seu público-alvo."}
                         </p>
                         <Button
                           onClick={handleMapRedditPainPoints}
                           disabled={mappingReddit}
-                          className="bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2"
+                          className="bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-xl h-10 px-5 text-xs inline-flex items-center gap-2 shadow-lg shadow-orange-600/20"
                         >
                           {mappingReddit ? (
                             <>
-                              <Loader2 className="h-4 w-4 animate-spin" /> Mapeando dores...
+                              <Loader2 className="h-4 w-4 animate-spin" /> {isEn ? "Mapping pain points..." : isEs ? "Mapeando dolores..." : "Mapeando dores..."}
                             </>
                           ) : (
                             <>
-                              <Sparkles className="h-4 w-4 text-yellow-300 animate-pulse" /> Mapear Dores Reais (Reddit)
+                              <Sparkles className="h-4 w-4 text-yellow-300 animate-pulse" /> {isEn ? "Map Real Pain Points (Reddit)" : isEs ? "Mapear Dolores Reales (Reddit)" : "Mapear Dores Reais (Reddit)"}
                             </>
                           )}
                         </Button>
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        {redditPainPoints.map((pain: any, index: number) => (
+                        {activeRedditPainPoints.map((pain: any, index: number) => (
                           <div key={index} className="bg-orange-500/5 border border-orange-500/10 p-5 rounded-xl space-y-3 transition-all hover:border-orange-500/20">
                             <div className="flex justify-between items-start gap-2">
                               <h5 className="font-extrabold text-sm text-white leading-snug">
@@ -669,7 +745,7 @@ function OpportunityCard({ item }: { item: any }) {
                                     : "bg-zinc-800 text-zinc-400"
                                 )}
                               >
-                                Severidade: {pain.severity}/5
+                                {isEn ? "Severity:" : isEs ? "Severidad:" : "Severidade:"} {pain.severity}/5
                               </Badge>
                             </div>
 
@@ -686,7 +762,7 @@ function OpportunityCard({ item }: { item: any }) {
                             {pain.source_title && (
                               <div className="pt-2.5 text-[10px] text-muted-foreground flex justify-between items-center flex-wrap gap-2 border-t border-white/5">
                                 <span className="truncate max-w-[220px]" title={pain.source_title}>
-                                  Origem: {pain.source_title}
+                                  {isEn ? "Source:" : isEs ? "Origen:" : "Origem:"} {pain.source_title}
                                 </span>
                                 {pain.source_url && (
                                   <a 
@@ -695,7 +771,7 @@ function OpportunityCard({ item }: { item: any }) {
                                     rel="noopener noreferrer" 
                                     className="text-orange-400 hover:text-orange-300 hover:underline inline-flex items-center gap-0.5"
                                   >
-                                    Ver Discussão ↗
+                                    {isEn ? "View Discussion ↗" : isEs ? "Ver Discusión ↗" : "Ver Discussão ↗"}
                                   </a>
                                 )}
                               </div>
@@ -712,11 +788,11 @@ function OpportunityCard({ item }: { item: any }) {
                           >
                             {mappingReddit ? (
                               <>
-                                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Remapeando...
+                                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> {isEn ? "Remapping..." : isEs ? "Remapeando..." : "Remapeando..."}
                               </>
                             ) : (
                               <>
-                                Refazer Análise de IA ↗
+                                {isEn ? "Redo AI Analysis ↗" : isEs ? "Rehacer Análisis de IA ↗" : "Refazer Análise de IA ↗"}
                               </>
                             )}
                           </Button>
@@ -730,31 +806,35 @@ function OpportunityCard({ item }: { item: any }) {
               {/* 3. Análise de Concorrentes */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
-                  title="Análise de Concorrentes & Brechas"
+                  title={t.blueprint.competitors}
                   isOpen={showCompetitors}
                   onToggle={() => setShowCompetitors(!showCompetitors)}
                   icon={<Crosshair className="h-4 w-4 text-red-400" />}
                 />
                 {showCompetitors && (
                   <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
-                    {!details?.competitor_analysis ? (
+                    {!activeDetails?.competitor_analysis ? (
                       <div className="text-center p-4">
                         <Button 
                           onClick={() => handleGeneratePremiumModule('competitor')} 
                           disabled={generatingModule === 'competitor'}
-                          className="bg-red-600 hover:bg-red-500 text-white"
+                          className="bg-red-600 hover:bg-red-500 text-white cursor-pointer"
                         >
                           {generatingModule === 'competitor' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
-                          Analisar Concorrentes (IA)
+                          {isEn ? "Analyze Competitors (AI)" : isEs ? "Analizar Competidores (IA)" : "Analisar Concorrentes (IA)"}
                         </Button>
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        {details.competitor_analysis.competitors?.map((comp: any, i: number) => (
+                        {activeDetails.competitor_analysis.competitors?.map((comp: any, i: number) => (
                           <div key={i} className="bg-zinc-950/50 p-3 rounded-lg border border-red-500/10">
                             <div className="font-bold text-red-400 text-sm mb-1">{comp.name}</div>
-                            <div className="text-xs text-zinc-300"><strong>Fraqueza:</strong> {comp.weakness}</div>
-                            <div className="text-xs text-green-400 mt-1"><strong>Nossa Vantagem:</strong> {comp.our_advantage}</div>
+                            <div className="text-xs text-zinc-300">
+                              <strong>{isEn ? "Weakness:" : isEs ? "Debilidad:" : "Fraqueza:"}</strong> {comp.weakness}
+                            </div>
+                            <div className="text-xs text-green-400 mt-1">
+                              <strong>{isEn ? "Our Advantage:" : isEs ? "Nuestra Ventaja:" : "Nossa Vantagem:"}</strong> {comp.our_advantage}
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -770,31 +850,32 @@ function OpportunityCard({ item }: { item: any }) {
               {/* 4. Como Monetizar */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
-                  title="Como Monetizar"
+                  title={t.blueprint.monetization}
                   isOpen={showMonetization}
                   onToggle={() => setShowMonetization(!showMonetization)}
                   icon={<DollarSign className="h-4 w-4 text-green-400" />}
                 />
                 {showMonetization && (
                   <div className="bg-muted/50 p-4 rounded-xl border border-border/50 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <p className="text-foreground text-sm">{details.monetization_model}</p>
+                    <p className="text-foreground text-sm">{activeDetails.monetization_model}</p>
                     <Separator className="my-3" />
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-muted-foreground">Preço Sugerido:</span>
-                      <span className="font-bold text-green-500">{details.suggested_price?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
+                      <span className="text-muted-foreground">{isEn ? "Suggested Price:" : isEs ? "Precio Sugerido:" : "Preço Sugerido:"}</span>
+                      <span className="font-bold text-green-500">{activeDetails.suggested_price?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
                     </div>
                     <div className="flex justify-between items-center text-sm mt-2">
-                      <span className="text-muted-foreground">Potencial:</span>
-                      <span className="font-bold">{details.potential_revenue?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
+                      <span className="text-muted-foreground">{isEn ? "Potential Revenue:" : isEs ? "Ingresos Potenciales:" : "Potencial:"}</span>
+                      <span className="font-bold">{activeDetails.potential_revenue?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
                     </div>
 
                     <div className="mt-6">
                       <div className="text-xs font-bold text-zinc-400 mb-4 flex items-center gap-2">
-                        <BarChart3 className="h-4 w-4 text-green-500" /> Projeção de MRR (12 Meses)
+                        <BarChart3 className="h-4 w-4 text-green-500" /> 
+                        {isEn ? "MRR Projection (12 Months)" : isEs ? "Proyección de MRR (12 Meses)" : "Projeção de MRR (12 Meses)"}
                       </div>
                       <div className="h-48 w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                          <LineChart data={generateMrrData(details.suggested_price)}>
+                          <LineChart data={generateMrrData(activeDetails.suggested_price)}>
                             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
                             <XAxis dataKey="month" stroke="rgba(255,255,255,0.3)" fontSize={10} tickMargin={10} />
                             <YAxis stroke="rgba(255,255,255,0.3)" fontSize={10} tickFormatter={(val) => `$${val}`} />
@@ -815,7 +896,7 @@ function OpportunityCard({ item }: { item: any }) {
               {/* 5. Calculadora de Viabilidade Financeira */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
-                  title="Calculadora de Viabilidade Financeira (SaaS)"
+                  title={isEn ? "FINANCIAL VIABILITY CALCULATOR (SAAS)" : isEs ? "CALCULADORA DE VIABILIDAD FINANCIERA (SAAS)" : "CALCULADORA DE VIABILIDADE FINANCEIRA (SAAS)"}
                   isOpen={showCalculator}
                   onToggle={() => setShowCalculator(!showCalculator)}
                   icon={<TrendingUp className="h-4 w-4 text-emerald-400" />}
@@ -823,14 +904,18 @@ function OpportunityCard({ item }: { item: any }) {
                 {showCalculator && (
                   <div className="bg-zinc-900/40 border border-white/5 p-5 rounded-xl space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
                   <p className="text-xs text-zinc-400 leading-relaxed">
-                    Simule a viabilidade financeira do seu SaaS em tempo real. Altere os parâmetros abaixo para ver as projeções de faturamento e metas de aquisição.
+                    {isEn 
+                      ? "Simulate your SaaS financial viability in real time. Adjust parameters below to see revenue projections and acquisition goals." 
+                      : isEs 
+                      ? "Simule la viabilidad financiera de su SaaS en tiempo real. Modifique los parámetros para ver las proyecciones de facturación." 
+                      : "Simule a viabilidade financeira do seu SaaS em tempo real. Altere os parâmetros abaixo para ver as projeções de faturamento e metas de aquisição."}
                   </p>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Inputs Column */}
                     <div className="space-y-4">
                       <h5 className="text-xs font-bold text-zinc-300 uppercase tracking-wide border-b border-white/5 pb-2">
-                        Parâmetros de Simulação
+                        {isEn ? "Simulation Parameters" : isEs ? "Parámetros de Simulación" : "Parâmetros de Simulação"}
                       </h5>
                       
                       {/* Price input */}
@@ -838,7 +923,7 @@ function OpportunityCard({ item }: { item: any }) {
                         <div className="flex justify-between text-xs">
                           <label className="text-zinc-400 font-medium flex items-center gap-1">
                             <DollarSign className="h-3.5 w-3.5 text-emerald-400" />
-                            Preço da Assinatura (Mensal)
+                            {isEn ? "Subscription Price (Monthly)" : isEs ? "Precio de Suscripción (Mensual)" : "Preço da Assinatura (Mensal)"}
                           </label>
                           <span className="text-emerald-400 font-bold">${calcPrice}</span>
                         </div>
@@ -866,9 +951,9 @@ function OpportunityCard({ item }: { item: any }) {
                         <div className="flex justify-between text-xs">
                           <label className="text-zinc-400 font-medium flex items-center gap-1">
                             <Users className="h-3.5 w-3.5 text-blue-400" />
-                            Tráfego / Leads (Mensal)
+                            {isEn ? "Traffic / Leads (Monthly)" : isEs ? "Tráfico / Leads (Mensual)" : "Tráfego / Leads (Mensal)"}
                           </label>
-                          <span className="text-blue-400 font-bold">{calcLeadsTarget.toLocaleString()} visitantes</span>
+                          <span className="text-blue-400 font-bold">{calcLeadsTarget.toLocaleString()} {isEn ? "visitors" : isEs ? "visitantes" : "visitantes"}</span>
                         </div>
                         <div className="flex gap-2">
                           <Input
@@ -895,7 +980,7 @@ function OpportunityCard({ item }: { item: any }) {
                         <div className="flex justify-between text-xs">
                           <label className="text-zinc-400 font-medium flex items-center gap-1">
                             <Percent className="h-3.5 w-3.5 text-purple-400" />
-                            Taxa de Conversão
+                            {isEn ? "Conversion Rate" : isEs ? "Tasa de Conversión" : "Taxa de Conversão"}
                           </label>
                           <span className="text-purple-400 font-bold">{calcConversion}%</span>
                         </div>
@@ -926,7 +1011,7 @@ function OpportunityCard({ item }: { item: any }) {
                         <div className="flex justify-between text-xs">
                           <label className="text-zinc-400 font-medium flex items-center gap-1">
                             <HelpCircle className="h-3.5 w-3.5 text-red-400" />
-                            Taxa de Churn (Cancelamento Mensal)
+                            {isEn ? "Churn Rate (Monthly Cancel)" : isEs ? "Tasa de Churn (Cancelación Mensual)" : "Taxa de Churn (Cancelamento Mensal)"}
                           </label>
                           <span className="text-red-400 font-bold">{calcChurn}%</span>
                         </div>
@@ -956,13 +1041,15 @@ function OpportunityCard({ item }: { item: any }) {
                     {/* Projections Column */}
                     <div className="space-y-4">
                       <h5 className="text-xs font-bold text-zinc-300 uppercase tracking-wide border-b border-white/5 pb-2">
-                        Métricas de Viabilidade & Prospecção
+                        {isEn ? "Viability & Outreach Metrics" : isEs ? "Métricas de Viabilidad y Prospección" : "Métricas de Viabilidade & Prospecção"}
                       </h5>
 
                       {/* Metrics cards grid */}
                       <div className="grid grid-cols-2 gap-3">
                         <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 space-y-1">
-                          <span className="text-[10px] text-zinc-400 font-medium block">Novos Clientes/Mês</span>
+                          <span className="text-[10px] text-zinc-400 font-medium block">
+                            {isEn ? "New Customers/Mo" : isEs ? "Nuevos Clientes/Mes" : "Novos Clientes/Mês"}
+                          </span>
                           <span className="text-base font-bold text-blue-400">
                             {Math.round(calcLeadsTarget * (calcConversion / 100))}
                           </span>
@@ -979,7 +1066,9 @@ function OpportunityCard({ item }: { item: any }) {
                       {/* 12-Month Projected MRR Card */}
                       <div className="p-4 bg-zinc-950/40 rounded-lg border border-emerald-500/20 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl -mr-8 -mt-8" />
-                        <span className="text-[10px] text-zinc-400 font-medium block">Receita Recorrente Projetada (12 Meses)</span>
+                        <span className="text-[10px] text-zinc-400 font-medium block">
+                          {isEn ? "Projected Monthly Revenue (12 Months)" : isEs ? "Ingresos Recurrentes Proyectados (12 Meses)" : "Receita Recorrente Projetada (12 Meses)"}
+                        </span>
                         <div className="flex items-baseline gap-1 mt-1">
                           <span className="text-2xl font-extrabold text-white">
                             ${(() => {
@@ -994,28 +1083,42 @@ function OpportunityCard({ item }: { item: any }) {
                               return Math.round(totalCustomers * calcPrice).toLocaleString();
                             })()}
                           </span>
-                          <span className="text-xs text-emerald-400 font-semibold">/mês (MRR)</span>
+                          <span className="text-xs text-emerald-400 font-semibold">
+                            {isEn ? "/mo (MRR)" : isEs ? "/mes (MRR)" : "/mês (MRR)"}
+                          </span>
                         </div>
                         <p className="text-[10px] text-zinc-500 mt-2 leading-relaxed">
-                          Baseado em adquirir novos clientes mensalmente com retenção composta.
+                          {isEn 
+                            ? "Based on acquiring new customers monthly with compound retention." 
+                            : isEs 
+                            ? "Basado en adquirir nuevos clientes mensualmente con retención compuesta." 
+                            : "Baseado em adquirir novos clientes mensalmente com retenção composta."}
                         </p>
                       </div>
 
                       {/* Financial Goals / Targets list */}
                       <div className="space-y-2">
-                        <span className="text-[10px] text-zinc-400 font-bold block uppercase tracking-wider">Clientes Necessários por Meta:</span>
+                        <span className="text-[10px] text-zinc-400 font-bold block uppercase tracking-wider">
+                          {isEn ? "Customers Needed Per Goal:" : isEs ? "Clientes Necesarios por Meta:" : "Clientes Necessários por Meta:"}
+                        </span>
                         <div className="space-y-1 text-xs">
                           <div className="flex justify-between items-center p-2 bg-zinc-950/20 rounded border border-white/5">
-                            <span className="text-zinc-400">Meta $1k/mês:</span>
-                            <span className="font-bold text-white">{Math.ceil(1000 / calcPrice)} clientes</span>
+                            <span className="text-zinc-400">{isEn ? "Goal $1k/mo:" : isEs ? "Meta $1k/mes:" : "Meta $1k/mês:"}</span>
+                            <span className="font-bold text-white">
+                              {Math.ceil(1000 / calcPrice)} {isEn ? "customers" : isEs ? "clientes" : "clientes"}
+                            </span>
                           </div>
                           <div className="flex justify-between items-center p-2 bg-zinc-950/20 rounded border border-white/5">
-                            <span className="text-zinc-400">Meta $5k/mês:</span>
-                            <span className="font-bold text-white">{Math.ceil(5000 / calcPrice)} clientes</span>
+                            <span className="text-zinc-400">{isEn ? "Goal $5k/mo:" : isEs ? "Meta $5k/mes:" : "Meta $5k/mês:"}</span>
+                            <span className="font-bold text-white">
+                              {Math.ceil(5000 / calcPrice)} {isEn ? "customers" : isEs ? "clientes" : "clientes"}
+                            </span>
                           </div>
                           <div className="flex justify-between items-center p-2 bg-zinc-950/20 rounded border border-white/5">
-                            <span className="text-zinc-400">Meta $10k/mês:</span>
-                            <span className="font-bold text-white">{Math.ceil(10000 / calcPrice)} clientes</span>
+                            <span className="text-zinc-400">{isEn ? "Goal $10k/mo:" : isEs ? "Meta $10k/mes:" : "Meta $10k/mês:"}</span>
+                            <span className="font-bold text-white">
+                              {Math.ceil(10000 / calcPrice)} {isEn ? "customers" : isEs ? "clientes" : "clientes"}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -1033,17 +1136,27 @@ function OpportunityCard({ item }: { item: any }) {
               {/* 6. Plano do MVP */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
-                  title="Plano do MVP"
+                  title={t.blueprint.mvpPlan}
                   isOpen={showMvpPlan}
                   onToggle={() => setShowMvpPlan(!showMvpPlan)}
                   icon={<List className="h-4 w-4 text-blue-400" />}
                 />
                 {showMvpPlan && (
                   <div className="bg-primary/5 p-4 rounded-xl border border-primary/20 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <p className="text-foreground text-sm leading-relaxed">{details.mvp_features}</p>
-                    <div className="flex gap-2 mt-4 text-xs">
-                      <Badge variant="outline" className="bg-background">⏱️ {details.development_time}</Badge>
-                      <Badge variant="outline" className="bg-background">🧠 {details.implementation_difficulty}</Badge>
+                    <p className="text-foreground text-sm leading-relaxed">{activeDetails.mvp_features}</p>
+                    <div className="flex flex-wrap gap-2 mt-4 text-xs">
+                      <Badge variant="outline" className="bg-background">
+                        ⏱️ {isEn ? "Dev Time:" : isEs ? "Tiempo de Dev:" : "Tempo de Dev:"} {activeDetails.development_time}
+                      </Badge>
+                      <Badge variant="outline" className="bg-background">
+                        🧠 {isEn ? "Difficulty:" : isEs ? "Dificultad:" : "Dificuldade:"} {
+                          isEn 
+                            ? activeDetails.implementation_difficulty?.replace(/Médio/gi, "Medium").replace(/Fácil/gi, "Easy").replace(/Avançado/gi, "Advanced").replace(/Básico/gi, "Basic")
+                            : isEs 
+                            ? activeDetails.implementation_difficulty?.replace(/Médio/gi, "Medio").replace(/Fácil/gi, "Fácil").replace(/Avançado/gi, "Avanzado").replace(/Básico/gi, "Básico")
+                            : activeDetails.implementation_difficulty
+                        }
+                      </Badge>
                     </div>
                   </div>
                 )}
@@ -1052,33 +1165,53 @@ function OpportunityCard({ item }: { item: any }) {
               {/* 7. Tech Stack Recomendada */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
-                  title="Tech Stack Recomendada"
+                  title={t.blueprint.techStack}
                   isOpen={showTechStack}
                   onToggle={() => setShowTechStack(!showTechStack)}
                   icon={<Layers className="h-4 w-4 text-blue-400" />}
                 />
                 {showTechStack && (
                   <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
-                    {!details?.tech_stack ? (
+                    {!activeDetails?.tech_stack ? (
                       <div className="text-center p-4">
                         <Button 
                           onClick={() => handleGeneratePremiumModule('tech')} 
                           disabled={generatingModule === 'tech'}
-                          className="bg-blue-600 hover:bg-blue-500 text-white"
+                          className="bg-blue-600 hover:bg-blue-500 text-white cursor-pointer"
                         >
                           {generatingModule === 'tech' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Layers className="mr-2 h-4 w-4" />}
-                          Descobrir Stack Ideal
+                          {isEn ? "Discover Ideal Stack" : isEs ? "Descubrir Stack Ideal" : "Descobrir Stack Ideal"}
                         </Button>
                       </div>
                     ) : (
-                      <div className="grid grid-cols-2 gap-3">
-                        {Object.entries(details.tech_stack).map(([key, tech]: any) => (
-                          <div key={key} className="bg-zinc-950/50 p-3 rounded-lg border border-white/5">
-                            <span className="text-[10px] text-zinc-500 uppercase font-bold block mb-1">{key.replace('_', ' ')}</span>
-                            <div className="font-bold text-blue-400 text-sm">{tech.name}</div>
-                            <div className="text-xs text-zinc-400 mt-1">{tech.reason}</div>
-                          </div>
-                        ))}
+                      <div className="space-y-3">
+                        <div className="flex justify-end border-b border-white/5 pb-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs font-bold text-blue-400 hover:bg-blue-500/10 h-7 cursor-pointer"
+                            onClick={() => handleGeneratePremiumModule('tech')}
+                            disabled={generatingModule === 'tech'}
+                          >
+                            {generatingModule === 'tech' ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : null}
+                            {isEn ? "Regenerate Stack ↗" : isEs ? "Regenerar Stack ↗" : "Refazer Stack ↗"}
+                          </Button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          {Object.entries(activeDetails.tech_stack).map(([key, tech]: any) => (
+                            <div key={key} className="bg-zinc-950/50 p-3 rounded-lg border border-white/5">
+                              <span className="text-[10px] text-zinc-500 uppercase font-bold block mb-1">
+                                {isEn 
+                                  ? key.replace('_', ' ').replace(/frontend/i, "Frontend Layer").replace(/backend db/i, "Database & Backend").replace(/ai tools/i, "AI Models & APIs").replace(/payments/i, "Payment Gateway")
+                                  : isEs 
+                                  ? key.replace('_', ' ').replace(/frontend/i, "Capa Frontend").replace(/backend db/i, "Base de Datos y Backend").replace(/ai tools/i, "Modelos de IA y APIs").replace(/payments/i, "Pasarela de Pagos")
+                                  : key.replace('_', ' ')}
+                              </span>
+                              <div className="font-bold text-blue-400 text-sm">{tech.name}</div>
+                              <div className="text-xs text-zinc-400 mt-1">{tech.reason}</div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -1088,36 +1221,55 @@ function OpportunityCard({ item }: { item: any }) {
               {/* 8. Arquitetura de Banco de Dados (SQL) */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
-                  title="Arquitetura de Banco de Dados (SQL)"
+                  title={t.blueprint.sqlDatabase}
                   isOpen={showSqlSchema}
                   onToggle={() => setShowSqlSchema(!showSqlSchema)}
                   icon={<Database className="h-4 w-4 text-emerald-400" />}
                 />
                 {showSqlSchema && (
                   <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
-                    {!details?.sql_schema ? (
+                    {!activeDetails?.sql_schema ? (
                       <div className="text-center p-4">
                         <Button 
                           onClick={() => handleGeneratePremiumModule('sql')} 
                           disabled={generatingModule === 'sql'}
-                          className="bg-emerald-600 hover:bg-emerald-500 text-white"
+                          className="bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer"
                         >
                           {generatingModule === 'sql' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Database className="mr-2 h-4 w-4" />}
-                          Gerar Tabelas Supabase
+                          {isEn ? "Generate Supabase Tables" : isEs ? "Generar Tablas Supabase" : "Gerar Tabelas Supabase"}
                         </Button>
                       </div>
                     ) : (
-                      <div className="relative group">
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                          onClick={() => navigator.clipboard.writeText(details.sql_schema)}
-                        >
-                          Copiar SQL
-                        </Button>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center border-b border-white/5 pb-2">
+                          <span className="text-xs font-semibold text-emerald-400">PostgreSQL / Supabase DDL</span>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-xs font-bold text-emerald-400 hover:bg-emerald-500/10 h-7 cursor-pointer"
+                              onClick={() => {
+                                const sqlContent = typeof activeDetails.sql_schema === 'string' ? activeDetails.sql_schema : JSON.stringify(activeDetails.sql_schema, null, 2);
+                                navigator.clipboard.writeText(sqlContent);
+                                setCopiedPrompt('sql');
+                                setTimeout(() => setCopiedPrompt(null), 2000);
+                              }}
+                            >
+                              {copiedPrompt === 'sql' ? (isEn ? "Copied!" : isEs ? "¡Copiado!" : "Copiado!") : (isEn ? "Copy SQL" : isEs ? "Copiar SQL" : "Copiar SQL")}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-xs font-bold text-zinc-400 hover:text-white h-7 cursor-pointer"
+                              onClick={() => handleGeneratePremiumModule('sql')}
+                              disabled={generatingModule === 'sql'}
+                            >
+                              {generatingModule === 'sql' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : (isEn ? "Regenerate SQL ↗" : isEs ? "Regenerar SQL ↗" : "Refazer SQL ↗")}
+                            </Button>
+                          </div>
+                        </div>
                         <pre className="text-[10px] text-emerald-400 bg-black p-4 rounded-lg overflow-x-auto max-h-[300px]">
-                          <code>{details.sql_schema}</code>
+                          <code>{typeof activeDetails.sql_schema === 'string' ? activeDetails.sql_schema : JSON.stringify(activeDetails.sql_schema, null, 2)}</code>
                         </pre>
                       </div>
                     )}
@@ -1128,7 +1280,7 @@ function OpportunityCard({ item }: { item: any }) {
               {/* 9. Exportar Engenharia (Cursor AI) */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
-                  title="Exportar Engenharia (Cursor AI)"
+                  title={t.blueprint.cursorExport}
                   isOpen={showCursorRules}
                   onToggle={() => setShowCursorRules(!showCursorRules)}
                   icon={<Bot className="h-4 w-4 text-emerald-400" />}
@@ -1143,10 +1295,14 @@ function OpportunityCard({ item }: { item: any }) {
                           className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
                         >
                           {generatingModule === 'cursor' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Bot className="mr-2 h-4 w-4" />}
-                          Gerar .cursorrules Mágico
+                          {isEn ? "Generate Magic .cursorrules" : isEs ? "Generar .cursorrules Mágico" : "Gerar .cursorrules Mágico"}
                         </Button>
                         <p className="text-xs text-muted-foreground mt-2">
-                          Gera as regras exatas de stack, estilos e db para colar no Cursor AI ou v0.dev.
+                          {isEn 
+                            ? "Generates exact stack, style, and DB rules to paste into Cursor AI or v0.dev." 
+                            : isEs 
+                            ? "Genera las reglas exactas de stack, estilos y BD para Cursor AI o v0.dev." 
+                            : "Gera as regras exatas de stack, estilos e db para colar no Cursor AI ou v0.dev."}
                         </p>
                       </div>
                     ) : (
@@ -1158,7 +1314,7 @@ function OpportunityCard({ item }: { item: any }) {
                           onClick={() => copyToClipboard(typeof cursorRules === 'string' ? cursorRules : JSON.stringify(cursorRules, null, 2), 'cursor')}
                         >
                           {copiedPrompt === 'cursor' ? <CheckCircle2 className="h-4 w-4 mr-1 text-green-400" /> : <Copy className="h-4 w-4 mr-1" />}
-                          Copiar Regras
+                          {isEn ? "Copy Rules" : isEs ? "Copiar Reglas" : "Copiar Regras"}
                         </Button>
                         <pre className="text-[10px] text-emerald-400 bg-black p-4 rounded-lg overflow-x-auto max-h-[300px] whitespace-pre-wrap">
                           <code>{typeof cursorRules === 'string' ? cursorRules : JSON.stringify(cursorRules, null, 2)}</code>
@@ -1174,13 +1330,13 @@ function OpportunityCard({ item }: { item: any }) {
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 animate-pulse opacity-60" />
                 <div className="relative bg-zinc-950/90 rounded-xl backdrop-blur-sm">
                   <CollapsibleSectionHeader
-                    title="Prompts de Construção"
+                    title={t.blueprint.buildPrompts}
                     isOpen={showPrompts}
                     onToggle={() => setShowPrompts(!showPrompts)}
                     icon={<Sparkles className="h-5 w-5 text-purple-400 animate-pulse" />}
                     badge={
                       <span className="flex h-6 items-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-3 text-[10px] font-bold text-white shadow-lg border border-white/20 uppercase tracking-wider">
-                        Ação Principal
+                        {t.blueprint.mainAction}
                       </span>
                     }
                   />
@@ -1197,27 +1353,27 @@ function OpportunityCard({ item }: { item: any }) {
                       {" "}(Universal)
                     </div>
                     <pre className="bg-muted p-4 rounded-lg text-sm text-foreground whitespace-pre-wrap font-mono border border-border/50">
-{`Atue como meu CTO e Estrategista de Negócios. Quero construir um SaaS chamado "${details.saas_name}".
+{`Atue como meu CTO e Estrategista de Negócios. Quero construir um SaaS chamado "${activeDetails.saas_name}".
 
 📌 CONTEXTO DE NEGÓCIO:
-- Problema a resolver: ${details.problem_solved}
-- Público-Alvo: ${details.target_audience}
-- Diferencial Competitivo: ${details.competitive_advantage}
+- Problema a resolver: ${activeDetails.problem_solved}
+- Público-Alvo: ${activeDetails.target_audience}
+- Diferencial Competitivo: ${activeDetails.competitive_advantage}
 
 🛠️ ESCOPO DO MVP:
-${details.mvp_features}
+${activeDetails.mvp_features}
 
 💰 MONETIZAÇÃO:
-- Modelo: ${details.monetization_model}
-- Ticket: ${details.suggested_price}
+- Modelo: ${activeDetails.monetization_model}
+- Ticket: ${activeDetails.suggested_price}
 
 Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal e me dê o passo a passo prático para começar a desenvolver agora.`}
                     </pre>
                     <Button 
                       size="sm" 
                       variant="secondary" 
-                      className="absolute top-8 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => copyToClipboard(`Atue como meu CTO e Estrategista de Negócios. Quero construir um SaaS chamado "${details.saas_name}".\n\n📌 CONTEXTO DE NEGÓCIO:\n- Problema a resolver: ${details.problem_solved}\n- Público-Alvo: ${details.target_audience}\n- Diferencial Competitivo: ${details.competitive_advantage}\n\n🛠️ ESCOPO DO MVP:\n${details.mvp_features}\n\n💰 MONETIZAÇÃO:\n- Modelo: ${details.monetization_model}\n- Ticket: ${details.suggested_price}\n\nPor favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal e me dê o passo a passo prático para começar a desenvolver agora.`, 'universal')}
+                      className="absolute top-8 right-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                      onClick={() => copyToClipboard(`Atue como meu CTO e Estrategista de Negócios. Quero construir um SaaS chamado "${activeDetails.saas_name}".\n\n📌 CONTEXTO DE NEGÓCIO:\n- Problema a resolver: ${activeDetails.problem_solved}\n- Público-Alvo: ${activeDetails.target_audience}\n- Diferencial Competitivo: ${activeDetails.competitive_advantage}\n\n🛠️ ESCOPO DO MVP:\n${activeDetails.mvp_features}\n\n💰 MONETIZAÇÃO:\n- Modelo: ${activeDetails.monetization_model}\n- Ticket: ${activeDetails.suggested_price}\n\nPor favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal e me dê o passo a passo prático para começar a desenvolver agora.`, 'universal')}
                     >
                       {copiedPrompt === 'universal' ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                     </Button>
@@ -1232,13 +1388,13 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                       {" "}(Frontend)
                     </div>
                     <pre className="bg-muted p-4 rounded-lg text-sm text-foreground whitespace-pre-wrap font-mono border border-border/50">
-                      {details.prompt_lovable}
+                      {activeDetails.prompt_lovable}
                     </pre>
                     <Button 
                       size="sm" 
                       variant="secondary" 
-                      className="absolute top-8 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => copyToClipboard(details.prompt_lovable, 'lovable')}
+                      className="absolute top-8 right-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                      onClick={() => copyToClipboard(activeDetails.prompt_lovable, 'lovable')}
                     >
                       {copiedPrompt === 'lovable' ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                     </Button>
@@ -1253,13 +1409,13 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                       {" "}(Backend/Fullstack)
                     </div>
                     <pre className="bg-muted p-4 rounded-lg text-sm text-foreground whitespace-pre-wrap font-mono border border-border/50">
-                      {details.prompt_bolt}
+                      {activeDetails.prompt_bolt}
                     </pre>
                     <Button 
                       size="sm" 
                       variant="secondary" 
-                      className="absolute top-8 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => copyToClipboard(details.prompt_bolt, 'bolt')}
+                      className="absolute top-8 right-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                      onClick={() => copyToClipboard(activeDetails.prompt_bolt, 'bolt')}
                     >
                       {copiedPrompt === 'bolt' ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                     </Button>
@@ -1275,29 +1431,31 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
               {/* 11. Roadmap Go-To-Market (30 Dias) */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
-                  title="Roadmap Go-To-Market (30 Dias)"
+                  title={t.blueprint.gtmRoadmap}
                   isOpen={showGtmRoadmap}
                   onToggle={() => setShowGtmRoadmap(!showGtmRoadmap)}
                   icon={<Crosshair className="h-4 w-4 text-orange-400" />}
                 />
                 {showGtmRoadmap && (
                   <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
-                    {!details?.gtm_roadmap ? (
+                    {!activeDetails?.gtm_roadmap ? (
                       <div className="text-center p-4">
                         <Button 
                           onClick={() => handleGeneratePremiumModule('gtm')} 
                           disabled={generatingModule === 'gtm'}
-                          className="bg-orange-600 hover:bg-orange-500 text-white"
+                          className="bg-orange-600 hover:bg-orange-500 text-white cursor-pointer"
                         >
                           {generatingModule === 'gtm' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                          Gerar Roadmap GTM (IA)
+                          {isEn ? "Generate GTM Roadmap (AI)" : isEs ? "Generar Roadmap GTM (IA)" : "Gerar Roadmap GTM (IA)"}
                         </Button>
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        {details.gtm_roadmap.weeks?.map((week: any, i: number) => (
+                        {activeDetails.gtm_roadmap.weeks?.map((week: any, i: number) => (
                           <div key={i} className="bg-zinc-950/50 p-3 rounded-lg border border-white/5">
-                            <h4 className="text-sm font-bold text-orange-400 mb-2">Semana {week.week}: {week.focus}</h4>
+                            <h4 className="text-sm font-bold text-orange-400 mb-2">
+                              {isEn ? "Week" : isEs ? "Semana" : "Semana"} {week.week}: {week.focus}
+                            </h4>
                             <ul className="list-disc pl-5 text-xs text-zinc-300 space-y-1">
                               {week.actions?.map((action: string, j: number) => <li key={j}>{action}</li>)}
                             </ul>
@@ -1312,22 +1470,26 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
               {/* 12. Kit de Lançamento & Marketing (IA) */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
-                  title="Kit de Lançamento & Marketing (IA)"
+                  title={t.blueprint.marketingKit}
                   isOpen={showMarketingKit}
                   onToggle={() => setShowMarketingKit(!showMarketingKit)}
                   icon={<Megaphone className="h-4 w-4 text-purple-400" />}
-                  badge={marketingKit && Object.keys(marketingKit).length > 0 && (
+                  badge={activeMarketingKit && Object.keys(activeMarketingKit).length > 0 && (
                     <Badge variant="secondary" className="bg-purple-500/10 text-purple-400 border-none text-[10px] px-1.5 h-4">
-                      Pronto
+                      {isEn ? "Ready" : isEs ? "Listo" : "Pronto"}
                     </Badge>
                   )}
                 />
                 {showMarketingKit && (
                   <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
-                    {!marketingKit || Object.keys(marketingKit).length === 0 ? (
+                    {!activeMarketingKit || Object.keys(activeMarketingKit).length === 0 ? (
                       <div className="bg-primary/5 p-5 rounded-lg border border-primary/10 text-center space-y-4">
                         <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                          Dificuldade em vender seu SaaS? Deixe a IA gerar copys prontas em formato de thread do Twitter/X, posts profissionais do LinkedIn, roteiros de vídeos para TikTok/Reels e e-mails de vendas frios.
+                          {isEn 
+                            ? "Struggling to sell your SaaS? Let AI generate ready-to-use Twitter/X threads, professional LinkedIn posts, short video scripts for TikTok/Reels, and cold sales emails." 
+                            : isEs 
+                            ? "¿Dificultad para vender su SaaS? Deje que la IA genere hilos de Twitter/X, publicaciones de LinkedIn, guiones de TikTok/Reels y correos de venta fría." 
+                            : "Dificuldade em vender seu SaaS? Deixe a IA gerar copys prontas em formato de thread do Twitter/X, posts profissionais do LinkedIn, roteiros de vídeos para TikTok/Reels e e-mails de vendas frios."}
                         </p>
                         <Button
                           onClick={handleGenerateMarketingKit}
@@ -1336,11 +1498,11 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                         >
                           {generatingKit ? (
                             <>
-                              <Loader2 className="h-4 w-4 animate-spin" /> Gerando Kit de Marketing...
+                              <Loader2 className="h-4 w-4 animate-spin" /> {isEn ? "Generating Marketing Kit..." : isEs ? "Generando Kit de Marketing..." : "Gerando Kit de Marketing..."}
                             </>
                           ) : (
                             <>
-                              <Megaphone className="h-4 w-4 text-white" /> Gerar Kit de Marketing (IA)
+                              <Megaphone className="h-4 w-4 text-white" /> {isEn ? "Generate Marketing Kit (AI)" : isEs ? "Generar Kit de Marketing (IA)" : "Gerar Kit de Marketing (IA)"}
                             </>
                           )}
                         </Button>
@@ -1348,14 +1510,14 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                     ) : (
                       <div className="space-y-4">
                         {/* Tab Selector */}
-                        <div className="grid grid-cols-4 p-1 bg-white/5 rounded-xl border border-white/5">
-                          {(["twitter", "linkedin", "tiktok", "email"] as const).map((tab) => (
+                        <div className="grid grid-cols-4 sm:grid-cols-7 p-1 bg-white/5 rounded-xl border border-white/5 gap-1">
+                          {(["twitter", "linkedin", "tiktok", "facebook", "instagram", "google", "email"] as const).map((tab) => (
                             <button
                               key={tab}
                               type="button"
                               onClick={() => setMarketingTab(tab)}
                               className={cn(
-                                "py-2 rounded-lg text-xxs font-bold uppercase transition-all duration-300 cursor-pointer",
+                                "py-2 px-1 rounded-lg text-xxs font-bold uppercase transition-all duration-300 cursor-pointer text-center truncate",
                                 marketingTab === tab
                                   ? "bg-primary text-primary-foreground shadow-md"
                                   : "text-muted-foreground hover:text-white"
@@ -1363,8 +1525,11 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                             >
                               {tab === "twitter" && "Twitter/X"}
                               {tab === "linkedin" && "LinkedIn"}
-                              {tab === "tiktok" && "TikTok/Reels"}
-                              {tab === "email" && "E-mail"}
+                              {tab === "tiktok" && "TikTok"}
+                              {tab === "facebook" && "Facebook"}
+                              {tab === "instagram" && "Instagram"}
+                              {tab === "google" && "Google Ads"}
+                              {tab === "email" && (isEn ? "Email" : isEs ? "Correo" : "E-mail")}
                             </button>
                           ))}
                         </div>
@@ -1373,28 +1538,30 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                         <div className="bg-zinc-900/40 border border-white/5 p-5 rounded-xl space-y-3 relative group">
                           
                           {/* Twitter Thread Tab */}
-                          {marketingTab === "twitter" && marketingKit.twitter_thread && (
+                          {marketingTab === "twitter" && activeMarketingKit.twitter_thread && (
                             <div className="space-y-4">
                               <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                                <span className="text-xs font-semibold text-zinc-400">Sequência do Twitter/X (Thread)</span>
+                                <span className="text-xs font-semibold text-zinc-400">
+                                  {isEn ? "Twitter/X Thread Sequence" : isEs ? "Secuencia de Twitter/X (Thread)" : "Sequência do Twitter/X (Thread)"}
+                                </span>
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
-                                  onClick={() => handleCopyMarketingText(marketingKit.twitter_thread.join("\n\n"), "tw-all")}
+                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8 cursor-pointer"
+                                  onClick={() => handleCopyMarketingText(activeMarketingKit.twitter_thread.join("\n\n"), "tw-all")}
                                 >
-                                  {copiedMarketing === "tw-all" ? "Copiado!" : "Copiar Thread Completa"}
+                                  {copiedMarketing === "tw-all" ? (isEn ? "Copied!" : isEs ? "¡Copiado!" : "Copiado!") : (isEn ? "Copy Full Thread" : isEs ? "Copiar Hilo Completo" : "Copiar Thread Completa")}
                                 </Button>
                               </div>
                               <div className="space-y-3">
-                                {marketingKit.twitter_thread.map((tweet: string, idx: number) => (
+                                {activeMarketingKit.twitter_thread.map((tweet: string, idx: number) => (
                                   <div key={idx} className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 relative group/tweet">
-                                    <div className="text-xxs text-primary font-bold mb-1">Tweet {idx + 1}/{marketingKit.twitter_thread.length}</div>
+                                    <div className="text-xxs text-primary font-bold mb-1">Tweet {idx + 1}/{activeMarketingKit.twitter_thread.length}</div>
                                     <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-wrap">{tweet}</p>
                                     <Button
                                       variant="ghost"
                                       size="icon"
-                                      className="h-6 w-6 absolute top-2.5 right-2.5 opacity-0 group-hover/tweet:opacity-100 transition-opacity"
+                                      className="h-6 w-6 absolute top-2.5 right-2.5 opacity-0 group-hover/tweet:opacity-100 transition-opacity cursor-pointer"
                                       onClick={() => handleCopyMarketingText(tweet, `tw-${idx}`)}
                                     >
                                       {copiedMarketing === `tw-${idx}` ? <CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
@@ -1409,60 +1576,206 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                           {marketingTab === "linkedin" && (
                             <div className="space-y-4">
                               <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                                <span className="text-xs font-semibold text-zinc-400">Postagem Profissional do LinkedIn</span>
+                                <span className="text-xs font-semibold text-zinc-400">
+                                  {isEn ? "LinkedIn Professional Post" : isEs ? "Publicación Profesional de LinkedIn" : "Postagem Profissional do LinkedIn"}
+                                </span>
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
-                                  onClick={() => handleCopyMarketingText(marketingKit.linkedin_post, "li")}
+                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8 cursor-pointer"
+                                  onClick={() => handleCopyMarketingText(activeMarketingKit.linkedin_post, "li")}
                                 >
-                                  {copiedMarketing === "li" ? "Copiado!" : "Copiar Texto"}
+                                  {copiedMarketing === "li" ? (isEn ? "Copied!" : isEs ? "¡Copiado!" : "Copiado!") : (isEn ? "Copy Text" : isEs ? "Copiar Texto" : "Copiar Texto")}
                                 </Button>
                               </div>
                               <div className="p-4 bg-zinc-950/40 rounded-lg border border-white/5 max-h-[350px] overflow-y-auto pr-2">
-                                <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-line">{marketingKit.linkedin_post}</p>
+                                <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-line">{activeMarketingKit.linkedin_post}</p>
                               </div>
                             </div>
                           )}
 
                           {/* TikTok/Reels Script Tab */}
-                          {marketingTab === "tiktok" && marketingKit.tiktok_script && (
+                          {marketingTab === "tiktok" && activeMarketingKit.tiktok_script && (
                             <div className="space-y-4">
                               <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                                <span className="text-xs font-semibold text-zinc-400">Roteiro de Vídeo Curto (TikTok/Reels)</span>
+                                <span className="text-xs font-semibold text-zinc-400">
+                                  {isEn ? "Short Video Script (TikTok/Reels)" : isEs ? "Guion de Video Corto (TikTok/Reels)" : "Roteiro de Vídeo Curto (TikTok/Reels)"}
+                                </span>
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
+                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8 cursor-pointer"
                                   onClick={() => {
-                                    const fullScript = `HOOK:\n"${marketingKit.tiktok_script.hook}"\n\nSCENES:\n${marketingKit.tiktok_script.scenes.map((s: any, i: number) => `CENA ${i+1}:\nVisual: [${s.visual}]\nFala: "${s.voiceover}"`).join("\n\n")}\n\nCTA:\n"${marketingKit.tiktok_script.cta}"`;
+                                    const fullScript = `HOOK:\n"${activeMarketingKit.tiktok_script.hook}"\n\nSCENES:\n${activeMarketingKit.tiktok_script.scenes.map((s: any, i: number) => `CENA ${i+1}:\nVisual: [${s.visual}]\nFala: "${s.voiceover}"`).join("\n\n")}\n\nCTA:\n"${activeMarketingKit.tiktok_script.cta}"`;
                                     handleCopyMarketingText(fullScript, "tk");
                                   }}
                                 >
-                                  {copiedMarketing === "tk" ? "Copiado!" : "Copiar Roteiro Completo"}
+                                  {copiedMarketing === "tk" ? (isEn ? "Copied!" : isEs ? "¡Copiado!" : "Copiado!") : (isEn ? "Copy Full Script" : isEs ? "Copiar Guion Completo" : "Copiar Roteiro Completo")}
                                 </Button>
                               </div>
                               <div className="space-y-3 text-xs">
                                 <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
-                                  <span className="font-bold text-red-400 block mb-1">🧲 O GANCHO (Primeiros 3s):</span>
-                                  <p className="italic text-zinc-300">&ldquo;{marketingKit.tiktok_script.hook}&rdquo;</p>
+                                  <span className="font-bold text-red-400 block mb-1">
+                                    {isEn ? "🧲 THE HOOK (First 3s):" : isEs ? "🧲 EL GANCHO (Primeros 3s):" : "🧲 O GANCHO (Primeiros 3s):"}
+                                  </span>
+                                  <p className="italic text-zinc-300">&ldquo;{activeMarketingKit.tiktok_script.hook}&rdquo;</p>
                                 </div>
                                 
                                 <div className="space-y-2">
-                                  <span className="font-bold text-zinc-400 block">🎬 CENAS & NARRATIVA:</span>
-                                  {marketingKit.tiktok_script.scenes.map((scene: any, idx: number) => (
+                                  <span className="font-bold text-zinc-400 block">
+                                    {isEn ? "🎬 SCENES & NARRATIVE:" : isEs ? "🎬 ESCENAS Y NARRATIVA:" : "🎬 CENAS & NARRATIVA:"}
+                                  </span>
+                                  {activeMarketingKit.tiktok_script.scenes.map((scene: any, idx: number) => (
                                     <div key={idx} className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 space-y-1">
-                                      <div className="text-[10px] text-zinc-500 uppercase font-bold">Cena {idx + 1}</div>
-                                      <div className="text-zinc-500 font-semibold text-xxs">Vídeo: <span className="font-normal text-zinc-400 italic">[{scene.visual}]</span></div>
-                                      <div className="text-zinc-200">Áudio (Falar): &ldquo;{scene.voiceover}&rdquo;</div>
+                                      <div className="text-[10px] text-zinc-500 uppercase font-bold">
+                                        {isEn ? "Scene" : isEs ? "Escena" : "Cena"} {idx + 1}
+                                      </div>
+                                      <div className="text-zinc-500 font-semibold text-xxs">
+                                        {isEn ? "Video:" : isEs ? "Video:" : "Vídeo:"} <span className="font-normal text-zinc-400 italic">[{scene.visual}]</span>
+                                      </div>
+                                      <div className="text-zinc-200">
+                                        {isEn ? "Audio (Voiceover):" : isEs ? "Audio (Voz en off):" : "Áudio (Falar):"} &ldquo;{scene.voiceover}&rdquo;
+                                      </div>
                                     </div>
                                   ))}
                                 </div>
 
                                 <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
-                                  <span className="font-bold text-green-400 block mb-1">📢 CHAMADA PARA AÇÃO (CTA):</span>
-                                  <p className="font-semibold text-zinc-300">{marketingKit.tiktok_script.cta}</p>
+                                  <span className="font-bold text-green-400 block mb-1">
+                                    {isEn ? "📢 CALL TO ACTION (CTA):" : isEs ? "📢 LLAMADA A LA ACCIÓN (CTA):" : "📢 CHAMADA PARA AÇÃO (CTA):"}
+                                  </span>
+                                  <p className="font-semibold text-zinc-300">{activeMarketingKit.tiktok_script.cta}</p>
                                 </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Facebook Ads Tab */}
+                          {marketingTab === "facebook" && activeMarketingKit.facebook_ad && (
+                            <div className="space-y-4">
+                              <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                                <span className="text-xs font-semibold text-zinc-400">
+                                  {isEn ? "Facebook Sponsored Ad" : isEs ? "Anuncio Patrocinado de Facebook" : "Anúncio Patrocinado do Facebook"}
+                                </span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8 cursor-pointer"
+                                  onClick={() => {
+                                    const adText = `HEADLINE:\n${activeMarketingKit.facebook_ad.headline}\n\nPRIMARY TEXT:\n${activeMarketingKit.facebook_ad.primary_text}\n\nDESCRIPTION:\n${activeMarketingKit.facebook_ad.description}\n\nTARGET INTERESTS:\n${activeMarketingKit.facebook_ad.target_interests?.join(", ")}\n\nCTA:\n${activeMarketingKit.facebook_ad.cta_button}`;
+                                    handleCopyMarketingText(adText, "fb");
+                                  }}
+                                >
+                                  {copiedMarketing === "fb" ? (isEn ? "Copied!" : isEs ? "¡Copiado!" : "Copiado!") : (isEn ? "Copy Ad Text" : isEs ? "Copiar Texto de Anuncio" : "Copiar Anúncio")}
+                                </Button>
+                              </div>
+                              <div className="space-y-3 text-xs">
+                                <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
+                                  <span className="font-bold text-blue-400 block mb-1">📢 {isEn ? "Headline:" : isEs ? "Título:" : "Título:"}</span>
+                                  <p className="font-semibold text-white">{activeMarketingKit.facebook_ad.headline}</p>
+                                </div>
+                                <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
+                                  <span className="font-bold text-zinc-400 block mb-1">📝 {isEn ? "Primary Text (Copy):" : isEs ? "Texto Principal (Copy):" : "Texto Principal (Copy):"}</span>
+                                  <p className="text-zinc-300 leading-relaxed whitespace-pre-line">{activeMarketingKit.facebook_ad.primary_text}</p>
+                                </div>
+                                {activeMarketingKit.facebook_ad.target_interests && (
+                                  <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
+                                    <span className="font-bold text-purple-400 block mb-1">🎯 {isEn ? "Targeting Interests:" : isEs ? "Intereses de Segmentación:" : "Interesses de Segmentação:"}</span>
+                                    <div className="flex flex-wrap gap-1 mt-1">
+                                      {activeMarketingKit.facebook_ad.target_interests.map((interest: string, idx: number) => (
+                                        <Badge key={idx} variant="secondary" className="bg-purple-500/10 text-purple-300 text-[10px]">{interest}</Badge>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Instagram Ads Tab */}
+                          {marketingTab === "instagram" && activeMarketingKit.instagram_ad && (
+                            <div className="space-y-4">
+                              <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                                <span className="text-xs font-semibold text-zinc-400">
+                                  {isEn ? "Instagram Reels & Feed Ad" : isEs ? "Anuncio de Instagram Reels y Feed" : "Anúncio do Instagram Reels & Feed"}
+                                </span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8 cursor-pointer"
+                                  onClick={() => {
+                                    const igText = `HOOK:\n"${activeMarketingKit.instagram_ad.hook}"\n\nCAPTION:\n${activeMarketingKit.instagram_ad.caption}\n\nVISUAL DIRECTION:\n${activeMarketingKit.instagram_ad.visual_direction}\n\nCTA:\n${activeMarketingKit.instagram_ad.cta}`;
+                                    handleCopyMarketingText(igText, "ig");
+                                  }}
+                                >
+                                  {copiedMarketing === "ig" ? (isEn ? "Copied!" : isEs ? "¡Copiado!" : "Copiado!") : (isEn ? "Copy Instagram Ad" : isEs ? "Copiar Anuncio de IG" : "Copiar Anúncio Instagram")}
+                                </Button>
+                              </div>
+                              <div className="space-y-3 text-xs">
+                                <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
+                                  <span className="font-bold text-pink-400 block mb-1">🧲 {isEn ? "Hook (First 3s):" : isEs ? "Gancho (Primeros 3s):" : "Gancho (Primeiros 3s):"}</span>
+                                  <p className="italic text-zinc-200">&ldquo;{activeMarketingKit.instagram_ad.hook}&rdquo;</p>
+                                </div>
+                                <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
+                                  <span className="font-bold text-zinc-400 block mb-1">✍️ {isEn ? "Post Caption:" : isEs ? "Leyenda del Post:" : "Legenda do Post:"}</span>
+                                  <p className="text-zinc-300 leading-relaxed whitespace-pre-line">{activeMarketingKit.instagram_ad.caption}</p>
+                                </div>
+                                {activeMarketingKit.instagram_ad.visual_direction && (
+                                  <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
+                                    <span className="font-bold text-yellow-400 block mb-1">🎨 {isEn ? "Visual Direction:" : isEs ? "Dirección Visual:" : "Direção Visual:"}</span>
+                                    <p className="text-zinc-400 italic">{activeMarketingKit.instagram_ad.visual_direction}</p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Google Ads Tab */}
+                          {marketingTab === "google" && activeMarketingKit.google_ad && (
+                            <div className="space-y-4">
+                              <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                                <span className="text-xs font-semibold text-zinc-400">
+                                  {isEn ? "Google Search Campaign Ads" : isEs ? "Anuncios de Búsqueda de Google" : "Anúncios de Busca do Google"}
+                                </span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8 cursor-pointer"
+                                  onClick={() => {
+                                    const gText = `HEADLINES:\n${activeMarketingKit.google_ad.headlines?.join("\n")}\n\nDESCRIPTIONS:\n${activeMarketingKit.google_ad.descriptions?.join("\n")}\n\nKEYWORDS:\n${activeMarketingKit.google_ad.keywords?.join(", ")}`;
+                                    handleCopyMarketingText(gText, "gg");
+                                  }}
+                                >
+                                  {copiedMarketing === "gg" ? (isEn ? "Copied!" : isEs ? "¡Copiado!" : "Copiado!") : (isEn ? "Copy Google Ad" : isEs ? "Copiar Anuncio de Google" : "Copiar Anúncios Google")}
+                                </Button>
+                              </div>
+                              <div className="space-y-3 text-xs">
+                                {activeMarketingKit.google_ad.headlines && (
+                                  <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 space-y-1">
+                                    <span className="font-bold text-emerald-400 block">📌 {isEn ? "Headlines (Max 30 Chars):" : isEs ? "Títulos (Máx 30 Caracteres):" : "Títulos (Máx 30 Caracteres):"}</span>
+                                    {activeMarketingKit.google_ad.headlines.map((h: string, idx: number) => (
+                                      <div key={idx} className="text-zinc-200 font-semibold">• {h}</div>
+                                    ))}
+                                  </div>
+                                )}
+                                {activeMarketingKit.google_ad.descriptions && (
+                                  <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 space-y-1">
+                                    <span className="font-bold text-blue-400 block">📝 {isEn ? "Descriptions (Max 90 Chars):" : isEs ? "Descripciones (Máx 90 Caracteres):" : "Descrições (Máx 90 Caracteres):"}</span>
+                                    {activeMarketingKit.google_ad.descriptions.map((d: string, idx: number) => (
+                                      <div key={idx} className="text-zinc-300">• {d}</div>
+                                    ))}
+                                  </div>
+                                )}
+                                {activeMarketingKit.google_ad.keywords && (
+                                  <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
+                                    <span className="font-bold text-yellow-400 block mb-1">🔑 {isEn ? "Recommended Keywords:" : isEs ? "Palabras Clave Recomendadas:" : "Palavras-Chave Recomendadas:"}</span>
+                                    <div className="flex flex-wrap gap-1 mt-1">
+                                      {activeMarketingKit.google_ad.keywords.map((kw: string, idx: number) => (
+                                        <Badge key={idx} variant="outline" className="text-[10px] text-yellow-300 border-yellow-500/20">{kw}</Badge>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           )}
@@ -1471,18 +1784,20 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                           {marketingTab === "email" && (
                             <div className="space-y-4">
                               <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                                <span className="text-xs font-semibold text-zinc-400">E-mail de Prospecção Fria</span>
+                                <span className="text-xs font-semibold text-zinc-400">
+                                  {isEn ? "Cold Email Prospecting" : isEs ? "Email de Prospección Fría" : "E-mail de Prospecção Fria"}
+                                </span>
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8"
-                                  onClick={() => handleCopyMarketingText(marketingKit.cold_email, "em")}
+                                  className="text-xs font-bold text-primary hover:bg-primary/10 h-8 cursor-pointer"
+                                  onClick={() => handleCopyMarketingText(activeMarketingKit.cold_email, "em")}
                                 >
-                                  {copiedMarketing === "em" ? "Copiado!" : "Copiar E-mail"}
+                                  {copiedMarketing === "em" ? (isEn ? "Copied!" : isEs ? "¡Copiado!" : "Copiado!") : (isEn ? "Copy Email" : isEs ? "Copiar Email" : "Copiar E-mail")}
                                 </Button>
                               </div>
                               <div className="p-4 bg-zinc-950/40 rounded-lg border border-white/5 pr-2">
-                                <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-line">{marketingKit.cold_email}</p>
+                                <p className="text-xs leading-relaxed text-zinc-300 whitespace-pre-line">{activeMarketingKit.cold_email}</p>
                               </div>
                             </div>
                           )}
@@ -1498,11 +1813,11 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                           >
                             {generatingKit ? (
                               <>
-                                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Remontando...
+                                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> {isEn ? "Rebuilding..." : isEs ? "Reconstruyendo..." : "Remontando..."}
                               </>
                             ) : (
                               <>
-                                Refazer Copys de IA ↗
+                                {isEn ? "Regenerate AI Copy ↗" : isEs ? "Regenerar Copy de IA ↗" : "Refazer Copys de IA ↗"}
                               </>
                             )}
                           </Button>
@@ -1516,27 +1831,27 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
               {/* 13. Pitch Deck (Apresentação) */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
-                  title="Pitch Deck (Apresentação)"
+                  title={t.blueprint.pitchDeck}
                   isOpen={showPitchDeck}
                   onToggle={() => setShowPitchDeck(!showPitchDeck)}
                   icon={<Presentation className="h-4 w-4 text-indigo-400" />}
                 />
                 {showPitchDeck && (
                   <div className="bg-zinc-900/10 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
-                    {!details?.pitch_deck ? (
+                    {!activeDetails?.pitch_deck ? (
                       <div className="text-center p-4">
                         <Button 
                           onClick={() => handleGeneratePremiumModule('pitch')} 
                           disabled={generatingModule === 'pitch'}
-                          className="bg-indigo-600 hover:bg-indigo-500 text-white"
+                          className="bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer"
                         >
                           {generatingModule === 'pitch' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Presentation className="mr-2 h-4 w-4" />}
-                          Gerar Slides do Pitch
+                          {isEn ? "Generate Pitch Slides (AI)" : isEs ? "Generar Diapositivas de Pitch (IA)" : "Gerar Slides do Pitch (IA)"}
                         </Button>
                       </div>
                     ) : (
                       <div className="flex overflow-x-auto gap-4 pb-4 snap-x">
-                        {details.pitch_deck.slides?.map((slide: any, i: number) => (
+                        {activeDetails.pitch_deck.slides?.map((slide: any, i: number) => (
                           <div key={i} className="min-w-[280px] w-[280px] h-[160px] bg-white text-black p-5 rounded-xl shadow-lg flex flex-col justify-center snap-center shrink-0">
                             <h3 className="font-extrabold text-lg mb-2 text-indigo-900 text-center">{slide.title}</h3>
                             <p className="text-xs text-slate-700 text-center leading-relaxed">{slide.content}</p>
@@ -1548,6 +1863,8 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                 )}
               </div>
           </div>
+            );
+          })()
             ) : (
               <div className="text-center py-20 text-muted-foreground flex flex-col items-center justify-center gap-3">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -1579,10 +1896,56 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
 
 export function OpportunitiesList({ initialData, hideSearch = false }: { initialData: any[], hideSearch?: boolean }) {
   const router = useRouter();
+  const { language, t } = useLanguage();
   const searchParams = useSearchParams();
+  const [items, setItems] = useState(initialData);
+  const [isTranslating, setIsTranslating] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [loading, setLoading] = useState(false);
   const [keyword, setKeyword] = useState("");
+
+  useEffect(() => {
+    if (!initialData || initialData.length === 0) {
+      setItems([]);
+      return;
+    }
+
+    if (language === 'pt') {
+      setItems(initialData);
+      return;
+    }
+
+    const cacheKey = `vbook_trans_${language}_${initialData.map(i => i.id).slice(0, 5).join('_')}`;
+    const cached = typeof window !== 'undefined' ? sessionStorage.getItem(cacheKey) : null;
+    if (cached) {
+      try {
+        setItems(JSON.parse(cached));
+        return;
+      } catch {}
+    }
+
+    setIsTranslating(true);
+    fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: initialData, targetLanguage: language })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.translatedItems && Array.isArray(data.translatedItems)) {
+          const merged = initialData.map(orig => {
+            const trans = data.translatedItems.find((t: any) => t.id === orig.id);
+            return trans ? { ...orig, ...trans } : orig;
+          });
+          setItems(merged);
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem(cacheKey, JSON.stringify(merged));
+          }
+        }
+      })
+      .catch(err => console.error('[OpportunitiesList Translate Error]:', err))
+      .finally(() => setIsTranslating(false));
+  }, [initialData, language]);
 
   const handleScan = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1660,13 +2023,13 @@ export function OpportunitiesList({ initialData, hideSearch = false }: { initial
       </div>
 
       <div className={viewMode === "grid" ? "grid gap-4 md:grid-cols-2 lg:grid-cols-3" : "flex flex-col gap-4"}>
-        {initialData.length === 0 && (
+        {items.length === 0 && (
           <div className="col-span-full py-12 text-center text-muted-foreground">
             Nenhuma oportunidade detectada ainda. Use a barra acima para iniciar o radar!
           </div>
         )}
 
-        {initialData.map((item) => (
+        {items.map((item) => (
           <OpportunityCard key={item.id} item={item} />
         ))}
       </div>

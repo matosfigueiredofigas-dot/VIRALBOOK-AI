@@ -4,6 +4,7 @@ import * as React from "react"
 import { Moon, Sun, Cpu, Sparkles, Coffee, ChevronDown } from "lucide-react"
 import { useTheme } from "next-themes"
 import { motion, AnimatePresence } from "framer-motion"
+import { useLanguage } from "@/contexts/language-context"
 
 const themes = [
   { id: "light", name: "Claro", icon: Sun, color: "bg-amber-400" },
@@ -15,6 +16,7 @@ const themes = [
 
 export function ThemeToggle() {
   const { setTheme, theme } = useTheme()
+  const { t } = useLanguage()
   const [isOpen, setIsOpen] = React.useState(false)
   const containerRef = React.useRef<HTMLDivElement>(null)
 
@@ -66,7 +68,7 @@ export function ThemeToggle() {
             className="absolute right-0 mt-2 w-48 rounded-2xl border border-border/50 bg-card p-2 shadow-xl z-[100] backdrop-blur-xl"
           >
             <div className="text-[10px] font-bold text-muted-foreground/70 px-3 py-1.5 uppercase tracking-wider">
-              Escolha o Tema
+              {t.settings.themeMode}
             </div>
             <div className="space-y-1">
               {themes.map((t) => {

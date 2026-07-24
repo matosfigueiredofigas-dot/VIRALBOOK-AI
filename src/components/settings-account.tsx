@@ -25,12 +25,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { useLanguage } from "@/contexts/language-context"
 
 interface Props {
   userEmail: string
 }
 
 export function SettingsAccount({ userEmail }: Props) {
+  const { t } = useLanguage()
   const [deleteOpen, setDeleteOpen] = useState(false)
 
   function handleExportData() {
@@ -52,10 +54,10 @@ export function SettingsAccount({ userEmail }: Props) {
             </div>
             <div>
               <h2 className="text-lg font-semibold tracking-tight">
-                Conta &amp; Segurança
+                {t.common.myAccount} &amp; {t.settings.title}
               </h2>
               <p className="text-sm text-muted-foreground">
-                Gerencie seu perfil, senha e dados pessoais
+                {t.settings.profileInfo}
               </p>
             </div>
           </div>

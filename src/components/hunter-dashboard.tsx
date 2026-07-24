@@ -5,6 +5,7 @@ import { ArrowLeft, Crosshair, Copy, Check, Search, Mail, MessageSquare, Loader2
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/language-context";
 
 interface HunterDashboardProps {
   opportunity: {
@@ -15,6 +16,7 @@ interface HunterDashboardProps {
 }
 
 export function HunterDashboard({ opportunity }: HunterDashboardProps) {
+  const { language, t } = useLanguage();
   const [data, setData] = useState<any>(opportunity.hunter_ai_json);
   const [loading, setLoading] = useState(!opportunity.hunter_ai_json);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +35,7 @@ export function HunterDashboard({ opportunity }: HunterDashboardProps) {
       const res = await fetch('/api/opportunities/hunter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ opportunityId: opportunity.id })
+        body: JSON.stringify({ opportunityId: opportunity.id, language })
       });
       const result = await res.json();
       
@@ -54,20 +56,28 @@ export function HunterDashboard({ opportunity }: HunterDashboardProps) {
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
+  const isEn = language === 'en';
+  const isEs = language === 'es';
 
   if (loading) {
     return (
       <div className="min-h-[80vh] flex flex-col items-center justify-center text-center">
-        <div className="relative w-32 h-32 mb-8">
+        <div className="relative w-24 h-24 mb-8">
           <div className="absolute inset-0 border-4 border-rose-500/30 rounded-full animate-ping opacity-75"></div>
           <div className="absolute inset-2 border-4 border-rose-500/50 rounded-full animate-spin direction-reverse"></div>
           <div className="absolute inset-0 flex items-center justify-center bg-zinc-950 rounded-full shadow-[0_0_50px_rgba(244,63,94,0.4)] border border-rose-500/20">
             <Crosshair className="h-12 w-12 text-rose-500 animate-pulse" />
           </div>
         </div>
-        <h2 className="text-3xl font-bold mb-4 text-white">Hunter AI Ativado...</h2>
+        <h2 className="text-3xl font-bold mb-4 text-white">
+          {isEn ? "Hunter AI Activated..." : isEs ? "Hunter AI Activado..." : "Hunter AI Ativado..."}
+        </h2>
         <p className="text-muted-foreground max-w-md mx-auto">
-          Vasculhando a web, forjando scripts letais e criando queries Dorks para aniquilar as barreiras dos seus clientes em potencial.
+          {isEn 
+            ? "Scouring the web, forging lethal scripts, and creating Dorks queries to reach your potential customers." 
+            : isEs 
+            ? "Explorando la web, forjando guiones y creando consultas Dorks para alcanzar a sus clientes potenciales." 
+            : "Vasculhando a web, forjando scripts letais e criando queries Dorks para aniquilar as barreiras dos seus clientes em potencial."}
         </p>
       </div>
     );
@@ -77,10 +87,12 @@ export function HunterDashboard({ opportunity }: HunterDashboardProps) {
     return (
       <div className="min-h-[80vh] flex flex-col items-center justify-center text-center">
         <XCircle className="h-16 w-16 text-rose-500 mb-4 animate-bounce" />
-        <h2 className="text-2xl font-bold mb-2 text-white">Ops! Falha na Prospecção</h2>
+        <h2 className="text-2xl font-bold mb-2 text-white">
+          {isEn ? "Ops! Prospecting Failed" : isEs ? "¡Ops! Falla en Prospección" : "Ops! Falha na Prospecção"}
+        </h2>
         <p className="text-muted-foreground mb-6">{error}</p>
         <button onClick={generateHunter} className="bg-rose-600/20 border border-rose-500/50 text-rose-500 font-bold px-6 py-2 rounded-lg hover:bg-rose-600/40 transition-colors">
-          Tentar Novamente
+          {isEn ? "Try Again" : isEs ? "Reintentar" : "Tentar Novamente"}
         </button>
       </div>
     );
@@ -91,7 +103,7 @@ export function HunterDashboard({ opportunity }: HunterDashboardProps) {
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 font-sans w-full space-y-8 animate-in fade-in zoom-in-95 duration-700">
       <Link href={`/canvas/${opportunity.id}`} className="inline-flex items-center text-sm font-bold text-muted-foreground hover:text-white transition-colors bg-zinc-900/50 px-4 py-2 rounded-full border border-white/5 w-fit">
-        <ArrowLeft className="mr-2 h-4 w-4" /> Retornar à Base (Canvas)
+        <ArrowLeft className="mr-2 h-4 w-4" /> {isEn ? "Return to Canvas" : isEs ? "Volver al Canvas" : "Retornar à Base (Canvas)"}
       </Link>
 
       <div className="relative">
@@ -101,7 +113,9 @@ export function HunterDashboard({ opportunity }: HunterDashboardProps) {
             <Target className="h-10 w-10 text-rose-500" />
             Command Center
           </h1>
-          <p className="text-lg text-zinc-400 font-medium">Arsenal tático gerado para dominar o mercado de: <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-orange-500">{opportunity.saas_name}</span></p>
+          <p className="text-lg text-zinc-400 font-medium">
+            {isEn ? "Tactical arsenal generated to conquer the market of:" : isEs ? "Arsenal táctico generado para dominar el mercado de:" : "Arsenal tático gerado para dominar o mercado de:"} <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-orange-500">{opportunity.saas_name}</span>
+          </p>
         </div>
       </div>
 
@@ -117,18 +131,18 @@ export function HunterDashboard({ opportunity }: HunterDashboardProps) {
             </div>
             <CardHeader className="border-b border-white/5 pb-4">
               <CardTitle className="text-xl font-bold flex items-center gap-2">
-                <Briefcase className="h-5 w-5 text-rose-400" /> Perfil do Alvo (ICP)
+                <Briefcase className="h-5 w-5 text-rose-400" /> {isEn ? "Target Profile (ICP)" : isEs ? "Perfil del Objetivo (ICP)" : "Perfil do Alvo (ICP)"}
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-6 space-y-6 relative z-10">
               <div>
                 <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
-                  <Zap className="h-3 w-3 text-orange-500" /> Quem Assina o Cheque
+                  <Zap className="h-3 w-3 text-orange-500" /> {isEn ? "Decision Maker" : isEs ? "Quien Firma el Cheque" : "Quem Assina o Cheque"}
                 </p>
                 <p className="text-white font-bold text-lg">{data.target_persona?.decision_maker}</p>
               </div>
               <div>
-                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-3">Cargos no LinkedIn</p>
+                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-3">{isEn ? "LinkedIn Job Titles" : isEs ? "Cargos en LinkedIn" : "Cargos no LinkedIn"}</p>
                 <div className="flex flex-wrap gap-2">
                   {data.target_persona?.job_titles?.map((title: string, i: number) => (
                     <span key={i} className="bg-rose-500/10 text-rose-400 px-3 py-1.5 rounded-md text-xs font-bold border border-rose-500/20 shadow-[0_0_10px_rgba(244,63,94,0.1)]">
@@ -138,7 +152,7 @@ export function HunterDashboard({ opportunity }: HunterDashboardProps) {
                 </div>
               </div>
               <div>
-                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-3">Setores de Atuação</p>
+                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-3">{isEn ? "Target Industries" : isEs ? "Sectores Objetivo" : "Setores de Atuação"}</p>
                 <div className="space-y-2">
                   {data.target_persona?.industries?.map((ind: string, i: number) => (
                     <div key={i} className="bg-zinc-900/50 border border-white/5 px-3 py-2 rounded-lg text-sm text-zinc-300 flex items-center gap-2">
@@ -160,7 +174,13 @@ export function HunterDashboard({ opportunity }: HunterDashboardProps) {
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
-              <p className="text-zinc-400 text-sm mb-6 font-medium">Execute essas queries no Google para burlar filtros e encontrar centenas de tomadores de decisão hiper-qualificados.</p>
+              <p className="text-zinc-400 text-sm mb-6 font-medium">
+                {isEn 
+                  ? "Run these queries on Google to find qualified leads." 
+                  : isEs 
+                  ? "Ejecute estas consultas en Google para encontrar clientes cualificados." 
+                  : "Execute essas queries no Google para burlar filtros e encontrar centenas de tomadores de decisão hiper-qualificados."}
+              </p>
               
               <div className="space-y-4">
                 {data.google_dorks?.map((dork: any, i: number) => (
@@ -176,7 +196,7 @@ export function HunterDashboard({ opportunity }: HunterDashboardProps) {
                       <button 
                         onClick={() => copyToClipboard(dork.query, `dork-${i}`)}
                         className="shrink-0 p-2 bg-zinc-900 hover:bg-emerald-500/20 rounded-md transition-colors border border-white/5 hover:border-emerald-500/50"
-                        title="Copiar Payload"
+                        title={isEn ? "Copy Payload" : isEs ? "Copiar Carga" : "Copiar Payload"}
                       >
                         {copiedId === `dork-${i}` ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4 text-zinc-500 group-hover:text-emerald-400" />}
                       </button>
@@ -199,7 +219,7 @@ export function HunterDashboard({ opportunity }: HunterDashboardProps) {
                 <div className="bg-blue-500/20 p-2 rounded-lg border border-blue-500/30">
                   <Mail className="h-6 w-6 text-blue-400" />
                 </div>
-                Sequência de Infiltração (Cold Email)
+                {isEn ? "Cold Email Sequence" : isEs ? "Secuencia de Cold Email" : "Sequência de Infiltração (Cold Email)"}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-8 space-y-8">
@@ -214,13 +234,13 @@ export function HunterDashboard({ opportunity }: HunterDashboardProps) {
                       onClick={() => copyToClipboard(`Assunto: ${email.subject}\n\n${email.body}`, `email-${i}`)}
                       className="text-xs font-bold bg-zinc-900 border border-white/10 hover:border-blue-500/50 hover:text-blue-400 px-4 py-1.5 rounded-full flex items-center gap-2 transition-all"
                     >
-                      {copiedId === `email-${i}` ? <><Check className="h-3.5 w-3.5 text-emerald-500" /> COPIADO</> : <><Copy className="h-3.5 w-3.5" /> COPIAR</>}
+                      {copiedId === `email-${i}` ? <><Check className="h-3.5 w-3.5 text-emerald-500" /> {isEn ? "COPIED" : isEs ? "COPIADO" : "COPIADO"}</> : <><Copy className="h-3.5 w-3.5" /> {isEn ? "COPY" : isEs ? "COPIAR" : "COPIAR"}</>}
                     </button>
                   </div>
                   
                   <div className="bg-zinc-950 border border-white/5 rounded-xl p-6 shadow-inner font-sans">
                     <div className="mb-4 pb-4 border-b border-white/5 flex gap-3 items-center">
-                      <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest bg-zinc-900 px-2 py-1 rounded">Subject</span>
+                      <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest bg-zinc-900 px-2 py-1 rounded">{isEn ? "Subject" : isEs ? "Asunto" : "Subject"}</span>
                       <span className="text-white font-bold">{email.subject}</span>
                     </div>
                     <div className="text-zinc-300 whitespace-pre-wrap leading-relaxed text-sm">
@@ -239,7 +259,7 @@ export function HunterDashboard({ opportunity }: HunterDashboardProps) {
                 <div className="bg-indigo-500/20 p-2 rounded-lg border border-indigo-500/30">
                   <MessageSquare className="h-6 w-6 text-indigo-400" />
                 </div>
-                Engajamento Direto (LinkedIn DM)
+                {isEn ? "Direct Outreach (LinkedIn DM)" : isEs ? "Mensaje Directo (LinkedIn DM)" : "Engajamento Direto (LinkedIn DM)"}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-8 grid md:grid-cols-2 gap-6">

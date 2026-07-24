@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator"
 import { AIChatModal } from "@/components/ai-chat-modal"
 import { useRouter } from "next/navigation"
 import { getSocialMetrics } from "@/lib/utils"
+import { useLanguage } from "@/contexts/language-context"
 
 // Ícone personalizado do Facebook
 function FacebookIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -51,7 +52,9 @@ function getCategoryColor(category: string) {
 
 export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
   const router = useRouter();
+  const { language, t } = useLanguage();
   const [items, setItems] = useState(initialData);
+  const [isTranslating, setIsTranslating] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [copiedPrompt, setCopiedPrompt] = useState<string | null>(null);
@@ -63,8 +66,47 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
   const [loadingDetails, setLoadingDetails] = useState(false);
 
   useEffect(() => {
-    setItems(initialData);
-  }, [initialData]);
+    if (!initialData || initialData.length === 0) {
+      setItems([]);
+      return;
+    }
+
+    if (language === 'pt') {
+      setItems(initialData);
+      return;
+    }
+
+    const cacheKey = `vbook_trans_${language}_${initialData.map(i => i.id).slice(0, 5).join('_')}`;
+    const cached = typeof window !== 'undefined' ? sessionStorage.getItem(cacheKey) : null;
+    if (cached) {
+      try {
+        setItems(JSON.parse(cached));
+        return;
+      } catch {}
+    }
+
+    setIsTranslating(true);
+    fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: initialData, targetLanguage: language })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.translatedItems && Array.isArray(data.translatedItems)) {
+          const merged = initialData.map(orig => {
+            const trans = data.translatedItems.find((t: any) => t.id === orig.id);
+            return trans ? { ...orig, ...trans } : orig;
+          });
+          setItems(merged);
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem(cacheKey, JSON.stringify(merged));
+          }
+        }
+      })
+      .catch(err => console.error('[CachedBooksLibrary Translate Error]:', err))
+      .finally(() => setIsTranslating(false));
+  }, [initialData, language]);
 
   useEffect(() => {
     if (activeItem && activeItem.id) {
@@ -160,26 +202,37 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
     return (titleMatch || saasMatch || problemMatch) && catMatch;
   });
 
+  const isEn = language === 'en';
+  const isEs = language === 'es';
+
   return (
     <div className="space-y-6">
       {/* Painel de Métricas Rápidas da Biblioteca */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-muted/20 p-5 rounded-3xl border border-border/40 backdrop-blur-md shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
         <div className="text-center">
-          <div className="text-[10px] text-muted-foreground font-extrabold uppercase tracking-widest">Livros Processados</div>
+          <div className="text-[10px] text-muted-foreground font-extrabold uppercase tracking-widest">
+            {isEn ? "Processed Books" : isEs ? "Libros Procesados" : "Livros Processados"}
+          </div>
           <div className="text-2xl font-black text-foreground mt-1.5">{items.length}</div>
         </div>
         <div className="text-center border-l border-border/30">
-          <div className="text-[10px] text-purple-400 font-extrabold uppercase tracking-widest">Nichos Distintos</div>
+          <div className="text-[10px] text-purple-400 font-extrabold uppercase tracking-widest">
+            {isEn ? "Distinct Niches" : isEs ? "Nichos Distintos" : "Nichos Distintos"}
+          </div>
           <div className="text-2xl font-black text-purple-400 mt-1.5">
             {new Set(items.map(item => item.target_audience).filter(Boolean)).size}
           </div>
         </div>
         <div className="text-center border-l border-border/30">
-          <div className="text-[10px] text-blue-400 font-extrabold uppercase tracking-widest">Categorias Únicas</div>
+          <div className="text-[10px] text-blue-400 font-extrabold uppercase tracking-widest">
+            {isEn ? "Unique Categories" : isEs ? "Categorías Únicas" : "Categorias Únicas"}
+          </div>
           <div className="text-2xl font-black text-blue-400 mt-1.5">{categories.length}</div>
         </div>
         <div className="text-center border-l border-border/30">
-          <div className="text-[10px] text-green-500 font-extrabold uppercase tracking-widest">Score Médio Geral</div>
+          <div className="text-[10px] text-green-500 font-extrabold uppercase tracking-widest">
+            {isEn ? "Average Score" : isEs ? "Puntuación Media" : "Score Médio Geral"}
+          </div>
           <div className="text-2xl font-black text-green-500 mt-1.5">
             {items.length > 0 ? Math.round(items.reduce((acc, curr) => acc + (curr.viral_opportunity_score || 0), 0) / items.length) : 0}
           </div>
@@ -191,7 +244,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
         <div className="relative w-full md:max-w-md">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Buscar por livro, SaaS ou problema..."
+            placeholder={t.common.search}
             className="pl-10 bg-background/80"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -205,7 +258,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
             className="cursor-pointer py-1.5 px-3 text-xs font-semibold"
             onClick={() => setSelectedCategory(null)}
           >
-            Todos
+            {isEn ? "All" : isEs ? "Todos" : "Todos"}
           </Badge>
           {categories.slice(0, 5).map((cat) => (
             <Badge
@@ -258,12 +311,12 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                       </h3>
                     </a>
                     <p className="text-xs text-white/80 font-medium italic truncate">
-                      por {item.book_author || "Autor Mapeado"}
+                      {isEn ? "by" : isEs ? "por" : "por"} {item.book_author || (isEn ? "Mapped Author" : isEs ? "Autor Mapeado" : "Autor Mapeado")}
                     </p>
                   </div>
 
                   <div className="flex justify-between items-center pl-3 pt-2 text-[10px] text-white/75 font-semibold border-t border-white/15">
-                    <span>MERCADO: {item.country}</span>
+                    <span>{isEn ? "MARKET:" : isEs ? "MERCADO:" : "MERCADO:"} {item.country}</span>
                     <span>{new Date(item.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
@@ -272,7 +325,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                 <div className="mt-5 space-y-3">
                   <div className="flex items-center gap-1.5">
                     <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">SaaS Oportunidade</span>
+                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{isEn ? "SaaS Opportunity" : isEs ? "Oportunidad SaaS" : "SaaS Oportunidade"}</span>
                   </div>
                   <h4 className="font-extrabold text-base text-foreground group-hover:text-primary transition-colors">
                     {item.saas_name}

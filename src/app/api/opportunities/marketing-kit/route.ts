@@ -15,11 +15,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    const { opportunityId } = await req.json();
+    const { opportunityId, language = 'pt', forceRegenerate = false } = await req.json();
 
     if (!opportunityId) {
       return NextResponse.json({ error: 'ID da oportunidade é obrigatório' }, { status: 400 });
     }
+
+    const targetLang = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese';
 
     // 1. Carregar Oportunidade
     const { data: opportunity, error: fetchErr } = await supabase
@@ -36,14 +38,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
 
-    // Se já foi gerado e possui cache, retorna direto
-    if (opportunity.marketing_kit && typeof opportunity.marketing_kit === 'object' && Object.keys(opportunity.marketing_kit).length > 0) {
+    // Se já foi gerado e possui cache, retorna direto (a não ser que forceRegenerate seja true)
+    if (!forceRegenerate && opportunity.marketing_kit && typeof opportunity.marketing_kit === 'object' && Object.keys(opportunity.marketing_kit).length > 0) {
       return NextResponse.json({ success: true, marketingKit: opportunity.marketing_kit, cached: true });
     }
 
     // 2. Chamar IA do Groq para criar as copys de marketing
     const systemPrompt = `Você é um Copywriter especialista em lançamentos virais de produtos de tecnologia (SaaS/Micro-SaaS) e Growth Hacker experiente.
-Sua missão é criar um Kit de Marketing & Lançamento de alta conversão para o seguinte SaaS:
+Sua missão é criar um Kit de Marketing & Lançamento de alta conversão para o seguinte SaaS.
+
+CRITICAL INSTRUCTION: All generated copy text, tweets, Product Hunt pitch, and emails MUST be written in **${targetLang}**.
 
 DADOS DO SAAS:
 - Nome do SaaS: "${opportunity.saas_name}"
@@ -52,7 +56,7 @@ DADOS DO SAAS:
 - Diferencial competitivo: "${opportunity.competitive_advantage}"
 - Inspirado no livro: "${opportunity.book_title}" de "${opportunity.book_author || 'Desconhecido'}"
 
-Você deve gerar e retornar estritamente um JSON com copys em português do Brasil no seguinte formato:
+Você deve gerar e retornar estritamente um JSON com copys no idioma ${targetLang} no seguinte formato:
 {
   "twitter_thread": [
     "Tweet 1: Um ganho/gancho provocativo conectando o conceito principal do livro com um problema comum (ex: 'O livro [Livro] ensina que... mas 90% das pessoas falham nisso porque... 🧵')",
@@ -79,7 +83,25 @@ Você deve gerar e retornar estritamente um JSON com copys em português do Bras
     ],
     "cta": "Chamada para ação do vídeo (ex: 'Comenta QUERO ou clica no link da bio para entrar no beta!')"
   },
-  "cold_email": "Assunto: Uma ideia simples para resolver o [Problema/Dor] na [Empresa/Nicho]\n\nOlá, [Nome],\n\nNotei que quem atua como [Público-Alvo] costuma perder muito tempo com [Problema]. Inspirados no livro [Livro], criamos o [Nome do SaaS] para fazer [Solução].\n\nNossos primeiros usuários relataram economia de X horas por semana.\n\nEstamos liberando vagas limitadas para o beta. Seria interessante para você testar sem custos?\n\nAbs,\n[Seu Nome]"
+  "cold_email": "Assunto: Uma ideia simples para resolver o [Problema/Dor] na [Empresa/Nicho]\n\nOlá, [Nome],\n\nNotei que quem atua como [Público-Alvo] costuma perder muito tempo com [Problema]. Inspirados no livro [Livro], criamos o [Nome do SaaS] para fazer [Solução].\n\nNossos primeiros usuários relataram economia de X horas por semana.\n\nEstamos liberando vagas limitadas para o beta. Seria interessante para você testar sem custos?\n\nAbs,\n[Seu Nome]",
+  "facebook_ad": {
+    "headline": "Título chamativo do anúncio do Facebook Ads",
+    "primary_text": "Texto principal patrocinado focando na dor do público-alvo e na facilidade da solução",
+    "description": "Descrição curta abaixo do título (ex: Teste sem cartão de crédito)",
+    "target_interests": ["Interesse 1", "Interesse 2", "Interesse 3"],
+    "cta_button": "Cadastre-se / Saiba Mais"
+  },
+  "instagram_ad": {
+    "hook": "Gancho chamativo nos primeiros 3 segundos para Reels/Feed do Instagram",
+    "caption": "Legenda completa do anúncio patrocinado do Instagram com emojis e hashtags",
+    "visual_direction": "Instruções do criativo de imagem ou vídeo",
+    "cta": "Clica no link da bio / Clica em Saiba Mais"
+  },
+  "google_ad": {
+    "headlines": ["Título 1 para Google Ads", "Título 2 para Google Ads", "Título 3 para Google Ads"],
+    "descriptions": ["Descrição 1 patrocinada do Google Ads", "Descrição 2 patrocinada do Google Ads"],
+    "keywords": ["palavra-chave 1", "palavra-chave 2", "palavra-chave 3", "palavra-chave 4"]
+  }
 }
 
 IMPORTANTE: Responda APENAS o JSON válido. Não adicione nenhuma saudação ou introdução.`;

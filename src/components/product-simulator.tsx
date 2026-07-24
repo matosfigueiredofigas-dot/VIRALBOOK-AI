@@ -7,6 +7,7 @@ import {
   MessageSquare, Sparkles, TrendingUp, FileText, 
   Check, Play, ArrowLeft, RefreshCw, AlertCircle, Search
 } from "lucide-react";
+import { useLanguage } from "@/contexts/language-context";
 
 interface ComboItem {
   id: string;
@@ -169,6 +170,9 @@ const PRESET_COMBOS: ComboItem[] = [
 ];
 
 export function ProductSimulator() {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
+  const isEs = language === 'es';
   const [activeTab, setActiveTab] = useState<"combo" | "scanning" | "dashboard">("combo");
   const [selectedCombo, setSelectedCombo] = useState<ComboItem>(PRESET_COMBOS[0]);
   const [customAudience, setCustomAudience] = useState("");
@@ -351,15 +355,15 @@ export function ProductSimulator() {
                 <div className="md:col-span-2 flex flex-col justify-between bg-background/30 rounded-2xl p-5 border border-border/50">
                   <div className="space-y-4">
                     <span className="text-sm font-bold text-foreground flex items-center gap-1.5">
-                      <Target className="h-4.5 w-4.5 text-primary" /> Ou crie o seu crossover:
+                      <Target className="h-4.5 w-4.5 text-primary" /> {isEn ? "Or create your custom crossover:" : isEs ? "O cree su crossover personalizado:" : "Ou crie o seu crossover:"}
                     </span>
                     
                     <div className="space-y-3">
                       <div>
-                        <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block mb-1">Público Alvo</label>
+                        <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block mb-1">{isEn ? "Target Audience" : isEs ? "Público Objetivo" : "Público Alvo"}</label>
                         <input
                           type="text"
-                          placeholder="Ex: Engenheiros Civis"
+                          placeholder={isEn ? "Ex: Civil Engineers" : isEs ? "Ej: Ingenieros Civiles" : "Ex: Engenheiros Civis"}
                           value={customAudience}
                           onChange={(e) => {
                             setCustomAudience(e.target.value);
@@ -370,10 +374,10 @@ export function ProductSimulator() {
                       </div>
 
                       <div>
-                        <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block mb-1">Dor Principal</label>
+                        <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block mb-1">{isEn ? "Main Pain Point" : isEs ? "Dolor Principal" : "Dor Principal"}</label>
                         <input
                           type="text"
-                          placeholder="Ex: Fazer orçamentos de obras"
+                          placeholder={isEn ? "Ex: Construction budgeting" : isEs ? "Ej: Presupuestos de obras" : "Ex: Fazer orçamentos de obras"}
                           value={customProblem}
                           onChange={(e) => {
                             setCustomProblem(e.target.value);
@@ -384,10 +388,10 @@ export function ProductSimulator() {
                       </div>
 
                       <div>
-                        <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block mb-1">Objetivo / Tecnologia</label>
+                        <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block mb-1">{isEn ? "Goal / Technology" : isEs ? "Objetivo / Tecnología" : "Objetivo / Tecnologia"}</label>
                         <input
                           type="text"
-                          placeholder="Ex: Reduzir erros de custos com IA"
+                          placeholder={isEn ? "Ex: Reduce cost errors with AI" : isEs ? "Ej: Reducir errores de costos con IA" : "Ex: Reduzir erros de custos com IA"}
                           value={customGoal}
                           onChange={(e) => {
                             setCustomGoal(e.target.value);
@@ -403,7 +407,7 @@ export function ProductSimulator() {
                     onClick={handleStartSimulation}
                     className="w-full mt-6 bg-primary hover:bg-primary/95 text-primary-foreground font-bold h-11 rounded-xl shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <Play className="h-4 w-4 fill-current" /> Simular Validação
+                    <Play className="h-4 w-4 fill-current" /> {isEn ? "Simulate Validation" : isEs ? "Simular Validación" : "Simular Validação"}
                   </button>
                 </div>
               </motion.div>

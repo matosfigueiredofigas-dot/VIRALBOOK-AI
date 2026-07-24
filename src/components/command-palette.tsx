@@ -20,6 +20,7 @@ import {
   Home,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useLanguage } from "@/contexts/language-context";
 
 interface CommandItem {
   id: string;
@@ -38,6 +39,7 @@ interface CommandPaletteProps {
 export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   const router = useRouter();
   const { setTheme, theme } = useTheme();
+  const { t } = useLanguage();
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -151,7 +153,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
           <input
             autoFocus
             type="text"
-            placeholder="Buscar páginas, ações..."
+            placeholder={t.commandPalette.placeholder}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
@@ -165,7 +167,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         <div className="max-h-80 overflow-y-auto py-2">
           {flatFiltered.length === 0 && (
             <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-              Nenhum resultado para "{query}"
+              {t.commandPalette.noResults}
             </div>
           )}
 

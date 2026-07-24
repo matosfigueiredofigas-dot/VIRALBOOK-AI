@@ -33,7 +33,7 @@ export default async function SharedOpportunityPage(props: { params: Promise<{ i
         <div className="text-center space-y-4">
           <div className="inline-flex items-center justify-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-2">
             <Lock className="h-3 w-3" />
-            Acesso Restrito via Link
+            Restricted Access via Link / Acesso Restrito
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">
             {opportunity.saas_name}
@@ -48,12 +48,12 @@ export default async function SharedOpportunityPage(props: { params: Promise<{ i
           <CardHeader className="bg-muted/30 pb-6 border-b border-border/50">
             <div className="flex flex-wrap items-center gap-3">
               <Badge variant={score >= 80 ? "default" : "secondary"} className="text-sm py-1">
-                Score Viral: {score}
+                Viral Score: {score}
               </Badge>
               <Badge variant="outline" className="text-sm py-1 bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
-                {score >= 95 ? "🌟🌟🌟🌟🌟🌟 (>5 Estrelas)" : 
-                 score >= 80 ? "⭐⭐⭐⭐⭐ (5 Estrelas)" : 
-                 score >= 60 ? "⭐⭐⭐⭐ (4 Estrelas)" : "⭐⭐⭐"}
+                {score >= 95 ? "🌟🌟🌟🌟🌟🌟 (>5 Stars)" : 
+                 score >= 80 ? "⭐⭐⭐⭐⭐ (5 Stars)" : 
+                 score >= 60 ? "⭐⭐⭐⭐ (4 Stars)" : "⭐⭐⭐"}
               </Badge>
               <Badge variant="outline" className="text-sm py-1">
                 <Globe className="h-3 w-3 mr-1" /> {opportunity.country}
@@ -67,12 +67,12 @@ export default async function SharedOpportunityPage(props: { params: Promise<{ i
               <div className="bg-black/5 dark:bg-black/20 p-4 rounded-xl border border-border/50 flex flex-col items-center justify-center text-center">
                 <TrendingUp className="h-6 w-6 text-green-500 mb-2" />
                 <span className="text-2xl font-bold text-green-500">+{opportunity.trends_growth_monthly}%</span>
-                <span className="text-sm text-muted-foreground">Crescimento Google</span>
+                <span className="text-sm text-muted-foreground">Google Growth / Crescimento</span>
               </div>
               <div className="bg-black/5 dark:bg-black/20 p-4 rounded-xl border border-border/50 flex flex-col items-center justify-center text-center">
                 <MessageSquare className="h-6 w-6 text-orange-500 mb-2" />
                 <span className="text-2xl font-bold text-orange-500">{metrics.reddit_mentions} refs</span>
-                <span className="text-sm text-muted-foreground">Validação Reddit</span>
+                <span className="text-sm text-muted-foreground">Reddit Validation</span>
               </div>
             </div>
 
@@ -82,24 +82,24 @@ export default async function SharedOpportunityPage(props: { params: Promise<{ i
             <div className="grid md:grid-cols-2 gap-8">
               <div className="space-y-6">
                 <div>
-                  <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">Público-Alvo</h4>
+                  <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">Target Audience / Público-Alvo</h4>
                   <p className="text-foreground leading-relaxed">{opportunity.target_audience}</p>
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">Diferencial (Moat)</h4>
+                  <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">Moat / Diferencial</h4>
                   <p className="text-foreground leading-relaxed">{opportunity.competitive_advantage}</p>
                 </div>
               </div>
               <div className="space-y-6">
                 <div>
-                  <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">Monetização & Preço</h4>
+                  <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">Monetization & Pricing</h4>
                   <p className="text-foreground leading-relaxed font-medium">
                     {opportunity.monetization_model}
                     <span className="block text-green-500 mt-1">{opportunity.suggested_price}</span>
                   </p>
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">Receita Potencial</h4>
+                  <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">Potential Revenue / Receita</h4>
                   <p className="text-foreground leading-relaxed">{opportunity.potential_revenue}</p>
                 </div>
               </div>
@@ -110,12 +110,12 @@ export default async function SharedOpportunityPage(props: { params: Promise<{ i
             {/* Execução */}
             <div className="bg-primary/5 p-6 rounded-xl border border-primary/10">
               <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-4 flex items-center gap-2">
-                <Sparkles className="h-4 w-4" /> Plano de Execução (MVP 30 Dias)
+                <Sparkles className="h-4 w-4" /> Execution Plan / Plano (MVP 30 Days)
               </h4>
               <p className="text-foreground leading-relaxed mb-4">{opportunity.mvp_features}</p>
               <div className="flex flex-wrap gap-2">
                 <Badge variant="outline" className="bg-background">⏱️ {opportunity.development_time}</Badge>
-                <Badge variant="outline" className="bg-background">🧠 Dificuldade: {opportunity.implementation_difficulty}</Badge>
+                <Badge variant="outline" className="bg-background">🧠 Difficulty: {opportunity.implementation_difficulty}</Badge>
               </div>
             </div>
 
@@ -123,9 +123,9 @@ export default async function SharedOpportunityPage(props: { params: Promise<{ i
         </Card>
 
         <div className="text-center pt-8">
-          <p className="text-sm text-muted-foreground mb-4">Gerado por Inteligência Artificial</p>
+          <p className="text-sm text-muted-foreground mb-4">Generated by AI / Gerado por IA</p>
           <a href="/" className="inline-flex items-center justify-center font-bold text-primary hover:underline">
-            Descubra suas próprias ideias com ViralBook AI &rarr;
+            Discover your own ideas with ViralBook AI &rarr;
           </a>
         </div>
       </div>

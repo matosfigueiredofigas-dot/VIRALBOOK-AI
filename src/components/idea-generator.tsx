@@ -10,14 +10,19 @@ import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Item, audiences, technologies } from "@/lib/matrices";
 import { supabase } from "@/lib/supabase";
+import { useLanguage } from "@/contexts/language-context";
 
 export function IdeaGenerator() {
   const router = useRouter();
+  const { language, t } = useLanguage();
+  const isEn = language === 'en';
+  const isEs = language === 'es';
   const [isGenerating, setIsGenerating] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [copied, setCopied] = useState(false);
   const [targetStars, setTargetStars] = useState<string>("random");
   const [country, setCountry] = useState<string>("ALL");
+  const [displayAudience, setDisplayAudience] = useState<string>("");
   
   // Pool local com fallback para dados estáticos
   const [audiencesPool, setAudiencesPool] = useState<Item[]>(audiences);
@@ -121,7 +126,7 @@ export function IdeaGenerator() {
       const response = await fetch("/api/radar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ keyword: suggestion.name, country, tier: suggestion.tier }), 
+        body: JSON.stringify({ keyword: suggestion.name, country, tier: suggestion.tier, targetLanguage: language }), 
       });
 
       if (response.ok) {
@@ -344,6 +349,47 @@ export function IdeaGenerator() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (!idea.audience) {
+      setDisplayAudience("");
+      return;
+    }
+
+    if (language === 'pt') {
+      setDisplayAudience(idea.audience);
+      return;
+    }
+
+    const cacheKey = `vbook_aud_trans_${language}_${idea.audience}`;
+    const cached = typeof window !== 'undefined' ? sessionStorage.getItem(cacheKey) : null;
+    if (cached) {
+      setDisplayAudience(cached);
+      return;
+    }
+
+    setDisplayAudience(idea.audience); // Fallback imediato
+
+    fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        items: [{ id: 'audience', saas_name: idea.audience }],
+        targetLanguage: language
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.translatedItems && data.translatedItems[0]?.saas_name) {
+          const trans = data.translatedItems[0].saas_name;
+          setDisplayAudience(trans);
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem(cacheKey, trans);
+          }
+        }
+      })
+      .catch(err => console.error('[Audience Translate Error]:', err));
+  }, [idea.audience, language]);
+
   const handleSaveDraft = () => {
     if (!idea.audience) return;
     
@@ -543,7 +589,7 @@ export function IdeaGenerator() {
       const response = await fetch("/api/radar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ keyword: idea.audience, country, tier: idea.tier }), 
+        body: JSON.stringify({ keyword: idea.audience, country, tier: idea.tier, targetLanguage: language }), 
       });
 
       if (response.ok) {
@@ -568,10 +614,10 @@ export function IdeaGenerator() {
       <div className="text-center space-y-1 bg-card/25 backdrop-blur-md border border-white/5 py-4 px-6 rounded-2xl max-w-2xl mx-auto shadow-inner flex flex-col items-center justify-center">
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-primary/10 text-primary border border-primary/20 shadow-md">
           <Zap className="h-3.5 w-3.5 fill-primary animate-pulse text-primary" />
-          {audiencesPool.length.toLocaleString('pt-BR')} Públicos-Alvo / Nichos de Mercado Disponíveis
+          {audiencesPool.length.toLocaleString()} {t.generator.availableNiches}
         </span>
         <p className="text-xxs text-muted-foreground/75 font-medium mt-1">
-          Escolha ou sorteie um público e deixe nossa IA rastrear sinais de mercado para mapear a dor e projetar o SaaS.
+          {t.generator.nicheSubtitle}
         </p>
       </div>
 
@@ -581,27 +627,27 @@ export function IdeaGenerator() {
           <button
             onClick={() => setCombinationMode("single")}
             className={cn(
-              "flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs transition-all duration-300",
+              "flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs transition-all duration-300 cursor-pointer",
               combinationMode === "single"
                 ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-105"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
             <Users className="h-3.5 w-3.5" />
-            Nicho Único
+            {t.generator.singleNiche}
           </button>
           
           <button
             onClick={() => setCombinationMode("crossover")}
             className={cn(
-              "flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs transition-all duration-300",
+              "flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs transition-all duration-300 cursor-pointer",
               combinationMode === "crossover"
                 ? "bg-purple-600 text-white shadow-md shadow-purple-600/20 scale-105"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
             <Dna className="h-3.5 w-3.5 animate-pulse" />
-            Crossover (Combinação)
+            {t.generator.crossoverNiche}
           </button>
         </div>
       </div>
@@ -616,16 +662,16 @@ export function IdeaGenerator() {
                 <Star className="h-5 w-5 text-yellow-500 ml-2 shrink-0" />
                 <Select value={targetStars} onValueChange={handleTargetStarsChange}>
                   <SelectTrigger className="border-0 bg-transparent text-sm md:text-base focus:ring-0">
-                    <SelectValue placeholder="Nível da Ideia" />
+                    <SelectValue placeholder={isEn ? "Idea Tier" : isEs ? "Nivel de Idea" : "Nível da Ideia"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="random">Qualquer Nível</SelectItem>
-                    <SelectItem value="6">&gt;5 Estrelas (Oceano Azul)</SelectItem>
-                    <SelectItem value="5">5 Estrelas (Inovador)</SelectItem>
-                    <SelectItem value="4">4 Estrelas (Avançado)</SelectItem>
-                    <SelectItem value="3">3 Estrelas (Mediano)</SelectItem>
-                    <SelectItem value="2">2 Estrelas (Comum)</SelectItem>
-                    <SelectItem value="1">1 Estrela (Saturado)</SelectItem>
+                    <SelectItem value="random">{isEn ? "Any Tier" : isEs ? "Cualquier Nivel" : "Qualquer Nível"}</SelectItem>
+                    <SelectItem value="6">{isEn ? ">5 Stars (Blue Ocean)" : isEs ? ">5 Estrellas (Océano Azul)" : ">5 Estrelas (Oceano Azul)"}</SelectItem>
+                    <SelectItem value="5">{isEn ? "5 Stars (Innovative)" : isEs ? "5 Estrellas (Innovador)" : "5 Estrelas (Inovador)"}</SelectItem>
+                    <SelectItem value="4">{isEn ? "4 Stars (Advanced)" : isEs ? "4 Estrellas (Avanzado)" : "4 Estrelas (Avançado)"}</SelectItem>
+                    <SelectItem value="3">{isEn ? "3 Stars (Average)" : isEs ? "3 Estrellas (Mediano)" : "3 Estrelas (Mediano)"}</SelectItem>
+                    <SelectItem value="2">{isEn ? "2 Stars (Common)" : isEs ? "2 Estrellas (Común)" : "2 Estrelas (Comum)"}</SelectItem>
+                    <SelectItem value="1">{isEn ? "1 Star (Saturated)" : isEs ? "1 Estrella (Saturado)" : "1 Estrela (Saturado)"}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -637,11 +683,11 @@ export function IdeaGenerator() {
                 <Plus className="h-5 w-5 text-purple-400 ml-2 shrink-0" />
                 <Select value={crossoverType} onValueChange={handleCrossoverTypeChange}>
                   <SelectTrigger className="border-0 bg-transparent text-sm md:text-base focus:ring-0">
-                    <SelectValue placeholder="Tipo de Crossover" />
+                    <SelectValue placeholder={isEn ? "Crossover Type" : isEs ? "Tipo de Crossover" : "Tipo de Crossover"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="2-audiences">Crossover de 2 Públicos</SelectItem>
-                    <SelectItem value="audience-tech">Nicho + Tecnologia Premium</SelectItem>
+                    <SelectItem value="2-audiences">{isEn ? "2 Audiences Crossover" : isEs ? "Crossover de 2 Públicos" : "Crossover de 2 Públicos"}</SelectItem>
+                    <SelectItem value="audience-tech">{isEn ? "Niche + Premium Tech" : isEs ? "Nicho + Tecnología Premium" : "Nicho + Tecnologia Premium"}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -651,11 +697,11 @@ export function IdeaGenerator() {
                 <Star className="h-5 w-5 text-purple-400 ml-2 shrink-0" />
                 <Select value={crossoverQuality} onValueChange={handleCrossoverQualityChange}>
                   <SelectTrigger className="border-0 bg-transparent text-sm md:text-base focus:ring-0">
-                    <SelectValue placeholder="Qualidade" />
+                    <SelectValue placeholder={isEn ? "Quality" : isEs ? "Calidad" : "Qualidade"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="premium">Premium (4, 5 e &gt;5★)</SelectItem>
-                    <SelectItem value="random">Qualquer Nível</SelectItem>
+                    <SelectItem value="premium">{isEn ? "Premium (4, 5 & >5★)" : isEs ? "Premium (4, 5 y >5★)" : "Premium (4, 5 e >5★)"}</SelectItem>
+                    <SelectItem value="random">{isEn ? "Any Tier" : isEs ? "Cualquier Nivel" : "Qualquer Nível"}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -667,10 +713,10 @@ export function IdeaGenerator() {
             <Globe className="h-5 w-5 text-blue-500 ml-2 shrink-0" />
             <Select value={country} onValueChange={handleCountryChange}>
               <SelectTrigger className="border-0 bg-transparent text-sm md:text-base focus:ring-0">
-                <SelectValue placeholder="País Alvo" />
+                <SelectValue placeholder={isEn ? "Target Country" : isEs ? "País Objetivo" : "País Alvo"} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">🌐 TODOS PAÍSES</SelectItem>
+                <SelectItem value="ALL">🌐 {isEn ? "ALL COUNTRIES" : isEs ? "TODOS LOS PAÍSES" : "TODOS PAÍSES"}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -682,22 +728,22 @@ export function IdeaGenerator() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
             <h4 className="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-1.5">
               <Dna className="h-4 w-4 text-purple-400 animate-pulse" />
-              Ajuste Fino da Combinação (Manual)
+              {t.generator.manualCrossoverTitle}
             </h4>
             <span className="text-xxs text-muted-foreground/75">
-              Modifique os nichos abaixo para personalizar a mistura
+              {t.generator.manualCrossoverSub}
             </span>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Primeiro Termo: Sempre Público 1 */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground">Público-Alvo Principal</label>
+              <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground">{t.generator.mainAudience}</label>
               <div className="flex items-center gap-2 bg-muted/40 border border-white/5 rounded-xl px-3 py-1.5 focus-within:border-purple-500/50 transition-all">
                 <Users className="h-4 w-4 text-purple-400 shrink-0" />
                 <Select value={crossoverAudience1} onValueChange={handleCrossoverAudience1Change}>
                   <SelectTrigger className="border-0 bg-transparent text-sm focus:ring-0 w-full p-0 h-8 text-foreground font-medium">
-                    <SelectValue placeholder="Selecione o Público 1" />
+                    <SelectValue placeholder={t.generator.mainAudience} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px] bg-background/95 backdrop-blur-xl border border-white/10">
                     {[...audiencesPool]
@@ -716,7 +762,7 @@ export function IdeaGenerator() {
             {/* Segundo Termo: Público 2 ou Tecnologia */}
             <div className="space-y-1.5">
               <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground">
-                {crossoverType === "2-audiences" ? "Segundo Público-Alvo" : "Tecnologia / Gatilho SaaS"}
+                {crossoverType === "2-audiences" ? t.generator.secondAudience : t.generator.techTrigger}
               </label>
               <div className="flex items-center gap-2 bg-muted/40 border border-white/5 rounded-xl px-3 py-1.5 focus-within:border-purple-500/50 transition-all">
                 {crossoverType === "2-audiences" ? (
@@ -762,14 +808,14 @@ export function IdeaGenerator() {
         onClick={generateIdea} 
         disabled={isGenerating}
         className={cn(
-          "h-16 px-12 text-lg font-bold rounded-full transition-all shadow-[0_0_40px_rgba(168,85,247,0.4)] hover:shadow-[0_0_60px_rgba(168,85,247,0.6)] bg-gradient-to-r from-purple-600 to-pink-600 hover:scale-105",
+          "h-16 px-12 text-lg font-bold rounded-full transition-all shadow-[0_0_40px_rgba(168,85,247,0.4)] hover:shadow-[0_0_60px_rgba(168,85,247,0.6)] bg-gradient-to-r from-purple-600 to-pink-600 hover:scale-105 cursor-pointer",
           isGenerating && "animate-pulse"
         )}
       >
         <Shuffle className={cn("mr-3 h-6 w-6", isGenerating && "animate-spin")} />
           {isGenerating 
-            ? (combinationMode === "single" ? "Selecionando Público..." : "Combinando Nichos...") 
-            : (combinationMode === "single" ? "Girar Roleta de Público-Alvo" : (crossoverType === "2-audiences" ? "Gerar Crossover de 2 Públicos" : "Gerar Crossover Nicho + Tech"))}
+            ? t.generator.generating
+            : t.generator.generateRandom}
         </Button>
       </div>
 
@@ -783,10 +829,10 @@ export function IdeaGenerator() {
           <CardContent className="p-8 md:p-12 relative z-10 flex flex-col items-center text-center space-y-6">
             <div className="flex items-center gap-2.5 text-purple-400">
               <Users className="h-6 w-6" />
-              <h3 className="font-extrabold uppercase tracking-widest text-sm">Público-Alvo Selecionado</h3>
+              <h3 className="font-extrabold uppercase tracking-widest text-sm">{t.generator.selectedAudience}</h3>
             </div>
             <p className="text-3xl md:text-5xl font-black text-foreground tracking-tight leading-none bg-gradient-to-r from-white via-slate-100 to-purple-200 bg-clip-text text-transparent drop-shadow-sm min-h-[3rem] flex items-center justify-center">
-              {idea.audience || "..."}
+              {displayAudience || idea.audience || "..."}
             </p>
             {idea.tier > 0 && (
               <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20 text-xs py-1 font-bold">
@@ -804,36 +850,36 @@ export function IdeaGenerator() {
           <CardContent className="p-8 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-4">
-                <h4 className="text-sm text-muted-foreground font-medium uppercase tracking-widest">Resumo do Nicho</h4>
+                <h4 className="text-sm text-muted-foreground font-medium uppercase tracking-widest">{t.generator.nicheSummary}</h4>
               </div>
               <p className="text-xl md:text-2xl font-medium leading-relaxed">
-                Análise completa de oportunidade de SaaS B2B voltada para o público de <span className="text-purple-400 font-bold underline decoration-purple-500/30 underline-offset-4">{idea.audience}</span>.
+                <span className="text-purple-400 font-bold underline decoration-purple-500/30 underline-offset-4">{displayAudience || idea.audience}</span>
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-2 shrink-0 mt-4 md:mt-0">
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="h-14 rounded-xl border-purple-500/20 hover:bg-purple-500/10 text-purple-400 font-semibold"
+                className="h-14 rounded-xl border-purple-500/20 hover:bg-purple-500/10 text-purple-400 font-semibold cursor-pointer"
                 onClick={handleSaveDraft}
                 disabled={!idea.audience}
               >
                 {draftSaved ? (
                   <>
                     <CheckCircle2 className="mr-2 h-5 w-5 text-purple-400" />
-                    Salvo!
+                    {t.generator.draftSaved}
                   </>
                 ) : (
                   <>
                     <Bookmark className="mr-2 h-5 w-5 text-purple-400" />
-                    Salvar Rascunho
+                    {t.generator.saveDraft}
                   </>
                 )}
               </Button>
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="h-14 rounded-xl border-white/10 hover:bg-white/5"
+                className="h-14 rounded-xl border-white/10 hover:bg-white/5 cursor-pointer"
                 onClick={handleCopy}
               >
                 {copied ? (
@@ -844,117 +890,32 @@ export function IdeaGenerator() {
                 ) : (
                   <>
                     <Copy className="mr-2 h-5 w-5 text-muted-foreground" />
-                    Copiar Público
+                    Copiar
                   </>
                 )}
               </Button>
               <Button 
                 variant="default" 
                 size="lg" 
-                className="h-14 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold shadow-lg shadow-blue-500/20"
+                className="h-14 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold shadow-lg shadow-blue-500/20 cursor-pointer"
                 onClick={handleAnalyze}
                 disabled={isAnalyzing || isGenerating}
               >
                 {isAnalyzing ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Analisando e Criando SaaS...
+                    {t.generator.analyzing}
                   </>
                 ) : (
                   <>
                     <Zap className="mr-2 h-5 w-5 text-yellow-300 fill-yellow-300" />
-                    Analisar Nicho no Radar
+                    {t.generator.analyzeNiche}
                   </>
                 )}
               </Button>
             </div>
           </CardContent>
         </Card>
-      </div>
-
-      {/* 🧬 Crossover Lab: Geração de Ideias Combinadas Infinita */}
-      <div className="mt-12 space-y-6 bg-purple-950/10 border border-purple-500/20 rounded-3xl p-6 md:p-8 backdrop-blur-md relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl" />
-        
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-purple-500/10 pb-4">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-purple-600/20 text-purple-400 border border-purple-500/20 flex items-center justify-center">
-              <Dna className="h-5 w-5 animate-pulse" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-foreground">🧬 Crossover Lab: Sugestões Premium</h3>
-              <p className="text-xs text-muted-foreground">Combinações prontas e altamente inovadoras de nichos Tiers 4, 5 e &gt;5★.</p>
-            </div>
-          </div>
-          
-          <Button
-            variant="outline"
-            className="border-purple-500/30 text-purple-400 hover:bg-purple-600/10 rounded-xl flex items-center gap-2 h-10 px-4 shrink-0 font-bold"
-            onClick={handleReshuffleSuggestions}
-          >
-            <Shuffle className="h-4 w-4" />
-            Embaralhar Nichos
-          </Button>
-        </div>
-
-        <div className="space-y-4">
-          {crossoverSuggestions.map((s) => (
-            <Card key={s.id} className="bg-card/25 border border-white/5 hover:border-purple-500/25 transition-all duration-300 relative overflow-hidden">
-              <CardContent className="p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div className="space-y-2 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="outline" className="bg-purple-500/5 text-purple-400 border-purple-500/10 text-[10px] font-extrabold tracking-widest uppercase">
-                      Combinação Crossover
-                    </Badge>
-                    <Badge variant="outline" className="bg-yellow-500/5 text-yellow-500 border-yellow-500/10 text-[10px] font-bold">
-                      ★ Média: {s.tier}.0
-                    </Badge>
-                  </div>
-                  
-                  <p className="font-extrabold text-foreground text-lg md:text-xl tracking-tight leading-snug">
-                    {s.name}
-                  </p>
-                </div>
-                
-                <div className="flex items-center gap-2 w-full md:w-auto justify-end pt-2 md:pt-0 shrink-0 border-t md:border-t-0 border-white/5">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="rounded-lg text-muted-foreground hover:text-purple-400 hover:bg-purple-500/10 font-bold text-xs"
-                    onClick={() => handleLoadSuggestion(s)}
-                    title="Ver no Painel de Testes"
-                  >
-                    Focar
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="rounded-lg text-muted-foreground hover:text-purple-400 hover:bg-purple-500/10 font-bold text-xs"
-                    onClick={() => handleDraftSuggestion(s)}
-                    title="Adicionar aos Rascunhos"
-                  >
-                    <Bookmark className="h-4 w-4 mr-1" />
-                    Salvar
-                  </Button>
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className="bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-extrabold px-3 py-2 flex items-center gap-1"
-                    onClick={() => handleAnalyzeSuggestion(s, s.id)}
-                    disabled={analyzingSuggestionId !== null}
-                  >
-                    {analyzingSuggestionId === s.id ? (
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                    ) : (
-                      <Zap className="h-3 w-3 text-yellow-300 fill-yellow-300" />
-                    )}
-                    Analisar no Radar
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
       </div>
 
       {/* Rascunhos de Públicos-Alvo Salvos */}

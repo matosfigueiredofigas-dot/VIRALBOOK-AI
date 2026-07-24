@@ -15,7 +15,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    const { opportunityId, advisorName, advisorRole, message } = await req.json();
+    const { opportunityId, advisorName, advisorRole, message, language = 'pt' } = await req.json();
 
     if (!opportunityId || !advisorName || !message) {
       return NextResponse.json({ error: 'Parâmetros incompletos' }, { status: 400 });
@@ -37,6 +37,8 @@ export async function POST(req: Request) {
     const allChats = opportunity.advisor_chat_history || {};
     const advisorHistory = allChats[advisorName] || [];
 
+    const langName = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese';
+
     const systemPrompt = `Você está interpretando o conselheiro: ${advisorName} (${advisorRole}).
 Você NUNCA deve sair do personagem. Responda sempre em primeira pessoa como se fosse o próprio bilionário/empreendedor.
 Seja arrogante, sarcástico, genial, ou visionário, dependendo estritamente da sua personalidade real. Não seja um "assistente de IA amigável".
@@ -57,6 +59,7 @@ Instruções Específicas de Personalidade (Siga apenas a que corresponde ao seu
 - Mark Zuckerberg: Foco brutal em retenção no dia 1 e métricas de viralidade. O produto tem efeito de rede?
 - Jeff Bezos: Obsessão no cliente final, decisões Tipo 1 vs Tipo 2, e "Dia 1". Pense no que NÃO vai mudar nos próximos 10 anos.
 
+CRITICAL INSTRUCTION: Respond strictly in ${langName}. Keep your persona intact while speaking in ${langName}.
 O usuário vai se defender ou fazer uma pergunta. Responda à altura, de forma curta e afiada (máximo 1 ou 2 parágrafos).`;
 
     const messages = [

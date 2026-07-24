@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { Sparkles, Zap, Lock, Mail, KeyRound, Loader2, AlertCircle, CheckCircle2, ArrowRight } from "lucide-react";
+import { Zap, Mail, KeyRound, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/contexts/language-context";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -18,6 +19,9 @@ interface AuthModalProps {
 export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalProps) {
   const router = useRouter();
   const supabase = createClient();
+  const { language, t } = useLanguage();
+  const isEn = language === 'en';
+  const isEs = language === 'es';
   const [tab, setTab] = useState<"login" | "signup" | "forgot">(initialTab);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,17 +57,17 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
       });
 
       if (error) {
-        setError(error.message === "Invalid login credentials" ? "E-mail ou senha incorretos." : error.message);
+        setError(error.message === "Invalid login credentials" ? t.auth.invalidCredentials : error.message);
       } else {
-        setMessage("Login efetuado com sucesso! Redirecionando...");
+        setMessage(t.auth.loginSuccess);
         setTimeout(() => {
           onClose();
           router.push("/dashboard");
           router.refresh();
         }, 1500);
       }
-    } catch (err) {
-      setError("Erro ao tentar fazer login. Tente novamente.");
+    } catch {
+      setError(t.auth.loginError);
     } finally {
       setLoading(false);
     }
@@ -75,12 +79,12 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
     setMessage(null);
 
     if (password.length < 6) {
-      setError("A senha deve ter pelo menos 6 caracteres.");
+      setError(t.auth.passwordMinLength);
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("As senhas não coincidem.");
+      setError(t.auth.passwordsDoNotMatch);
       return;
     }
 
@@ -98,17 +102,17 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
       if (error) {
         setError(error.message);
       } else if (data.user && data.session === null) {
-        setMessage("Cadastro realizado! Por favor, verifique seu e-mail para confirmar a conta.");
+        setMessage(t.auth.signupCheckEmail);
       } else {
-        setMessage("Cadastro realizado com sucesso! Redirecionando...");
+        setMessage(t.auth.signupSuccess);
         setTimeout(() => {
           onClose();
           router.push("/dashboard");
           router.refresh();
         }, 1500);
       }
-    } catch (err) {
-      setError("Erro ao tentar cadastrar. Tente novamente.");
+    } catch {
+      setError(t.auth.signupError);
     } finally {
       setLoading(false);
     }
@@ -128,10 +132,10 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
       if (error) {
         setError(error.message);
       } else {
-        setMessage("E-mail de recuperação enviado! Verifique sua caixa de entrada.");
+        setMessage(t.auth.recoverySent);
       }
-    } catch (err) {
-      setError("Erro ao enviar e-mail de recuperação. Tente novamente.");
+    } catch {
+      setError(t.auth.recoveryError);
     } finally {
       setLoading(false);
     }
@@ -154,8 +158,8 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
         setError(error.message);
         setLoading(false);
       }
-    } catch (err) {
-      setError("Erro ao conectar com o Google.");
+    } catch {
+      setError("Error");
       setLoading(false);
     }
   };
@@ -184,7 +188,7 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 15 }}
         transition={{ type: "spring", duration: 0.5 }}
-        className="relative w-full max-w-md overflow-hidden rounded-[30px] border border-white/10 bg-background/80 p-8 shadow-2xl backdrop-blur-2xl z-10"
+        className="relative w-full max-w-md overflow-hidden rounded-[30px] border border-white/10 bg-background/80 p-8 shadow-2xl backdrop-blur-2xl z-10 text-foreground"
       >
         {/* Glow decoration */}
         <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-primary/20 blur-2xl pointer-events-none" />
@@ -195,38 +199,38 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-blue-600 shadow-lg shadow-primary/20 mb-3">
             <Zap className="h-5 w-5 text-white" />
           </div>
-          <h2 className="text-2xl font-black text-white tracking-tight">ViralBook AI</h2>
+          <h2 className="text-2xl font-black text-foreground tracking-tight">{t.auth.loginTitle}</h2>
           <p className="text-xs text-muted-foreground mt-1.5 max-w-[280px]">
-            {tab === "login" && "Acesse sua conta para visualizar o radar e salvar oportunidades."}
-            {tab === "signup" && "Crie sua conta para acessar o gerador de ideias completo."}
-            {tab === "forgot" && "Recupere o acesso à sua conta de forma segura."}
+            {tab === "login" && t.auth.loginSubtitle}
+            {tab === "signup" && t.auth.signupSubtitle}
+            {tab === "forgot" && t.auth.forgotSubtitle}
           </p>
         </div>
 
         {/* Tab Selector (only for Login & Signup) */}
         {tab !== "forgot" && (
-          <div className="grid grid-cols-2 p-1 bg-white/5 rounded-xl border border-white/5 mb-6">
+          <div className="grid grid-cols-2 p-1 bg-muted/50 rounded-xl border border-border/40 mb-6">
             <button
               onClick={() => changeTab("login")}
               disabled={loading}
-              className={`py-2 rounded-lg text-xs font-bold transition-all duration-300 ${
+              className={`py-2 rounded-lg text-xs font-bold transition-all duration-300 cursor-pointer ${
                 tab === "login"
                   ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                  : "text-muted-foreground hover:text-white"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              Entrar
+              {t.auth.tabLogin}
             </button>
             <button
               onClick={() => changeTab("signup")}
               disabled={loading}
-              className={`py-2 rounded-lg text-xs font-bold transition-all duration-300 ${
+              className={`py-2 rounded-lg text-xs font-bold transition-all duration-300 cursor-pointer ${
                 tab === "signup"
                   ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                  : "text-muted-foreground hover:text-white"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              Criar Conta
+              {t.auth.tabSignup}
             </button>
           </div>
         )}
@@ -254,7 +258,7 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
               exit={{ opacity: 0, height: 0 }}
               className="mb-4 overflow-hidden"
             >
-              <div className="p-3.5 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-xs flex items-start gap-2.5">
+              <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-start gap-2.5">
                 <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5" />
                 <span>{message}</span>
               </div>
@@ -267,31 +271,31 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
           {tab === "login" && (
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-xs text-muted-foreground font-semibold">E-mail</Label>
+                <Label htmlFor="email" className="text-xs text-muted-foreground font-semibold">{t.auth.emailLabel}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="email"
-                    placeholder="seu@email.com"
+                    placeholder={isEn ? "your@email.com" : isEs ? "su@email.com" : "seu@email.com"}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     disabled={loading}
-                    className="bg-background/40 border-white/10 text-white rounded-xl pl-10 focus-visible:ring-primary"
+                    className="bg-background/40 border-border/50 text-foreground rounded-xl pl-10 focus-visible:ring-primary"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
-                  <Label htmlFor="password" className="text-xs text-muted-foreground font-semibold">Senha</Label>
+                  <Label htmlFor="password" className="text-xs text-muted-foreground font-semibold">{t.auth.passwordLabel}</Label>
                   <button
                     type="button"
                     onClick={() => changeTab("forgot")}
                     disabled={loading}
-                    className="text-xs text-primary hover:underline"
+                    className="text-xs text-primary hover:underline cursor-pointer"
                   >
-                    Esqueceu a senha?
+                    {t.auth.forgotPasswordLink}
                   </button>
                 </div>
                 <div className="relative">
@@ -303,7 +307,7 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     disabled={loading}
-                    className="bg-background/40 border-white/10 text-white rounded-xl pl-10 focus-visible:ring-primary"
+                    className="bg-background/40 border-border/50 text-foreground rounded-xl pl-10 focus-visible:ring-primary"
                   />
                 </div>
               </div>
@@ -311,9 +315,9 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-bold h-11 rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5 mt-2"
+                className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-bold h-11 rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5 mt-2 cursor-pointer"
               >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Entrar na Plataforma"}
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t.auth.submitLogin}
               </Button>
             </form>
           )}
@@ -321,49 +325,49 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
           {tab === "signup" && (
             <form onSubmit={handleSignup} className="space-y-4">
               <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-xs text-muted-foreground font-semibold">E-mail</Label>
+                <Label htmlFor="email" className="text-xs text-muted-foreground font-semibold">{t.auth.emailLabel}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="email"
-                    placeholder="seu@email.com"
+                    placeholder={isEn ? "your@email.com" : isEs ? "su@email.com" : "seu@email.com"}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     disabled={loading}
-                    className="bg-background/40 border-white/10 text-white rounded-xl pl-10 focus-visible:ring-primary"
+                    className="bg-background/40 border-border/50 text-foreground rounded-xl pl-10 focus-visible:ring-primary"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="password" className="text-xs text-muted-foreground font-semibold">Senha</Label>
+                <Label htmlFor="password" className="text-xs text-muted-foreground font-semibold">{t.auth.passwordLabel}</Label>
                 <div className="relative">
                   <KeyRound className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="password"
-                    placeholder="Mínimo 6 caracteres"
+                    placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     disabled={loading}
-                    className="bg-background/40 border-white/10 text-white rounded-xl pl-10 focus-visible:ring-primary"
+                    className="bg-background/40 border-border/50 text-foreground rounded-xl pl-10 focus-visible:ring-primary"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="confirmPassword" className="text-xs text-muted-foreground font-semibold">Confirmar Senha</Label>
+                <Label htmlFor="confirmPassword" className="text-xs text-muted-foreground font-semibold">{t.auth.confirmPasswordLabel}</Label>
                 <div className="relative">
                   <KeyRound className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="password"
-                    placeholder="Repita sua senha"
+                    placeholder="••••••••"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                     disabled={loading}
-                    className="bg-background/40 border-white/10 text-white rounded-xl pl-10 focus-visible:ring-primary"
+                    className="bg-background/40 border-border/50 text-foreground rounded-xl pl-10 focus-visible:ring-primary"
                   />
                 </div>
               </div>
@@ -371,9 +375,9 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-bold h-11 rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5 mt-2"
+                className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-bold h-11 rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5 mt-2 cursor-pointer"
               >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Criar Minha Conta"}
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t.auth.submitSignup}
               </Button>
             </form>
           )}
@@ -381,7 +385,7 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
           {tab === "forgot" && (
             <form onSubmit={handleForgotPassword} className="space-y-4">
               <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-xs text-muted-foreground font-semibold">E-mail</Label>
+                <Label htmlFor="email" className="text-xs text-muted-foreground font-semibold">{t.auth.emailLabel}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -391,7 +395,7 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     disabled={loading}
-                    className="bg-background/40 border-white/10 text-white rounded-xl pl-10 focus-visible:ring-primary"
+                    className="bg-background/40 border-border/50 text-foreground rounded-xl pl-10 focus-visible:ring-primary"
                   />
                 </div>
               </div>
@@ -399,18 +403,18 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-bold h-11 rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5 mt-2"
+                className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-bold h-11 rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5 mt-2 cursor-pointer"
               >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enviar E-mail de Recuperação"}
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t.auth.submitForgot}
               </Button>
 
               <button
                 type="button"
                 onClick={() => changeTab("login")}
                 disabled={loading}
-                className="w-full text-center text-xs text-muted-foreground hover:text-white transition-colors"
+                className="w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
-                Voltar para o Login
+                {t.auth.backToLogin}
               </button>
             </form>
           )}
@@ -421,10 +425,10 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
           <>
             <div className="relative my-5">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-white/5" />
+                <span className="w-full border-t border-border/40" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-[#121214] px-2 text-muted-foreground">Ou</span>
+                <span className="bg-background px-2 text-muted-foreground font-semibold">{t.auth.orDivider}</span>
               </div>
             </div>
 
@@ -434,7 +438,7 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
               onClick={handleGoogleLogin}
               disabled={loading}
               variant="secondary"
-              className="w-full border border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold h-11 rounded-xl transition-all"
+              className="w-full border border-border/50 bg-muted/30 hover:bg-muted/60 text-foreground font-bold h-11 rounded-xl transition-all cursor-pointer"
             >
               <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -442,7 +446,7 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
               </svg>
-              Continuar com Google
+              {t.auth.continueWithGoogle}
             </Button>
           </>
         )}

@@ -9,11 +9,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/contexts/language-context";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createClient();
+  const { language, t } = useLanguage();
+  const isEn = language === 'en';
+  const isEs = language === 'es';
   
   const [tab, setTab] = useState<"login" | "signup" | "forgot">("login");
   const [email, setEmail] = useState("");
@@ -58,17 +62,12 @@ function LoginForm() {
         password,
       });
 
-      if (error) {
-        setError(error.message === "Invalid login credentials" ? "E-mail ou senha incorretos." : error.message);
-      } else {
-        setMessage("Login efetuado com sucesso! Redirecionando...");
-        setTimeout(() => {
-          router.push("/dashboard");
-          router.refresh();
-        }, 1500);
-      }
-    } catch (err) {
-      setError("Erro ao tentar fazer login. Tente novamente.");
+      if (error) throw error;
+
+      router.push("/dashboard");
+      router.refresh();
+    } catch (err: any) {
+      setError(err.message || (isEn ? "Failed to sign in" : isEs ? "Error al iniciar sesión" : "Falha ao fazer login"));
     } finally {
       setLoading(false);
     }
@@ -79,20 +78,20 @@ function LoginForm() {
     setError(null);
     setMessage(null);
 
-    if (password.length < 6) {
-      setError("A senha deve ter pelo menos 6 caracteres.");
+    if (password !== confirmPassword) {
+      setError(isEn ? "Passwords do not match" : isEs ? "Las contraseñas no coinciden" : "As senhas não coincidem");
       return;
     }
 
-    if (password !== confirmPassword) {
-      setError("As senhas não coincidem.");
+    if (password.length < 6) {
+      setError(isEn ? "Password must be at least 6 characters" : isEs ? "La contraseña debe tener al menos 6 caracteres" : "A senha deve ter pelo menos 6 caracteres");
       return;
     }
 
     setLoading(true);
 
     try {
-      const { error, data } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -100,19 +99,12 @@ function LoginForm() {
         },
       });
 
-      if (error) {
-        setError(error.message);
-      } else if (data.user && data.session === null) {
-        setMessage("Cadastro realizado! Por favor, verifique seu e-mail para confirmar a conta.");
-      } else {
-        setMessage("Cadastro realizado com sucesso! Redirecionando...");
-        setTimeout(() => {
-          router.push("/dashboard");
-          router.refresh();
-        }, 1500);
-      }
-    } catch (err) {
-      setError("Erro ao tentar cadastrar. Tente novamente.");
+      if (error) throw error;
+
+      setMessage(isEn ? "Account created! Check your email to confirm registration." : isEs ? "¡Cuenta creada! Revise su correo para confirmar el registro." : "Conta criada com sucesso! Verifique seu e-mail para confirmar o cadastro.");
+      setTab("login");
+    } catch (err: any) {
+      setError(err.message || (isEn ? "Failed to create account" : isEs ? "Error al crear cuenta" : "Falha ao criar conta"));
     } finally {
       setLoading(false);
     }
@@ -126,16 +118,14 @@ function LoginForm() {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/api/auth/callback?next=/update-password`,
+        redirectTo: `${window.location.origin}/update-password`,
       });
 
-      if (error) {
-        setError(error.message);
-      } else {
-        setMessage("E-mail de recuperação enviado! Verifique sua caixa de entrada.");
-      }
-    } catch (err) {
-      setError("Erro ao enviar e-mail de recuperação. Tente novamente.");
+      if (error) throw error;
+
+      setMessage(isEn ? "Password reset link sent to your email." : isEs ? "Enlace de recuperación enviado a su correo." : "E-mail de recuperação enviado com sucesso. Verifique sua caixa de entrada.");
+    } catch (err: any) {
+      setError(err.message || (isEn ? "Failed to send reset link" : isEs ? "Error al enviar enlace" : "Falha ao enviar e-mail de recuperação"));
     } finally {
       setLoading(false);
     }
@@ -143,7 +133,6 @@ function LoginForm() {
 
   const handleGoogleLogin = async () => {
     setError(null);
-    setMessage(null);
     setLoading(true);
 
     try {
@@ -151,18 +140,12 @@ function LoginForm() {
         provider: "google",
         options: {
           redirectTo: `${window.location.origin}/api/auth/callback`,
-          queryParams: {
-            prompt: "select_account",
-          },
         },
       });
 
-      if (error) {
-        setError(error.message);
-        setLoading(false);
-      }
-    } catch (err) {
-      setError("Erro ao conectar com o Google.");
+      if (error) throw error;
+    } catch (err: any) {
+      setError(err.message || (isEn ? "Google login failed" : isEs ? "Error en inicio con Google" : "Falha na autenticação com o Google"));
       setLoading(false);
     }
   };
@@ -172,7 +155,7 @@ function LoginForm() {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-8 w-8 text-primary animate-spin" />
-          <span className="text-sm text-muted-foreground">Verificando sessão...</span>
+          <span className="text-sm text-muted-foreground">{isEn ? "Loading..." : isEs ? "Cargando..." : "Carregando..."}</span>
         </div>
       </div>
     );
@@ -190,14 +173,14 @@ function LoginForm() {
       <Card className="w-full max-w-md glass-card z-10 border-white/10 bg-background/65 backdrop-blur-xl shadow-2xl rounded-[30px] p-2">
         <CardHeader className="space-y-1 pb-4 text-center">
           <CardTitle className="text-2xl font-black text-white">
-            {tab === "login" && "Bem-vindo de volta"}
-            {tab === "signup" && "Criar nova conta"}
-            {tab === "forgot" && "Recuperar senha"}
+            {tab === "login" && (isEn ? "Welcome back" : isEs ? "Bienvenido de nuevo" : "Bem-vindo de volta")}
+            {tab === "signup" && (isEn ? "Create new account" : isEs ? "Crear nueva cuenta" : "Criar nova conta")}
+            {tab === "forgot" && (isEn ? "Reset password" : isEs ? "Recuperar contraseña" : "Recuperar senha")}
           </CardTitle>
           <CardDescription className="text-muted-foreground text-sm">
-            {tab === "login" && "Acesse sua conta para ver suas ideias e oportunidades."}
-            {tab === "signup" && "Cadastre-se para começar a usar o radar de micro-SaaS."}
-            {tab === "forgot" && "Insira seu e-mail para receber as instruções de recuperação."}
+            {tab === "login" && (isEn ? "Sign in to access your ideas and opportunities." : isEs ? "Acceda a su cuenta para ver sus ideas y oportunidades." : "Acesse sua conta para ver suas ideias e oportunidades.")}
+            {tab === "signup" && (isEn ? "Sign up to start using the micro-SaaS radar." : isEs ? "Regístrese para empezar a usar el radar de micro-SaaS." : "Cadastre-se para começar a usar o radar de micro-SaaS.")}
+            {tab === "forgot" && (isEn ? "Enter your email to receive recovery instructions." : isEs ? "Ingrese su correo para recibir instrucciones de recuperación." : "Insira seu e-mail para receber as instruções de recuperação.")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -213,7 +196,7 @@ function LoginForm() {
                     : "text-muted-foreground hover:text-white"
                 }`}
               >
-                Entrar
+                {t.common.login}
               </button>
               <button
                 onClick={() => changeTab("signup")}
@@ -224,7 +207,7 @@ function LoginForm() {
                     : "text-muted-foreground hover:text-white"
                 }`}
               >
-                Criar Conta
+                {isEn ? "Sign Up" : isEs ? "Registrarse" : "Criar Conta"}
               </button>
             </div>
           )}
@@ -281,14 +264,14 @@ function LoginForm() {
 
                 <div className="space-y-1.5">
                   <div className="flex justify-between items-center">
-                    <Label htmlFor="password" className="text-xs text-muted-foreground font-semibold">Senha</Label>
+                    <Label htmlFor="password" className="text-xs text-muted-foreground font-semibold">{isEn ? "Password" : isEs ? "Contraseña" : "Senha"}</Label>
                     <button
                       type="button"
                       onClick={() => changeTab("forgot")}
                       disabled={loading}
                       className="text-xs text-primary hover:underline"
                     >
-                      Esqueceu a senha?
+                      {isEn ? "Forgot password?" : isEs ? "¿Olvidó su contraseña?" : "Esqueceu a senha?"}
                     </button>
                   </div>
                   <div className="relative">
@@ -310,7 +293,7 @@ function LoginForm() {
                   disabled={loading}
                   className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-bold h-11 rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5 mt-2"
                 >
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Entrar na Plataforma"}
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : (isEn ? "Sign In" : isEs ? "Iniciar Sesión" : "Entrar na Plataforma")}
                 </Button>
               </form>
             )}
@@ -334,12 +317,12 @@ function LoginForm() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="password" className="text-xs text-muted-foreground font-semibold">Senha</Label>
+                  <Label htmlFor="password" className="text-xs text-muted-foreground font-semibold">{isEn ? "Password" : isEs ? "Contraseña" : "Senha"}</Label>
                   <div className="relative">
                     <KeyRound className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
                     <Input
                       type="password"
-                      placeholder="Mínimo 6 caracteres"
+                      placeholder={isEn ? "Min 6 characters" : isEs ? "Mínimo 6 caracteres" : "Mínimo 6 caracteres"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
@@ -350,12 +333,12 @@ function LoginForm() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="confirmPassword" className="text-xs text-muted-foreground font-semibold">Confirmar Senha</Label>
+                  <Label htmlFor="confirmPassword" className="text-xs text-muted-foreground font-semibold">{isEn ? "Confirm Password" : isEs ? "Confirmar Contraseña" : "Confirmar Senha"}</Label>
                   <div className="relative">
                     <KeyRound className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
                     <Input
                       type="password"
-                      placeholder="Repita sua senha"
+                      placeholder={isEn ? "Repeat your password" : isEs ? "Repita su contraseña" : "Repita sua senha"}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       required
@@ -370,7 +353,7 @@ function LoginForm() {
                   disabled={loading}
                   className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-bold h-11 rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5 mt-2"
                 >
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Criar Minha Conta"}
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : (isEn ? "Create Account" : isEs ? "Crear Cuenta" : "Criar Minha Conta")}
                 </Button>
               </form>
             )}
@@ -398,7 +381,7 @@ function LoginForm() {
                   disabled={loading}
                   className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-bold h-11 rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5 mt-2"
                 >
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enviar E-mail de Recuperação"}
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : (isEn ? "Send Recovery Link" : isEs ? "Enviar Enlace de Recuperación" : "Enviar E-mail de Recuperação")}
                 </Button>
 
                 <button
@@ -407,7 +390,7 @@ function LoginForm() {
                   disabled={loading}
                   className="w-full text-center text-xs text-muted-foreground hover:text-white transition-colors"
                 >
-                  Voltar para o Login
+                  {isEn ? "Back to Sign In" : isEs ? "Volver a Iniciar Sesión" : "Voltar para o Login"}
                 </button>
               </form>
             )}
@@ -421,7 +404,7 @@ function LoginForm() {
                   <span className="w-full border-t border-white/5" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-[#121214] px-2 text-muted-foreground">Ou</span>
+                  <span className="bg-[#121214] px-2 text-muted-foreground">{isEn ? "Or" : isEs ? "O" : "Ou"}</span>
                 </div>
               </div>
 
@@ -439,7 +422,7 @@ function LoginForm() {
                   <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
                   <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                 </svg>
-                Continuar com Google
+                {isEn ? "Continue with Google" : isEs ? "Continuar con Google" : "Continuar com Google"}
               </Button>
             </>
           )}

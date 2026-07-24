@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    const { opportunityId } = await req.json();
+    const { opportunityId, language = 'pt' } = await req.json();
 
     if (!opportunityId) {
       return NextResponse.json({ error: 'ID da oportunidade é obrigatório' }, { status: 400 });
@@ -56,6 +56,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true, slug: existingLP.slug, message: 'Landing page já existe!' });
     }
 
+    const langName = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese';
+
     // 2. Chamar o Groq para gerar a Copywriting
     const systemPrompt = `Você é um Copywriter especialista em conversão (Landing Pages) e lançamento de SaaS de alta conversão.
 Sua missão é escrever todo o conteúdo de uma Landing Page com tema escuro (Dark Mode) para capturar leads (lista de espera) para uma nova ideia de SaaS.
@@ -67,6 +69,8 @@ DADOS DA IDEIA DO SAAS:
 - Diferencial Competitivo: "${opportunity.competitive_advantage}"
 - MVP Funcionalidades: "${opportunity.mvp_features}"
 - Monetização/Preço: "${opportunity.monetization_model} / ${opportunity.suggested_price}"
+
+CRITICAL INSTRUCTION: Write all generated string fields inside the JSON object strictly in ${langName}.
 
 Você deve gerar e retornar estritamente um JSON no seguinte formato:
 {

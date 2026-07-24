@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Mail, Download, Users, Copy, Check, ExternalLink, Sparkles } from "lucide-react";
+import { useLanguage } from "@/contexts/language-context";
 
 interface Lead {
   id: string;
@@ -18,6 +19,7 @@ interface LeadsManagerProps {
 }
 
 export function LeadsManager({ leads, saasName, landingPageUrl }: LeadsManagerProps) {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   const handleCopyAll = () => {

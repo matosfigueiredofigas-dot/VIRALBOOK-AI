@@ -2,13 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { CheckCircle2, Circle, ChevronRight, X, Sparkles } from "lucide-react";
-
-const STEPS = [
-  { id: "search", label: "Buscar um livro ou nicho" },
-  { id: "save", label: "Salvar uma ideia nos Favoritos" },
-  { id: "canvas", label: "Gerar um Lean Canvas" },
-  { id: "export", label: "Exportar ou Compartilhar" },
-];
+import { useLanguage } from "@/contexts/language-context";
 
 const STORAGE_KEY = "viralbook_onboarding_v1";
 
@@ -22,6 +16,17 @@ function getStepsFromStorage(): Record<string, boolean> {
 }
 
 export function OnboardingTracker() {
+  const { language, t } = useLanguage();
+  const isEn = language === 'en';
+  const isEs = language === 'es';
+
+  const STEPS = [
+    { id: "search", label: isEn ? "Search a book or niche" : isEs ? "Buscar un libro o nicho" : "Buscar um livro ou nicho" },
+    { id: "save", label: isEn ? "Save an idea to Favorites" : isEs ? "Guardar una idea en Favoritos" : "Salvar uma ideia nos Favoritos" },
+    { id: "canvas", label: isEn ? "Generate a Lean Canvas" : isEs ? "Generar un Lean Canvas" : "Gerar um Lean Canvas" },
+    { id: "export", label: isEn ? "Export or Share" : isEs ? "Exportar o Compartir" : "Exportar ou Compartilhar" },
+  ];
+
   const [completed, setCompleted] = useState<Record<string, boolean>>({});
   const [dismissed, setDismissed] = useState(false);
   const [expanded, setExpanded] = useState(false);

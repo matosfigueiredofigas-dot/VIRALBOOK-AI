@@ -15,11 +15,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    const { opportunityId } = await req.json();
+    const { opportunityId, language = 'pt' } = await req.json();
 
     if (!opportunityId) {
       return NextResponse.json({ error: 'ID da oportunidade é obrigatório' }, { status: 400 });
     }
+
+    const targetLang = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese (Brazil)';
 
     // 1. Carregar Oportunidade
     const { data: opportunity, error: fetchErr } = await supabase
@@ -38,7 +40,9 @@ export async function POST(req: Request) {
 
     // 2. Chamar IA do Groq para simular o conselho de mentores
     const systemPrompt = `Você é o facilitador de um Conselho Consultivo de Startups (AI Board of Advisors) composto por 8 lendas do empreendedorismo tecnológico mundial.
-Sua missão é gerar feedbacks profundos, sinceros, perspicazes e extremamente fiéis às filosofias de vida e negócios de cada um deles sobre o seguinte projeto de SaaS:
+Sua missão é gerar feedbacks profundos, sinceros, perspicazes e extremamente fiéis às filosofias de vida e negócios de cada um deles sobre o seguinte projeto de SaaS.
+
+CRITICAL INSTRUCTION: You MUST generate all response text, verdicts, reviews, and actionable advice STRICTLY in the following target language: **${targetLang}**.
 
 DADOS DO PROJETO:
 - Nome do SaaS: "${opportunity.saas_name}"
@@ -57,7 +61,7 @@ OS ADVISORS DO CONSELHO:
 7. **Mark Zuckerberg**: Fundador do Facebook/Meta. Foca em: mover-se rápido e quebrar coisas (move fast and break things), efeitos de rede agressivos, retenção obsessiva de usuários, crescimento viral orgânico e criação de hábitos diários de uso social/produtivo.
 8. **Jeff Bezos**: Fundador da Amazon. Foca em: obsessão extrema pelo cliente (customer obsession), mentalidade do "Dia 1" (Day 1 - manter a velocidade e fome de uma startup), apostar em coisas que não mudam no longo prazo (preço baixo, facilidade e agilidade), e tomar decisões de duas vias (Type 2 decisions) o mais rápido possível para manter o momentum.
 
-Você deve gerar e retornar estritamente um JSON em português do Brasil contendo a pontuação e os feedbacks detalhados, estruturado no seguinte formato:
+Você deve gerar e retornar estritamente um JSON no idioma ${targetLang} contendo a pontuação e os feedbacks detalhados, estruturado no seguinte formato:
 {
   "board_score": 85, // Uma pontuação média de 0 a 100 dada pelo conselho para a ideia.
   "verdict_summary": "Veredito geral consolidado do conselho (uma frase curta e impactante)",

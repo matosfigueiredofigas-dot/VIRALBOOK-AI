@@ -19,11 +19,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Chave da API da Groq não configurada' }, { status: 500 });
     }
 
-    const { opportunityId } = await req.json();
+    const { opportunityId, language = 'pt' } = await req.json();
 
     if (!opportunityId) {
       return NextResponse.json({ error: 'ID da oportunidade é obrigatório' }, { status: 400 });
     }
+
+    const targetLang = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese';
 
     // Busca os dados da oportunidade
     const { data: opp, error: oppError } = await supabase
@@ -45,6 +47,8 @@ export async function POST(req: Request) {
     const prompt = `
 Você é o "Hunter AI", o melhor Especialista de Outbound B2B e SDR Sênior do Vale do Silício.
 Você é mestre na metodologia Predictable Revenue (Aaron Ross) e em Cold Emails ultracurtos e de altíssima conversão.
+
+CRITICAL INSTRUCTION: You MUST generate all text fields, persona details, cold email templates, and LinkedIn messages STRICTLY in the following target language: **${targetLang}**.
 
 Eu tenho o seguinte produto SaaS:
 Nome: ${opp.saas_name}

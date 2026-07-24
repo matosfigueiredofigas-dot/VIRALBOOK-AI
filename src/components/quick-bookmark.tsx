@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-
 import { Bookmark, BookmarkCheck, Loader2 } from "lucide-react";
+import { useLanguage } from "@/contexts/language-context";
 
 export function QuickBookmark() {
   const pathname = usePathname();
+  const { t } = useLanguage();
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -29,7 +30,7 @@ export function QuickBookmark() {
     <button
       onClick={handleSave}
       disabled={loading || saved}
-      title="Salvar tela atual nos Favoritos"
+      title={t.common.save}
       className={`
         relative flex items-center gap-1.5 px-3 h-8 rounded-full text-xs font-medium border transition-all duration-300
         ${saved
@@ -47,7 +48,7 @@ export function QuickBookmark() {
         <Bookmark className="h-3.5 w-3.5" />
       )}
       <span className="hidden sm:inline">
-        {saved ? "Salvo!" : "Favoritar"}
+        {saved ? (t.generator.draftSaved || "Salvo!") : (t.common.save || "Favoritar")}
       </span>
     </button>
   );

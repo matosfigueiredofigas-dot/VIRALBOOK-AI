@@ -15,11 +15,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    const { opportunityId } = await req.json();
+    const { opportunityId, language = 'pt' } = await req.json();
 
     if (!opportunityId) {
       return NextResponse.json({ error: 'ID da oportunidade é obrigatório' }, { status: 400 });
     }
+
+    const targetLang = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese';
 
     // 1. Carregar Oportunidade
     const { data: opportunity, error: fetchErr } = await supabase
@@ -42,7 +44,6 @@ export async function POST(req: Request) {
     }
 
     // 2. Buscar discussões reais no Reddit
-    // Usamos o target_audience ou o problema para buscar
     const keyword = opportunity.target_audience || opportunity.saas_name;
     console.log(`[Reddit Extractor] Buscando Reddit para: "${keyword}"`);
 
@@ -54,10 +55,9 @@ export async function POST(req: Request) {
         posts = json.data?.children || [];
       }
     } catch (err) {
-      console.warn('[Reddit Extractor] Falha ao fazer fetch no Reddit API, usando mockups...', err);
+      console.warn('[Reddit Extractor] Falha ao fazer fetch no Reddit API, usando fallback...', err);
     }
 
-    // Se não retornar nada, tentamos uma segunda busca mais genérica
     if (posts.length === 0) {
       try {
         const res = await fetch(`https://www.reddit.com/search.json?q=${encodeURIComponent(opportunity.saas_name)}&sort=new&limit=10`);
@@ -70,7 +70,6 @@ export async function POST(req: Request) {
       }
     }
 
-    // Mapeia posts para um formato enxuto a ser enviado ao Groq
     const redditPostsContext = posts.map((p: any) => ({
       title: p.data?.title || 'Discussão do usuário',
       text: p.data?.selftext ? p.data.selftext.slice(0, 300) : 'Sem descrição.',
@@ -79,7 +78,7 @@ export async function POST(req: Request) {
 
     // 3. Chamar IA do Groq para extrair dores
     const systemPrompt = `Você é um Analista de Mercado e Especialista em Pesquisa de Dores do Usuário (Customer Pain Points).
-Sua missão é analisar discussões extraídas de subreddits e fóruns do Reddit relacionados ao seguinte nicho de mercado:
+Sua missão é analisar discussões extraídas de subreddits e fóruns do Reddit relacionados ao seguinte nicho de mercado e extrair as dores no idioma: ${targetLang}.
 
 INFORMAÇÕES DO SAAS:
 - Nome sugerido do SaaS: "${opportunity.saas_name}"
@@ -91,21 +90,23 @@ ${JSON.stringify(redditPostsContext, null, 2)}
 
 Selecione e classifique as 3 maiores DORES, RECLAMAÇÕES ou NECESSIDADES REAIS dos usuários nas discussões que mostram uma oportunidade de negócios. Se as discussões acima forem vazias ou insuficientes, você deve usar seus conhecimentos sobre as dores de "${opportunity.target_audience}" combinadas com o problema central do SaaS para idealizar dores realistas do Reddit.
 
-Você deve responder estritamente no seguinte formato JSON (array de objetos):
-[
-  {
-    "pain_point": "Definição curta da dor em português do Brasil (ex: 'Falta de controle de hábitos diários no home office')",
-    "severity": 5, // Número de 1 a 5 (onde 5 é crítico/urgente e 1 é um incômodo leve)
-    "quotes": [
-      "Uma reclamação/desabafo realista que um usuário faria sobre essa dor no Reddit, traduzido para o português (ex: 'Eu sempre esqueço de beber água e me alongar enquanto trabalho de casa, preciso de alertas urgentes!')",
-      "Outro desabafo ou comentário realista sobre o mesmo problema"
-    ],
-    "source_title": "O título em inglês ou português do post no Reddit que originou essa análise",
-    "source_url": "A URL exata do post original (da lista fornecida) ou uma URL fictícia do Reddit baseada na palavra-chave"
-  }
-]
+Você DEVE responder ESTRITAMENTE em formato JSON com uma chave raiz "pain_points":
+{
+  "pain_points": [
+    {
+      "pain_point": "Definição curta da dor no idioma ${targetLang}",
+      "severity": 5,
+      "quotes": [
+        "Uma reclamação/desabafo realista que um usuário faria sobre essa dor no Reddit, no idioma ${targetLang}",
+        "Outro desabafo ou comentário realista sobre o mesmo problema no idioma ${targetLang}"
+      ],
+      "source_title": "O título da postagem no Reddit que originou essa análise",
+      "source_url": "A URL exata do post original (da lista fornecida) ou uma URL válida do Reddit baseada na palavra-chave"
+    }
+  ]
+}
 
-IMPORTANTE: Responda APENAS o JSON válido. Não adicione nenhuma saudação ou introdução.`;
+IMPORTANTE: Responda APENAS o JSON válido em ${targetLang}. Não adicione nenhuma introdução ou texto fora do JSON.`;
 
     const models = ['llama-3.3-70b-versatile', 'mixtral-8x7b-32768', 'llama-3.1-8b-instant'];
     let reply = '';
@@ -136,8 +137,8 @@ IMPORTANTE: Responda APENAS o JSON válido. Não adicione nenhuma saudação ou 
       throw new Error(`Falha crítica na análise do Groq: ${lastError?.message || lastError}`);
     }
 
-    const painPoints = JSON.parse(reply);
-    const painPointsArray = Array.isArray(painPoints) ? painPoints : (painPoints.pain_points || painPoints.dores || []);
+    const parsedData = JSON.parse(reply);
+    const painPointsArray = parsedData.pain_points || (Array.isArray(parsedData) ? parsedData : parsedData.dores || []);
 
     // 4. Atualizar no banco de dados na coluna da oportunidade
     const { error: updateErr } = await supabase

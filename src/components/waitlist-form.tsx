@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, CheckCircle2, AlertCircle, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/contexts/language-context";
 
 interface WaitlistFormProps {
   landingPageId: string;
@@ -13,6 +14,10 @@ interface WaitlistFormProps {
 }
 
 export function WaitlistForm({ landingPageId, ctaText, themeColor }: WaitlistFormProps) {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
+  const isEs = language === 'es';
+
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -33,13 +38,13 @@ export function WaitlistForm({ landingPageId, ctaText, themeColor }: WaitlistFor
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Algo deu errado. Tente novamente.");
+        throw new Error(data.error || (isEn ? "Something went wrong." : isEs ? "Algo salió mal." : "Algo deu errado. Tente novamente."));
       }
 
       setSuccess(true);
       setEmail("");
     } catch (err: any) {
-      setError(err.message || "Erro de conexão.");
+      setError(err.message || (isEn ? "Connection error." : isEs ? "Error de conexión." : "Erro de conexão."));
     } finally {
       setLoading(false);
     }
@@ -58,9 +63,15 @@ export function WaitlistForm({ landingPageId, ctaText, themeColor }: WaitlistFor
             <div className="mx-auto h-12 w-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
               <CheckCircle2 className="h-6 w-6 text-emerald-400 animate-bounce" />
             </div>
-            <h3 className="font-bold text-lg text-white">Inscrição confirmada!</h3>
+            <h3 className="font-bold text-lg text-white">
+              {isEn ? "Subscription confirmed!" : isEs ? "¡Suscripción confirmada!" : "Inscrição confirmada!"}
+            </h3>
             <p className="text-sm text-emerald-300/80">
-              Você está na lista de espera. Entraremos em contato assim que o acesso ao beta for liberado!
+              {isEn 
+                ? "You are on the waitlist. We will contact you as soon as access is granted!" 
+                : isEs 
+                ? "Está en la lista de espera. Nos pondremos en contacto tan pronto como se libere el acceso." 
+                : "Você está na lista de espera. Entraremos em contato assim que o acesso for liberado!"}
             </p>
           </motion.div>
         ) : (
@@ -72,7 +83,7 @@ export function WaitlistForm({ landingPageId, ctaText, themeColor }: WaitlistFor
             <div className="flex flex-col sm:flex-row gap-3">
               <Input
                 type="email"
-                placeholder="Insira seu melhor e-mail"
+                placeholder={isEn ? "Enter your email" : isEs ? "Ingrese su correo" : "Insira seu e-mail"}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

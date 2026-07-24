@@ -7,7 +7,7 @@ const groq = new Groq({
 
 export async function POST(req: Request) {
   try {
-    const { messages, contextText } = await req.json();
+    const { messages, contextText, language = 'pt' } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: 'Mensagens inválidas' }, { status: 400 });
@@ -16,6 +16,8 @@ export async function POST(req: Request) {
     if (!process.env.GROQ_API_KEY) {
       return NextResponse.json({ error: 'Chave da API da Groq não configurada' }, { status: 500 });
     }
+
+    const targetLang = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese (Brazil)';
 
     // Cria o System Prompt com o contexto do SaaS
     const systemPrompt = {
@@ -27,7 +29,8 @@ CONTEXTO DA IDEIA:
 ${contextText}
 
 Sua missão é ajudar o usuário a construir, nomear, precificar e programar essa ideia.
-Dê respostas curtas, práticas, em português do Brasil e diretas ao ponto. Se o usuário pedir código (React, Next.js, etc), escreva o código. Se ele pedir nomes, dê nomes curtos e em inglês/português. Sempre seja encorajador, mas focado na execução e lançamento rápido.`
+CRITICAL INSTRUCTION: Respond ALL questions, code comments, and advice STRICTLY in the following language: **${targetLang}**.
+Dê respostas curtas, práticas e diretas ao ponto. Se o usuário pedir código (React, Next.js, etc), escreva o código. Se ele pedir nomes, dê nomes curtos. Sempre seja encorajador, mas focado na execução e lançamento rápido.`
     };
 
     // Monta o payload final

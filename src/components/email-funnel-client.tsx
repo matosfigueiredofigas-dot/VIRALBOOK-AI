@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Loader2, Sparkles, Copy, CheckCircle2, Mail, Info, Send, Calendar, Tag, ChevronRight, FileText, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { MarketMarquee } from "@/components/market-marquee";
+import { useLanguage } from "@/contexts/language-context";
 
 interface Email {
   day: string;
@@ -31,6 +32,7 @@ interface Opportunity {
 
 export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: { initialOpportunities: Opportunity[], initialSelectedId?: string }) {
   const router = useRouter();
+  const { language, t } = useLanguage();
   const [opportunities, setOpportunities] = useState<Opportunity[]>(initialOpportunities);
   const validInitialId = initialSelectedId && initialOpportunities.some(o => o.id === initialSelectedId) ? initialSelectedId : initialOpportunities[0]?.id || "";
   const [selectedId, setSelectedId] = useState<string>(validInitialId);
@@ -49,7 +51,7 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
       const res = await fetch("/api/opportunities/email-funnel", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ opportunityId: selectedId, tone, discount }),
+        body: JSON.stringify({ opportunityId: selectedId, tone, discount, language }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -102,6 +104,9 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
     URL.revokeObjectURL(url);
   };
 
+  const isEn = language === 'en';
+  const isEs = language === 'es';
+
   if (opportunities.length === 0) {
     return (
       <Card className="glass-card border-primary/20 max-w-2xl mx-auto mt-8 text-center p-8 relative overflow-hidden">
@@ -110,14 +115,20 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
           <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center text-primary shadow-[0_0_30px_rgba(var(--primary),0.3)] border border-primary/30">
             <Mail className="h-10 w-10 animate-bounce" />
           </div>
-          <CardTitle className="text-3xl font-black tracking-tight text-white">Nenhum Micro-SaaS Encontrado</CardTitle>
+          <CardTitle className="text-3xl font-black tracking-tight text-white">
+            {isEn ? "No Micro-SaaS Found" : isEs ? "Ningún Micro-SaaS Encontrado" : "Nenhum Micro-SaaS Encontrado"}
+          </CardTitle>
           <CardDescription className="max-w-md mx-auto leading-relaxed text-zinc-400 text-base">
-            Para gerar sequências de e-mails automatizadas de alta conversão, você precisa ter salvo pelo menos um micro-SaaS a partir da Biblioteca ou do Radar de Ebooks.
+            {isEn 
+              ? "To generate automated high-converting email sequences, save at least one micro-SaaS from the Library or Radar." 
+              : isEs 
+              ? "Para generar secuencias de email automatizadas de alta conversión, guarde al menos un micro-SaaS desde la Biblioteca o Radar." 
+              : "Para gerar sequências de e-mails automatizadas de alta conversão, você precisa ter salvo pelo menos um micro-SaaS a partir da Biblioteca ou do Radar de Ebooks."}
           </CardDescription>
         </CardHeader>
         <CardFooter className="flex justify-center mt-6 relative z-10">
           <Button onClick={() => router.push("/library")} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8 py-6 rounded-xl shadow-[0_0_20px_rgba(var(--primary),0.4)] transition-all hover:scale-105 text-lg">
-            Explorar Biblioteca de Ideias
+            {isEn ? "Explore Idea Library" : isEs ? "Explorar Biblioteca de Ideas" : "Explorar Biblioteca de Ideias"}
           </Button>
         </CardFooter>
       </Card>
@@ -127,7 +138,7 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
   return (
     <div className="space-y-8 animate-in fade-in zoom-in-95 duration-700">
       
-      {/* Ticker (Se houver SaaS selecionado, talvez mostrar no Ticker? Passar options genéricas se quisermos, mas aqui podemos passar o próprio opportunities) */}
+      {/* Ticker */}
       <MarketMarquee opportunities={opportunities} />
 
       <div className="relative">
@@ -137,7 +148,9 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
             <Mail className="h-10 w-10 text-blue-500" />
             Email Matrix
           </h1>
-          <p className="text-lg text-zinc-400 font-medium">Motor de Lançamento por Email (Gatilhos Automáticos)</p>
+          <p className="text-lg text-zinc-400 font-medium">
+            {isEn ? "Email Launch Engine (Automated Triggers)" : isEs ? "Motor de Lanzamiento por Email (Disparadores Automáticos)" : "Motor de Lançamento por Email (Gatilhos Automáticos)"}
+          </p>
         </div>
       </div>
 
@@ -150,7 +163,7 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
             {/* Seletor do SaaS */}
             <div className="space-y-3 md:col-span-2">
               <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                <Send className="h-4 w-4 text-blue-500" /> Escolha o Micro-SaaS
+                <Send className="h-4 w-4 text-blue-500" /> {isEn ? "Choose Micro-SaaS" : isEs ? "Elija el Micro-SaaS" : "Escolha o Micro-SaaS"}
               </label>
               <select
                 value={selectedId}
@@ -162,7 +175,7 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
               >
                 {opportunities.map((opp) => (
                   <option key={opp.id} value={opp.id} className="bg-zinc-950 text-white font-medium">
-                    {opp.saas_name} (Inspirado em: {opp.book_title})
+                    {opp.saas_name} ({isEn ? "Inspired by:" : isEs ? "Inspirado en:" : "Inspirado em:"} {opp.book_title})
                   </option>
                 ))}
               </select>
@@ -171,24 +184,24 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
             {/* Tom de Voz */}
             <div className="space-y-3">
               <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                <Info className="h-4 w-4 text-fuchsia-500" /> Tom da Copy
+                <Info className="h-4 w-4 text-fuchsia-500" /> {isEn ? "Copy Tone" : isEs ? "Tono del Copy" : "Tom da Copy"}
               </label>
               <select
                 value={tone}
                 onChange={(e) => setTone(e.target.value)}
                 className="w-full h-12 px-4 bg-zinc-900 border border-white/10 rounded-xl text-sm font-semibold focus:outline-none focus:border-fuchsia-500 transition-colors text-white shadow-inner"
               >
-                <option value="persuasivo" className="bg-zinc-950">🔥 Persuasivo & Convincente</option>
-                <option value="amigável" className="bg-zinc-950">👋 Amigável & Casual</option>
-                <option value="técnico" className="bg-zinc-950">⚙️ Técnico & Focado em Valor</option>
-                <option value="audacioso" className="bg-zinc-950">⚡ Audacioso & Disruptivo</option>
+                <option value="persuasivo" className="bg-zinc-950">🔥 {isEn ? "Persuasive & Convincing" : isEs ? "Persuasivo y Convincente" : "Persuasivo & Convincente"}</option>
+                <option value="amigável" className="bg-zinc-950">👋 {isEn ? "Friendly & Casual" : isEs ? "Amigable y Casual" : "Amigável & Casual"}</option>
+                <option value="técnico" className="bg-zinc-950">⚙️ {isEn ? "Technical & Value-Focused" : isEs ? "Técnico y Enfocado en Valor" : "Técnico & Focado em Valor"}</option>
+                <option value="audacioso" className="bg-zinc-950">⚡ {isEn ? "Bold & Disruptive" : isEs ? "Audaz y Disruptivo" : "Audacioso & Disruptivo"}</option>
               </select>
             </div>
 
             {/* Desconto de Lançamento */}
             <div className="space-y-3">
               <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                <Tag className="h-4 w-4 text-emerald-500" /> Gatilho de Preço
+                <Tag className="h-4 w-4 text-emerald-500" /> {isEn ? "Price Trigger" : isEs ? "Gatillo de Precio" : "Gatilho de Preço"}
               </label>
               <select
                 value={discount}
@@ -196,9 +209,9 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
                 className="w-full h-12 px-4 bg-zinc-900 border border-white/10 rounded-xl text-sm font-semibold focus:outline-none focus:border-emerald-500 transition-colors text-white shadow-inner"
               >
                 <option value="10%" className="bg-zinc-950">10% OFF</option>
-                <option value="20%" className="bg-zinc-950">20% OFF (Recomendado)</option>
+                <option value="20%" className="bg-zinc-950">20% OFF ({isEn ? "Recommended" : isEs ? "Recomendado" : "Recomendado"})</option>
                 <option value="30%" className="bg-zinc-950">30% OFF</option>
-                <option value="Uso Grátis (7 dias)" className="bg-zinc-950">Trial de 7 Dias</option>
+                <option value="Uso Grátis (7 dias)" className="bg-zinc-950">{isEn ? "7-Day Free Trial" : isEs ? "Prueba Gratis 7 Días" : "Trial de 7 Dias"}</option>
               </select>
             </div>
 
@@ -212,12 +225,14 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
             >
               {generating ? (
                 <>
-                  <Loader2 className="h-5 w-5 animate-spin" /> Sintetizando Sequência...
+                  <Loader2 className="h-5 w-5 animate-spin" /> {isEn ? "Synthesizing Sequence..." : isEs ? "Sintetizando Secuencia..." : "Sintetizando Sequência..."}
                 </>
               ) : (
                 <>
                   <Zap className="h-5 w-5 text-yellow-300 animate-pulse" />
-                  {selectedOpp?.email_funnel ? "Regerar Sequência por IA" : "Forjar Funil de Lançamento"}
+                  {selectedOpp?.email_funnel 
+                    ? (isEn ? "Regenerate AI Sequence" : isEs ? "Regenerar Secuencia" : "Regerar Sequência por IA") 
+                    : (isEn ? "Forge Launch Funnel" : isEs ? "Forjar Embudo de Lanzamiento" : "Forjar Funil de Lançamento")}
                 </>
               )}
             </Button>
@@ -234,9 +249,15 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
               <Mail className="h-8 w-8" />
             </div>
             <div>
-              <h3 className="font-black text-xl text-white mb-2">Matrix Vazia</h3>
+              <h3 className="font-black text-xl text-white mb-2">
+                {isEn ? "Empty Matrix" : isEs ? "Matriz Vacía" : "Matrix Vazia"}
+              </h3>
               <p className="text-zinc-500 max-w-md mx-auto text-sm leading-relaxed font-medium">
-                Nenhuma sequência de e-mails armada para o alvo <strong className="text-white bg-white/5 px-2 py-0.5 rounded">{selectedOpp?.saas_name}</strong>. Ajuste os parâmetros acima e ative a forja.
+                {isEn 
+                  ? "No email sequence generated for target" 
+                  : isEs 
+                  ? "Sin secuencia de emails armada para" 
+                  : "Nenhuma sequência de e-mails armada para o alvo"} <strong className="text-white bg-white/5 px-2 py-0.5 rounded">{selectedOpp?.saas_name}</strong>.
               </p>
             </div>
           </CardContent>
@@ -247,7 +268,7 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
           {/* Menu Lateral da Sequência */}
           <div className="space-y-4 sticky top-6">
             <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest px-2 mb-4 flex items-center gap-2">
-              <Calendar className="h-3.5 w-3.5 text-blue-500" /> Fluxo Automático
+              <Calendar className="h-3.5 w-3.5 text-blue-500" /> {isEn ? "Automated Flow" : isEs ? "Flujo Automático" : "Fluxo Automático"}
             </h3>
             <div className="space-y-3">
               {selectedOpp.email_funnel.sequence.map((email, idx) => (
@@ -288,7 +309,7 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
               className="w-full bg-zinc-950 border-white/10 hover:border-blue-500/50 hover:bg-zinc-900 text-zinc-300 hover:text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 mt-6 transition-all"
             >
               <FileText className="h-4 w-4 text-blue-400" />
-              Exportar Payload (.txt)
+              {isEn ? "Export Payload (.txt)" : isEs ? "Exportar Carga (.txt)" : "Exportar Payload (.txt)"}
             </Button>
           </div>
 
@@ -296,6 +317,7 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
           <div className="lg:col-span-2">
             {(() => {
               const email = selectedOpp.email_funnel.sequence[activeEmailIdx];
+
               return (
                 <Card className="glass-card border-blue-500/20 relative overflow-hidden shadow-2xl">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
@@ -310,7 +332,7 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
                       </span>
                     </div>
                     <span className="text-[10px] text-zinc-500 font-black uppercase tracking-widest bg-black px-2 py-1 rounded border border-white/5">
-                      Passo {activeEmailIdx + 1} de 5
+                      {isEn ? `Step ${activeEmailIdx + 1} of 5` : isEs ? `Paso ${activeEmailIdx + 1} de 5` : `Passo ${activeEmailIdx + 1} de 5`}
                     </span>
                   </CardHeader>
                   
@@ -319,7 +341,7 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
                     {/* Assunto */}
                     <div className="space-y-3 group/section">
                       <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest bg-zinc-900 px-2 py-1 rounded">Subject / Assunto</span>
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest bg-zinc-900 px-2 py-1 rounded">{isEn ? "Subject" : isEs ? "Asunto" : "Subject / Assunto"}</span>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -327,9 +349,9 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
                           onClick={() => handleCopyText(email.subject, "subject")}
                         >
                           {copiedSection === "subject" ? (
-                            <><CheckCircle2 className="h-3.5 w-3.5 mr-1.5 text-emerald-500" /> COPIADO!</>
+                            <><CheckCircle2 className="h-3.5 w-3.5 mr-1.5 text-emerald-500" /> {isEn ? "COPIED!" : isEs ? "¡COPIADO!" : "COPIADO!"}</>
                           ) : (
-                            <><Copy className="h-3.5 w-3.5 mr-1.5" /> COPIAR</>
+                            <><Copy className="h-3.5 w-3.5 mr-1.5" /> {isEn ? "COPY" : isEs ? "COPIAR" : "COPIAR"}</>
                           )}
                         </Button>
                       </div>
@@ -341,7 +363,7 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
                     {/* Preheader */}
                     <div className="space-y-3 group/section">
                       <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest bg-zinc-900 px-2 py-1 rounded">Preheader (Texto Oculto)</span>
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest bg-zinc-900 px-2 py-1 rounded">{isEn ? "Preheader (Hidden Text)" : isEs ? "Preheader (Texto Oculto)" : "Preheader (Texto Oculto)"}</span>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -349,9 +371,9 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
                           onClick={() => handleCopyText(email.preheader, "preheader")}
                         >
                           {copiedSection === "preheader" ? (
-                            <><CheckCircle2 className="h-3.5 w-3.5 mr-1.5 text-emerald-500" /> COPIADO!</>
+                            <><CheckCircle2 className="h-3.5 w-3.5 mr-1.5 text-emerald-500" /> {isEn ? "COPIED!" : isEs ? "¡COPIADO!" : "COPIADO!"}</>
                           ) : (
-                            <><Copy className="h-3.5 w-3.5 mr-1.5" /> COPIAR</>
+                            <><Copy className="h-3.5 w-3.5 mr-1.5" /> {isEn ? "COPY" : isEs ? "COPIAR" : "COPIAR"}</>
                           )}
                         </Button>
                       </div>
@@ -363,7 +385,7 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
                     {/* Corpo */}
                     <div className="space-y-3 group/section">
                       <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest bg-zinc-900 px-2 py-1 rounded">Payload (Corpo do Email)</span>
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest bg-zinc-900 px-2 py-1 rounded">{isEn ? "Payload (Email Body)" : isEs ? "Carga (Cuerpo del Email)" : "Payload (Corpo do Email)"}</span>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -371,9 +393,9 @@ export function EmailFunnelClient({ initialOpportunities, initialSelectedId }: {
                           onClick={() => handleCopyText(email.body, "body")}
                         >
                           {copiedSection === "body" ? (
-                            <><CheckCircle2 className="h-3.5 w-3.5 mr-1.5 text-emerald-500" /> PAYLOAD COPIADO!</>
+                            <><CheckCircle2 className="h-3.5 w-3.5 mr-1.5 text-emerald-500" /> {isEn ? "PAYLOAD COPIED!" : isEs ? "¡CARGA COPIADA!" : "PAYLOAD COPIADO!"}</>
                           ) : (
-                            <><Copy className="h-3.5 w-3.5 mr-1.5" /> COPIAR PAYLOAD</>
+                            <><Copy className="h-3.5 w-3.5 mr-1.5" /> {isEn ? "COPY PAYLOAD" : isEs ? "COPIAR CARGA" : "COPIAR PAYLOAD"}</>
                           )}
                         </Button>
                       </div>

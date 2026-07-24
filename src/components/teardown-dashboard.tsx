@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Target, TrendingUp, Swords, Zap, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/contexts/language-context";
 
 interface TeardownDashboardProps {
   opportunity: {
@@ -13,6 +14,7 @@ interface TeardownDashboardProps {
 }
 
 export function TeardownDashboard({ opportunity }: TeardownDashboardProps) {
+  const { language, t } = useLanguage();
   const [data, setData] = useState<any>(opportunity.market_teardown_json);
   const [loading, setLoading] = useState(!opportunity.market_teardown_json);
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +32,7 @@ export function TeardownDashboard({ opportunity }: TeardownDashboardProps) {
       const res = await fetch('/api/opportunities/teardown', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ opportunityId: opportunity.id })
+        body: JSON.stringify({ opportunityId: opportunity.id, language })
       });
       const result = await res.json();
       
@@ -46,6 +48,9 @@ export function TeardownDashboard({ opportunity }: TeardownDashboardProps) {
     }
   };
 
+  const isEn = language === 'en';
+  const isEs = language === 'es';
+
   if (loading) {
     return (
       <div className="min-h-[80vh] flex flex-col items-center justify-center text-center">
@@ -55,9 +60,15 @@ export function TeardownDashboard({ opportunity }: TeardownDashboardProps) {
             <Target className="h-10 w-10 text-white animate-pulse" />
           </div>
         </div>
-        <h2 className="text-3xl font-bold mb-4">Mapeando o Campo de Batalha...</h2>
+        <h2 className="text-3xl font-bold mb-4">
+          {isEn ? "Mapping the Battlefield..." : isEs ? "Mapeando el Campo de Batalla..." : "Mapeando o Campo de Batalha..."}
+        </h2>
         <p className="text-gray-500 max-w-md mx-auto">
-          Nossos agentes estão dissecando seus concorrentes, calculando o tamanho do mercado e definindo a melhor estratégia de ataque. Isso pode levar até 20 segundos.
+          {isEn 
+            ? "Our AI agents are dissecting your competitors, calculating market size, and defining the best attack strategy. This may take up to 20 seconds." 
+            : isEs 
+            ? "Nuestros agentes IA están analizando sus competidores, calculando el tamaño del mercado y definiendo la mejor estrategia de ataque." 
+            : "Nossos agentes estão dissecando seus concorrentes, calculando o tamanho do mercado e definindo a melhor estratégia de ataque. Isso pode levar até 20 segundos."}
         </p>
       </div>
     );
@@ -67,10 +78,12 @@ export function TeardownDashboard({ opportunity }: TeardownDashboardProps) {
     return (
       <div className="min-h-[80vh] flex flex-col items-center justify-center text-center">
         <XCircle className="h-16 w-16 text-red-500 mb-4" />
-        <h2 className="text-2xl font-bold mb-2">Ops! Falha na Inteligência</h2>
+        <h2 className="text-2xl font-bold mb-2">
+          {isEn ? "Ops! Intelligence Failure" : isEs ? "¡Ops! Falla de Inteligencia" : "Ops! Falha na Inteligência"}
+        </h2>
         <p className="text-gray-600 mb-6">{error}</p>
         <button onClick={generateTeardown} className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800">
-          Tentar Novamente
+          {isEn ? "Try Again" : isEs ? "Reintentar" : "Tentar Novamente"}
         </button>
       </div>
     );
@@ -81,14 +94,14 @@ export function TeardownDashboard({ opportunity }: TeardownDashboardProps) {
   return (
     <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8 font-sans w-full">
       <Link href={`/canvas/${opportunity.id}`} className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-black mb-8 transition-colors">
-        <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para o Canvas
+        <ArrowLeft className="mr-2 h-4 w-4" /> {isEn ? "Back to Canvas" : isEs ? "Volver al Canvas" : "Voltar para o Canvas"}
       </Link>
 
       <div className="mb-12">
         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-gray-900 mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          Dossiê Competitivo: <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">{opportunity.saas_name}</span>
+          {isEn ? "Competitive Dossier:" : isEs ? "Dossier Competitivo:" : "Dossiê Competitivo:"} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">{opportunity.saas_name}</span>
         </h1>
-        <p className="text-lg text-gray-500">Market Teardown & Estratégia de Go-to-Market</p>
+        <p className="text-lg text-gray-500">Market Teardown & Go-to-Market Strategy</p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-8 mb-12">
@@ -97,21 +110,27 @@ export function TeardownDashboard({ opportunity }: TeardownDashboardProps) {
           <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
             <div className="flex items-center gap-3 mb-4 text-indigo-600">
               <TrendingUp className="h-6 w-6" />
-              <h2 className="text-xl font-bold text-gray-900">Visão de Mercado</h2>
+              <h2 className="text-xl font-bold text-gray-900">{isEn ? "Market Overview" : isEs ? "Visión de Mercado" : "Visão de Mercado"}</h2>
             </div>
             <div className="space-y-4">
               <div>
-                <p className="text-sm text-gray-500 font-medium uppercase tracking-wider mb-1">Tamanho (TAM/SAM/SOM)</p>
+                <p className="text-sm text-gray-500 font-medium uppercase tracking-wider mb-1">
+                  {isEn ? "Market Size (TAM/SAM/SOM)" : isEs ? "Tamaño de Mercado (TAM/SAM/SOM)" : "Tamanho (TAM/SAM/SOM)"}
+                </p>
                 <p className="font-semibold text-gray-900">{data.market_overview?.tam_sam_som}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500 font-medium uppercase tracking-wider mb-1">Crescimento Anual (CAGR)</p>
+                <p className="text-sm text-gray-500 font-medium uppercase tracking-wider mb-1">
+                  {isEn ? "Annual Growth (CAGR)" : isEs ? "Crecimiento Anual (CAGR)" : "Crescimento Anual (CAGR)"}
+                </p>
                 <div className="inline-flex items-center gap-1 bg-green-100 text-green-700 px-2 py-1 rounded-md text-sm font-bold">
                   <TrendingUp className="h-3 w-3" /> {data.market_overview?.growth_cagr}
                 </div>
               </div>
               <div>
-                <p className="text-sm text-gray-500 font-medium uppercase tracking-wider mb-2">Drivers & Tendências</p>
+                <p className="text-sm text-gray-500 font-medium uppercase tracking-wider mb-2">
+                  {isEn ? "Key Drivers & Trends" : isEs ? "Factores y Tendencias Clave" : "Drivers & Tendências"}
+                </p>
                 <ul className="space-y-2">
                   {data.market_overview?.key_trends?.map((trend: string, i: number) => (
                     <li key={i} className="flex gap-2 text-sm text-gray-700">
@@ -125,7 +144,7 @@ export function TeardownDashboard({ opportunity }: TeardownDashboardProps) {
 
           <div className="bg-black text-white rounded-2xl p-6 shadow-xl">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Target className="h-5 w-5 text-indigo-400" /> Preço Sugerido
+              <Target className="h-5 w-5 text-indigo-400" /> {isEn ? "Suggested Pricing" : isEs ? "Precio Sugerido" : "Preço Sugerido"}
             </h2>
             <p className="text-gray-400 text-sm mb-6">{data.pricing_model_recommendation?.logic}</p>
             <div className="space-y-4">
@@ -151,7 +170,7 @@ export function TeardownDashboard({ opportunity }: TeardownDashboardProps) {
           
           <section>
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-gray-900">
-              <Swords className="h-6 w-6 text-red-500" /> Raio-X dos Concorrentes
+              <Swords className="h-6 w-6 text-red-500" /> {isEn ? "Competitor X-Ray" : isEs ? "Rayos X Competitivos" : "Raio-X dos Concorrentes"}
             </h2>
             <div className="grid sm:grid-cols-2 gap-4">
               {data.competitors?.map((comp: any, i: number) => (
@@ -159,15 +178,15 @@ export function TeardownDashboard({ opportunity }: TeardownDashboardProps) {
                   <h3 className="text-lg font-bold text-gray-900 mb-4">{comp.name}</h3>
                   <div className="space-y-4 text-sm flex-1">
                     <div>
-                      <span className="font-bold text-emerald-600 flex items-center gap-1 mb-1"><TrendingUp className="h-4 w-4"/> FORÇA DELES:</span>
+                      <span className="font-bold text-emerald-600 flex items-center gap-1 mb-1"><TrendingUp className="h-4 w-4"/> {isEn ? "THEIR STRENGTH:" : isEs ? "SU FUERZA:" : "FORÇA DELES:"}</span>
                       <p className="text-gray-700 leading-relaxed">{comp.strength}</p>
                     </div>
                     <div>
-                      <span className="font-bold text-red-500 flex items-center gap-1 mb-1"><Target className="h-4 w-4"/> FRAQUEZA:</span>
+                      <span className="font-bold text-red-500 flex items-center gap-1 mb-1"><Target className="h-4 w-4"/> {isEn ? "WEAKNESS:" : isEs ? "DEBILIDAD:" : "FRAQUEZA:"}</span>
                       <p className="text-gray-700 leading-relaxed">{comp.weakness}</p>
                     </div>
                     <div className="pt-4 border-t border-gray-100 mt-auto">
-                      <span className="font-bold text-indigo-600 block mb-1">NOSSA VANTAGEM INJUSTA:</span>
+                      <span className="font-bold text-indigo-600 block mb-1">{isEn ? "OUR UNFAIR ADVANTAGE:" : isEs ? "NUESTRA VENTAJA:" : "NOSSA VANTAGEM INJUSTA:"}</span>
                       <p className="font-semibold text-gray-900">{comp.our_edge}</p>
                     </div>
                   </div>
@@ -188,7 +207,7 @@ export function TeardownDashboard({ opportunity }: TeardownDashboardProps) {
             </h2>
             
             <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-100 mb-6">
-              <h3 className="font-bold text-indigo-900 mb-2">Estratégia para os 100 Primeiros Clientes</h3>
+              <h3 className="font-bold text-indigo-900 mb-2">{isEn ? "First 100 Customers Strategy" : isEs ? "Estrategia para los Primeros 100 Clientes" : "Estratégia para os 100 Primeiros Clientes"}</h3>
               <p className="text-indigo-800 leading-relaxed">{data.go_to_market_strategy?.first_100_users}</p>
             </div>
 

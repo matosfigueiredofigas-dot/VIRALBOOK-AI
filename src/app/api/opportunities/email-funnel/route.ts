@@ -15,7 +15,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    const { opportunityId, tone = 'persuasivo', discount = '20%' } = await req.json();
+    const { opportunityId, tone = 'persuasivo', discount = '20%', language = 'pt' } = await req.json();
 
     if (!opportunityId) {
       return NextResponse.json({ error: 'ID da oportunidade é obrigatório' }, { status: 400 });
@@ -36,6 +36,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
 
+    const langName = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese';
+
     // 2. Chamar IA do Groq para criar a sequência de e-mails
     const systemPrompt = `Você é um Copywriter especialista em Email Marketing de Alta Conversão para startups de tecnologia (SaaS/Micro-SaaS).
 Sua missão é criar uma sequência lógica de 5 e-mails automáticos de nutrição e lançamento para a lista de espera (waitlist) do seguinte SaaS:
@@ -48,15 +50,15 @@ DADOS DO SAAS:
 - Inspirado no livro: "${opportunity.book_title}" de "${opportunity.book_author || 'Desconhecido'}"
 
 CONFIGURAÇÕES ADICIONAIS:
-- Tom de Voz: "${tone}" (ex: persuasivo, amigável, técnico, audacioso)
+- Tom de Voz: "${tone}"
 - Cupom/Desconto de Fundador: "${discount}"
 
-Você deve gerar e retornar estritamente um JSON em português do Brasil com a sequência exata de 5 e-mails, estruturada no seguinte formato:
+CRITICAL INSTRUCTION: Write all generated values inside the JSON object strictly in ${langName}.
+
+Você deve gerar e retornar estritamente um JSON com a sequência exata de 5 e-mails, estruturada no seguinte formato:
 {
   "sequence": [
     {
-      "day": "Dia 1 (Imediato)",
-      "purpose": "Boas-vindas & Confirmação de vaga na Waitlist",
       "subject": "Assunto instigante do e-mail de boas-vindas",
       "preheader": "Pré-cabeçalho resumido e magnético",
       "body": "Corpo do e-mail com parágrafos bem espaçados, contendo uma mensagem calorosa de boas-vindas, explicando a proposta de valor do SaaS e garantindo que o usuário está no lugar certo."

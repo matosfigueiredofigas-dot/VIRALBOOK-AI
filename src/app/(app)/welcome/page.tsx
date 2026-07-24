@@ -1,9 +1,15 @@
-import { Zap, PlayCircle, ArrowRight, BookOpen, Sparkles, LayoutDashboard } from "lucide-react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+"use client";
+
+import { Zap, BookOpen, Sparkles, LayoutDashboard } from "lucide-react";
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import { useLanguage } from "@/contexts/language-context";
 
 export default function WelcomePage() {
+  const { language, t } = useLanguage();
+  const isEn = language === 'en';
+  const isEs = language === 'es';
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] max-w-5xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 py-10">
       
@@ -14,12 +20,18 @@ export default function WelcomePage() {
         </div>
         
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
-          Sua Fábrica de <br className="hidden md:block" />
-          <span className="bg-gradient-to-r from-blue-400 via-primary to-purple-500 bg-clip-text text-transparent">Micro-SaaS Validados</span>
+          {isEn ? "Your Validated" : isEs ? "Su Fábrica de" : "Sua Fábrica de"} <br className="hidden md:block" />
+          <span className="bg-gradient-to-r from-blue-400 via-primary to-purple-500 bg-clip-text text-transparent">
+            {isEn ? "Micro-SaaS Factory" : isEs ? "Micro-SaaS Validados" : "Micro-SaaS Validados"}
+          </span>
         </h1>
         
         <p className="text-xl text-muted-foreground leading-relaxed">
-          O ViralBook AI usa inteligência artificial para vasculhar os livros mais vendidos, checar tendências e desenhar o seu próximo negócio lucrativo do zero.
+          {isEn 
+            ? "ViralBook AI uses artificial intelligence to scan top books, track market trends, and build your next profitable software from scratch." 
+            : isEs 
+            ? "ViralBook AI utiliza inteligencia artificial para rastrear libros más vendidos, verificar tendencias y construir su próximo negocio rentable desde cero." 
+            : "O ViralBook AI usa inteligência artificial para vasculhar os livros mais vendidos, checar tendências e desenhar o seu próximo negócio lucrativo do zero."}
         </p>
       </div>
 
@@ -30,12 +42,16 @@ export default function WelcomePage() {
             <div className="h-14 w-14 rounded-full bg-indigo-500/10 flex items-center justify-center mb-2">
               <BookOpen className="h-7 w-7 text-indigo-500" />
             </div>
-            <h3 className="text-xl font-bold">1. Encontre a Dor</h3>
+            <h3 className="text-xl font-bold">{isEn ? "1. Find Pain Points" : isEs ? "1. Encontre el Dolor" : "1. Encontre a Dor"}</h3>
             <p className="text-muted-foreground">
-              Vá ao Radar de E-books e procure por tópicos em alta. Se existem livros best-sellers sobre um problema, existe gente pagando por soluções.
+              {isEn 
+                ? "Go to the Ebook Radar and search rising topics. If best-selling books exist on a problem, people are paying for solutions." 
+                : isEs 
+                ? "Vaya al Radar de Ebooks y busque temas populares. Si existen libros sobre un problema, hay personas pagando por soluciones." 
+                : "Vá ao Radar de E-books e procure por tópicos em alta. Se existem livros best-sellers sobre um problema, existe gente pagando por soluções."}
             </p>
             <Link href="/radar" className="text-indigo-500 mt-auto text-sm font-semibold underline-offset-4 hover:underline">
-              Explorar Radar &rarr;
+              {t.common.radar} &rarr;
             </Link>
           </CardContent>
         </Card>
@@ -46,12 +62,16 @@ export default function WelcomePage() {
             <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center mb-2">
               <Sparkles className="h-7 w-7 text-primary" />
             </div>
-            <h3 className="text-xl font-bold">2. Combine Ideias</h3>
+            <h3 className="text-xl font-bold">{isEn ? "2. Combine Ideas" : isEs ? "2. Combine Ideas" : "2. Combine Ideias"}</h3>
             <p className="text-muted-foreground">
-              Acesse a Biblioteca de Ideias, gire a roleta e misture públicos, problemas e tecnologias em mercados de Oceano Azul.
+              {isEn 
+                ? "Visit the Idea Library, spin combinations, and mix audiences, problems, and tech in Blue Ocean markets." 
+                : isEs 
+                ? "Visite la Biblioteca de Ideas, combine audiencias, problemas y tecnologías en mercados de Océano Azul." 
+                : "Acesse a Biblioteca de Ideias, gire a roleta e misture públicos, problemas e tecnologias em mercados de Oceano Azul."}
             </p>
             <Link href="/library" className="text-primary mt-auto text-sm font-semibold underline-offset-4 hover:underline">
-              Gerar Combinações &rarr;
+              {t.common.library} &rarr;
             </Link>
           </CardContent>
         </Card>
@@ -61,12 +81,16 @@ export default function WelcomePage() {
             <div className="h-14 w-14 rounded-full bg-green-500/10 flex items-center justify-center mb-2">
               <LayoutDashboard className="h-7 w-7 text-green-500" />
             </div>
-            <h3 className="text-xl font-bold">3. Execute o Plano</h3>
+            <h3 className="text-xl font-bold">{isEn ? "3. Execute the Plan" : isEs ? "3. Ejecute el Plan" : "3. Execute o Plano"}</h3>
             <p className="text-muted-foreground">
-              No Dashboard, veja o Score Viral da sua ideia, extraia o Lean Canvas completo e copie os Prompts para a IA programar para você.
+              {isEn 
+                ? "In your Dashboard, view your Viral Score, extract your full Lean Canvas, and copy prompt instructions for AI." 
+                : isEs 
+                ? "En su Dashboard, vea su Viral Score, extraiga el Lean Canvas completo y copie prompts de IA." 
+                : "No Dashboard, veja o Score Viral da sua ideia, extraia o Lean Canvas completo e copie os Prompts para a IA programar para você."}
             </p>
             <Link href="/dashboard" className="text-green-500 mt-auto text-sm font-semibold underline-offset-4 hover:underline">
-              Ver Oportunidades &rarr;
+              {t.common.dashboard} &rarr;
             </Link>
           </CardContent>
         </Card>
@@ -78,13 +102,13 @@ export default function WelcomePage() {
           href="/library" 
           className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/80 h-14 px-8 text-lg font-bold shadow-xl shadow-primary/20 rounded-xl hover:scale-105 transition-transform"
         >
-          <Sparkles className="mr-2 h-5 w-5" /> Começar a Gerar Agora
+          <Sparkles className="mr-2 h-5 w-5" /> {isEn ? "Start Generating Now" : isEs ? "Empezar a Generar Ahora" : "Começar a Gerar Agora"}
         </Link>
         <Link 
           href="/radar" 
           className="group/button inline-flex shrink-0 items-center justify-center border border-border bg-background hover:bg-muted hover:text-foreground h-14 px-8 text-lg rounded-xl glass-card hover:bg-white/5"
         >
-          <BookOpen className="mr-2 h-5 w-5" /> Vasculhar a Amazon
+          <BookOpen className="mr-2 h-5 w-5" /> {isEn ? "Explore Ebook Radar" : isEs ? "Explorar Radar de Ebooks" : "Vasculhar a Amazon"}
         </Link>
       </div>
     </div>

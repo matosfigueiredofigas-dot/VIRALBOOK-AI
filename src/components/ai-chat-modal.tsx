@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { MessageCircle, X, Send, Bot, User, Loader2 } from "lucide-react";
+import { useLanguage } from "@/contexts/language-context";
 
 interface Message {
   role: "user" | "assistant";
@@ -18,11 +19,19 @@ interface AIChatModalProps {
 }
 
 export function AIChatModal({ isOpen, onClose, contextText, projectName, showLeft = false }: AIChatModalProps) {
+  const { language, t } = useLanguage();
   const [mounted, setMounted] = useState(false);
+  const isEn = language === 'en';
+  const isEs = language === 'es';
+
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: `Olá! Eu sou o CTO da sua nova startup baseada no "${projectName}". Do que você precisa? Nomes, código, estratégia de vendas?`,
+      content: isEn 
+        ? `Hello! I'm the CTO of your new startup based on "${projectName}". How can I help you? Strategy, code, or naming?` 
+        : isEs 
+        ? `¡Hola! Soy el CTO de su nueva startup basada en "${projectName}". ¿En qué puedo ayudarle?` 
+        : `Olá! Eu sou o CTO da sua nova startup baseada no "${projectName}". Do que você precisa? Nomes, código, estratégia de vendas?`,
     },
   ]);
   const [input, setInput] = useState("");
@@ -38,8 +47,6 @@ export function AIChatModal({ isOpen, onClose, contextText, projectName, showLef
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Se fechar, podemos querer resetar as mensagens ou manter na sessão atual (vamos manter)
-
   async function handleSend() {
     if (!input.trim() || isLoading) return;
 
@@ -50,7 +57,6 @@ export function AIChatModal({ isOpen, onClose, contextText, projectName, showLef
 
     try {
       const currentMessages = [...messages, userMessage].filter((m) => m.role === "user" || m.role === "assistant");
-      // O primeiro do estado é assistente (boas vindas), o Groq não liga se a primeira for assistant.
 
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -58,6 +64,7 @@ export function AIChatModal({ isOpen, onClose, contextText, projectName, showLef
         body: JSON.stringify({
           messages: currentMessages,
           contextText,
+          language
         }),
       });
 

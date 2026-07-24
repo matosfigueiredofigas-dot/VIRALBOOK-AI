@@ -6,10 +6,14 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { useSearchParams, useRouter } from "next/navigation"
+import { useLanguage } from "@/contexts/language-context"
 
 const RESULTS_PER_PAGE = 9;
 
 export function BookSearcher() {
+  const { language, t } = useLanguage();
+  const isEn = language === 'en';
+  const isEs = language === 'es';
   const [query, setQuery] = useState("")
   const [loading, setLoading] = useState(false)
   const [generatingFor, setGeneratingFor] = useState<string | null>(null)
@@ -169,7 +173,7 @@ export function BookSearcher() {
       const res = await fetch('/api/radar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ keyword: bookTitle, country })
+        body: JSON.stringify({ keyword: bookTitle, country, targetLanguage: language })
       })
 
       if (!res.ok) {
@@ -204,20 +208,20 @@ export function BookSearcher() {
       <div className="glass-card p-6 rounded-2xl border border-primary/20 bg-primary/5">
         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
           <Book className="h-5 w-5 text-primary" />
-          Busca Ativa na Amazon / Google Books
+          {t.radar.activeSearchTitle}
         </h2>
         <form onSubmit={(e) => searchBooks(e, 0)} className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input 
-              placeholder="Digite um problema, nicho ou nome de um livro..." 
+              placeholder={t.radar.searchPlaceholder} 
               className="pl-10 h-12 text-lg bg-background/80"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
           </div>
-          <Button type="submit" disabled={loading || !query.trim()} className="h-12 px-8 font-bold text-md">
-            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Procurar Livros"}
+          <Button type="submit" disabled={loading || !query.trim()} className="h-12 px-8 font-bold text-md cursor-pointer">
+            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : t.radar.searchButton}
           </Button>
         </form>
 
@@ -236,9 +240,9 @@ export function BookSearcher() {
               className="w-full sm:w-auto self-start border-red-500/30 hover:bg-red-500/10 text-foreground"
             >
               {generatingFor === query ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Gerando pelo termo livre...</>
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {isEn ? "Generating by custom term..." : isEs ? "Generando por término libre..." : "Gerando pelo termo livre..."}</>
               ) : (
-                <><Sparkles className="mr-2 h-4 w-4 text-red-500" /> Forçar geração de SaaS para "{query}"</>
+                <><Sparkles className="mr-2 h-4 w-4 text-red-500" /> {isEn ? `Force SaaS generation for "${query}"` : isEs ? `Forzar generación de SaaS para "${query}"` : `Forçar geração de SaaS para "${query}"`}</>
               )}
             </Button>
           </div>
@@ -394,21 +398,21 @@ export function BookSearcher() {
                         className="w-full font-bold border-sky-500/50 text-sky-400 hover:bg-sky-500/10 hover:text-sky-300"
                       >
                         {isScanning ? (
-                          <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Escaneando Tópicos...</>
+                          <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t.radar.deepScanning}</>
                         ) : (
-                          <><ScanLine className="mr-2 h-4 w-4" /> Deep Scan (Extrair Dados)</>
+                          <><ScanLine className="mr-2 h-4 w-4" /> {t.radar.deepScan}</>
                         )}
                       </Button>
                     ) : (
                       <Button 
                         onClick={() => generateSaaS(book.title)}
                         disabled={!!generatingFor}
-                        className="w-full font-bold shadow-[0_0_15px_rgba(var(--primary),0.3)] bg-primary text-primary-foreground hover:bg-primary/90"
+                        className="w-full font-bold shadow-[0_0_15px_rgba(var(--primary),0.3)] bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
                       >
                         {generatingFor === book.title ? (
-                          <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Convertendo em SaaS...</>
+                          <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t.radar.convertingToSaas}</>
                         ) : (
-                          <><Sparkles className="mr-2 h-4 w-4" /> Gerar SaaS deste Livro</>
+                          <><Sparkles className="mr-2 h-4 w-4" /> {t.radar.generateSaasFromBook}</>
                         )}
                       </Button>
                     )}
@@ -428,21 +432,21 @@ export function BookSearcher() {
             size="sm"
             onClick={() => searchBooks(undefined, currentPage - 1)}
             disabled={loading || currentPage === 0}
-            className="border-white/10 hover:bg-white/5 font-semibold rounded-xl px-4 py-2"
+            className="border-white/10 hover:bg-white/5 font-semibold rounded-xl px-4 py-2 cursor-pointer"
           >
-            ← Página Anterior
+            ← {t.radar.prevPage}
           </Button>
           <span className="text-xs font-bold text-muted-foreground bg-muted/40 px-4 py-2 rounded-xl border border-white/5 shadow-inner">
-            Página {currentPage + 1}
+            {t.radar.pageLabel} {currentPage + 1}
           </span>
           <Button 
             variant="outline" 
             size="sm"
             onClick={() => searchBooks(undefined, currentPage + 1)}
             disabled={loading || books.length < RESULTS_PER_PAGE}
-            className="border-white/10 hover:bg-white/5 font-semibold rounded-xl px-4 py-2"
+            className="border-white/10 hover:bg-white/5 font-semibold rounded-xl px-4 py-2 cursor-pointer"
           >
-            Próxima Página →
+            {t.radar.nextPage} →
           </Button>
         </div>
       )}

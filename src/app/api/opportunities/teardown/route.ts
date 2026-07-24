@@ -19,7 +19,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Chave da API da Groq não configurada' }, { status: 500 });
     }
 
-    const { opportunityId } = await req.json();
+    const { opportunityId, language = 'pt' } = await req.json();
 
     if (!opportunityId) {
       return NextResponse.json({ error: 'ID da oportunidade é obrigatório' }, { status: 400 });
@@ -42,6 +42,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ teardown: opp.market_teardown_json });
     }
 
+    const langName = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese';
+
     const prompt = `
 Você é o mais brilhante Estrategista de Mercado e Analista de Venture Capital do mundo (nível Y Combinator e a16z).
 Sua missão é criar um "Dossiê de Inteligência Competitiva (Market Teardown)" implacável para a seguinte ideia de SaaS:
@@ -51,6 +53,8 @@ Público Alvo: ${opp.target_audience}
 Problema Resolvido: ${opp.problem_solved}
 Funcionalidades MVP: ${opp.mvp_features}
 Vantagem Injusta Planejada: ${opp.competitive_advantage}
+
+CRITICAL: All generated values inside the JSON object must be written strictly in ${langName}.
 
 Você deve retornar EXCLUSIVAMENTE um objeto JSON válido, estruturado EXATAMENTE da seguinte forma:
 {
@@ -66,8 +70,7 @@ Você deve retornar EXCLUSIVAMENTE um objeto JSON válido, estruturado EXATAMENT
       "strength": "string (A maior força deles)",
       "pricing": "string (Como eles cobram)",
       "our_edge": "string (Como este nosso MVP os derrota)"
-    },
-    // Gere 3 concorrentes
+    }
   ],
   "go_to_market_strategy": {
     "acquisition_channels": [
@@ -76,7 +79,7 @@ Você deve retornar EXCLUSIVAMENTE um objeto JSON válido, estruturado EXATAMENT
         "tactics": "string (Como executar especificamente para esse SaaS)"
       }
     ],
-    "first_100_users": "string (Guia prático e sujo de como roubar/conseguir os 100 primeiros clientes pagos em 30 dias)"
+    "first_100_users": "string (Guia prático de como conseguir os 100 primeiros clientes pagos em 30 dias)"
   },
   "pricing_model_recommendation": {
     "logic": "string (Por que escolhemos este modelo de preço)",
@@ -85,8 +88,7 @@ Você deve retornar EXCLUSIVAMENTE um objeto JSON válido, estruturado EXATAMENT
         "name": "string (Ex: Starter)",
         "price": "string (Preço exato)",
         "features": ["string"]
-      },
-      // Gere 2 ou 3 planos
+      }
     ]
   }
 }

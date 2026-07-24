@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { CountrySelect } from "@/components/country-select";
 import { TimeSelect } from "@/components/time-select";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageToggle } from "@/components/language-toggle";
 import { TrendTicker } from "@/components/trend-ticker";
 import { CommandPaletteTrigger } from "@/components/command-palette-trigger";
 import { QuickBookmark } from "@/components/quick-bookmark";
@@ -59,6 +60,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
               {/* Filters */}
               <div className="flex items-center gap-2" data-tour="global-filters">
+                <LanguageToggle />
                 <ThemeToggle />
                 <Suspense fallback={<div className="h-8 w-[120px] bg-muted animate-pulse rounded-full" />}>
                   <TimeSelect />

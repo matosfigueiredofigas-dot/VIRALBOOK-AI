@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { AIEngineSettings } from "@/hooks/use-settings";
+import { useLanguage } from "@/contexts/language-context";
 
 // ============================================================
 // Types
@@ -23,91 +24,62 @@ interface Props {
   onUpdate: (updates: Partial<AIEngineSettings>) => void;
 }
 
-// ============================================================
-// Slider config
-// ============================================================
-
-interface SliderConfig {
-  key: keyof Pick<
-    AIEngineSettings,
-    "weightTrends" | "weightReddit" | "weightFacebook" | "weightAIConfidence"
-  >;
-  label: string;
-  icon: React.ElementType;
-  color: string;       // tailwind-friendly hex / named color for the filled track
-  thumbBorder: string; // border color class for the thumb
-}
-
-const SLIDERS: SliderConfig[] = [
-  {
-    key: "weightTrends",
-    label: "Google Trends Growth",
-    icon: TrendingUp,
-    color: "#22c55e",
-    thumbBorder: "border-green-500",
-  },
-  {
-    key: "weightReddit",
-    label: "Reddit Mentions",
-    icon: MessageCircle,
-    color: "#f97316",
-    thumbBorder: "border-orange-500",
-  },
-  {
-    key: "weightFacebook",
-    label: "Facebook Signals",
-    icon: Share2,
-    color: "#3b82f6",
-    thumbBorder: "border-blue-500",
-  },
-  {
-    key: "weightAIConfidence",
-    label: "AI Confidence",
-    icon: Brain,
-    color: "#a855f7",
-    thumbBorder: "border-purple-500",
-  },
-];
-
-// ============================================================
-// Generation modes
-// ============================================================
-
-interface ModeOption {
-  value: AIEngineSettings["generationMode"];
-  emoji: string;
-  title: string;
-  description: string;
-  recommended?: boolean;
-}
-
-const MODES: ModeOption[] = [
-  {
-    value: "conservative",
-    emoji: "🛡️",
-    title: "Conservador",
-    description: "Apenas oportunidades com alta confiança",
-  },
-  {
-    value: "balanced",
-    emoji: "⚖️",
-    title: "Balanceado",
-    description: "Equilíbrio entre quantidade e qualidade",
-    recommended: true,
-  },
-  {
-    value: "aggressive",
-    emoji: "🚀",
-    title: "Agressivo",
-    description: "Mais ideias, incluindo experimentais",
-  },
-];
-
-// ============================================================
-// Component
-// ============================================================
-
 export function SettingsAIEngine({ settings, onUpdate }: Props) {
+  const { t } = useLanguage();
+
+  const SLIDERS = [
+    {
+      key: "weightTrends" as const,
+      label: "Google Trends Growth",
+      icon: TrendingUp,
+      color: "#22c55e",
+      thumbBorder: "border-green-500",
+    },
+    {
+      key: "weightReddit" as const,
+      label: "Reddit Mentions",
+      icon: MessageCircle,
+      color: "#f97316",
+      thumbBorder: "border-orange-500",
+    },
+    {
+      key: "weightFacebook" as const,
+      label: "Facebook Signals",
+      icon: Share2,
+      color: "#3b82f6",
+      thumbBorder: "border-blue-500",
+    },
+    {
+      key: "weightAIConfidence" as const,
+      label: "AI Confidence",
+      icon: Brain,
+      color: "#a855f7",
+      thumbBorder: "border-purple-500",
+    },
+  ];
+
+  const MODES = [
+    {
+      value: "conservative" as const,
+      emoji: "🛡️",
+      title: "Conservador",
+      description: "Apenas oportunidades com alta confiança",
+    },
+    {
+      value: "balanced" as const,
+      emoji: "⚖️",
+      title: "Balanceado",
+      description: "Equilíbrio entre quantidade e qualidade",
+      recommended: true,
+    },
+    {
+      value: "aggressive" as const,
+      emoji: "🚀",
+      title: "Agressivo",
+      description: "Mais ideias, incluindo experimentais",
+    },
+  ];
+
   const total = useMemo(
     () =>
       settings.weightTrends +
@@ -138,9 +110,9 @@ export function SettingsAIEngine({ settings, onUpdate }: Props) {
             <Brain className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold">Motor de IA</h3>
+            <h3 className="text-lg font-semibold">{t.settings.tabAiEngine}</h3>
             <p className="text-sm text-muted-foreground">
-              Ajuste os pesos do algoritmo de pontuação e modo de geração
+              {t.settings.aiProvider}
             </p>
           </div>
         </div>

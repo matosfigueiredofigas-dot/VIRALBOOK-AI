@@ -19,25 +19,25 @@ import { SettingsAIEngine } from "@/components/settings-ai-engine";
 import { SettingsMarket } from "@/components/settings-market";
 import { SettingsNotifications } from "@/components/settings-notifications";
 import { SettingsAccount } from "@/components/settings-account";
-
-const tabs = [
-  { id: "appearance", label: "Aparência", icon: Palette, color: "from-violet-500 to-purple-600" },
-  { id: "ai-engine", label: "Motor de IA", icon: Brain, color: "from-emerald-500 to-teal-600" },
-  { id: "market", label: "Mercado", icon: Globe, color: "from-blue-500 to-cyan-600" },
-  { id: "notifications", label: "Notificações", icon: Bell, color: "from-amber-500 to-orange-600" },
-  { id: "account", label: "Conta", icon: Shield, color: "from-rose-500 to-red-600" },
-] as const;
-
-type TabId = (typeof tabs)[number]["id"];
+import { useLanguage } from "@/contexts/language-context";
 
 interface SettingsClientProps {
   userEmail: string;
 }
 
 export function SettingsClient({ userEmail }: SettingsClientProps) {
-  const [activeTab, setActiveTab] = useState<TabId>("appearance");
+  const { t } = useLanguage();
+  const [activeTab, setActiveTab] = useState<string>("appearance");
   const { settings, loaded, updateSettings, resetSection, resetAll } = useSettings();
   const [showSaved, setShowSaved] = useState(false);
+
+  const tabs = [
+    { id: "appearance", label: t.settings.tabAppearance, icon: Palette, color: "from-violet-500 to-purple-600" },
+    { id: "ai-engine", label: t.settings.tabAiEngine, icon: Brain, color: "from-emerald-500 to-teal-600" },
+    { id: "market", label: t.dash.targetMarket || "Mercado", icon: Globe, color: "from-blue-500 to-cyan-600" },
+    { id: "notifications", label: t.settings.tabNotifications, icon: Bell, color: "from-amber-500 to-orange-600" },
+    { id: "account", label: t.settings.tabAccount, icon: Shield, color: "from-rose-500 to-red-600" },
+  ];
 
   const handleSaveFlash = () => {
     setShowSaved(true);
@@ -54,8 +54,6 @@ export function SettingsClient({ userEmail }: SettingsClientProps) {
     );
   }
 
-  const activeTabData = tabs.find((t) => t.id === activeTab)!;
-
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
       {/* Header */}
@@ -63,10 +61,10 @@ export function SettingsClient({ userEmail }: SettingsClientProps) {
         <div>
           <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-br from-primary to-blue-500 bg-clip-text text-transparent w-fit pb-1 flex items-center gap-3">
             <Settings className="h-9 w-9 text-primary" />
-            Configurações
+            {t.settings.title}
           </h1>
           <p className="text-muted-foreground mt-2 text-lg">
-            Personalize o ViralBook AI ao seu estilo e necessidades.
+            {t.settings.subtitle}
           </p>
         </div>
 

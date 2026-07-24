@@ -55,7 +55,7 @@ export async function POST(request: Request) {
       }
     }
 
-    const { keyword, country = 'ALL', idea, tier } = await request.json();
+    const { keyword, country = 'ALL', idea, tier, targetLanguage = 'pt' } = await request.json();
 
     // 0.5 Cache: Se já buscamos esse livro/termo nos últimos 7 dias, retorna do cache (apenas para pesquisas gerais sem ideia estruturada e sem tier específico)
     if (!idea && tier === undefined) {
@@ -126,7 +126,7 @@ export async function POST(request: Request) {
 
     // 4. Processamento via IA (Groq/Llama3)
     console.log("[Radar] Iniciando Groq Pipeline Multi-Agente...");
-    const aiInsight = await GroqService.generateOpportunity(book, trendsData, redditData, facebookData, country, idea || keyword);
+    const aiInsight = await GroqService.generateOpportunity(book, trendsData, redditData, facebookData, country, idea || keyword, targetLanguage);
     if (!aiInsight) {
       console.log("[Radar] Falha na IA. aiInsight é null.");
       return NextResponse.json({ error: 'Falha na geração de IA' }, { status: 500 });

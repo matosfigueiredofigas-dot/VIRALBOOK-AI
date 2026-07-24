@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { PlayCircle, X, Code, Loader2, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/language-context";
 
 interface LivePreviewModalProps {
   opportunity: {
@@ -15,6 +16,7 @@ interface LivePreviewModalProps {
 }
 
 export function LivePreviewModal({ opportunity }: LivePreviewModalProps) {
+  const { language, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [htmlCode, setHtmlCode] = useState<string | null>(null);
@@ -24,6 +26,9 @@ export function LivePreviewModal({ opportunity }: LivePreviewModalProps) {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const isEn = language === 'en';
+  const isEs = language === 'es';
 
   const generatePreview = async () => {
     try {
@@ -39,13 +44,14 @@ export function LivePreviewModal({ opportunity }: LivePreviewModalProps) {
           problem: opportunity.problem_solved,
           audience: opportunity.target_audience,
           features: opportunity.mvp_features,
+          language
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Falha ao gerar o preview.');
+        throw new Error(data.error || (isEn ? "Failed to generate preview." : isEs ? "Error al generar vista previa." : "Falha ao gerar o preview."));
       }
 
       setHtmlCode(data.html);
@@ -59,7 +65,7 @@ export function LivePreviewModal({ opportunity }: LivePreviewModalProps) {
   const copyToClipboard = () => {
     if (htmlCode) {
       navigator.clipboard.writeText(htmlCode);
-      alert("Código HTML copiado para a área de transferência!");
+      alert(isEn ? "HTML source code copied to clipboard!" : isEs ? "¡Código HTML copiado al portapapeles!" : "Código HTML copiado para a área de transferência!");
     }
   };
 
@@ -76,7 +82,7 @@ export function LivePreviewModal({ opportunity }: LivePreviewModalProps) {
             </h3>
             {isLoading && (
               <span className="flex items-center gap-2 text-xs text-zinc-400 ml-4 bg-zinc-800 px-3 py-1 rounded-full">
-                <Loader2 className="h-3 w-3 animate-spin" /> IA Codificando MVP...
+                <Loader2 className="h-3 w-3 animate-spin" /> {isEn ? "AI Coding MVP..." : isEs ? "IA Codificando MVP..." : "IA Codificando MVP..."}
               </span>
             )}
           </div>
@@ -85,7 +91,7 @@ export function LivePreviewModal({ opportunity }: LivePreviewModalProps) {
             {htmlCode && !isLoading && (
               <Button variant="outline" size="sm" onClick={copyToClipboard} className="text-zinc-300 border-zinc-700 bg-zinc-800 hover:bg-zinc-700 hover:text-white">
                 <Code className="h-4 w-4 mr-2" />
-                Copiar Código Fonte
+                {isEn ? "Copy Source Code" : isEs ? "Copiar Código Fuente" : "Copiar Código Fonte"}
               </Button>
             )}
             <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-full">
@@ -101,9 +107,9 @@ export function LivePreviewModal({ opportunity }: LivePreviewModalProps) {
               <div className="relative flex h-24 w-24 items-center justify-center rounded-2xl bg-blue-600 shadow-2xl shadow-blue-500/40 animate-pulse mb-6">
                 <Wand2 className="h-10 w-10 animate-bounce" />
               </div>
-              <h4 className="text-xl font-bold mb-2">Engenharia Reversa Ativada</h4>
+              <h4 className="text-xl font-bold mb-2">{isEn ? "Reverse Engineering Active" : isEs ? "Ingeniería Inversa Activada" : "Engenharia Reversa Ativada"}</h4>
               <p className="text-zinc-400 text-sm max-w-sm text-center animate-pulse">
-                O modelo Llama 3.3 70B está escrevendo o HTML + Tailwind da sua dashboard em tempo real...
+                {isEn ? "AI is generating the real-time UI code..." : isEs ? "La IA está generando el código UI en tiempo real..." : "O modelo Llama 3.3 está escrevendo o HTML + Tailwind da sua dashboard em tempo real..."}
               </p>
             </div>
           )}
@@ -111,10 +117,10 @@ export function LivePreviewModal({ opportunity }: LivePreviewModalProps) {
           {error && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950 text-red-400 p-6 text-center z-10">
               <X className="h-12 w-12 mx-auto mb-4" />
-              <p className="text-xl font-bold">Erro ao gerar a interface.</p>
+              <p className="text-xl font-bold">{isEn ? "Error generating interface." : isEs ? "Error al generar la interfaz." : "Erro ao gerar a interface."}</p>
               <p className="text-md opacity-80 mt-2 max-w-md">{error}</p>
               <Button variant="outline" className="mt-6 border-red-800 bg-red-950 text-red-300 hover:bg-red-900 hover:text-white" onClick={() => setIsOpen(false)}>
-                Fechar e tentar novamente
+                {isEn ? "Close and try again" : isEs ? "Cerrar y reintentar" : "Fechar e tentar novamente"}
               </Button>
             </div>
           )}
@@ -139,7 +145,7 @@ export function LivePreviewModal({ opportunity }: LivePreviewModalProps) {
         className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/20 font-bold"
       >
         <Wand2 className="h-4 w-4 mr-2" />
-        Gerar Live Preview (UI)
+        {isEn ? "Generate Live Preview (UI)" : isEs ? "Generar Vista Previa (UI)" : "Gerar Live Preview (UI)"}
       </Button>
 
       {mounted && typeof document !== "undefined" && createPortal(modalContent, document.body)}

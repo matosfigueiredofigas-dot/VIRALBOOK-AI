@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Globe, Calendar, Languages, Filter } from "lucide-react";
+import { Globe, Calendar, Languages, Filter, Compass, Sparkles, Loader2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import type { MarketSettings } from "@/hooks/use-settings";
+import { useLanguage } from "@/contexts/language-context";
 
 // ─── Data ────────────────────────────────────────────────────
 
@@ -62,6 +63,14 @@ interface Props {
 // ─── Component ───────────────────────────────────────────────
 
 export function SettingsMarket({ settings, onUpdate }: Props) {
+  const {
+    t,
+    isAutoDetect,
+    triggerAutoDetectRegion,
+    isDetectingRegion,
+    detectedRegionInfo
+  } = useLanguage();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -86,6 +95,45 @@ export function SettingsMarket({ settings, onUpdate }: Props) {
 
       {/* ── Body ────────────────────────────────────────────── */}
       <div className="flex flex-col gap-6 p-6">
+        {/* 0 ▸ Auto Detect Region Language */}
+        <SettingsRow
+          icon={<Compass className="h-4 w-4" />}
+          label={t.region.autoDetectLabel}
+          description={t.region.autoDetectDesc}
+        >
+          <div className="flex flex-col items-end gap-1.5">
+            <button
+              type="button"
+              disabled={isDetectingRegion}
+              onClick={() => triggerAutoDetectRegion()}
+              className={`
+                relative flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all duration-200 cursor-pointer shadow-sm
+                ${
+                  isAutoDetect
+                    ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-emerald-500/25"
+                    : "bg-white/10 hover:bg-white/20 text-foreground border border-white/10"
+                }
+              `}
+            >
+              {isDetectingRegion ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Sparkles className="h-4 w-4" />
+              )}
+              <span>
+                {isDetectingRegion ? t.common.autoDetecting : t.common.autoDetectRegion}
+              </span>
+            </button>
+            {detectedRegionInfo?.regionName && isAutoDetect && (
+              <span className="text-[10px] text-emerald-400 font-medium">
+                📍 {t.common.regionDetected}: {detectedRegionInfo.regionName}
+              </span>
+            )}
+          </div>
+        </SettingsRow>
+
+        <div className="h-px bg-white/10" />
+
         {/* 1 ▸ Default Country */}
         <SettingsRow
           icon={<Globe className="h-4 w-4" />}
@@ -125,7 +173,7 @@ export function SettingsMarket({ settings, onUpdate }: Props) {
                 type="button"
                 onClick={() => onUpdate({ defaultPeriod: p.value })}
                 className={`
-                  relative rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all duration-200
+                  relative rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all duration-200 cursor-pointer
                   ${
                     settings.defaultPeriod === p.value
                       ? "bg-emerald-500/20 text-emerald-400 shadow-sm shadow-emerald-500/10 border border-emerald-500/30"
@@ -152,7 +200,7 @@ export function SettingsMarket({ settings, onUpdate }: Props) {
                 type="button"
                 onClick={() => onUpdate({ aiOutputLanguage: l.value })}
                 className={`
-                  relative flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all duration-200
+                  relative flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all duration-200 cursor-pointer
                   ${
                     settings.aiOutputLanguage === l.value
                       ? "bg-emerald-500/20 text-emerald-400 shadow-sm shadow-emerald-500/10 border border-emerald-500/30"
@@ -235,7 +283,7 @@ export function SettingsMarket({ settings, onUpdate }: Props) {
                   type="button"
                   onClick={() => onUpdate({ minScoreDisplay: tick })}
                   className={`
-                    text-[10px] px-1.5 py-0.5 rounded-md transition-colors
+                    text-[10px] px-1.5 py-0.5 rounded-md transition-colors cursor-pointer
                     ${
                       settings.minScoreDisplay === tick
                         ? "text-emerald-400 bg-emerald-500/10"

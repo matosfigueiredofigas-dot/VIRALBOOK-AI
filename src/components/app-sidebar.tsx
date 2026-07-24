@@ -17,7 +17,9 @@ import {
   SidebarMenuClient, 
   SidebarMyAccountClient, 
   SidebarAdminClient, 
-  SidebarFooterLinksClient 
+  SidebarFooterLinksClient,
+  SidebarGroupLabelClient,
+  SidebarLogoutClient
 } from "@/components/sidebar-menu-client"
 
 export async function AppSidebar() {
@@ -52,7 +54,9 @@ export async function AppSidebar() {
 
         {/* Minha Conta (Favoritos) */}
         <SidebarGroup className="mt-8">
-          <SidebarGroupLabel className="text-xs font-semibold tracking-wider text-muted-foreground/70 uppercase mb-2">Minha Conta</SidebarGroupLabel>
+          <SidebarGroupLabel>
+            <SidebarGroupLabelClient type="myAccount" />
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMyAccountClient />
           </SidebarGroupContent>
@@ -61,7 +65,9 @@ export async function AppSidebar() {
         {/* Painel Administrativo */}
         {isAdmin && (
           <SidebarGroup className="mt-4">
-            <SidebarGroupLabel className="text-xs font-semibold tracking-wider text-muted-foreground/70 uppercase mb-2">Administração</SidebarGroupLabel>
+            <SidebarGroupLabel>
+              <SidebarGroupLabelClient type="admin" />
+            </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarAdminClient isAdmin={isAdmin} />
             </SidebarGroupContent>
@@ -87,7 +93,7 @@ export async function AppSidebar() {
                     <form action="/api/auth/logout" method="post">
                       <SidebarMenuButton type="submit" className="h-11 hover:bg-red-500/10 hover:text-red-500 transition-all rounded-lg group w-full text-left">
                         <LogOut className="h-5 w-5 text-muted-foreground group-hover:text-red-500 transition-colors" />
-                        <span className="font-medium text-sm">Sair da Conta</span>
+                        <SidebarLogoutClient />
                       </SidebarMenuButton>
                     </form>
                   </SidebarMenuItem>

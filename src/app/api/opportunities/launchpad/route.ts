@@ -25,11 +25,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Chave da API da Groq não configurada' }, { status: 500 });
     }
 
-    const { opportunityId, saasName, problem, audience, features, theme = 'cyberpunk' } = await req.json();
+    const { opportunityId, saasName, problem, audience, features, theme = 'cyberpunk', language = 'pt' } = await req.json();
 
     if (!opportunityId || !saasName || !problem) {
       return NextResponse.json({ error: 'Faltam parâmetros obrigatórios' }, { status: 400 });
     }
+
+    const targetLang = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese';
 
     // Verifica se a oportunidade pertence ao usuário
     const { data: opp, error: oppError } = await supabase
@@ -83,6 +85,7 @@ export async function POST(req: Request) {
     const prompt = `
 Você é o melhor Desenvolvedor Frontend e Especialista em Copywriting de Conversão do mundo.
 Sua missão é criar uma Landing Page HTML de altíssima conversão para coletar leads (Lista de Espera) para um novo SaaS.
+IMPORTANT: You MUST write ALL visible text, headlines, labels, features, and buttons in ${targetLang}.
 A página será hospedada publicamente. O design deve ser ABSURDAMENTE PREMIUM, nível Stripe/Vercel/Linear.
 
 Nome do SaaS: ${saasName}

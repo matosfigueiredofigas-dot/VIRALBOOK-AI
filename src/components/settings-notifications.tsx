@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Bell, Mail, Zap, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { NotificationSettings } from "@/hooks/use-settings";
+import { useLanguage } from "@/contexts/language-context";
 
 interface Props {
   settings: NotificationSettings;
@@ -96,6 +97,8 @@ function SettingRow({
 /* ------------------------------------------------------------------ */
 
 export function SettingsNotifications({ settings, onUpdate }: Props) {
+  const { t } = useLanguage();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -111,10 +114,10 @@ export function SettingsNotifications({ settings, onUpdate }: Props) {
           </div>
           <div>
             <h2 className="text-lg font-bold text-foreground tracking-tight">
-              Notificações & Alertas
+              {t.settings.tabNotifications}
             </h2>
             <p className="text-xs text-muted-foreground">
-              Configure como e quando receber alertas de oportunidades
+              {t.settings.notifyEmail}
             </p>
           </div>
         </div>

@@ -99,7 +99,7 @@ export default async function PublicLandingPage(props: { params: Promise<{ slug:
       <section className="max-w-5xl mx-auto px-6 pt-20 pb-24 text-center relative z-10 space-y-10">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-md text-xs font-semibold text-zinc-300 shadow-md">
           <Icons.Sparkles className="h-3.5 w-3.5 animate-pulse" style={{ color: themeColor }} />
-          <span>Oportunidade Exclusiva & Convites para Fundadores</span>
+          <span>Exclusive Opportunity & Founder Invites / Oportunidade Exclusiva</span>
         </div>
 
         <h1 className="text-4xl sm:text-7xl font-extrabold tracking-tight leading-[1.05] text-white max-w-4xl mx-auto font-sans">
@@ -121,9 +121,9 @@ export default async function PublicLandingPage(props: { params: Promise<{ slug:
                 ctaText={lp.cta_text} 
                 themeColor={themeColor} 
               />
-              <p className="text-xxs text-zinc-500 mt-4 flex items-center justify-center gap-1.5">
-                <Icons.Lock className="h-3.5 w-3.5 text-zinc-600" />
-                Inscrição segura. Você receberá o convite do beta no e-mail cadastrado.
+              <p className="text-xxs text-zinc-500 mt-4 flex items-center justify-center gap-1.5 text-center">
+                <Icons.Lock className="h-3.5 w-3.5 text-zinc-600 shrink-0" />
+                Secure Subscription / Inscrição Segura
               </p>
             </div>
           </div>
@@ -131,7 +131,7 @@ export default async function PublicLandingPage(props: { params: Promise<{ slug:
 
         {/* Featured On (Trust Badges) */}
         <div className="pt-12 space-y-4">
-          <p className="text-xxs font-bold uppercase tracking-widest text-zinc-600">Projetado com base em ideias virais e validado no mercado</p>
+          <p className="text-xxs font-bold uppercase tracking-widest text-zinc-600">Designed based on viral insights / Projetado com base em ideias virais</p>
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 opacity-40 grayscale contrast-120">
             <span className="text-sm font-black text-white tracking-widest">PRODUCT HUNT</span>
             <span className="text-sm font-bold text-white tracking-widest">HACKER NEWS</span>

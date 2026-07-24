@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { CommandPalette } from "@/components/command-palette";
+import { useLanguage } from "@/contexts/language-context";
 
 export function CommandPaletteTrigger() {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -26,7 +28,7 @@ export function CommandPaletteTrigger() {
         aria-label="Abrir paleta de comandos"
       >
         <Search className="h-3.5 w-3.5 shrink-0" />
-        <span className="hidden md:inline text-xs">Buscar...</span>
+        <span className="hidden md:inline text-xs">{t.common.search}...</span>
         <kbd className="hidden lg:flex items-center gap-0.5 pl-1.5 text-[10px] font-mono opacity-60 group-hover:opacity-100 transition-opacity">
           <span>Ctrl</span><span>+K</span>
         </kbd>

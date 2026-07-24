@@ -9,6 +9,7 @@ import {
   AlertCircle, ArrowUpRight, Database, Sparkles, RefreshCw, FileText
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/contexts/language-context";
 
 interface Profile {
   id: string;
@@ -47,6 +48,7 @@ interface HealthStatus {
 }
 
 export function AdminPanelClient({ initialOpps }: { initialOpps: Opp[] }) {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<"overview" | "users" | "contacts" | "opps" | "transactions" | "copilot" | "matrices">("overview");
   const [users, setUsers] = useState<Profile[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);

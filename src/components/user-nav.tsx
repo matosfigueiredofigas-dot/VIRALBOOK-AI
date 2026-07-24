@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { User, Settings, LogOut, ChevronDown, Shield, PlayCircle } from "lucide-react";
+import { Settings, LogOut, ChevronDown, Shield, PlayCircle } from "lucide-react";
 import { startTutorial } from "@/components/tutorial-provider";
 import { LanguageToggle } from "@/components/language-toggle";
+import { useLanguage } from "@/contexts/language-context";
 
 interface UserNavProps {
   email: string;
@@ -11,6 +12,7 @@ interface UserNavProps {
 }
 
 export function UserNav({ email, isAdmin = false }: UserNavProps) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -35,8 +37,8 @@ export function UserNav({ email, isAdmin = false }: UserNavProps) {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 h-9 pl-1 pr-2.5 rounded-full border border-border/50 bg-muted/40 hover:bg-muted hover:border-border transition-all group"
-        aria-label="Menu do utilizador"
+        className="flex items-center gap-2 h-9 pl-1 pr-2.5 rounded-full border border-border/50 bg-muted/40 hover:bg-muted hover:border-border transition-all group cursor-pointer"
+        aria-label={t.common.myAccount}
       >
         {/* Avatar */}
         <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white text-xs font-bold shrink-0 shadow-sm shadow-primary/30">
@@ -49,7 +51,7 @@ export function UserNav({ email, isAdmin = false }: UserNavProps) {
       </button>
 
       {open && (
-        <div className="absolute top-11 right-0 w-56 bg-popover border border-border/60 rounded-xl shadow-xl z-50 overflow-hidden">
+        <div className="absolute top-11 right-0 w-56 bg-popover border border-border/60 rounded-xl shadow-xl z-50 overflow-hidden backdrop-blur-xl">
           {/* User info header */}
           <div className="px-3 py-3 border-b border-border/40 bg-muted/20">
             <p className="text-xs font-bold text-foreground truncate">{email?.split("@")[0]}</p>
@@ -69,11 +71,11 @@ export function UserNav({ email, isAdmin = false }: UserNavProps) {
               className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm hover:bg-muted/70 transition-colors text-foreground"
             >
               <Settings className="h-4 w-4 text-muted-foreground shrink-0" />
-              Configurações
+              {t.common.accountSettings}
             </a>
 
             <div className="flex items-center justify-between px-3 py-2 rounded-lg text-sm hover:bg-muted/70 transition-colors text-foreground">
-              <span className="text-xs font-medium text-muted-foreground">Idioma</span>
+              <span className="text-xs font-medium text-muted-foreground">{t.common.language}</span>
               <LanguageToggle />
             </div>
 
@@ -82,10 +84,10 @@ export function UserNav({ email, isAdmin = false }: UserNavProps) {
                 setOpen(false);
                 startTutorial();
               }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm hover:bg-muted/70 transition-colors text-foreground text-left"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm hover:bg-muted/70 transition-colors text-foreground text-left cursor-pointer"
             >
               <PlayCircle className="h-4 w-4 text-muted-foreground shrink-0" />
-              Refazer Tutorial
+              {t.common.redoTutorial}
             </button>
 
             {isAdmin && (
@@ -95,7 +97,7 @@ export function UserNav({ email, isAdmin = false }: UserNavProps) {
                 className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm hover:bg-amber-500/10 transition-colors text-amber-500"
               >
                 <Shield className="h-4 w-4 shrink-0" />
-                Painel Admin
+                {t.common.adminPanel}
               </a>
             )}
 
@@ -104,10 +106,10 @@ export function UserNav({ email, isAdmin = false }: UserNavProps) {
             <form action="/api/auth/logout" method="post">
               <button
                 type="submit"
-                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm hover:bg-red-500/10 transition-colors text-red-500"
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm hover:bg-red-500/10 transition-colors text-red-500 cursor-pointer"
               >
                 <LogOut className="h-4 w-4 shrink-0" />
-                Sair da Conta
+                {t.common.logout}
               </button>
             </form>
           </div>

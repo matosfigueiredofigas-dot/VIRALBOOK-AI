@@ -5,10 +5,12 @@ import { Search, Filter, LayoutGrid, List, Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useTransition, useState, useEffect } from "react"
+import { useLanguage } from "@/contexts/language-context"
 
 export function AdvancedFilters() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { t } = useLanguage()
   const [isPending, startTransition] = useTransition()
 
   const [search, setSearch] = useState(searchParams.get("search") || "")
@@ -49,7 +51,7 @@ export function AdvancedFilters() {
       <div className="flex items-center gap-2 w-full sm:w-auto flex-1 relative">
         <Search className="h-4 w-4 absolute left-3 text-muted-foreground" />
         <Input 
-          placeholder="Buscar por nicho, nome ou problema..." 
+          placeholder={t.hunter.searchPlaceholder || t.common.search} 
           className="pl-9 pr-9 bg-background/50 border-border/50 w-full"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -63,14 +65,14 @@ export function AdvancedFilters() {
         <Filter className="h-4 w-4 text-muted-foreground" />
         <Select value={minScore} onValueChange={handleScoreChange}>
           <SelectTrigger className="w-full sm:w-[180px] bg-background/50 border-border/50">
-            <SelectValue placeholder="Score Mínimo" />
+            <SelectValue placeholder={t.hunter.filterScore} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="0">Todos os Scores</SelectItem>
-            <SelectItem value="50">🔥 Acima de 50</SelectItem>
-            <SelectItem value="70">🚀 Acima de 70</SelectItem>
-            <SelectItem value="85">⭐ Acima de 85</SelectItem>
-            <SelectItem value="95">🦄 Acima de 95 (Raro)</SelectItem>
+            <SelectItem value="0">{t.generator.qualityAll}</SelectItem>
+            <SelectItem value="50">🔥 &gt; 50</SelectItem>
+            <SelectItem value="70">🚀 &gt; 70</SelectItem>
+            <SelectItem value="85">⭐ &gt; 85</SelectItem>
+            <SelectItem value="95">🦄 &gt; 95</SelectItem>
           </SelectContent>
         </Select>
       </div>

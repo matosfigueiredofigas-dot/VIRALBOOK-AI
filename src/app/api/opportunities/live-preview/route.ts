@@ -11,16 +11,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Chave da API da Groq não configurada' }, { status: 500 });
     }
 
-    const { saasName, problem, audience, features } = await req.json();
+    const { saasName, problem, audience, features, language = 'pt' } = await req.json();
 
     if (!saasName || !problem) {
       return NextResponse.json({ error: 'Faltam parâmetros obrigatórios' }, { status: 400 });
     }
 
+    const targetLang = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese';
+
     const prompt = `
 Você é o Lead UI/UX Designer e Desenvolvedor Frontend Sênior da Linear e da Vercel.
 Sua missão é escrever o código HTML/TailwindCSS perfeito e de cair o queixo para o Dashboard de um novo SaaS.
 O resultado DEVE ser uma obra de arte do design de software B2B: moderno, sério, limpo e absurdamente premium.
+
+CRITICAL INSTRUCTION: All visible UI copy, titles, metrics, notifications, buttons, and text content MUST be written in **${targetLang}**.
 
 Nome do SaaS: ${saasName}
 Público Alvo: ${audience}

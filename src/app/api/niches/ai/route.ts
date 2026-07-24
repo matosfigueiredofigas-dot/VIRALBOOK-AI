@@ -11,7 +11,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    const { topNiches } = await request.json();
+    const { topNiches, language = 'pt' } = await request.json();
 
     if (!topNiches || !Array.isArray(topNiches) || topNiches.length === 0) {
       return NextResponse.json({ error: 'Parâmetro topNiches é obrigatório' }, { status: 400 });
@@ -23,6 +23,8 @@ export async function POST(request: Request) {
     }
     const groq = new Groq({ apiKey });
 
+    const langName = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese';
+
     const prompt = `Você é um CTO visionário e analista de Venture Capital.
 O usuário capturou as seguintes macro-tendências (Nichos) no seu radar atual, ordenadas por potencial (Hype Score):
 ${topNiches.map((n: any) => `- ${n.name} (Hype Score: ${n.maxScore})`).join('\n')}
@@ -31,7 +33,9 @@ Seu objetivo é cruzar essas informações e sugerir **1 ÚNICA GRANDE IDEIA DE 
 Mostre como a combinação dessas frentes de mercado cria um diferencial competitivo massivo ("Oceano Azul").
 
 Formato de Resposta Exigido:
-Retorne um parágrafo denso, ultra premium, direto ao ponto (sem firulas como "Aqui está sua resposta") explicando a oportunidade. Mantenha em no máximo 4 frases de alto impacto em português.`;
+Retorne um parágrafo denso, ultra premium, direto ao ponto (sem firulas como "Aqui está sua resposta") explicando a oportunidade. Mantenha em no máximo 4 frases de alto impacto.
+
+CRITICAL INSTRUCTION: Respond strictly in ${langName}.`;
 
     const chatCompletion = await groq.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],

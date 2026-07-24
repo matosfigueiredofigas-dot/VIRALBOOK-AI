@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Rocket, Loader2, ExternalLink, Users, Copy, Check, Download, Eye, TrendingUp, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/language-context";
 
 interface Lead {
   id: string;
@@ -24,6 +25,7 @@ interface LaunchpadManagerProps {
 }
 
 export function LaunchpadManager({ opportunity, initialLeads }: LaunchpadManagerProps) {
+  const { language, t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [slug, setSlug] = useState<string | null>(opportunity.published_slug);
   const [copied, setCopied] = useState(false);
@@ -45,7 +47,8 @@ export function LaunchpadManager({ opportunity, initialLeads }: LaunchpadManager
           problem: opportunity.problem_solved,
           audience: opportunity.target_audience,
           features: opportunity.mvp_features,
-          theme: theme
+          theme: theme,
+          language
         })
       });
       
@@ -89,6 +92,9 @@ export function LaunchpadManager({ opportunity, initialLeads }: LaunchpadManager
     link.remove();
   };
 
+  const isEn = language === 'en';
+  const isEs = language === 'es';
+
   return (
     <div id="launchpad" className="mt-12 border-t border-gray-200 pt-12 print:hidden scroll-mt-24">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
@@ -97,7 +103,13 @@ export function LaunchpadManager({ opportunity, initialLeads }: LaunchpadManager
             <Rocket className="h-8 w-8 text-indigo-600" />
             1-Click Launchpad
           </h2>
-          <p className="text-gray-600 mt-1">Publique sua Landing Page instantaneamente e acompanhe os Leads em tempo real.</p>
+          <p className="text-gray-600 mt-1">
+            {isEn 
+              ? "Publish your Landing Page instantly and track Leads in real-time." 
+              : isEs 
+              ? "Publique su Landing Page al instante y rastree Leads en tiempo real." 
+              : "Publique sua Landing Page instantaneamente e acompanhe os Leads em tempo real."}
+          </p>
         </div>
 
         {!slug && (
@@ -110,15 +122,15 @@ export function LaunchpadManager({ opportunity, initialLeads }: LaunchpadManager
                 className="bg-transparent text-sm font-medium focus:outline-none cursor-pointer"
               >
                 <option value="cyberpunk">Cyberpunk (Dark)</option>
-                <option value="minimalist">Minimalista (Apple)</option>
-                <option value="corporate">Corporativo (B2B)</option>
+                <option value="minimalist">{isEn ? "Minimalist (Apple)" : isEs ? "Minimalista (Apple)" : "Minimalista (Apple)"}</option>
+                <option value="corporate">{isEn ? "Corporate (B2B)" : isEs ? "Corporativo (B2B)" : "Corporativo (B2B)"}</option>
               </select>
             </div>
             <Button onClick={handleGenerate} disabled={isLoading} className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-600/20 rounded-lg">
               {isLoading ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Gerando...</>
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {isEn ? "Generating..." : isEs ? "Generando..." : "Gerando..."}</>
               ) : (
-                <><Rocket className="mr-2 h-4 w-4" /> Publicar Landing Page</>
+                <><Rocket className="mr-2 h-4 w-4" /> {isEn ? "Publish Landing Page" : isEs ? "Publicar Landing Page" : "Publicar Landing Page"}</>
               )}
             </Button>
           </div>

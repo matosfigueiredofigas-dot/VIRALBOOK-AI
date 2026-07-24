@@ -2,11 +2,16 @@
 
 import { useState } from "react";
 import { Share2, Check, Link, FileText, Loader2 } from "lucide-react";
+import { useLanguage } from "@/contexts/language-context";
 
 export function ShareButton() {
+  const { language, t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [exporting, setExporting] = useState(false);
+
+  const isEn = language === 'en';
+  const isEs = language === 'es';
 
   const handleCopyLink = async () => {
     try {
@@ -33,11 +38,11 @@ export function ShareButton() {
     <div className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        title="Compartilhar ou Exportar"
+        title={isEn ? "Share or Export" : isEs ? "Compartir o Exportar" : "Compartilhar ou Exportar"}
         className="flex items-center gap-1.5 px-3 h-8 rounded-full bg-muted/50 border border-border/50 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground hover:border-border transition-all"
       >
         <Share2 className="h-3.5 w-3.5" />
-        <span className="hidden sm:inline">Compartilhar</span>
+        <span className="hidden sm:inline">{isEn ? "Share" : isEs ? "Compartir" : "Compartilhar"}</span>
       </button>
 
       {open && (
@@ -45,7 +50,7 @@ export function ShareButton() {
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div className="absolute top-10 right-0 w-52 bg-popover border border-border/60 rounded-xl shadow-xl p-2 z-50">
             <p className="px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-1">
-              Compartilhar
+              {isEn ? "Share" : isEs ? "Compartir" : "Compartilhar"}
             </p>
             <button
               onClick={handleCopyLink}
@@ -56,7 +61,7 @@ export function ShareButton() {
               ) : (
                 <Link className="h-4 w-4 text-muted-foreground shrink-0" />
               )}
-              <span>{copied ? "Link copiado!" : "Copiar link"}</span>
+              <span>{copied ? (isEn ? "Link copied!" : isEs ? "¡Enlace copiado!" : "Link copiado!") : (isEn ? "Copy link" : isEs ? "Copiar enlace" : "Copiar link")}</span>
             </button>
             <button
               onClick={handleExportPDF}
@@ -68,7 +73,7 @@ export function ShareButton() {
               ) : (
                 <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
               )}
-              <span>Exportar PDF</span>
+              <span>{isEn ? "Export PDF" : isEs ? "Exportar PDF" : "Exportar PDF"}</span>
             </button>
           </div>
         </>

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useRouter } from "next/navigation"
+import { useLanguage } from "@/contexts/language-context"
 
 interface ProcessedBook {
   id: string
@@ -46,6 +47,9 @@ function getCategoryColor(category: string) {
 
 export function ProcessedBooks({ initialBooks }: ProcessedBooksProps) {
   const router = useRouter()
+  const { language, t } = useLanguage()
+  const isEn = language === 'en';
+  const isEs = language === 'es';
   const [viewMode, setViewMode] = useState<"mosaic" | "table">("mosaic")
 
   const handleDelete = async (id: string, title: string) => {
@@ -72,10 +76,10 @@ export function ProcessedBooks({ initialBooks }: ProcessedBooksProps) {
         <div>
           <h2 className="text-xl font-bold flex items-center gap-2">
             <BookOpen className="h-5 w-5 text-indigo-500" />
-            Últimos Livros Processados pelo Sistema
+            {t.radar.processedTitle}
           </h2>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Total de {initialBooks.length} livro(s) analisado(s) recentemente
+            {t.radar.processedSubtitle} ({initialBooks.length})
           </p>
         </div>
 
@@ -167,7 +171,7 @@ export function ProcessedBooks({ initialBooks }: ProcessedBooksProps) {
                         handleDelete(book.id, book.book_title);
                       }}
                       className="p-1 rounded-md bg-black/30 hover:bg-red-600/80 text-white/80 hover:text-white transition-all cursor-pointer z-30"
-                      title="Excluir do Radar"
+                      title={isEn ? "Delete from Radar" : isEs ? "Eliminar del Radar" : "Excluir do Radar"}
                     >
                       <Trash2 className="h-3 w-3" />
                     </button>
@@ -186,20 +190,20 @@ export function ProcessedBooks({ initialBooks }: ProcessedBooksProps) {
                       </h3>
                     </a>
                     <p className="text-[10px] text-white/80 font-medium italic truncate">
-                      por {book.book_author || "Autor Mapeado"}
+                      {isEn ? "by" : isEs ? "por" : "por"} {book.book_author || (isEn ? "Mapped Author" : isEs ? "Autor Mapeado" : "Autor Mapeado")}
                     </p>
                   </div>
 
                   {/* Footer details */}
                   <div className="flex justify-between items-center pl-2 pt-1.5 text-[9px] text-white/70 font-semibold border-t border-white/15">
-                    <span>MERCADO: {book.country}</span>
+                    <span>{isEn ? "MARKET:" : isEs ? "MERCADO:" : "MERCADO:"} {book.country}</span>
                     <span>{new Date(book.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
 
                 {/* Additional Info below the cover */}
                 <div className="mt-3.5 space-y-1 pl-1">
-                  <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Livro Mapeado</div>
+                  <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">{isEn ? "Mapped Book" : isEs ? "Libro Mapeado" : "Livro Mapeado"}</div>
                   <a 
                     href={`https://www.google.com/search?tbm=bks&q=${encodeURIComponent(book.book_title + " " + (book.book_author || ""))}`}
                     target="_blank"
@@ -211,7 +215,7 @@ export function ProcessedBooks({ initialBooks }: ProcessedBooksProps) {
                     </h4>
                   </a>
                   <p className="text-xs text-muted-foreground truncate">
-                    {book.book_author || "Autor Desconhecido"}
+                    {book.book_author || (isEn ? "Unknown Author" : isEs ? "Autor Desconocido" : "Autor Desconhecido")}
                   </p>
                 </div>
               </div>
@@ -220,7 +224,7 @@ export function ProcessedBooks({ initialBooks }: ProcessedBooksProps) {
 
           {!initialBooks.length && (
             <div className="col-span-full py-16 text-center text-muted-foreground bg-muted/10 border border-dashed border-border/50 rounded-3xl">
-              Nenhum e-book capturado neste país.
+              {isEn ? "No e-books captured in this country." : isEs ? "No se capturaron e-books en este país." : "Nenhum e-book capturado neste país."}
             </div>
           )}
         </div>
@@ -230,11 +234,11 @@ export function ProcessedBooks({ initialBooks }: ProcessedBooksProps) {
           <Table>
             <TableHeader className="bg-muted/50">
               <TableRow>
-                <TableHead>Título</TableHead>
-                <TableHead>Autor</TableHead>
-                <TableHead>Categoria</TableHead>
-                <TableHead>Capturado Em</TableHead>
-                <TableHead className="w-[80px] text-right">Ações</TableHead>
+                <TableHead>{isEn ? "Title" : isEs ? "Título" : "Título"}</TableHead>
+                <TableHead>{isEn ? "Author" : isEs ? "Autor" : "Autor"}</TableHead>
+                <TableHead>{isEn ? "Category" : isEs ? "Categoría" : "Categoria"}</TableHead>
+                <TableHead>{isEn ? "Captured At" : isEs ? "Capturado En" : "Capturado Em"}</TableHead>
+                <TableHead className="w-[80px] text-right">{isEn ? "Actions" : isEs ? "Acciones" : "Ações"}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

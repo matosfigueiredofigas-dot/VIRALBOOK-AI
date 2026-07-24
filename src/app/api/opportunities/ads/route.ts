@@ -19,7 +19,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Chave da API da Groq não configurada' }, { status: 500 });
     }
 
-    const { opportunityId } = await req.json();
+    const { opportunityId, language = 'pt' } = await req.json();
 
     if (!opportunityId) {
       return NextResponse.json({ error: 'ID da oportunidade é obrigatório' }, { status: 400 });
@@ -42,6 +42,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ ads: opp.ads_ai_json });
     }
 
+    const langName = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese';
+
     const prompt = `
 Você é o "Ads Generator AI", um Diretor de Criação e Copywriter de elite (nível Russell Brunson / Ogilvy) especializado em tráfego pago para produtos SaaS.
 Você conhece as fórmulas secretas que retêm a atenção nos primeiros 3 segundos do TikTok e geram cliques altíssimos no Facebook/Instagram Ads.
@@ -51,6 +53,8 @@ Nome: ${opp.saas_name}
 Público Alvo: ${opp.target_audience}
 Problema: ${opp.problem_solved}
 Solução (MVP): ${opp.mvp_features}
+
+CRITICAL: All copy, headlines, text scripts, and descriptions inside the JSON must be written strictly in ${langName}.
 
 Sua missão é criar a campanha perfeita para mim em formato JSON, com as seguintes chaves EXATAS:
 

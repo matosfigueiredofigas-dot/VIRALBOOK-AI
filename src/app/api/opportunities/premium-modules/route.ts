@@ -7,7 +7,8 @@ const groq = new Groq({
 });
 
 const prompts = {
-  gtm: (name: string, audience: string, problem: string, features: string) => `Você é um CMO experiente do Vale do Silício. Crie um Roadmap Go-To-Market de 30 dias focado em capturar os primeiros 10 clientes para o SaaS "${name}" que atende "${audience}" resolvendo o problema "${problem}".
+  gtm: (name: string, problem: string, audience: string, features: string, targetLang: string) => `Você é um CMO experiente do Vale do Silício. Crie um Roadmap Go-To-Market de 30 dias focado em capturar os primeiros 10 clientes para o SaaS "${name}" que atende "${audience}" resolvendo o problema "${problem}".
+CRITICAL INSTRUCTION: All generated text MUST be in **${targetLang}**.
 Formato OBRIGATÓRIO de saída (JSON puro):
 {
   "weeks": [
@@ -18,7 +19,8 @@ Formato OBRIGATÓRIO de saída (JSON puro):
   ]
 }`,
   
-  tech: (name: string, features: string) => `Você é um CTO Expert. Recomende a Tech Stack moderna ideal para desenvolver rapidamente o MVP do SaaS "${name}" que possui estas funcionalidades: ${features}.
+  tech: (name: string, problem: string, audience: string, features: string, targetLang: string) => `Você é um CTO Expert. Recomende a Tech Stack moderna ideal para desenvolver rapidamente o MVP do SaaS "${name}" que possui estas funcionalidades: ${features}.
+CRITICAL INSTRUCTION: All text fields MUST be in **${targetLang}**.
 Formato OBRIGATÓRIO de saída (JSON puro):
 {
   "frontend": { "name": "ex: Next.js", "reason": "Motivo" },
@@ -27,8 +29,9 @@ Formato OBRIGATÓRIO de saída (JSON puro):
   "payments": { "name": "ex: Stripe", "reason": "Motivo" }
 }`,
 
-  competitor: (name: string, problem: string) => `Você é um Analista Competitivo. Liste 3 possíveis concorrentes reais ou indiretos para um SaaS focado em resolver: "${problem}".
+  competitor: (name: string, problem: string, audience: string, features: string, targetLang: string) => `Você é um Analista Competitivo. Liste 3 possíveis concorrentes reais ou indiretos para um SaaS focado em resolver: "${problem}".
 Para cada concorrente, identifique a maior brecha/falha deles que o nosso SaaS "${name}" pode usar como vantagem competitiva.
+CRITICAL INSTRUCTION: All text fields MUST be in **${targetLang}**.
 Formato OBRIGATÓRIO de saída (JSON puro):
 {
   "competitors": [
@@ -36,10 +39,11 @@ Formato OBRIGATÓRIO de saída (JSON puro):
   ]
 }`,
 
-  pitch: (name: string, problem: string, audience: string, features: string) => `Você é um Fundador Serial levantando Seed Round. Escreva o conteúdo de um Pitch Deck para o SaaS "${name}".
+  pitch: (name: string, problem: string, audience: string, features: string, targetLang: string) => `Você é um Fundador Serial levantando Seed Round. Escreva o conteúdo de um Pitch Deck para o SaaS "${name}".
 Problema: ${problem}
 Público: ${audience}
 Solução: ${features}
+CRITICAL INSTRUCTION: All slide content MUST be in **${targetLang}**.
 Formato OBRIGATÓRIO de saída (JSON puro):
 {
   "slides": [
@@ -51,14 +55,14 @@ Formato OBRIGATÓRIO de saída (JSON puro):
   ]
 }`,
 
-  sql: (name: string, features: string) => `Você é um Arquiteto de Banco de Dados Postgres (Supabase). Crie as queries SQL exatas para criar as tabelas iniciais necessárias para o MVP do SaaS "${name}" com as seguintes features: ${features}.
+  sql: (name: string, problem: string, audience: string, features: string, targetLang: string) => `Você é um Arquiteto de Banco de Dados Postgres (Supabase). Crie as queries SQL exatas para criar as tabelas iniciais necessárias para o MVP do SaaS "${name}" com as seguintes features: ${features}.
 Inclua RLS policies básicas se necessário. Use uuid como chave primária padrão.
 Formato OBRIGATÓRIO de saída (JSON puro):
 {
   "sql_code": "CREATE TABLE users (\\n id UUID... \\n); \\n\\n CREATE TABLE..."
 }`,
 
-  cursor: (name: string, problem: string, audience: string, features: string) => `Você é um Arquiteto Sênior e Especialista em Cursor AI. Crie o arquivo .cursorrules perfeito para o SaaS "${name}".
+  cursor: (name: string, problem: string, audience: string, features: string, targetLang: string) => `Você é um Arquiteto Sênior e Especialista em Cursor AI. Crie o arquivo .cursorrules perfeito para o SaaS "${name}".
 O problema resolvido é: ${problem}.
 O público é: ${audience}.
 As funcionalidades principais são: ${features}.
@@ -83,11 +87,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Chave da API da Groq não configurada' }, { status: 500 });
     }
 
-    const { opportunityId, moduleType, saasName, problem, audience, features } = await req.json();
+    const { opportunityId, moduleType, saasName, problem, audience, features, language = 'pt' } = await req.json();
 
     if (!opportunityId || !moduleType || !prompts[moduleType as keyof typeof prompts]) {
-      return NextResponse.json({ error: 'Parâmetros inválidos' }, { status: 400 });
+      return NextResponse.json({ error: 'Módulo inválido ou não suportado' }, { status: 400 });
     }
+
+    const targetLang = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese';
 
     // Verifica se a oportunidade pertence ao usuário
     const { data: opp, error: oppError } = await supabase
@@ -102,7 +108,7 @@ export async function POST(req: Request) {
     }
 
     const promptGenerator = prompts[moduleType as keyof typeof prompts];
-    const prompt = promptGenerator(saasName || '', problem || '', audience || '', features || '');
+    const prompt = promptGenerator(saasName || '', problem || '', audience || '', features || '', targetLang);
 
     const chatCompletion = await groq.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],

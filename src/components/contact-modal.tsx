@@ -5,8 +5,10 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Mail, CheckCircle2 } from "lucide-react";
+import { useLanguage } from "@/contexts/language-context";
 
 export function ContactModal() {
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -36,7 +38,7 @@ export function ContactModal() {
           setIsOpen(false);
         }, 2500);
       } else {
-        alert("Ops, ocorreu um erro ao enviar sua mensagem. Tente novamente.");
+        alert("Ops, erro ao enviar mensagem.");
       }
     } catch (err) {
       console.error(err);
@@ -48,54 +50,54 @@ export function ContactModal() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger render={<button className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5 cursor-pointer" />}>
-        <Mail className="h-4 w-4" /> Enviar Mensagem de Suporte
+        <Mail className="h-4 w-4" /> {t.contact.triggerButton}
       </DialogTrigger>
       <DialogContent className="max-w-md bg-background border-border/50 text-foreground">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">Enviar Mensagem</DialogTitle>
+          <DialogTitle className="text-xl font-bold">{t.contact.modalTitle}</DialogTitle>
           <DialogDescription className="text-muted-foreground text-sm">
-            Tem alguma dúvida ou encontrou um problema? Envie uma mensagem que nosso suporte responderá em até 24 horas úteis.
+            {t.contact.modalDesc}
           </DialogDescription>
         </DialogHeader>
 
         {success ? (
           <div className="py-8 text-center flex flex-col items-center justify-center gap-3 animate-in zoom-in duration-300">
-            <CheckCircle2 className="h-12 w-12 text-green-500 animate-bounce" />
-            <h4 className="font-bold text-lg">Mensagem Enviada!</h4>
-            <p className="text-sm text-muted-foreground">Obrigado. Nosso time já foi notificado.</p>
+            <CheckCircle2 className="h-12 w-12 text-emerald-500 animate-bounce" />
+            <h4 className="font-bold text-lg">{t.contact.successTitle}</h4>
+            <p className="text-sm text-muted-foreground">{t.contact.successDesc}</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4 pt-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Nome Completo</label>
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t.contact.nameLabel}</label>
               <Input 
                 type="text" 
                 value={name} 
                 onChange={(e) => setName(e.target.value)} 
-                placeholder="Ex: João Silva" 
+                placeholder={t.contact.namePlaceholder} 
                 required 
                 disabled={loading}
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">E-mail de Contato</label>
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t.contact.emailLabel}</label>
               <Input 
                 type="email" 
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)} 
-                placeholder="Ex: joao@email.com" 
+                placeholder={t.contact.emailPlaceholder} 
                 required 
                 disabled={loading}
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Como podemos ajudar?</label>
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t.contact.messageLabel}</label>
               <textarea 
                 value={message} 
                 onChange={(e) => setMessage(e.target.value)} 
-                placeholder="Descreva sua dúvida, sugestão ou feedback de forma clara..." 
+                placeholder={t.contact.messagePlaceholder} 
                 rows={4} 
                 required 
                 disabled={loading}
@@ -103,13 +105,13 @@ export function ContactModal() {
               />
             </div>
 
-            <Button type="submit" disabled={loading} className="w-full h-10 mt-2 font-bold shadow-lg shadow-primary/20">
+            <Button type="submit" disabled={loading} className="w-full h-10 mt-2 font-bold shadow-lg shadow-primary/20 cursor-pointer">
               {loading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Enviando...
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t.contact.sendingButton}
                 </>
               ) : (
-                "Enviar Mensagem"
+                t.contact.submitButton
               )}
             </Button>
           </form>

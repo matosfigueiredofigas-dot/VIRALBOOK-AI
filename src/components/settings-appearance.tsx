@@ -15,6 +15,7 @@ import {
   Zap,
 } from "lucide-react";
 import type { AppearanceSettings } from "@/hooks/use-settings";
+import { useLanguage } from "@/contexts/language-context";
 
 // ============================================================
 // Theme definitions with preview colors
@@ -98,6 +99,7 @@ interface Props {
 
 export function SettingsAppearance({ settings, onUpdate }: Props) {
   const { theme, setTheme } = useTheme();
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -118,10 +120,10 @@ export function SettingsAppearance({ settings, onUpdate }: Props) {
         </div>
         <div>
           <h3 className="text-base font-bold text-foreground tracking-tight">
-            Personalização Visual
+            {t.settings.tabAppearance}
           </h3>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Tema, densidade e animações da interface
+            {t.settings.themeMode}
           </p>
         </div>
       </div>

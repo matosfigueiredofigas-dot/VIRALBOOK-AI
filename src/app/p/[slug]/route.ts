@@ -22,7 +22,7 @@ export async function GET(
 
     if (error || !opp || !opp.landing_page_html) {
       return new NextResponse(
-        '<html><body><h1>Landing Page não encontrada ou ainda não publicada.</h1></body></html>',
+        '<html><body style="font-family:sans-serif;text-align:center;padding:50px;"><h1>Landing Page Not Found / Landing Page não encontrada</h1><p>The requested page does not exist or has not been published yet.</p></body></html>',
         { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
       );
     }
