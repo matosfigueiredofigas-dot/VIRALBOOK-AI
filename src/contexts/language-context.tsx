@@ -89,14 +89,16 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const savedAutoDetect = localStorage.getItem('viralbook_auto_detect_lang');
     const savedLang = localStorage.getItem('viralbook_lang') as Language;
 
-    if (savedAutoDetect === 'true' || (!savedLang && savedAutoDetect !== 'false')) {
-      triggerAutoDetectRegion();
-    } else if (savedLang && (savedLang === 'pt' || savedLang === 'en' || savedLang === 'es')) {
-      setLanguageState(savedLang);
-      applyLanguageToDOM(savedLang);
-    } else {
-      triggerAutoDetectRegion();
-    }
+    queueMicrotask(() => {
+      if (savedAutoDetect === 'true' || (!savedLang && savedAutoDetect !== 'false')) {
+        triggerAutoDetectRegion();
+      } else if (savedLang && (savedLang === 'pt' || savedLang === 'en' || savedLang === 'es')) {
+        setLanguageState(savedLang);
+        applyLanguageToDOM(savedLang);
+      } else {
+        triggerAutoDetectRegion();
+      }
+    });
   }, [applyLanguageToDOM, triggerAutoDetectRegion]);
 
   const t = dictionaries[language] || pt;

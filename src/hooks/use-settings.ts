@@ -84,16 +84,18 @@ export function useSettings() {
 
   // Load from localStorage on mount
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as Partial<AllSettings>;
-        setSettingsState((prev) => deepMerge(prev, parsed));
+    queueMicrotask(() => {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw) as Partial<AllSettings>;
+          setSettingsState((prev) => deepMerge(prev, parsed));
+        }
+      } catch {
+        // Ignore parse errors, use defaults
       }
-    } catch {
-      // Ignore parse errors, use defaults
-    }
-    setLoaded(true);
+      setLoaded(true);
+    });
   }, []);
 
   // Persist to localStorage on every change (after initial load)
@@ -137,7 +139,7 @@ export function useSettings() {
 // Utility: deep merge (2-level)
 // ============================================================
 
-function deepMerge<T extends Record<string, any>>(
+function deepMerge<T extends Record<string, unknown>>(
   base: T,
   overrides: Partial<T>
 ): T {
@@ -150,7 +152,7 @@ function deepMerge<T extends Record<string, any>>(
       !Array.isArray(val) &&
       val !== null
     ) {
-      result[key] = { ...base[key], ...val };
+      result[key] = { ...(base[key] as Record<string, unknown>), ...val } as T[keyof T];
     } else if (val !== undefined) {
       result[key] = val as T[keyof T];
     }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { TrendingUp, TrendingDown, RefreshCw } from "lucide-react";
 
 interface TrendItem {
@@ -23,7 +23,7 @@ export function TrendTicker() {
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  const fetchTrends = async () => {
+  const fetchTrends = useCallback(async () => {
     try {
       const res = await fetch("/api/trends/ticker", { cache: "no-store" });
       if (!res.ok) throw new Error("fetch failed");
@@ -37,14 +37,19 @@ export function TrendTicker() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
+    let isMounted = true;
     fetchTrends();
-    // Atualiza a cada 5 minutos automaticamente
-    const interval = setInterval(fetchTrends, 5 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, []);
+    const interval = setInterval(() => {
+      if (isMounted) fetchTrends();
+    }, 5 * 60 * 1000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [fetchTrends]);
 
   // Duplicar para loop contínuo
   const items = [...trends, ...trends];

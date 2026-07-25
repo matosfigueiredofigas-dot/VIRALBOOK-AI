@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, Target, TrendingUp, Swords, Zap, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/language-context";
@@ -19,13 +19,7 @@ export function TeardownDashboard({ opportunity }: TeardownDashboardProps) {
   const [loading, setLoading] = useState(!opportunity.market_teardown_json);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!data) {
-      generateTeardown();
-    }
-  }, []);
-
-  const generateTeardown = async () => {
+  const generateTeardown = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -41,12 +35,18 @@ export function TeardownDashboard({ opportunity }: TeardownDashboardProps) {
       } else {
         setError(result.error || "Falha ao gerar dossiê");
       }
-    } catch (err) {
+    } catch {
       setError("Erro de conexão");
     } finally {
       setLoading(false);
     }
-  };
+  }, [opportunity.id, language]);
+
+  useEffect(() => {
+    if (!data) {
+      generateTeardown();
+    }
+  }, [data, generateTeardown]);
 
   const isEn = language === 'en';
   const isEs = language === 'es';

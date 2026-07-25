@@ -171,7 +171,7 @@ IMPORTANTE: Responda APENAS o JSON válido. Não adicione saudações, explicaç
     const data = JSON.parse(reply);
 
     // 3. Gerar um slug amigável e único
-    let baseSlug = slugify(opportunity.saas_name);
+    const baseSlug = slugify(opportunity.saas_name);
     let slug = baseSlug;
     let counter = 1;
 
