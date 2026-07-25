@@ -17,7 +17,7 @@ export default function DocsPage() {
       <div className="w-full h-px bg-border/50"></div>
 
       <section id="radar" className="space-y-6 scroll-mt-24">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">1. Radar de Sinais (A Base de Dados do Google Books)</h2>
+        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">1. Radar de Livros Virais (A Base de Dados do Google Books)</h2>
         
         <h3 className="text-2xl font-semibold mt-8 text-foreground/90">A Filosofia da Dor Humana</h3>
         <p className="text-lg text-muted-foreground leading-relaxed">
