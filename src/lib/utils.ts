@@ -76,19 +76,53 @@ export function getSocialMetrics(item: OpportunityMetricsInput) {
 }
 
 export function getCleanSearchQuery(item: any): string {
-  if (!item) return '';
-  if (item.search_keyword && item.search_keyword.trim() && item.search_keyword.split(' ').length <= 4) {
-    return item.search_keyword.trim();
+  if (!item) return 'saas';
+
+  // 1. Categoria de livro explicita (ex: "Finanças", "Produtividade", "Psicologia")
+  if (item.book_category && typeof item.book_category === 'string') {
+    const cat = item.book_category.trim();
+    if (cat && !cat.toLowerCase().includes('general') && cat.split(' ').length <= 2) {
+      return cat;
+    }
   }
-  if (item.book_category && item.book_category.trim()) {
-    return item.book_category.trim();
+
+  // 2. Se houver search_keyword curta de ate 2 palavras
+  if (item.search_keyword && typeof item.search_keyword === 'string') {
+    const trimmed = item.search_keyword.trim();
+    const words = trimmed.split(/\s+/);
+    if (words.length >= 1 && words.length <= 2 && !trimmed.toLowerCase().includes('http')) {
+      return trimmed;
+    }
   }
-  if (item.saas_name && item.saas_name.trim()) {
-    return item.saas_name.trim();
+
+  // 3. Extracao limpa do nome do SaaS (removendo sufixos de marca genéricos como AI/SaaS/App/Pro/Lab/Hub)
+  if (item.saas_name && typeof item.saas_name === 'string') {
+    const cleanSaas = item.saas_name
+      .replace(/(AI|SaaS|App|Hub|Lab|Bot|Pro|Flow|IQ|Master|Desk|Doc|Mind|Craft|Sync|Scale|Genie|Spot|Pulse|Radar|Base)$/i, '')
+      .trim();
+    if (cleanSaas.length >= 3 && cleanSaas.split(' ').length <= 2) {
+      return cleanSaas;
+    }
   }
-  const text = item.search_keyword || item.target_audience || item.book_title || '';
-  const cleanText = text.replace(/[^\w\s\u00C0-\u00FF]/gi, '').trim();
-  const words = cleanText.split(/\s+/).filter((w: string) => w.length > 3);
-  return words.slice(0, 3).join(' ') || cleanText.slice(0, 30);
+
+  // 4. Extracao de palavras-chave de alto valor de mercado do publico-alvo / problema
+  const rawText = `${item.target_audience || ''} ${item.problem_solved || ''} ${item.book_title || ''}`;
+  const stopWords = new Set([
+    'para', 'com', 'que', 'uma', 'como', 'mais', 'sobre', 'mulheres', 'pessoas', 'gerenciar',
+    'desenvolver', 'enfrentam', 'precisam', 'fortalecer', 'ajudar', 'ferramenta', 'plataforma',
+    'sistema', 'aplicativo', 'solução', 'negócios', 'empresas', 'criadores', 'usuários',
+    'for', 'with', 'that', 'from', 'about', 'help', 'tool', 'platform', 'app', 'system'
+  ]);
+
+  const words = rawText
+    .replace(/[^\w\s\u00C0-\u00FF]/gi, ' ')
+    .split(/\s+/)
+    .filter(w => w.length > 3 && !stopWords.has(w.toLowerCase()));
+
+  if (words.length > 0) {
+    return words.slice(0, 2).join(' ');
+  }
+
+  return item.saas_name || 'saas';
 }
 
