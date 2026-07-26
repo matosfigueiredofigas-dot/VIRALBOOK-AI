@@ -10,7 +10,7 @@ import { AuthModal } from "@/components/auth-modal";
 import { AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageToggle } from "@/components/language-toggle";
-import { ProductSimulator } from "@/components/product-simulator";
+import { VideoDemo } from "@/components/video-demo";
 import { useLanguage } from "@/contexts/language-context";
 
 const LEMON_SQUEEZY_CHECKOUT_URLS = {
@@ -229,7 +229,7 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="max-w-6xl mx-auto">
-            <ProductSimulator />
+            <VideoDemo />
           </div>
         </section>
 
