@@ -139,7 +139,7 @@ export function useSettings() {
 // Utility: deep merge (2-level)
 // ============================================================
 
-function deepMerge<T extends Record<string, unknown>>(
+function deepMerge<T extends object>(
   base: T,
   overrides: Partial<T>
 ): T {
@@ -152,9 +152,12 @@ function deepMerge<T extends Record<string, unknown>>(
       !Array.isArray(val) &&
       val !== null
     ) {
-      result[key] = { ...(base[key] as Record<string, unknown>), ...val } as T[keyof T];
+      (result as Record<string, unknown>)[key as string] = {
+        ...((base as Record<string, unknown>)[key as string] as object),
+        ...(val as object),
+      };
     } else if (val !== undefined) {
-      result[key] = val as T[keyof T];
+      (result as Record<string, unknown>)[key as string] = val;
     }
   }
   return result;

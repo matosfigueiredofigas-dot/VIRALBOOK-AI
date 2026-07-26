@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/language-context";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -14,12 +15,22 @@ interface CanvasClientProps {
 }
 
 export function CanvasClient({ opportunity: initialOpp, metrics, initialLeads }: CanvasClientProps) {
+  const router = useRouter();
   const { language } = useLanguage();
   const isEn = language === 'en';
   const isEs = language === 'es';
 
   const [opp, setOpp] = useState(initialOpp);
   const [isTranslating, setIsTranslating] = useState(false);
+
+  const handleBack = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push(`/dashboard?open=${opp.id}`);
+    }
+  };
 
   useEffect(() => {
     if (!language || language === 'pt') {
@@ -75,9 +86,12 @@ export function CanvasClient({ opportunity: initialOpp, metrics, initialLeads }:
       
       {/* Controles apenas na tela (escondidos na impressão) */}
       <div className="print:hidden flex flex-wrap justify-between items-center mb-8 border-b border-border pb-4 gap-4">
-        <a href="/dashboard" className="flex items-center gap-2 text-primary hover:underline font-medium">
-          <ArrowLeft className="h-4 w-4" /> {isEn ? "Back to Radar" : isEs ? "Volver al Radar" : "Voltar ao Radar"}
-        </a>
+        <button
+          onClick={handleBack}
+          className="flex items-center gap-2 text-primary hover:underline font-medium cursor-pointer bg-transparent border-0 p-0"
+        >
+          <ArrowLeft className="h-4 w-4" /> {isEn ? "Back" : isEs ? "Volver" : "Voltar"}
+        </button>
         <div className="flex flex-wrap items-center gap-3">
           {isTranslating && (
             <span className="flex items-center gap-1.5 text-xs text-primary font-semibold animate-pulse bg-primary/10 px-3 py-1.5 rounded-full border border-primary/20">

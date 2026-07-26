@@ -172,6 +172,15 @@ function OpportunityCard({ item }: { item: any }) {
       .catch(() => setDisplayDetails(details));
   }, [details, language]);
 
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const openId = searchParams.get('open') || searchParams.get('id');
+    if (openId && openId === item.id) {
+      handleSheetOpen(true);
+    }
+  }, [searchParams, item.id]);
+
   const handleSheetOpen = async (open: boolean) => {
     setIsSheetOpen(open);
     if (open && !details) {
