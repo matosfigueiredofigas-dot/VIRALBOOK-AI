@@ -75,3 +75,20 @@ export function getSocialMetrics(item: OpportunityMetricsInput) {
   };
 }
 
+export function getCleanSearchQuery(item: any): string {
+  if (!item) return '';
+  if (item.search_keyword && item.search_keyword.trim() && item.search_keyword.split(' ').length <= 4) {
+    return item.search_keyword.trim();
+  }
+  if (item.book_category && item.book_category.trim()) {
+    return item.book_category.trim();
+  }
+  if (item.saas_name && item.saas_name.trim()) {
+    return item.saas_name.trim();
+  }
+  const text = item.search_keyword || item.target_audience || item.book_title || '';
+  const cleanText = text.replace(/[^\w\s\u00C0-\u00FF]/gi, '').trim();
+  const words = cleanText.split(/\s+/).filter((w: string) => w.length > 3);
+  return words.slice(0, 3).join(' ') || cleanText.slice(0, 30);
+}
+

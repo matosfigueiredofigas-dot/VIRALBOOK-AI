@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { cn, getSocialMetrics } from "@/lib/utils";
+import { cn, getSocialMetrics, getCleanSearchQuery } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -502,7 +502,7 @@ function OpportunityCard({ item }: { item: any }) {
                 <span className="font-semibold text-orange-500">{metrics.reddit_mentions} refs</span>
               </a>
               <a
-                href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(item.search_keyword || item.target_audience || item.saas_name)}&media_type=all`}
+                href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(getCleanSearchQuery(item))}&media_type=all`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 hover:underline hover:text-blue-600 transition-colors"
@@ -512,7 +512,7 @@ function OpportunityCard({ item }: { item: any }) {
                 <span className="font-semibold text-blue-600">{metrics.facebook_ads_count} ads</span>
               </a>
               <a
-                href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(item.search_keyword || item.target_audience || item.saas_name)}`}
+                href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(getCleanSearchQuery(item))}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 hover:underline hover:text-indigo-400 transition-colors"
@@ -658,7 +658,7 @@ function OpportunityCard({ item }: { item: any }) {
                             </div>
                             <div className="flex flex-col gap-2">
                               <a
-                                href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(activeDetails.search_keyword || activeDetails.target_audience || activeDetails.saas_name)}&media_type=all`}
+                                href={`https://www.facebook.com/ads/library/?active_status=all&ad_type=all&q=${encodeURIComponent(getCleanSearchQuery(activeDetails))}&media_type=all`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-sm font-bold text-foreground hover:text-blue-500 transition-colors flex items-center justify-between group/link border-b border-border/20 pb-1"
@@ -669,7 +669,7 @@ function OpportunityCard({ item }: { item: any }) {
                                 </span>
                               </a>
                               <a
-                                href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(activeDetails.search_keyword || activeDetails.target_audience || activeDetails.saas_name)}`}
+                                href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(getCleanSearchQuery(activeDetails))}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-sm font-bold text-foreground hover:text-indigo-400 transition-colors flex items-center justify-between group/link"
