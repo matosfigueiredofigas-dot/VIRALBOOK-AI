@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { createAdminClient } from '@/utils/supabase/admin';
 import Groq from 'groq-sdk';
 
 const groq = new Groq({
@@ -33,16 +34,17 @@ export async function POST(req: Request) {
 
     const targetLang = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese';
 
-    // Verifica se a oportunidade pertence ao usuário
-    const { data: opp, error: oppError } = await supabase
+    const adminSupabase = createAdminClient();
+
+    // Carrega a oportunidade (suporta públicas/sementes)
+    const { data: opp, error: oppError } = await adminSupabase
       .from('opportunities')
       .select('id, published_slug')
       .eq('id', opportunityId)
-      .eq('user_id', user.id)
       .single();
 
     if (oppError || !opp) {
-      return NextResponse.json({ error: 'Oportunidade não encontrada ou acesso negado' }, { status: 404 });
+      return NextResponse.json({ error: 'Oportunidade não encontrada' }, { status: 404 });
     }
 
     // Se já tiver um slug, reutiliza, caso contrário cria um novo
@@ -215,14 +217,13 @@ BOILERPLATE HTML (Siga esta estrutura rigorosamente):
     htmlCode = htmlCode.replace(/```html/g, '').replace(/```/g, '').trim();
 
     // Salvar no Banco
-    const { error: updateError } = await supabase
+    const { error: updateError } = await adminSupabase
       .from('opportunities')
       .update({
         landing_page_html: htmlCode,
         published_slug: slug,
       })
-      .eq('id', opportunityId)
-      .eq('user_id', user.id);
+      .eq('id', opportunityId);
 
     if (updateError) {
       throw new Error(`Erro ao salvar no banco: ${updateError.message}`);

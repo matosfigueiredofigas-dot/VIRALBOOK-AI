@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createAdminClient } from "@/utils/supabase/admin";
 import { notFound } from "next/navigation";
 import { WaitlistForm } from "@/components/waitlist-form";
 import * as Icons from "lucide-react";
@@ -14,12 +14,12 @@ function DynamicIcon({ name, className, color }: { name: string; className?: str
 // Para SEO dinâmico
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const supabase = await createClient();
-  const { data: lp } = await supabase
+  const adminSupabase = createAdminClient();
+  const { data: lp } = await adminSupabase
     .from('landing_pages')
     .select('headline, subheadline, opportunities(saas_name)')
     .eq('slug', params.slug)
-    .single();
+    .maybeSingle();
 
   if (!lp) {
     return {
@@ -36,16 +36,26 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 
 export default async function PublicLandingPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const supabase = await createClient();
+  const adminSupabase = createAdminClient();
 
   // 1. Carregar a Landing Page com os dados do SaaS associado
-  const { data: lp, error } = await supabase
+  let { data: lp, error } = await adminSupabase
     .from('landing_pages')
     .select('*, opportunities(*)')
     .eq('slug', params.slug)
-    .single();
+    .maybeSingle();
 
-  if (error || !lp) {
+  if (!lp) {
+    const { data: altLp } = await adminSupabase
+      .from('opportunity_landing_pages')
+      .select('*, opportunities(*)')
+      .eq('slug', params.slug)
+      .maybeSingle();
+
+    if (altLp) lp = altLp;
+  }
+
+  if (!lp) {
     notFound();
   }
 
