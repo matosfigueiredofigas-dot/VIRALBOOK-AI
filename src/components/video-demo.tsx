@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Play, Volume2, VolumeX, Maximize, Sparkles, Clock, CheckCircle2 } from "lucide-react";
+import { Play, Volume2, VolumeX, Maximize, Sparkles, Clock, CheckCircle2, X } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 
 export function VideoDemo() {
@@ -27,14 +27,24 @@ export function VideoDemo() {
           <div className="absolute inset-0 opacity-40 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
           
           {isPlaying ? (
-            <video 
-              src="/demo.mp4" 
-              controls 
-              autoPlay 
-              muted={isMuted}
-              className="w-full h-full object-cover relative z-10"
-              onEnded={() => setIsPlaying(false)}
-            />
+            <div className="relative w-full h-full">
+              <button
+                onClick={() => setIsPlaying(false)}
+                className="absolute top-4 right-4 z-30 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black/80 hover:bg-red-600 backdrop-blur-md text-white text-xs font-bold border border-white/20 shadow-2xl transition-all duration-200 hover:scale-105 cursor-pointer"
+                title={isEn ? "Close video" : isEs ? "Cerrar vídeo" : "Fechar vídeo"}
+              >
+                <X className="w-4 h-4" />
+                <span>{isEn ? "Close Video" : isEs ? "Cerrar Vídeo" : "Fechar Vídeo"}</span>
+              </button>
+              <video 
+                src="/demo.mp4" 
+                controls 
+                autoPlay 
+                muted={isMuted}
+                className="w-full h-full object-cover relative z-10"
+                onEnded={() => setIsPlaying(false)}
+              />
+            </div>
           ) : (
             <div 
               onClick={() => setIsPlaying(true)}
