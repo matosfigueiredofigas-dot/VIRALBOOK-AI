@@ -59,7 +59,7 @@ export const es: Translations = {
     featuresNav: 'Características',
     pricingNav: 'Precios',
     docsNav: 'Documentación',
-    heroBadge: '✨ El Radar #1 de Oportunidades de Mercado',
+    heroBadge: '✨ Primer Radar que crea nuevos millonarios',
     heroTitlePrefix: 'Deja de construir ',
     heroTitleHighlight: 'productos que nadie quiere.',
     heroSubtitle1: 'Transforma ideas de ',

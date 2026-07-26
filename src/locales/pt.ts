@@ -59,7 +59,7 @@ export const pt: Translations = {
     featuresNav: 'Funcionalidades',
     pricingNav: 'Preços',
     docsNav: 'Documentação',
-    heroBadge: '✨ O Primeiro Radar Anti-Achismos do Brasil',
+    heroBadge: '✨ Primeiro Radar que cria novos milionários',
     heroTitlePrefix: 'Pare de construir ',
     heroTitleHighlight: 'produtos que ninguém quer.',
     heroSubtitle1: 'Transforme os insights de ',
