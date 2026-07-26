@@ -93,6 +93,10 @@ export interface Translations {
     discountTimer: string;
     limitedTimeOffer: string;
     buyNow: string;
+    demoBtn: string;
+    demoBadge: string;
+    demoTitle: string;
+    demoSubtitle: string;
   };
   auth: {
     loginTitle: string;

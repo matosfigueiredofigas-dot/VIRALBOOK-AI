@@ -139,6 +139,12 @@ export default function LandingPage() {
                 {t.landing.heroCtaPrimary} <ArrowRight className="ml-2 h-5 w-5" />
               </button>
               <Link 
+                href="#demo" 
+                className="group/button inline-flex shrink-0 items-center justify-center bg-blue-600/10 hover:bg-blue-600/20 text-blue-600 dark:text-blue-400 h-14 px-8 text-lg font-bold rounded-full border border-blue-500/30 transition-all hover:scale-105"
+              >
+                <Play className="mr-2 h-5 w-5 fill-current" /> {t.landing.demoBtn}
+              </Link>
+              <Link 
                 href="#pricing" 
                 className="group/button inline-flex shrink-0 items-center justify-center bg-muted text-foreground hover:bg-muted/80 h-14 px-8 text-lg font-bold rounded-full border border-border/50 transition-all hover:scale-105"
               >
@@ -197,6 +203,33 @@ export default function LandingPage() {
                 </ul>
               </div>
             </div>
+          </div>
+
+          <div className="mt-12 text-center relative z-10">
+            <Link 
+              href="#demo"
+              className="inline-flex items-center justify-center bg-blue-600 text-white hover:bg-blue-700 h-12 px-8 text-base font-bold rounded-full shadow-lg shadow-blue-500/25 transition-all hover:scale-105"
+            >
+              <Play className="mr-2 h-4 w-4 fill-current" /> {t.landing.demoBtn}
+            </Link>
+          </div>
+        </section>
+
+        {/* Interactive Demo Simulator Section */}
+        <section id="demo" className="w-full py-20 bg-background border-t border-border/50 px-4 md:px-6 relative">
+          <div className="max-w-6xl mx-auto text-center mb-12 space-y-4">
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-1.5 text-xs font-extrabold text-blue-500 uppercase tracking-wider">
+              <Play className="h-3.5 w-3.5 fill-current" /> {t.landing.demoBadge}
+            </div>
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground">
+              {t.landing.demoTitle}
+            </h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              {t.landing.demoSubtitle}
+            </p>
+          </div>
+          <div className="max-w-6xl mx-auto">
+            <ProductSimulator />
           </div>
         </section>
 
