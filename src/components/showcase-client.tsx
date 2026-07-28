@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Rocket, Filter, TrendingUp, Clock, Plus, Loader2, Users2, Globe2 } from "lucide-react";
+import { useState } from "react";
+import { Rocket, TrendingUp, Clock, Plus, Loader2, Users2, Globe2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ShowcaseCard } from "@/components/showcase-card";
 import { ShowcaseSubmitModal } from "@/components/showcase-submit-modal";
-import { motion } from "framer-motion";
+import { ShowcaseWeeklyLeaderboard } from "@/components/showcase-weekly-leaderboard";
 
 const CATEGORIES = ["Todos", "SaaS", "App Mobile", "Extensão Chrome", "Infoproduto", "E-commerce", "Marketplace", "Ferramenta IA", "Outro"];
 
@@ -68,6 +68,33 @@ export function ShowcaseClient({ currentUserId, initialProjects }: ShowcaseClien
     setProjects(prev => prev.filter(p => p.id !== id));
   };
 
+  const handleLeaderboardUpvote = async (id: string, currentHasVoted: boolean) => {
+    // Atualizar no estado local
+    setProjects(prev =>
+      prev.map(p => {
+        if (p.id === id) {
+          return {
+            ...p,
+            has_voted: !currentHasVoted,
+            upvotes_count: currentHasVoted ? p.upvotes_count - 1 : p.upvotes_count + 1,
+          };
+        }
+        return p;
+      })
+    );
+
+    try {
+      await fetch(`/api/showcase/${id}/upvote`, { method: "POST" });
+    } catch (err) {
+      console.error("Erro no upvote:", err);
+    }
+  };
+
+  // Top 3 projetos ordenados por upvotes
+  const topWeeklyProjects = [...projects]
+    .sort((a, b) => b.upvotes_count - a.upvotes_count)
+    .slice(0, 3);
+
   return (
     <div className="space-y-8">
       {/* Hero Banner */}
@@ -111,6 +138,12 @@ export function ShowcaseClient({ currentUserId, initialProjects }: ShowcaseClien
           </Button>
         </div>
       </div>
+
+      {/* Leaderboard Semanal */}
+      <ShowcaseWeeklyLeaderboard
+        topProjects={topWeeklyProjects}
+        onUpvote={handleLeaderboardUpvote}
+      />
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
