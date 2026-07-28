@@ -44,6 +44,7 @@ export interface Translations {
     hunter: string;
     settings: string;
     favorites: string;
+    showcase: string;
     phase1: string;
     phase2: string;
     phase3: string;

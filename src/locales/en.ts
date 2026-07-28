@@ -38,6 +38,7 @@ export const en: Translations = {
     hunter: 'Opportunity Hunter',
     settings: 'Settings',
     favorites: 'Saved Favorites',
+    showcase: 'Community',
     phase1: '🧠 Phase 1: Ideation',
     phase2: '🚀 Phase 2: Validation',
     phase3: '📣 Phase 3: Traction & Sales',

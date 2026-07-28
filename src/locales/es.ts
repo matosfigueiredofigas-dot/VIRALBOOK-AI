@@ -38,6 +38,7 @@ export const es: Translations = {
     hunter: 'Cazador de Oportunidades',
     settings: 'Configuración',
     favorites: 'Favoritos Guardados',
+    showcase: 'Comunidad',
     phase1: '🧠 Fase 1: Ideación',
     phase2: '🚀 Fase 2: Validación',
     phase3: '📣 Fase 3: Tracción y Ventas',

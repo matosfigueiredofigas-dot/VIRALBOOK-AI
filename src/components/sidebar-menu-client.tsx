@@ -10,6 +10,7 @@ import {
   LogIn, 
   Settings,
   Globe,
+  Globe2,
   Mail,
   Users
 } from "lucide-react";
@@ -53,6 +54,11 @@ export function SidebarMenuClient() {
       title: t.navigation.emailFunnel,
       url: "/email-funnel",
       icon: Mail,
+    },
+    {
+      title: t.navigation.showcase,
+      url: "/showcase",
+      icon: Globe2,
     },
   ];
 
