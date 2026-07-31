@@ -126,6 +126,7 @@ function OpportunityCard({ item }: { item: any }) {
   const [showSqlSchema, setShowSqlSchema] = useState(false);
   const [showCursorRules, setShowCursorRules] = useState(false);
   const [cursorRules, setCursorRules] = useState<string | null>(null);
+  const [showAllSections, setShowAllSections] = useState(false);
   const [generatingModule, setGeneratingModule] = useState<string | null>(null);
 
   const [details, setDetails] = useState<any>(null);
@@ -608,6 +609,39 @@ function OpportunityCard({ item }: { item: any }) {
               const activeMarketingKit = (marketingKit && Object.keys(marketingKit).length > 0) ? marketingKit : (activeDetails?.marketing_kit || {});
               return (
             <div className="space-y-4">
+
+              {/* ── Botão Toggle da Caixa de Análise ── */}
+              <button
+                type="button"
+                onClick={() => setShowAllSections(!showAllSections)}
+                className="w-full group flex items-center justify-between px-4 py-3 rounded-xl border border-primary/25 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-all duration-200 cursor-pointer"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className={`h-2 w-2 rounded-full transition-colors duration-300 ${showAllSections ? 'bg-primary' : 'bg-primary/40'}`} />
+                  <span className="text-sm font-bold text-primary">
+                    {showAllSections
+                      ? (isEn ? 'Hide Analysis' : isEs ? 'Ocultar Análisis' : 'Fechar Análise')
+                      : (isEn ? 'View Full Analysis' : isEs ? 'Ver Análisis Completo' : 'Ver Análise Completa')}
+                  </span>
+                  <span className="text-[10px] font-semibold text-primary/60 hidden sm:inline">
+                    {isEn ? '(12 sections)' : isEs ? '(12 secciones)' : '(12 secções)'}
+                  </span>
+                </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={`h-4 w-4 text-primary transition-transform duration-300 ${showAllSections ? 'rotate-180' : 'rotate-0'}`}
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                  strokeLinecap="round" strokeLinejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+              {/* ══════════════════════════════════════════════════════════ */}
+              {/* CAIXA COLAPSÁVEL — Todas as secções de análise            */}
+              {/* ══════════════════════════════════════════════════════════ */}
+              {showAllSections && (
+              <div className="space-y-4 border border-primary/15 rounded-2xl p-4 bg-primary/[0.02] animate-in fade-in slide-in-from-top-2 duration-200">
+
               {/* ═══════════════════════════════════════════ */}
               {/* FASE 1: VALIDAÇÃO — Entender se há demanda */}
               {/* ═══════════════════════════════════════════ */}
@@ -1334,6 +1368,9 @@ function OpportunityCard({ item }: { item: any }) {
                 )}
               </div>
 
+              </div>
+              )} {/* fim showAllSections */}
+
               {/* 10. Prompts de Construção */}
               <div className="space-y-2 relative rounded-xl overflow-hidden p-[1px] my-4 shadow-lg shadow-purple-500/20">
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 animate-pulse opacity-60" />
@@ -1433,9 +1470,11 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
               )}
             </div>
           </div>
-              {/* ═══════════════════════════════════════════ */}
-              {/* FASE 4: LANÇAMENTO — Go-to-market e escala */}
-              {/* ═══════════════════════════════════════════ */}
+              {/* ═══════════════════════════════════════════════════════ */}
+              {/* FASE 4 — dentro da caixa colapsável (showAllSections)   */}
+              {/* ═══════════════════════════════════════════════════════ */}
+              {showAllSections && (
+              <div className="space-y-4 border border-primary/15 rounded-2xl p-4 bg-primary/[0.02] mt-0">
 
               {/* 11. Roadmap Go-To-Market (30 Dias) */}
               <div className="space-y-2">
@@ -1871,6 +1910,10 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
                   </div>
                 )}
               </div>
+
+              </div>
+              )} {/* fim showAllSections FASE 4 */}
+
           </div>
             );
           })()
