@@ -526,7 +526,7 @@ function OpportunityCard({ item }: { item: any }) {
           );
         })()}
 
-        <div className="text-sm font-medium mb-1">Diferencial:</div>
+        <div className="text-sm font-medium mb-1">{t.blueprint.differential}</div>
         <p className="text-sm text-muted-foreground line-clamp-2">
           {item.competitive_advantage}
         </p>
@@ -1390,36 +1390,36 @@ function OpportunityCard({ item }: { item: any }) {
                     <div className="p-4 pt-0 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
                       <div className="relative group">
                     <div className="text-xs font-semibold mb-1 text-purple-500">
-                      Para{" "}
+                      {t.blueprint.forUniversal}{" "}
                       <a href="https://chatgpt.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-purple-400 transition-colors">ChatGPT</a>
                       {" "}/{" "}
                       <a href="https://claude.ai" target="_blank" rel="noopener noreferrer" className="underline hover:text-purple-400 transition-colors">Claude</a>
                       {" "}/{" "}
                       <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-purple-400 transition-colors">Gemini</a>
-                      {" "}(Universal)
+                      {" "}{t.blueprint.universalLabel}
                     </div>
                     <pre className="bg-muted p-4 rounded-lg text-sm text-foreground whitespace-pre-wrap font-mono border border-border/50">
-{`Atue como meu CTO e Estrategista de Negócios. Quero construir um SaaS chamado "${activeDetails.saas_name}".
+{`${t.blueprint.promptUniversalIntro} "${activeDetails.saas_name}".
 
-📌 CONTEXTO DE NEGÓCIO:
-- Problema a resolver: ${activeDetails.problem_solved}
-- Público-Alvo: ${activeDetails.target_audience}
-- Diferencial Competitivo: ${activeDetails.competitive_advantage}
+${t.blueprint.promptContextTitle}
+${t.blueprint.promptProblem} ${activeDetails.problem_solved}
+${t.blueprint.promptAudience} ${activeDetails.target_audience}
+${t.blueprint.promptDifferential} ${activeDetails.competitive_advantage}
 
-🛠️ ESCOPO DO MVP:
+${t.blueprint.promptMvpTitle}
 ${activeDetails.mvp_features}
 
-💰 MONETIZAÇÃO:
-- Modelo: ${activeDetails.monetization_model}
-- Ticket: ${activeDetails.suggested_price}
+${t.blueprint.promptMonetizationTitle}
+${t.blueprint.promptModel} ${activeDetails.monetization_model}
+${t.blueprint.promptTicket} ${activeDetails.suggested_price}
 
-Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal e me dê o passo a passo prático para começar a desenvolver agora.`}
+${t.blueprint.promptUniversalOutro}`}
                     </pre>
                     <Button 
                       size="sm" 
                       variant="secondary" 
                       className="absolute top-8 right-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                      onClick={() => copyToClipboard(`Atue como meu CTO e Estrategista de Negócios. Quero construir um SaaS chamado "${activeDetails.saas_name}".\n\n📌 CONTEXTO DE NEGÓCIO:\n- Problema a resolver: ${activeDetails.problem_solved}\n- Público-Alvo: ${activeDetails.target_audience}\n- Diferencial Competitivo: ${activeDetails.competitive_advantage}\n\n🛠️ ESCOPO DO MVP:\n${activeDetails.mvp_features}\n\n💰 MONETIZAÇÃO:\n- Modelo: ${activeDetails.monetization_model}\n- Ticket: ${activeDetails.suggested_price}\n\nPor favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal e me dê o passo a passo prático para começar a desenvolver agora.`, 'universal')}
+                      onClick={() => copyToClipboard(`${t.blueprint.promptUniversalIntro} "${activeDetails.saas_name}".\n\n${t.blueprint.promptContextTitle}\n${t.blueprint.promptProblem} ${activeDetails.problem_solved}\n${t.blueprint.promptAudience} ${activeDetails.target_audience}\n${t.blueprint.promptDifferential} ${activeDetails.competitive_advantage}\n\n${t.blueprint.promptMvpTitle}\n${activeDetails.mvp_features}\n\n${t.blueprint.promptMonetizationTitle}\n${t.blueprint.promptModel} ${activeDetails.monetization_model}\n${t.blueprint.promptTicket} ${activeDetails.suggested_price}\n\n${t.blueprint.promptUniversalOutro}`, 'universal')}
                     >
                       {copiedPrompt === 'universal' ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                     </Button>
@@ -1427,11 +1427,11 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
 
                   <div className="relative group">
                     <div className="text-xs font-semibold mb-1 text-primary">
-                      Para{" "}
+                      {t.blueprint.forFrontend}{" "}
                       <a href="https://v0.dev" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary/80 transition-colors">Vercel v0</a>
                       {" "}/{" "}
                       <a href="https://lovable.dev" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary/80 transition-colors">Lovable</a>
-                      {" "}(Frontend)
+                      {" "}{t.blueprint.frontendLabel}
                     </div>
                     <pre className="bg-muted p-4 rounded-lg text-sm text-foreground whitespace-pre-wrap font-mono border border-border/50">
                       {activeDetails.prompt_lovable}
@@ -1448,11 +1448,11 @@ Por favor, crie um plano de arquitetura técnica detalhado, sugira a stack ideal
 
                   <div className="relative group">
                     <div className="text-xs font-semibold mb-1 text-blue-500">
-                      Para{" "}
+                      {t.blueprint.forBackend}{" "}
                       <a href="https://bolt.new" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-400 transition-colors">Bolt.new</a>
                       {" "}/{" "}
                       <a href="https://cursor.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-400 transition-colors">Cursor</a>
-                      {" "}(Backend/Fullstack)
+                      {" "}{t.blueprint.backendLabel}
                     </div>
                     <pre className="bg-muted p-4 rounded-lg text-sm text-foreground whitespace-pre-wrap font-mono border border-border/50">
                       {activeDetails.prompt_bolt}

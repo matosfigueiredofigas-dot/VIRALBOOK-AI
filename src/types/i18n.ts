@@ -233,6 +233,23 @@ export interface Translations {
     pitchDeck: string;
     mainAction: string;
     loadingDetails: string;
+    differential: string;
+    forUniversal: string;
+    universalLabel: string;
+    forFrontend: string;
+    frontendLabel: string;
+    forBackend: string;
+    backendLabel: string;
+    promptUniversalIntro: string;
+    promptContextTitle: string;
+    promptProblem: string;
+    promptAudience: string;
+    promptDifferential: string;
+    promptMvpTitle: string;
+    promptMonetizationTitle: string;
+    promptModel: string;
+    promptTicket: string;
+    promptUniversalOutro: string;
   };
   advisors: {
     title: string;
