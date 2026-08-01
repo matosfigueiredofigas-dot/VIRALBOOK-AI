@@ -43,10 +43,10 @@ export function AdsDashboard({ opportunity }: AdsDashboardProps) {
       if (res.ok && result.ads) {
         setData(result.ads);
       } else {
-        setError(result.error || "Falha ao gerar Criativos");
+        setError(result.error || t.ads.errorGenerating);
       }
     } catch (err) {
-      setError("Erro de conexão");
+      setError(t.ads.errorConnection);
     } finally {
       setLoading(false);
     }
@@ -71,14 +71,10 @@ export function AdsDashboard({ opportunity }: AdsDashboardProps) {
           </div>
         </div>
         <h2 className="text-3xl font-bold mb-4 text-white">
-          {isEn ? "Ad Factory Activated..." : isEs ? "Fábrica de Anuncios Activada..." : "Ad Factory Ativada..."}
+          {t.ads.factoryActivated}
         </h2>
         <p className="text-muted-foreground max-w-md mx-auto">
-          {isEn 
-            ? "Our AI Copywriters are extracting emotional triggers and writing viral creatives." 
-            : isEs 
-            ? "Nuestros Copywriters de IA están extrayendo gatillos emocionales y escribiendo creativos virales." 
-            : "Nossos Copywriters IA estão extraindo os gatilhos emocionais mais letais do mercado e escrevendo criativos virais."}
+          {t.ads.factoryDesc}
         </p>
       </div>
     );
@@ -89,11 +85,11 @@ export function AdsDashboard({ opportunity }: AdsDashboardProps) {
       <div className="min-h-[80vh] flex flex-col items-center justify-center text-center">
         <XCircle className="h-16 w-16 text-indigo-500 mb-4 animate-bounce" />
         <h2 className="text-2xl font-bold mb-2 text-white">
-          {isEn ? "Ops! Creation Failed" : isEs ? "¡Ops! Falla en Creación" : "Ops! Falha na Criação"}
+          {t.ads.creationFailed}
         </h2>
         <p className="text-muted-foreground mb-6">{error}</p>
         <button onClick={generateAds} className="bg-indigo-600/20 border border-indigo-500/50 text-indigo-400 font-bold px-6 py-2 rounded-lg hover:bg-indigo-600/40 transition-colors">
-          {isEn ? "Restart Factory" : isEs ? "Reiniciar Fábrica" : "Reiniciar Fábrica"}
+          {t.ads.restartFactory}
         </button>
       </div>
     );
@@ -104,7 +100,7 @@ export function AdsDashboard({ opportunity }: AdsDashboardProps) {
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 font-sans w-full space-y-8 animate-in fade-in zoom-in-95 duration-700">
       <Link href={`/canvas/${opportunity.id}`} className="inline-flex items-center text-sm font-bold text-muted-foreground hover:text-white transition-colors bg-zinc-900/50 px-4 py-2 rounded-full border border-white/5 w-fit">
-        <ArrowLeft className="mr-2 h-4 w-4" /> {isEn ? "Return to Canvas" : isEs ? "Volver al Canvas" : "Retornar à Base (Canvas)"}
+        <ArrowLeft className="mr-2 h-4 w-4" /> {t.ads.returnCanvas}
       </Link>
 
       <div className="relative">
@@ -112,10 +108,10 @@ export function AdsDashboard({ opportunity }: AdsDashboardProps) {
         <div className="relative bg-zinc-950/80 border border-white/10 rounded-2xl p-8 backdrop-blur-xl">
           <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 uppercase">
             <Megaphone className="h-10 w-10 text-indigo-500" />
-            Ad Factory Pro
+            {t.ads.factoryPro}
           </h1>
           <p className="text-lg text-zinc-400 font-medium">
-            {isEn ? "High-converting copies & viral scripts for:" : isEs ? "Copys de alta conversión y guiones virales para:" : "Textos de alta conversão e roteiros virais injetados para:"} <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-fuchsia-500">{opportunity.saas_name}</span>
+            {t.ads.factoryProDesc} <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-fuchsia-500">{opportunity.saas_name}</span>
           </p>
         </div>
       </div>
@@ -154,13 +150,13 @@ export function AdsDashboard({ opportunity }: AdsDashboardProps) {
                   
                   <CardHeader className="bg-indigo-500/5 border-b border-indigo-500/10 flex flex-row justify-between items-center py-4">
                     <span className="text-[10px] uppercase font-black tracking-widest text-indigo-400 bg-indigo-500/10 px-3 py-1.5 rounded-full border border-indigo-500/20 shadow-[0_0_10px_rgba(99,102,241,0.1)]">
-                      {isEn ? "Angle:" : isEs ? "Ángulo:" : "Ângulo:"} {ad.angle}
+                      {t.ads.angle} {ad.angle}
                     </span>
                     <button 
                       onClick={() => copyToClipboard(`${ad.primary_text}\n\nTítulo: ${ad.headline}\nBotão: ${ad.call_to_action}`, `fb-${i}`)}
                       className="text-xs font-bold bg-zinc-900 border border-white/10 hover:border-indigo-500/50 text-indigo-400 px-4 py-1.5 rounded-full flex items-center gap-2 transition-all"
                     >
-                      {copiedId === `fb-${i}` ? <><Check className="h-3.5 w-3.5 text-emerald-500" /> {isEn ? "COPIED" : isEs ? "COPIADO" : "COPIADO"}</> : <><Copy className="h-3.5 w-3.5" /> {isEn ? "COPY AD" : isEs ? "COPIAR AD" : "COPIAR AD"}</>}
+                      {copiedId === `fb-${i}` ? <><Check className="h-3.5 w-3.5 text-emerald-500" /> {t.ads.copied}</> : <><Copy className="h-3.5 w-3.5" /> {t.ads.copyAd}</>}
                     </button>
                   </CardHeader>
 
@@ -174,7 +170,7 @@ export function AdsDashboard({ opportunity }: AdsDashboardProps) {
                         </div>
                         <div>
                           <p className="font-bold text-[#E4E6EB] text-[15px] leading-tight">{opportunity.saas_name}</p>
-                          <p className="text-xs text-[#B0B3B8] font-medium mt-0.5">{isEn ? "Sponsored · 🌍" : isEs ? "Patrocinado · 🌍" : "Patrocinado · 🌍"}</p>
+                          <p className="text-xs text-[#B0B3B8] font-medium mt-0.5">{t.ads.sponsored}</p>
                         </div>
                       </div>
                       
@@ -187,13 +183,13 @@ export function AdsDashboard({ opportunity }: AdsDashboardProps) {
                       <div className="bg-[#242526] h-64 w-full flex flex-col items-center justify-center text-[#B0B3B8] border-y border-[#3E4042] relative overflow-hidden group/img cursor-pointer">
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-0"></div>
                         <ImageIcon className="h-12 w-12 mb-3 opacity-30 z-10 group-hover/img:scale-110 transition-transform" />
-                        <span className="text-sm font-semibold z-10 drop-shadow-md">{isEn ? "[ Video/Image Space ]" : isEs ? "[ Espacio para Video/Imagen ]" : "[ Espaço para seu Vídeo/Imagem ]"}</span>
+                        <span className="text-sm font-semibold z-10 drop-shadow-md">{t.ads.videoSpace}</span>
                       </div>
 
                       {/* CTA Section */}
                       <div className="bg-[#242526] p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div className="flex-1">
-                          <p className="text-[11px] text-[#B0B3B8] uppercase tracking-wider font-semibold mb-1">{isEn ? "FORM" : isEs ? "FORMULARIO" : "FORMULÁRIO"}</p>
+                          <p className="text-[11px] text-[#B0B3B8] uppercase tracking-wider font-semibold mb-1">{t.ads.form}</p>
                           <p className="font-bold text-[#E4E6EB] text-[15px] leading-tight">{ad.headline}</p>
                         </div>
                         <button className="bg-[#3A3B3C] hover:bg-[#4E4F50] text-[#E4E6EB] font-bold py-2 px-6 rounded-lg text-[15px] transition-colors shrink-0">
@@ -235,7 +231,7 @@ export function AdsDashboard({ opportunity }: AdsDashboardProps) {
                       }}
                       className="text-xs font-bold bg-zinc-900 border border-white/10 hover:border-fuchsia-500/50 text-fuchsia-400 px-4 py-1.5 rounded-full flex items-center gap-2 transition-all"
                     >
-                      {copiedId === `tk-${i}` ? <><Check className="h-3.5 w-3.5 text-emerald-500" /> {isEn ? "COPIED" : isEs ? "COPIADO" : "COPIADO"}</> : <><Copy className="h-3.5 w-3.5" /> {isEn ? "COPY SCRIPT" : isEs ? "COPIAR GUION" : "COPIAR SCRIPT"}</>}
+                      {copiedId === `tk-${i}` ? <><Check className="h-3.5 w-3.5 text-emerald-500" /> {t.ads.copied}</> : <><Copy className="h-3.5 w-3.5" /> {t.ads.copyScript}</>}
                     </button>
                   </CardHeader>
                   
@@ -258,7 +254,7 @@ export function AdsDashboard({ opportunity }: AdsDashboardProps) {
                               {block.visual}
                             </div>
                             <div className="text-[15px] font-semibold leading-relaxed text-white pl-4 border-l-2 border-fuchsia-500">
-                              <span className="text-[10px] font-black uppercase text-fuchsia-500 tracking-wider mr-2 bg-fuchsia-500/10 px-1.5 py-0.5 rounded">🎙️ {isEn ? "SPEECH" : isEs ? "AUDIO" : "FALA"}</span> 
+                              <span className="text-[10px] font-black uppercase text-fuchsia-500 tracking-wider mr-2 bg-fuchsia-500/10 px-1.5 py-0.5 rounded">🎙️ {t.ads.speech}</span> 
                               "{block.audio}"
                             </div>
                           </div>
@@ -282,16 +278,12 @@ export function AdsDashboard({ opportunity }: AdsDashboardProps) {
                 <div className="bg-orange-500/20 p-2 rounded-lg border border-orange-500/30">
                   <ImageIcon className="h-5 w-5 text-orange-400" />
                 </div>
-                {isEn ? "Visual Inspiration" : isEs ? "Inspiración Visual" : "Inspiração Visual"}
+                {t.ads.visualInsp}
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
               <p className="text-sm text-zinc-400 mb-6 font-medium">
-                {isEn 
-                  ? "Looking for the perfect hook? Generate these ideas on Canva or Midjourney:" 
-                  : isEs 
-                  ? "¿Buscando el gancho perfecto? Genere estas ideas en Canva o Midjourney:" 
-                  : "Buscando o gancho perfeito? Gere essas ideias no Canva ou Midjourney para parar o scroll instantaneamente:"}
+                {t.ads.visualInspDesc}
               </p>
 
               <div className="space-y-6">

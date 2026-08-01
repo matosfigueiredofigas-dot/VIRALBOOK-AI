@@ -2,6 +2,7 @@
 
 import { Flame } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/contexts/language-context";
 
 interface Opportunity {
   saas_name?: string;
@@ -15,6 +16,8 @@ interface MarketMarqueeProps {
 }
 
 export function MarketMarquee({ opportunities }: MarketMarqueeProps) {
+  const { t } = useLanguage();
+
   if (!opportunities || opportunities.length === 0) return null;
 
   return (
@@ -37,10 +40,10 @@ export function MarketMarquee({ opportunities }: MarketMarqueeProps) {
         <div className="absolute right-0 w-20 h-full bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
         
         <div className="flex animate-marquee whitespace-nowrap min-w-max">
-          {[...opportunities, ...opportunities].slice(0, 30).map((t, i) => {
-            const name = t.saas_name || t.book_title || "Startup Idea";
-            const growth = t.trends_growth_monthly || Math.floor(Math.random() * 50) + 10;
-            const score = t.viral_opportunity_score || 0;
+          {[...opportunities, ...opportunities].slice(0, 30).map((tItem, i) => {
+            const name = tItem.saas_name || tItem.book_title || t.dash.startupIdea;
+            const growth = tItem.trends_growth_monthly || Math.floor(Math.random() * 50) + 10;
+            const score = tItem.viral_opportunity_score || 0;
             const isHot = score >= 80 || i < 3;
 
             return (
@@ -48,7 +51,7 @@ export function MarketMarquee({ opportunities }: MarketMarqueeProps) {
                 key={i} 
                 href={`/dashboard?search=${encodeURIComponent(name)}`}
                 className="group flex items-center gap-3 px-6 border-r border-white/5 hover:bg-white/5 cursor-pointer transition-colors"
-                title={`Analisar ${name}`}
+                title={`${t.dash.analyzeName} ${name}`}
               >
                 <span className="text-xs font-bold text-white group-hover:text-primary transition-colors">{name}</span>
                 <span className="text-xs font-mono font-bold text-green-500">+{growth}%</span>

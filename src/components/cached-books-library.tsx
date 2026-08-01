@@ -141,7 +141,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
       if (res.status === 401) {
         router.push('/login');
       } else if (res.ok) {
-        alert('Adicionado aos favoritos!');
+        alert(t.lib.addedToFavorites);
       }
     } catch (err) {
       console.error(err);
@@ -150,7 +150,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
   };
 
   const handleDelete = async (id: string, title: string) => {
-    if (!confirm(`Tem certeza que deseja excluir a oportunidade "${title}" da biblioteca?`)) {
+    if (!confirm(`${t.lib.deleteConfirm} "${title}" ${t.lib.deleteFromLibConfirm}`)) {
       return;
     }
     try {
@@ -162,16 +162,16 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
       if (res.status === 401) {
         router.push('/login');
       } else if (res.ok) {
-        alert('Oportunidade excluída com sucesso!');
+        alert(t.lib.deletedSuccess);
         setItems(items.filter((item) => item.id !== id));
         router.refresh();
       } else {
         const errorData = await res.json().catch(() => ({}));
-        alert(errorData.error || 'Erro ao excluir.');
+        alert(errorData.error || t.lib.deleteError);
       }
     } catch (err) {
       console.error(err);
-      alert('Erro de conexão ao excluir.');
+      alert(t.lib.connErrorDelete);
     }
   };
 
@@ -184,7 +184,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
   const handleShare = (id: string) => {
     const url = `${window.location.origin}/share/${id}`;
     navigator.clipboard.writeText(url);
-    alert("Link secreto copiado para a área de transferência!");
+    alert(t.lib.secretLinkCopied);
   };
 
   // Mapear todas as categorias únicas disponíveis no histórico
@@ -211,13 +211,13 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-muted/20 p-5 rounded-3xl border border-border/40 backdrop-blur-md shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
         <div className="text-center">
           <div className="text-[10px] text-muted-foreground font-extrabold uppercase tracking-widest">
-            {isEn ? "Processed Books" : isEs ? "Libros Procesados" : "Livros Processados"}
+            {t.lib.processedBooks}
           </div>
           <div className="text-2xl font-black text-foreground mt-1.5">{items.length}</div>
         </div>
         <div className="text-center border-l border-border/30">
           <div className="text-[10px] text-purple-400 font-extrabold uppercase tracking-widest">
-            {isEn ? "Distinct Niches" : isEs ? "Nichos Distintos" : "Nichos Distintos"}
+            {t.lib.distinctNiches}
           </div>
           <div className="text-2xl font-black text-purple-400 mt-1.5">
             {new Set(items.map(item => item.target_audience).filter(Boolean)).size}
@@ -225,13 +225,13 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
         </div>
         <div className="text-center border-l border-border/30">
           <div className="text-[10px] text-blue-400 font-extrabold uppercase tracking-widest">
-            {isEn ? "Unique Categories" : isEs ? "Categorías Únicas" : "Categorias Únicas"}
+            {t.lib.uniqueCategories}
           </div>
           <div className="text-2xl font-black text-blue-400 mt-1.5">{categories.length}</div>
         </div>
         <div className="text-center border-l border-border/30">
           <div className="text-[10px] text-green-500 font-extrabold uppercase tracking-widest">
-            {isEn ? "Average Score" : isEs ? "Puntuación Media" : "Score Médio Geral"}
+            {t.lib.averageScore}
           </div>
           <div className="text-2xl font-black text-green-500 mt-1.5">
             {items.length > 0 ? Math.round(items.reduce((acc, curr) => acc + (curr.viral_opportunity_score || 0), 0) / items.length) : 0}
@@ -258,7 +258,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
             className="cursor-pointer py-1.5 px-3 text-xs font-semibold"
             onClick={() => setSelectedCategory(null)}
           >
-            {isEn ? "All" : isEs ? "Todos" : "Todos"}
+            {t.lib.all}
           </Badge>
           {categories.slice(0, 5).map((cat) => (
             <Badge
@@ -311,12 +311,12 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                       </h3>
                     </a>
                     <p className="text-xs text-white/80 font-medium italic truncate">
-                      {isEn ? "by" : isEs ? "por" : "por"} {item.book_author || (isEn ? "Mapped Author" : isEs ? "Autor Mapeado" : "Autor Mapeado")}
+                      {t.lib.by} {item.book_author || t.lib.mappedAuthor}
                     </p>
                   </div>
 
                   <div className="flex justify-between items-center pl-3 pt-2 text-[10px] text-white/75 font-semibold border-t border-white/15">
-                    <span>{isEn ? "MARKET:" : isEs ? "MERCADO:" : "MERCADO:"} {item.country}</span>
+                    <span>{t.lib.market} {item.country}</span>
                     <span>{new Date(item.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
@@ -325,7 +325,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                 <div className="mt-5 space-y-3">
                   <div className="flex items-center gap-1.5">
                     <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{isEn ? "SaaS Opportunity" : isEs ? "Oportunidad SaaS" : "SaaS Oportunidade"}</span>
+                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{t.lib.saasOpportunity}</span>
                   </div>
                   <h4 className="font-extrabold text-base text-foreground group-hover:text-primary transition-colors">
                     {item.saas_name}
@@ -339,7 +339,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
               <CardFooter className="p-5 pt-0 flex gap-2 items-center">
                 <Sheet>
                   <SheetTrigger render={<Button className="flex-1 bg-primary/10 text-primary hover:bg-primary/20 border border-primary/10 rounded-xl font-bold py-5 text-xs" />}>
-                    <span onClick={() => setActiveItem(item)}>Abrir</span>
+                    <span onClick={() => setActiveItem(item)}>{t.lib.openBtn}</span>
                   </SheetTrigger>
                   
                   {activeItem && (
@@ -348,7 +348,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                         <button 
                           onClick={() => setIsExpanded(!isExpanded)}
                           className="absolute top-0 right-8 p-2 rounded-md hover:bg-muted text-muted-foreground transition-colors"
-                          title={isExpanded ? "Restaurar tamanho" : "Maximizar"}
+                          title={isExpanded ? t.lib.restoreSize : t.lib.maximize}
                         >
                           {isExpanded ? "🗗" : "🗖"}
                         </button>
@@ -361,7 +361,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                               className="bg-white text-black hover:bg-zinc-100 hover:text-black border-none"
                               onClick={() => window.open(`/canvas/${activeItem.id}`, '_blank')}
                             >
-                              <FileText className="h-4 w-4 mr-2" /> Lean Canvas
+                              <FileText className="h-4 w-4 mr-2" /> {t.blueprint.btnLeanCanvas.replace(/Gerar |Generate |Generar /, '')}
                             </Button>
                             <Button 
                               variant="outline" 
@@ -369,7 +369,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                               className="bg-purple-600 text-white hover:bg-purple-700 hover:text-white border-none"
                               onClick={() => router.push(`/advisors?oppId=${activeItem.id}`)}
                             >
-                              <Users className="h-4 w-4 mr-2" /> Falar com Mentores
+                              <Users className="h-4 w-4 mr-2" /> {t.blueprint.btnMentors}
                             </Button>
                             <Button 
                               variant="outline" 
@@ -377,12 +377,12 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                               className="bg-emerald-600 text-white hover:bg-emerald-700 hover:text-white border-none"
                               onClick={() => setIsChatOpen(true)}
                             >
-                              <MessageSquare className="h-4 w-4 mr-2" /> Falar com CTO (IA)
+                              <MessageSquare className="h-4 w-4 mr-2" /> {t.blueprint.btnCto}
                             </Button>
                           </div>
                         </SheetTitle>
                         <SheetDescription className="text-base text-foreground mt-2">
-                          <strong>Livro Original:</strong>{" "}
+                          <strong>{t.lib.originalBook}</strong>{" "}
                           <a 
                             href={`https://www.google.com/search?tbm=bks&q=${encodeURIComponent(activeItem.book_title + " " + (activeItem.book_author || ""))}`}
                             target="_blank"
@@ -391,22 +391,22 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                           >
                             {activeItem.book_title}
                           </a>
-                          {" "}(por {activeItem.book_author})
+                          {" "}({t.lib.by} {activeItem.book_author})
                           <br />
-                          <strong>Problema Resolvido:</strong> {activeItem.problem_solved}
+                          <strong>{t.lib.problemSolved}</strong> {activeItem.problem_solved}
                         </SheetDescription>
                       </SheetHeader>
                       
                       {loadingDetails ? (
                         <div className="flex flex-col items-center justify-center py-20 gap-3 text-muted-foreground">
                           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                          <p className="text-sm font-medium">Carregando detalhes...</p>
+                          <p className="text-sm font-medium">{t.lib.loadingDetails}</p>
                         </div>
                       ) : details ? (
                         <div className="space-y-6">
                           {/* Canais de Validação */}
                           <div>
-                            <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Validação Social & Canais</h4>
+                            <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">{t.lib.socialValidation}</h4>
                              {(() => {
                                const detailMetrics = getSocialMetrics(details);
                                return (
@@ -414,21 +414,21 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                                    <div className="bg-orange-500/5 p-4 rounded-lg border border-orange-500/10">
                                      <div className="flex items-center gap-2 text-orange-500 font-bold mb-2">
                                        <Search className="h-4 w-4" />
-                                       Validação Reddit
+                                       {t.lib.redditValidation}
                                      </div>
                                      <div className="text-xl font-extrabold text-foreground mb-1">
                                        {detailMetrics.reddit_mentions}
-                                       <span className="text-xs font-normal text-muted-foreground ml-1">menções</span>
+                                       <span className="text-xs font-normal text-muted-foreground ml-1">{t.lib.mentions}</span>
                                      </div>
                                      <p className="text-[11px] text-muted-foreground leading-relaxed">
-                                       Discussões de dores ativas identificadas em fóruns do Reddit.
+                                       {t.lib.activeDiscussions}
                                      </p>
                                    </div>
         
                                    <div className="bg-blue-600/5 p-4 rounded-lg border border-blue-600/10">
                                      <div className="flex items-center gap-2 text-blue-500 font-bold mb-2">
                                        <FacebookIcon className="h-4 w-4" />
-                                       Validação Facebook
+                                       {t.lib.facebookValidation}
                                      </div>
                                      <div className="space-y-1">
                                        <a
@@ -437,7 +437,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                                          rel="noopener noreferrer"
                                          className="text-[13px] font-bold text-foreground hover:text-blue-500 hover:underline transition-colors block"
                                        >
-                                         Anúncios Ativos: <span className="text-blue-500">{detailMetrics.facebook_ads_count} ads ↗</span>
+                                         {t.lib.activeAds} <span className="text-blue-500">{detailMetrics.facebook_ads_count} ads ↗</span>
                                        </a>
                                        <a
                                          href={`https://www.facebook.com/groups/search/groups/?q=${encodeURIComponent(details.search_keyword || details.target_audience || details.saas_name)}`}
@@ -445,11 +445,11 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                                          rel="noopener noreferrer"
                                          className="text-[13px] font-bold text-foreground hover:text-indigo-400 hover:underline transition-colors block"
                                        >
-                                         Grupos do Nicho: <span className="text-indigo-400">{detailMetrics.facebook_groups_count} ativos ↗</span>
+                                         {t.lib.nicheGroups} <span className="text-indigo-400">{detailMetrics.facebook_groups_count} ativos ↗</span>
                                        </a>
                                      </div>
                                      <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
-                                       Presença comercial e audiência mapeada no Facebook.
+                                       {t.lib.commercialPresence}
                                      </p>
                                    </div>
                                  </div>
@@ -459,16 +459,16 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
    
                           {/* Monetização */}
                           <div>
-                            <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Como Monetizar</h4>
+                            <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">{t.lib.howToMonetize}</h4>
                             <div className="bg-muted/50 p-4 rounded-lg border border-border/50">
                               <p className="text-foreground text-sm">{details.monetization_model}</p>
                               <Separator className="my-3" />
                               <div className="flex justify-between items-center text-sm">
-                                <span className="text-muted-foreground">Preço Sugerido:</span>
+                                <span className="text-muted-foreground">{t.lib.suggestedPrice}</span>
                                 <span className="font-bold text-green-500">{details.suggested_price?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
                               </div>
                               <div className="flex justify-between items-center text-sm mt-2">
-                                <span className="text-muted-foreground">Potencial:</span>
+                                <span className="text-muted-foreground">{t.lib.potential}</span>
                                 <span className="font-bold">{details.potential_revenue?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
                               </div>
                             </div>
@@ -476,7 +476,7 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
    
                           {/* Plano MVP */}
                           <div>
-                            <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">Plano do MVP</h4>
+                            <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider">{t.lib.mvpPlan}</h4>
                             <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
                               <p className="text-foreground text-sm leading-relaxed">{details.mvp_features}</p>
                               <div className="flex gap-2 mt-4 text-xs">
@@ -489,11 +489,11 @@ export function CachedBooksLibrary({ initialData }: { initialData: any[] }) {
                           {/* Prompts */}
                           <div>
                             <h4 className="font-bold text-sm text-muted-foreground mb-2 uppercase tracking-wider flex items-center justify-between">
-                              Prompts de Construção
+                              {t.lib.buildingPrompts}
                             </h4>
                             <div className="space-y-4">
                               <div className="relative group">
-                                <div className="text-[11px] font-semibold mb-1 text-purple-500">Para ChatGPT / Claude / Gemini (Universal)</div>
+                                <div className="text-[11px] font-semibold mb-1 text-purple-500">{t.lib.universalPrompt}</div>
                                 <pre className="bg-muted p-4 rounded-lg text-[12px] text-foreground overflow-x-auto whitespace-pre-wrap font-mono border border-border/50">
 {`Atue como meu CTO. SaaS: "${details.saas_name}".
 Problema: ${details.problem_solved}
@@ -503,7 +503,7 @@ Preço: ${details.suggested_price}`}
                               </div>
    
                               <div className="relative group">
-                                <div className="text-[11px] font-semibold mb-1 text-primary">Para Vercel v0 / Lovable (Frontend)</div>
+                                <div className="text-[11px] font-semibold mb-1 text-primary">{t.lib.frontendPrompt}</div>
                                 <pre className="bg-muted p-4 rounded-lg text-[12px] text-foreground overflow-x-auto whitespace-pre-wrap font-mono border border-border/50">
                                   {details.prompt_lovable}
                                 </pre>
@@ -518,7 +518,7 @@ Preço: ${details.suggested_price}`}
                               </div>
    
                               <div className="relative group">
-                                <div className="text-[11px] font-semibold mb-1 text-blue-500">Para Bolt.new / Cursor</div>
+                                <div className="text-[11px] font-semibold mb-1 text-blue-500">{t.lib.backendPrompt}</div>
                                 <pre className="bg-muted p-4 rounded-lg text-[12px] text-foreground overflow-x-auto whitespace-pre-wrap font-mono border border-border/50">
                                   {details.prompt_bolt}
                                 </pre>
@@ -537,7 +537,7 @@ Preço: ${details.suggested_price}`}
                       ) : (
                         <div className="text-center py-20 text-muted-foreground flex flex-col items-center justify-center gap-3">
                           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                          <p className="text-sm font-medium">Carregando detalhes...</p>
+                          <p className="text-sm font-medium">{t.lib.loadingDetails}</p>
                         </div>
                       )}
                       <AIChatModal 
@@ -556,10 +556,10 @@ Preço: ${details.suggested_price}`}
                   variant="outline"
                   className="rounded-xl border-border hover:bg-muted font-semibold text-xs py-5 px-3"
                   onClick={() => {
-                    alert(`Carregando análise reutilizada para "${item.book_title}"...`);
+                    alert(`${t.lib.loadingReusedAnalysis} "${item.book_title}"...`);
                     window.location.href = `/dashboard?search=${encodeURIComponent(item.saas_name)}`;
                   }}
-                  title="Focar no Painel de Análise"
+                  title={t.lib.focusOnDashboard}
                 >
                   Focar
                 </Button>
@@ -570,7 +570,7 @@ Preço: ${details.suggested_price}`}
                   size="icon"
                   className="h-10 w-10 shrink-0 border-border text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-xl"
                   onClick={() => handleFavorite(item.id)}
-                  title="Adicionar aos Favoritos"
+                  title={t.lib.addToFavorites}
                 >
                   <Heart className="h-4 w-4" />
                 </Button>
@@ -581,7 +581,7 @@ Preço: ${details.suggested_price}`}
                   size="icon"
                   className="h-10 w-10 shrink-0 border-border text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-xl"
                   onClick={() => handleDelete(item.id, item.book_title)}
-                  title="Excluir da Biblioteca"
+                  title={t.lib.deleteFromLibrary}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -592,7 +592,7 @@ Preço: ${details.suggested_price}`}
 
         {filteredData.length === 0 && (
           <div className="col-span-full py-16 text-center text-muted-foreground bg-muted/10 border border-dashed border-border/50 rounded-3xl">
-            Nenhum e-book processado encontrado para a busca ou filtro selecionados.
+            {t.lib.noneFound}
           </div>
         )}
       </div>

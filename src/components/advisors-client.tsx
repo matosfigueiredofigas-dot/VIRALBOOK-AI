@@ -113,7 +113,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Erro ao reunir o conselho.");
+        throw new Error(data.error || t.advisors.errorGathering);
       }
 
       const updatedOpps = opportunities.map(opp => {
@@ -126,7 +126,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
       setActiveAdvisorIdx(0);
       router.refresh();
     } catch (err: any) {
-      alert(err.message || "Erro ao consultar o conselho de mentores.");
+      alert(err.message || t.advisors.errorConsulting);
     } finally {
       setGenerating(false);
     }
@@ -134,7 +134,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
 
   const playAudio = (text: string) => {
     if (!window.speechSynthesis) {
-      alert("Seu navegador não suporta síntese de voz.");
+      alert(t.advisors.errorAudioSupport);
       return;
     }
     if (isPlayingAudio) {
@@ -207,7 +207,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
         return opp;
       }));
     } catch (err: any) {
-      alert(err.message || "Erro ao enviar mensagem.");
+      alert(err.message || t.advisors.errorSendingMsg);
       // Rollback
       setOpportunities(prev => prev.map(opp => {
         if (opp.id === selectedId) {
@@ -340,19 +340,15 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
             <Users className="h-10 w-10 animate-bounce" />
           </div>
           <CardTitle className="text-3xl font-black tracking-tight text-white">
-            {isEn ? "No Micro-SaaS Found" : isEs ? "Ningún Micro-SaaS Encontrado" : "Nenhum Micro-SaaS Encontrado"}
+            {t.advisors.noMicroSaasFound}
           </CardTitle>
           <CardDescription className="max-w-md mx-auto leading-relaxed text-zinc-400 text-base">
-            {isEn 
-              ? "To consult the Holographic Advisors, you need to save at least one Micro-SaaS from the Idea Library or Radar." 
-              : isEs 
-              ? "Para consultar los Asesores Holográficos, debe guardar al menos un Micro-SaaS desde la Biblioteca de Ideas o Radar." 
-              : "Para consultar os Conselheiros Holográficos, você precisa ter salvo pelo menos um micro-SaaS a partir da Biblioteca de Ideias ou do Radar."}
+            {t.advisors.noMicroSaasDesc}
           </CardDescription>
         </CardHeader>
         <CardFooter className="flex justify-center mt-6 relative z-10">
           <Button onClick={() => router.push("/library")} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8 py-6 rounded-xl shadow-[0_0_20px_rgba(var(--primary),0.4)] transition-all hover:scale-105 text-lg">
-            {isEn ? "Access Idea Bank" : isEs ? "Acceder al Banco de Ideas" : "Acessar Banco de Ideias"}
+            {t.advisors.accessIdeaBank}
           </Button>
         </CardFooter>
       </Card>
@@ -371,10 +367,10 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
         <div className="relative bg-zinc-950/80 border border-white/10 rounded-2xl p-8 backdrop-blur-xl">
           <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 uppercase">
             <ShieldAlert className="h-10 w-10 text-teal-400" />
-            Board of Advisors
+            {t.advisors.boardTitle}
           </h1>
           <p className="text-lg text-zinc-400 font-medium">
-            {isEn ? "Holographic Advisory Board of Virtual Experts" : isEs ? "Consejo Holográfico de Expertos Virtuales" : "Conselho Holográfico de Especialistas Virtuais"}
+            {t.advisors.boardSubtitle}
           </p>
         </div>
       </div>
@@ -387,7 +383,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
             
             <div className="space-y-3 flex-grow max-w-3xl">
               <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                <Users className="h-4 w-4 text-teal-500" /> {isEn ? "Which SaaS to present to the Board?" : isEs ? "¿Qué SaaS presentar al Consejo?" : "Qual SaaS apresentar ao Conselho?"}
+                <Users className="h-4 w-4 text-teal-500" /> {t.advisors.whichSaas}
               </label>
               <select
                 value={selectedId}
@@ -399,7 +395,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
               >
                 {opportunities.map((opp) => (
                   <option key={opp.id} value={opp.id} className="bg-zinc-950 text-white font-medium">
-                    {opp.saas_name} ({isEn ? "Inspired by:" : isEs ? "Inspirado en:" : "Inspirado em:"} {opp.book_title})
+                    {opp.saas_name} ({t.advisors.inspiredBy} {opp.book_title})
                   </option>
                 ))}
               </select>
@@ -412,14 +408,14 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
             >
               {generating ? (
                 <>
-                  <Loader2 className="h-5 w-5 animate-spin" /> {isEn ? "Convening Avatars..." : isEs ? "Convocando Avatares..." : "Convocando Avatares..."}
+                  <Loader2 className="h-5 w-5 animate-spin" /> {t.advisors.conveningAvatars}
                 </>
               ) : (
                 <>
                   <Sparkles className="h-5 w-5 text-teal-200 animate-pulse" />
                   {selectedOpp?.advisor_advice 
-                    ? (isEn ? "Reconvene Board" : isEs ? "Reunir de Nuevo" : "Convocar Novamente") 
-                    : (isEn ? "Gather Board (AI)" : isEs ? "Reunir Consejo (IA)" : "Reunir Conselho (IA)")}
+                    ? t.advisors.reconveneBoard 
+                    : t.advisors.gatherBoard}
                 </>
               )}
             </Button>
@@ -438,14 +434,10 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
             </div>
             <div>
               <h3 className="font-black text-xl text-white mb-2">
-                {isEn ? "Virtual Meeting Room" : isEs ? "Sala de Reuniones Virtual" : "Sala de Reuniões Virtual"}
+                {t.advisors.virtualRoom}
               </h3>
               <p className="text-zinc-500 max-w-sm mx-auto text-sm leading-relaxed font-medium">
-                {isEn 
-                  ? "The holographic mentors are waiting to dissect the MVP of" 
-                  : isEs 
-                  ? "Los mentores holográficos están esperando para analizar el MVP de" 
-                  : "Os mentores holográficos aguardam a convocação para dissecar o MVP de"} <strong className="text-white bg-white/5 px-2 py-0.5 rounded">{selectedOpp?.saas_name}</strong>.
+                {t.advisors.mentorsWaiting} <strong className="text-white bg-white/5 px-2 py-0.5 rounded">{selectedOpp?.saas_name}</strong>.
               </p>
             </div>
           </CardContent>
@@ -464,12 +456,12 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
                   getScoreColor(selectedOpp.advisor_advice.board_score)
                 )}>
                   {selectedOpp.advisor_advice.board_score}
-                  <span className="text-[9px] uppercase tracking-widest font-bold text-white/70 mt-1">Score</span>
+                  <span className="text-[9px] uppercase tracking-widest font-bold text-white/70 mt-1">{t.advisors.score}</span>
                 </div>
                 
                 <div className="space-y-2 max-w-2xl">
                   <span className="text-[10px] font-black uppercase text-teal-400 tracking-widest flex items-center gap-1.5 bg-teal-500/10 px-2 py-1 rounded w-fit border border-teal-500/20">
-                    <TrendingUp className="h-3 w-3" /> {isEn ? "Consolidated Verdict" : isEs ? "Veredicto Consolidado" : "Veredito Consolidado"}
+                    <TrendingUp className="h-3 w-3" /> {t.advisors.consolidatedVerdict}
                   </span>
                   <p className="text-xl font-bold text-white leading-relaxed">
                     &ldquo;{selectedOpp.advisor_advice.verdict_summary}&rdquo;
@@ -486,7 +478,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
             {/* Abas dos Advisors */}
             <div className="space-y-4 xl:col-span-1 sticky top-6">
               <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest px-2 flex items-center gap-2">
-                <Network className="h-3.5 w-3.5 text-primary" /> Holo-Mentores
+                <Network className="h-3.5 w-3.5 text-primary" /> {t.advisors.holoMentors}
               </span>
               <div className="grid grid-cols-2 xl:grid-cols-1 gap-3">
                 {selectedOpp.advisor_advice.advisors.map((advisor, idx) => {
@@ -564,11 +556,11 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
                         >
                           <Volume2 className={cn("h-4 w-4 mr-2", isPlayingAudio && "animate-pulse")} />
                           {isPlayingAudio 
-                            ? (isEn ? "Listening to Synthesizer..." : isEs ? "Escuchando Sintetizador..." : "Ouvindo Sintetizador...") 
-                            : (isEn ? "Listen to Holographic Audio" : isEs ? "Escuchar Audio Holográfico" : "Ouvir Audio Holográfico")}
+                            ? t.advisors.listeningAudio 
+                            : t.advisors.listenAudio}
                         </Button>
                         <span className="text-[11px] font-black uppercase tracking-widest bg-zinc-950 border border-white/10 text-zinc-300 px-4 py-2.5 rounded-lg shadow-inner flex items-center gap-2">
-                          {isEn ? "Verdict:" : isEs ? "Veredicto:" : "Veredito:"} <span className={cn(theme.text, "drop-shadow-md")}>{advisor.verdict}</span>
+                          {t.advisors.verdict} <span className={cn(theme.text, "drop-shadow-md")}>{advisor.verdict}</span>
                         </span>
                       </div>
                     </CardHeader>
@@ -578,7 +570,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
                       {/* Crítica Severa (Typewriter) */}
                       <div className="space-y-3 group">
                         <span className="text-[10px] font-black text-red-400/90 uppercase tracking-widest flex items-center gap-2 bg-red-500/10 px-2.5 py-1 rounded w-fit border border-red-500/20">
-                          <AlertTriangle className="h-3.5 w-3.5 text-red-500 animate-pulse" /> {isEn ? "Critical Examination" : isEs ? "Examen Crítico" : "Sabatina Crítica"}
+                          <AlertTriangle className="h-3.5 w-3.5 text-red-500 animate-pulse" /> {t.advisors.criticalExam}
                         </span>
                         <div className="p-6 bg-red-500/5 rounded-2xl border border-red-500/10 text-[15px] text-zinc-300 leading-relaxed italic whitespace-pre-line min-h-[100px] shadow-inner group-hover:border-red-500/20 transition-colors">
                           <span className="text-red-500 font-serif text-2xl leading-none">&ldquo;</span>
@@ -590,7 +582,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
                       {/* Conselho Prático */}
                       <div className="space-y-3 group">
                         <span className="text-[10px] font-black text-emerald-400/90 uppercase tracking-widest flex items-center gap-2 bg-emerald-500/10 px-2.5 py-1 rounded w-fit border border-emerald-500/20">
-                          <Lightbulb className="h-3.5 w-3.5 text-emerald-500" /> {isEn ? "Direct Action Plan" : isEs ? "Plan de Acción Directo" : "Plano de Ação Direto"}
+                          <Lightbulb className="h-3.5 w-3.5 text-emerald-500" /> {t.advisors.actionPlan}
                         </span>
                         <div className="p-6 bg-emerald-500/5 rounded-2xl border border-emerald-500/10 text-[15px] text-zinc-300 leading-relaxed whitespace-pre-line flex items-start gap-4 shadow-inner group-hover:border-emerald-500/20 transition-colors">
                           <div className="bg-emerald-500/20 p-2 rounded-full border border-emerald-500/30 shrink-0">
@@ -598,7 +590,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
                           </div>
                           <div className="pt-0.5">
                             <span className="font-black text-white block mb-2 uppercase tracking-wide text-xs">
-                              {isEn ? "Tactical Instruction:" : isEs ? "Instrucción Táctica:" : "Instrução Táctica:"}
+                              {t.advisors.tacticalInstruction}
                             </span>
                             <TypewriterText text={advisor.actionable_advice} speed={8} />
                           </div>
@@ -608,7 +600,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
                       {/* Área de Chat Interativo */}
                       <div className="pt-8 border-t border-white/5">
                         <span className="text-[10px] font-black text-blue-400/90 uppercase tracking-widest flex items-center gap-2 mb-6 bg-blue-500/10 px-2.5 py-1 rounded w-fit border border-blue-500/20">
-                          <MessageSquare className="h-3.5 w-3.5 text-blue-500" /> {isEn ? "Communication Interface with" : isEs ? "Interfaz de Comunicación con" : "Interface de Comunicação com"} {advisor.name.split(' ')[0]}
+                          <MessageSquare className="h-3.5 w-3.5 text-blue-500" /> {t.advisors.commInterface} {advisor.name.split(' ')[0]}
                         </span>
                         
                         {activeChat.length > 0 && (
@@ -629,7 +621,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
                               <div className="flex justify-start">
                                 <div className="bg-zinc-900/80 text-zinc-400 border border-white/10 max-w-[85%] rounded-2xl rounded-bl-sm px-5 py-4 text-[15px] flex items-center gap-3 backdrop-blur-md">
                                   <Loader2 className="h-5 w-5 animate-spin text-zinc-500" /> 
-                                  <span className="font-medium">{advisor.name.split(' ')[0]} {isEn ? "is processing response..." : isEs ? "está procesando la respuesta..." : "está processando a resposta..."}</span>
+                                  <span className="font-medium">{advisor.name.split(' ')[0]} {t.advisors.processingResponse}</span>
                                 </div>
                               </div>
                             )}
@@ -645,7 +637,7 @@ export function AdvisorsClient({ initialOpportunities, initialSelectedId }: { in
                             type="text"
                             value={chatMessage}
                             onChange={(e) => setChatMessage(e.target.value)}
-                            placeholder={isEn ? `Discuss with ${advisor.name.split(' ')[0]}...` : isEs ? `Debatimos con ${advisor.name.split(' ')[0]}...` : `Argumente com ${advisor.name.split(' ')[0]}...`}
+                            placeholder={`${t.advisors.discussWith} ${advisor.name.split(' ')[0]}...`}
                             className="flex-1 bg-zinc-950/80 backdrop-blur-md border border-white/10 rounded-xl px-5 text-[15px] text-white focus:outline-none focus:border-blue-500 transition-colors h-14 shadow-inner"
                             disabled={isSendingChat}
                           />

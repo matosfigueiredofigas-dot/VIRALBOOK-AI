@@ -27,11 +27,7 @@ export function AIChatModal({ isOpen, onClose, contextText, projectName, showLef
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: isEn 
-        ? `Hello! I'm the CTO of your new startup based on "${projectName}". How can I help you? Strategy, code, or naming?` 
-        : isEs 
-        ? `¡Hola! Soy el CTO de su nueva startup basada en "${projectName}". ¿En qué puedo ayudarle?` 
-        : `Olá! Eu sou o CTO da sua nova startup baseada no "${projectName}". Do que você precisa? Nomes, código, estratégia de vendas?`,
+      content: t.advisors.greeting.replace('{projectName}', projectName),
     },
   ]);
   const [input, setInput] = useState("");
@@ -80,7 +76,7 @@ export function AIChatModal({ isOpen, onClose, contextText, projectName, showLef
       console.error(error);
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "Ops, ocorreu um erro de conexão. Tente novamente em instantes." },
+        { role: "assistant", content: t.advisors.connectionError },
       ]);
     } finally {
       setIsLoading(false);
@@ -151,7 +147,7 @@ export function AIChatModal({ isOpen, onClose, contextText, projectName, showLef
                 <Bot className="h-4 w-4 text-primary" />
               </div>
               <div className="bg-muted/50 border border-border/50 rounded-2xl rounded-tl-sm p-4 flex items-center gap-2 text-muted-foreground">
-                <Loader2 className="h-4 w-4 animate-spin" /> Pensando...
+                <Loader2 className="h-4 w-4 animate-spin" /> {t.advisors.thinking}
               </div>
             </div>
           )}
@@ -168,7 +164,7 @@ export function AIChatModal({ isOpen, onClose, contextText, projectName, showLef
               type="text" 
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Digite sua dúvida..."
+              placeholder={t.advisors.typeQuestion}
               className="flex-1 bg-transparent border-none outline-none text-sm px-4 text-foreground placeholder:text-muted-foreground"
               disabled={isLoading}
             />

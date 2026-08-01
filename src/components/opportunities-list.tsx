@@ -386,10 +386,10 @@ function OpportunityCard({ item }: { item: any }) {
                 <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20 text-[9px] h-5 px-1.5 font-bold uppercase tracking-wider">
                   {(() => {
                     const s = item.viral_opportunity_score || 0;
-                    if (s >= 95) return "🌟 Unicórnio (>95)";
-                    if (s >= 80) return "⭐ Premium (>80)";
-                    if (s >= 60) return "👍 Bom (>60)";
-                    return "⚠️ Risco";
+                    if (s >= 95) return t.opportunities.badgeUnicorn;
+                    if (s >= 80) return t.opportunities.badgePremium;
+                    if (s >= 60) return t.opportunities.badgeGood;
+                    return t.opportunities.badgeRisk;
                   })()}
                 </Badge>
               </div>
@@ -535,14 +535,14 @@ function OpportunityCard({ item }: { item: any }) {
       <CardFooter className="pt-4 border-t border-border/50 flex gap-2">
         <Sheet onOpenChange={handleSheetOpen}>
           <SheetTrigger render={<Button className="flex-1 bg-primary/10 text-primary hover:bg-primary/20" />}>
-            Detalhes & Prompts <Sparkles className="ml-2 h-4 w-4" />
+            {t.opportunities.detailsAndPrompts} <Sparkles className="ml-2 h-4 w-4" />
           </SheetTrigger>
           <SheetContent className={`w-full overflow-y-auto transition-all duration-300 ${isExpanded ? "!max-w-[90vw]" : "!max-w-xl"}`}>
             <SheetHeader className="mb-6 relative pr-12">
               <button 
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="absolute top-0 right-8 p-2 rounded-md hover:bg-muted text-muted-foreground transition-colors"
-                title={isExpanded ? "Restaurar tamanho" : "Maximizar"}
+                title={isExpanded ? t.opportunities.restoreSize : t.opportunities.maximize}
               >
                 {isExpanded ? "🗗" : "🗖"}
               </button>
@@ -1099,7 +1099,7 @@ function OpportunityCard({ item }: { item: any }) {
                         </div>
 
                         <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 space-y-1">
-                          <span className="text-[10px] text-zinc-400 font-medium block">Lifetime Value (LTV)</span>
+                          <span className="text-[10px] text-zinc-400 font-medium block">{t.opportunities.lifetimeValue}</span>
                           <span className="text-base font-bold text-emerald-400">
                             ${calcChurn > 0 ? Math.round(calcPrice / (calcChurn / 100)) : calcPrice * 100}
                           </span>
@@ -1920,7 +1920,7 @@ ${t.blueprint.promptUniversalOutro}`}
             ) : (
               <div className="text-center py-20 text-muted-foreground flex flex-col items-center justify-center gap-3">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className="text-sm font-medium">Carregando detalhes...</p>
+                <p className="text-sm font-medium">{t.opportunities.loadingDetails}</p>
               </div>
             )}
           </SheetContent>
@@ -1929,10 +1929,10 @@ ${t.blueprint.promptUniversalOutro}`}
           variant="outline" 
           className="bg-blue-600/10 text-blue-400 hover:bg-blue-600/20 border-blue-500/20 px-3 h-10 flex items-center gap-2"
           onClick={() => setIsChatOpen(true)}
-          title="Falar com o CTO"
+          title={t.opportunities.talkCto}
         >
           <MessageSquare className="h-4 w-4" />
-          <span className="hidden sm:inline font-semibold">CTO Chat</span>
+          <span className="hidden sm:inline font-semibold">{t.opportunities.ctoChat}</span>
         </Button>
       </CardFooter>
       <AIChatModal 
@@ -2017,7 +2017,7 @@ export function OpportunitiesList({ initialData, hideSearch = false }: { initial
         setKeyword("");
         router.refresh(); 
       } else {
-        alert("Falha ao analisar a tendência.");
+        alert(t.opportunities.analyzeTrendFail);
       }
     } catch (err) {
       console.error(err);
@@ -2036,7 +2036,7 @@ export function OpportunitiesList({ initialData, hideSearch = false }: { initial
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input 
-                  placeholder="Ex: Mindful Productivity, Personal Finance, Dieting..." 
+                  placeholder={t.opportunities.searchPlaceholder} 
                   className="pl-10 h-10"
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
@@ -2045,11 +2045,11 @@ export function OpportunitiesList({ initialData, hideSearch = false }: { initial
               </div>
               <Button type="submit" disabled={loading || !keyword} className="h-10">
                 {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                Analisar Nicho
+                {t.opportunities.analyzeNiche}
               </Button>
             </form>
             <p className="text-xs text-muted-foreground mt-3">
-              O algoritmo irá buscar os livros mais lidos sobre o tema, checar o Google Trends, mapear o Reddit e gerar a ideia do SaaS.
+              {t.opportunities.algorithmDesc}
             </p>
           </CardContent>
         </Card>
@@ -2057,7 +2057,7 @@ export function OpportunitiesList({ initialData, hideSearch = false }: { initial
 
       {/* Lista de Oportunidades */}
       <div className="flex justify-between items-center">
-        <h3 className="font-bold text-lg text-foreground">Oportunidades</h3>
+        <h3 className="font-bold text-lg text-foreground">{t.opportunities.opportunitiesTitle}</h3>
         <div className="flex items-center gap-1 bg-background/50 p-1 rounded-lg border border-border/50 shadow-sm">
           <button 
             onClick={() => setViewMode("grid")}
@@ -2077,7 +2077,7 @@ export function OpportunitiesList({ initialData, hideSearch = false }: { initial
       <div className={viewMode === "grid" ? "grid gap-4 md:grid-cols-2 lg:grid-cols-3" : "flex flex-col gap-4"}>
         {items.length === 0 && (
           <div className="col-span-full py-12 text-center text-muted-foreground">
-            Nenhuma oportunidade detectada ainda. Use a barra acima para iniciar o radar!
+            {t.opportunities.noOpportunities}
           </div>
         )}
 
