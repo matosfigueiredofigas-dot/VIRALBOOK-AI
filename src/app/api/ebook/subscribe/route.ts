@@ -3,7 +3,7 @@ import { createAdminClient } from '@/utils/supabase/admin';
 import { NextResponse } from 'next/server';
 
 // ── Templates de email ────────────────────────────────────────────────────────
-const DOMAIN = 'https://www.viralbook-ai.com';
+const DOMAIN = 'https://viralbook-ai.vercel.app';
 const EBOOK_DOWNLOAD_URL = `${DOMAIN}/ebook-download`;
 
 function emailWelcome(name: string) {
@@ -27,7 +27,7 @@ function emailWelcome(name: string) {
           <p style="color: #666; font-size: 13px; line-height: 1.7;">Nos próximos 5 dias vou partilhar contigo os conceitos mais importantes do livro — direto no teu email, sem spam.</p>
         </div>
         <div style="background: #111; padding: 24px 32px; text-align: center; border-top: 1px solid #222;">
-          <p style="color: #444; font-size: 12px; margin: 0;">© 2025 ViralBook AI · <a href="https://www.viralbook-ai.com" style="color: #3b82f6; text-decoration: none;">www.viralbook-ai.com</a></p>
+          <p style="color: #444; font-size: 12px; margin: 0;">© 2025 ViralBook AI · <a href="https://viralbook-ai.vercel.app" style="color: #3b82f6; text-decoration: none;">viralbook-ai.vercel.app</a></p>
         </div>
       </div>
     `
@@ -60,7 +60,7 @@ function emailDay2() {
           <p style="color: #a0a0a0; line-height: 1.7;">Amanhã partilho os 5 casos reais de livros que se tornaram startups avaliadas em mil milhões.</p>
         </div>
         <div style="background: #111; padding: 24px 32px; text-align: center; border-top: 1px solid #222;">
-          <p style="color: #444; font-size: 12px; margin: 0;">© 2025 ViralBook AI · <a href="https://www.viralbook-ai.com" style="color: #3b82f6; text-decoration: none;">www.viralbook-ai.com</a></p>
+          <p style="color: #444; font-size: 12px; margin: 0;">© 2025 ViralBook AI · <a href="https://viralbook-ai.vercel.app" style="color: #3b82f6; text-decoration: none;">viralbook-ai.vercel.app</a></p>
         </div>
       </div>
     `
@@ -103,7 +103,7 @@ function emailDay3() {
           <p style="color: #a0a0a0; line-height: 1.7;">Amanhã ensino o método de 4 passos para passar da prateleira ao SaaS — em 48 horas.</p>
         </div>
         <div style="background: #111; padding: 24px 32px; text-align: center; border-top: 1px solid #222;">
-          <p style="color: #444; font-size: 12px; margin: 0;">© 2025 ViralBook AI · <a href="https://www.viralbook-ai.com" style="color: #3b82f6; text-decoration: none;">www.viralbook-ai.com</a></p>
+          <p style="color: #444; font-size: 12px; margin: 0;">© 2025 ViralBook AI · <a href="https://viralbook-ai.vercel.app" style="color: #3b82f6; text-decoration: none;">viralbook-ai.vercel.app</a></p>
         </div>
       </div>
     `
@@ -141,7 +141,7 @@ function emailDay4() {
           <p style="color: #a0a0a0; line-height: 1.7; margin-top: 24px;">Amanhã: os 3 erros que destroem 90% dos projetos antes do primeiro cliente.</p>
         </div>
         <div style="background: #111; padding: 24px 32px; text-align: center; border-top: 1px solid #222;">
-          <p style="color: #444; font-size: 12px; margin: 0;">© 2025 ViralBook AI · <a href="https://www.viralbook-ai.com" style="color: #3b82f6; text-decoration: none;">www.viralbook-ai.com</a></p>
+          <p style="color: #444; font-size: 12px; margin: 0;">© 2025 ViralBook AI · <a href="https://viralbook-ai.vercel.app" style="color: #3b82f6; text-decoration: none;">viralbook-ai.vercel.app</a></p>
         </div>
       </div>
     `
@@ -173,7 +173,7 @@ function emailDay5() {
           <p style="color: #a0a0a0; line-height: 1.7; margin-top: 24px;">Amanhã envio-te algo especial — uma oferta exclusiva para leitores do eBook. 👀</p>
         </div>
         <div style="background: #111; padding: 24px 32px; text-align: center; border-top: 1px solid #222;">
-          <p style="color: #444; font-size: 12px; margin: 0;">© 2025 ViralBook AI · <a href="https://www.viralbook-ai.com" style="color: #3b82f6; text-decoration: none;">www.viralbook-ai.com</a></p>
+          <p style="color: #444; font-size: 12px; margin: 0;">© 2025 ViralBook AI · <a href="https://viralbook-ai.vercel.app" style="color: #3b82f6; text-decoration: none;">viralbook-ai.vercel.app</a></p>
         </div>
       </div>
     `
@@ -204,14 +204,14 @@ function emailDay6() {
             <p style="margin: 0; color: #f59e0b; font-weight: 700; font-size: 13px;">30% desconto exclusivo para leitores do eBook</p>
           </div>
           <div style="text-align: center; margin: 24px 0;">
-            <a href="https://www.viralbook-ai.com#pricing" style="display: inline-block; background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; text-decoration: none; padding: 16px 40px; border-radius: 50px; font-weight: 800; font-size: 16px;">
+            <a href="https://viralbook-ai.vercel.app#pricing" style="display: inline-block; background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; text-decoration: none; padding: 16px 40px; border-radius: 50px; font-weight: 800; font-size: 16px;">
               🚀 Ativar Desconto de 30%
             </a>
           </div>
           <p style="color: #666; font-size: 13px; text-align: center;">Esta oferta expira em 48 horas. Garantia de reembolso de 30 dias.</p>
         </div>
         <div style="background: #111; padding: 24px 32px; text-align: center; border-top: 1px solid #222;">
-          <p style="color: #444; font-size: 12px; margin: 0;">© 2025 ViralBook AI · <a href="https://www.viralbook-ai.com" style="color: #3b82f6; text-decoration: none;">www.viralbook-ai.com</a></p>
+          <p style="color: #444; font-size: 12px; margin: 0;">© 2025 ViralBook AI · <a href="https://viralbook-ai.vercel.app" style="color: #3b82f6; text-decoration: none;">viralbook-ai.vercel.app</a></p>
         </div>
       </div>
     `
