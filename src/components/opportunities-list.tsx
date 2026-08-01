@@ -248,7 +248,7 @@ function OpportunityCard({ item }: { item: any }) {
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || (isEn ? "Error generating Marketing Kit." : isEs ? "Error al generar el Kit de Marketing." : "Erro ao gerar o Kit de Marketing."));
+        throw new Error(data.error || t.opportunities.errorGeneratingKit);
       }
       const newKit = data.marketingKit || {};
       setMarketingKit(newKit);
@@ -257,7 +257,7 @@ function OpportunityCard({ item }: { item: any }) {
       setShowMarketingKit(true);
       router.refresh();
     } catch (err: any) {
-      alert(err.message || (isEn ? "Connection error generating Marketing Kit." : isEs ? "Error de conexión al generar el Kit de Marketing." : "Erro de conexão ao gerar o Kit de Marketing."));
+      alert(err.message || t.opportunities.connErrorGeneratingKit);
     } finally {
       setGeneratingKit(false);
     }
@@ -303,7 +303,7 @@ function OpportunityCard({ item }: { item: any }) {
       });
       
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error || (isEn ? "Error generating module" : isEs ? "Error al generar módulo" : "Erro ao gerar o módulo"));
+      if (!res.ok) throw new Error(json.error || t.opportunities.errorGeneratingModule);
       
       if (moduleType === 'cursor') {
         setCursorRules(json.data);
@@ -330,7 +330,7 @@ function OpportunityCard({ item }: { item: any }) {
       if (moduleType === 'sql') setShowSqlSchema(true);
       
     } catch (err: any) {
-      alert(err.message || (isEn ? "Connection error generating advanced module." : isEs ? "Error de conexión al generar módulo avanzado." : "Erro de conexão ao gerar módulo avançado."));
+      alert(err.message || t.opportunities.connErrorGeneratingModule);
     } finally {
       setGeneratingModule(null);
     }
@@ -401,7 +401,7 @@ function OpportunityCard({ item }: { item: any }) {
               size="icon" 
               className="h-8 w-8 text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10"
               onClick={() => handleShare(item.id)}
-              title={isEn ? "Copy Secret Link" : isEs ? "Copiar Enlace Secreto" : "Copiar Link Secreto"}
+              title={t.opportunities.copySecretLink}
             >
               <Share2 className="h-4 w-4" />
             </Button>
@@ -412,17 +412,17 @@ function OpportunityCard({ item }: { item: any }) {
               onClick={async () => {
                 const isFavoritePage = pathname?.includes('/favorites');
                 if (isFavoritePage) {
-                  if (confirm(isEn ? "Remove this opportunity from favorites?" : isEs ? "¿Quitar de favoritos?" : "Deseja remover esta oportunidade dos favoritos?")) {
+                  if (confirm(t.opportunities.removeFromFavConfirm)) {
                     const res = await fetch('/api/favorites', {
                       method: 'DELETE',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ opportunityId: item.id })
                     });
                     if (res.ok) {
-                      alert(isEn ? "Removed from favorites!" : isEs ? "¡Eliminado de favoritos!" : "Removido dos favoritos!");
+                      alert(t.opportunities.removedFromFav);
                       router.refresh();
                     } else {
-                      alert(isEn ? "Error removing." : isEs ? "Error al eliminar." : "Erro ao remover.");
+                      alert(t.opportunities.errorRemovingFav);
                     }
                   }
                 } else {
@@ -434,11 +434,11 @@ function OpportunityCard({ item }: { item: any }) {
                   if (res.status === 401) {
                     router.push('/login');
                   } else if (res.ok) {
-                    alert(isEn ? "Added to favorites!" : isEs ? "¡Añadido a favoritos!" : "Adicionado aos favoritos!");
+                    alert(t.opportunities.addedToFav);
                   }
                 }
               }}
-              title={pathname?.includes('/favorites') ? (isEn ? "Remove from Favorites" : isEs ? "Quitar de Favoritos" : "Remover dos Favoritos") : (isEn ? "Favorite" : isEs ? "Favorito" : "Favoritar")}
+              title={pathname?.includes('/favorites') ? t.opportunities.removeFromFav : t.opportunities.favorite}
             >
               <Heart className={`h-4 w-4 ${pathname?.includes('/favorites') ? "fill-red-500 text-red-500" : ""}`} />
             </Button>
@@ -446,8 +446,8 @@ function OpportunityCard({ item }: { item: any }) {
               variant="ghost" 
               size="icon" 
               className="h-8 w-8 text-muted-foreground hover:text-yellow-500 hover:bg-yellow-500/10"
-              onClick={() => alert(isEn ? "Monitoring alert activated! We will notify you if this niche explodes." : isEs ? "¡Alerta de monitoreo activada!" : "Alerta de Monitoramento ativado! Avisaremos se este nicho explodir.")}
-              title={isEn ? "Monitor Alert" : isEs ? "Monitorear Alerta" : "Monitorar Alerta"}
+              onClick={() => alert(t.opportunities.monitorAlertActivated)}
+              title={t.opportunities.monitorAlert}
             >
               <Bell className="h-4 w-4" />
             </Button>
@@ -456,22 +456,22 @@ function OpportunityCard({ item }: { item: any }) {
               size="icon" 
               className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-500/10"
               onClick={async () => {
-                if (confirm(isEn ? `Are you sure you want to permanently delete "${item.saas_name}"?` : isEs ? `¿Está seguro de eliminar "${item.saas_name}"?` : `Tem certeza que deseja excluir permanentemente a oportunidade "${item.saas_name}"?`)) {
+                if (confirm(t.opportunities.deleteOppConfirm.replace('{name}', item.saas_name))) {
                   const res = await fetch('/api/radar', {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: item.id })
                   });
                   if (res.ok) {
-                    alert(isEn ? "Opportunity deleted successfully!" : isEs ? "¡Oportunidad eliminada con éxito!" : "Oportunidade excluída com sucesso!");
+                    alert(t.opportunities.oppDeletedSuccess);
                     router.refresh();
                   } else {
                     const errData = await res.json().catch(() => ({}));
-                    alert(errData.error || (isEn ? "Error deleting opportunity." : isEs ? "Error al eliminar la oportunidad." : "Erro ao excluir oportunidade."));
+                    alert(errData.error || t.opportunities.errorDeletingOpp);
                   }
                 }
               }}
-              title={isEn ? "Delete Opportunity" : isEs ? "Eliminar Oportunidad" : "Excluir Oportunidade"}
+              title={t.opportunities.deleteOpportunity}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -488,7 +488,7 @@ function OpportunityCard({ item }: { item: any }) {
           const metrics = getSocialMetrics(item);
           return (
             <div className="flex flex-wrap gap-4 text-xs sm:text-sm text-muted-foreground mb-4">
-              <div className="flex items-center gap-1" title={isEn ? "Monthly Growth (Trends)" : isEs ? "Crecimiento Mensual (Trends)" : "Crescimento Mensual (Trends)"}>
+              <div className="flex items-center gap-1" title={t.opportunities.monthlyGrowthTrends}>
                 <TrendingUp className="h-4 w-4 text-green-500" />
                 <span className="font-semibold text-green-500">+{item.trends_growth_monthly}%</span>
               </div>
@@ -497,7 +497,7 @@ function OpportunityCard({ item }: { item: any }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 hover:underline hover:text-orange-500 transition-colors"
-                title={isEn ? "Search on Reddit" : isEs ? "Buscar en Reddit" : "Buscar no Reddit"}
+                title={t.opportunities.searchOnReddit}
               >
                 <Search className="h-4 w-4 text-orange-500" />
                 <span className="font-semibold text-orange-500">{metrics.reddit_mentions} refs</span>
@@ -507,7 +507,7 @@ function OpportunityCard({ item }: { item: any }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 hover:underline hover:text-blue-600 transition-colors"
-                title={isEn ? "Search on Meta Ads Library" : isEs ? "Buscar en Meta Ads Library" : "Buscar na Biblioteca de Anúncios do Facebook"}
+                title={t.opportunities.searchMetaAds}
               >
                 <FacebookIcon className="h-4 w-4 text-blue-600" />
                 <span className="font-semibold text-blue-600">{metrics.facebook_ads_count} ads</span>
@@ -620,11 +620,11 @@ function OpportunityCard({ item }: { item: any }) {
                   <div className={`h-2 w-2 rounded-full transition-colors duration-300 ${showAllSections ? 'bg-primary' : 'bg-primary/40'}`} />
                   <span className="text-sm font-bold text-primary">
                     {showAllSections
-                      ? (isEn ? 'Hide Analysis' : isEs ? 'Ocultar Análisis' : 'Fechar Análise')
-                      : (isEn ? 'View Full Analysis' : isEs ? 'Ver Análisis Completo' : 'Ver Análise Completa')}
+                      ? t.opportunities.hideAnalysis
+                      : t.opportunities.viewFullAnalysis}
                   </span>
                   <span className="text-[10px] font-semibold text-primary/60 hidden sm:inline">
-                    {isEn ? '(12 sections)' : isEs ? '(12 secciones)' : '(12 secções)'}
+                    {t.opportunities.sections12}
                   </span>
                 </div>
                 <svg
@@ -667,20 +667,16 @@ function OpportunityCard({ item }: { item: any }) {
                         >
                           <div className="flex items-center gap-2 text-orange-500 font-bold mb-2">
                             <Search className="h-5 w-5" />
-                            {isEn ? "Reddit Validation" : isEs ? "Validación de Reddit" : "Validação Reddit"}
+                            {t.opportunities.redditValidationTitle}
                           </div>
                           <div className="text-2xl font-extrabold text-foreground mb-1 group-hover/reddit:text-orange-500 transition-colors">
                             {detailMetrics.reddit_mentions}
                             <span className="text-xs font-normal text-muted-foreground ml-1 underline decoration-muted-foreground/30 group-hover/reddit:decoration-orange-500">
-                              {isEn ? "mentions ↗" : isEs ? "menciones ↗" : "menções ↗"}
+                              {t.opportunities.mentionsLink}
                             </span>
                           </div>
                           <p className="text-xs text-muted-foreground leading-relaxed">
-                            {isEn 
-                              ? "Represents active user discussions and pain point expressions across relevant subreddits." 
-                              : isEs 
-                              ? "Representa la cantidad de discusiones activas y manifestaciones de dolores de usuarios en subreddits relevantes." 
-                              : "Representa a quantidade de discussões ativas e manifestações de dores de usuários em subreddits relevantes."}
+                            {t.opportunities.redditValidationDesc}
                           </p>
                         </a>
 
@@ -688,7 +684,7 @@ function OpportunityCard({ item }: { item: any }) {
                           <div>
                             <div className="flex items-center gap-2 text-blue-500 font-bold mb-2">
                               <FacebookIcon className="h-5 w-5" />
-                              {isEn ? "Facebook Validation" : isEs ? "Validación de Facebook" : "Validação Facebook"}
+                              {t.opportunities.facebookValidationTitle}
                             </div>
                             <div className="flex flex-col gap-2">
                               <a
@@ -697,9 +693,9 @@ function OpportunityCard({ item }: { item: any }) {
                                 rel="noopener noreferrer"
                                 className="text-sm font-bold text-foreground hover:text-blue-500 transition-colors flex items-center justify-between group/link border-b border-border/20 pb-1"
                               >
-                                <span>{isEn ? "Active Ads:" : isEs ? "Anuncios Activos:" : "Anúncios Ativos:"}</span>
+                                <span>{t.opportunities.activeAds}</span>
                                 <span className="text-blue-500 underline decoration-blue-500/30 group-hover/link:decoration-blue-500">
-                                  {detailMetrics.facebook_ads_count} {isEn ? "campaigns ↗" : isEs ? "campañas ↗" : "campanhas ↗"}
+                                  {detailMetrics.facebook_ads_count} {t.opportunities.campaignsLink}
                                 </span>
                               </a>
                               <a
@@ -708,19 +704,15 @@ function OpportunityCard({ item }: { item: any }) {
                                 rel="noopener noreferrer"
                                 className="text-sm font-bold text-foreground hover:text-indigo-400 transition-colors flex items-center justify-between group/link"
                               >
-                                <span>{isEn ? "Niche Groups:" : isEs ? "Grupos del Nicho:" : "Grupos do Nicho:"}</span>
+                                <span>{t.opportunities.nicheGroups}</span>
                                 <span className="text-indigo-400 underline decoration-indigo-400/30 group-hover/link:decoration-indigo-400">
-                                  {detailMetrics.facebook_groups_count} {isEn ? "active ↗" : isEs ? "activos ↗" : "ativos ↗"}
+                                  {detailMetrics.facebook_groups_count} {t.opportunities.activeLink}
                                 </span>
                               </a>
                             </div>
                           </div>
                           <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
-                            {isEn 
-                              ? "Commercial presence of competitor ads and active community groups ideal for organic traffic and outreach." 
-                              : isEs 
-                              ? "Presencia comercial de anuncios competidores y grupos activos ideales para tráfico orgánico y prospección." 
-                              : "Presença comercial de anúncios concorrentes e grupos ativos ideais para tráfego orgânico e prospecção."}
+                            {t.opportunities.fbValidationDesc}
                           </p>
                         </div>
                       </div>
@@ -732,7 +724,7 @@ function OpportunityCard({ item }: { item: any }) {
               {/* 2. Dores Reais do Reddit (Mapeador de IA) */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
-                  title={isEn ? "REAL REDDIT PAIN POINTS (AI MAPPER)" : isEs ? "DOLORES REALES DE REDDIT (MAPEADOR IA)" : "DORES REAIS DO REDDIT (MAPEADOR DE IA)"}
+                  title={t.opportunities.realRedditPainPoints}
                   isOpen={showRedditPainPoints}
                   onToggle={() => setShowRedditPainPoints(!showRedditPainPoints)}
                   icon={<Search className="h-4 w-4 text-orange-500" />}
@@ -747,11 +739,7 @@ function OpportunityCard({ item }: { item: any }) {
                     {activeRedditPainPoints.length === 0 ? (
                       <div className="bg-orange-500/5 p-5 rounded-lg border border-orange-500/10 text-center space-y-4">
                         <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                          {isEn 
-                            ? "Not mapped yet. Let AI analyze Reddit user discussions and rants to extract real critical pain points from your target audience." 
-                            : isEs 
-                            ? "Aún no mapeado. Deje que la IA analice las discusiones y desahogos de los usuarios en Reddit para extraer dolores críticos y reales de su público objetivo." 
-                            : "Ainda não mapeado. Deixe a IA analisar as discussões e desabafos dos usuários no Reddit para extrair dores críticas e reais do seu público-alvo."}
+                          {t.opportunities.notMappedYet}
                         </p>
                         <Button
                           onClick={handleMapRedditPainPoints}
@@ -760,11 +748,11 @@ function OpportunityCard({ item }: { item: any }) {
                         >
                           {mappingReddit ? (
                             <>
-                              <Loader2 className="h-4 w-4 animate-spin" /> {isEn ? "Mapping pain points..." : isEs ? "Mapeando dolores..." : "Mapeando dores..."}
+                              <Loader2 className="h-4 w-4 animate-spin" /> {t.opportunities.mappingPainPoints}
                             </>
                           ) : (
                             <>
-                              <Sparkles className="h-4 w-4 text-yellow-300 animate-pulse" /> {isEn ? "Map Real Pain Points (Reddit)" : isEs ? "Mapear Dolores Reales (Reddit)" : "Mapear Dores Reais (Reddit)"}
+                              <Sparkles className="h-4 w-4 text-yellow-300 animate-pulse" /> {t.opportunities.mapRealPainPoints}
                             </>
                           )}
                         </Button>
@@ -788,7 +776,7 @@ function OpportunityCard({ item }: { item: any }) {
                                     : "bg-zinc-800 text-zinc-400"
                                 )}
                               >
-                                {isEn ? "Severity:" : isEs ? "Severidad:" : "Severidade:"} {pain.severity}/5
+                                {t.opportunities.severityLabel} {pain.severity}/5
                               </Badge>
                             </div>
 
@@ -805,7 +793,7 @@ function OpportunityCard({ item }: { item: any }) {
                             {pain.source_title && (
                               <div className="pt-2.5 text-[10px] text-muted-foreground flex justify-between items-center flex-wrap gap-2 border-t border-white/5">
                                 <span className="truncate max-w-[220px]" title={pain.source_title}>
-                                  {isEn ? "Source:" : isEs ? "Origen:" : "Origem:"} {pain.source_title}
+                                  {t.opportunities.sourceLabel} {pain.source_title}
                                 </span>
                                 {pain.source_url && (
                                   <a 
@@ -814,7 +802,7 @@ function OpportunityCard({ item }: { item: any }) {
                                     rel="noopener noreferrer" 
                                     className="text-orange-400 hover:text-orange-300 hover:underline inline-flex items-center gap-0.5"
                                   >
-                                    {isEn ? "View Discussion ↗" : isEs ? "Ver Discusión ↗" : "Ver Discussão ↗"}
+                                    {t.opportunities.viewDiscussionLink}
                                   </a>
                                 )}
                               </div>
@@ -831,11 +819,11 @@ function OpportunityCard({ item }: { item: any }) {
                           >
                             {mappingReddit ? (
                               <>
-                                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> {isEn ? "Remapping..." : isEs ? "Remapeando..." : "Remapeando..."}
+                                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> {t.opportunities.remapping}
                               </>
                             ) : (
                               <>
-                                {isEn ? "Redo AI Analysis ↗" : isEs ? "Rehacer Análisis de IA ↗" : "Refazer Análise de IA ↗"}
+                                {t.opportunities.redoAiAnalysis}
                               </>
                             )}
                           </Button>
@@ -864,7 +852,7 @@ function OpportunityCard({ item }: { item: any }) {
                           className="bg-red-600 hover:bg-red-500 text-white cursor-pointer"
                         >
                           {generatingModule === 'competitor' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
-                          {isEn ? "Analyze Competitors (AI)" : isEs ? "Analizar Competidores (IA)" : "Analisar Concorrentes (IA)"}
+                          {t.opportunities.analyzeCompetitors}
                         </Button>
                       </div>
                     ) : (
@@ -873,10 +861,10 @@ function OpportunityCard({ item }: { item: any }) {
                           <div key={i} className="bg-zinc-950/50 p-3 rounded-lg border border-red-500/10">
                             <div className="font-bold text-red-400 text-sm mb-1">{comp.name}</div>
                             <div className="text-xs text-zinc-300">
-                              <strong>{isEn ? "Weakness:" : isEs ? "Debilidad:" : "Fraqueza:"}</strong> {comp.weakness}
+                              <strong>{t.opportunities.weaknessLabel}</strong> {comp.weakness}
                             </div>
                             <div className="text-xs text-green-400 mt-1">
-                              <strong>{isEn ? "Our Advantage:" : isEs ? "Nuestra Ventaja:" : "Nossa Vantagem:"}</strong> {comp.our_advantage}
+                              <strong>{t.opportunities.ourAdvantageLabel}</strong> {comp.our_advantage}
                             </div>
                           </div>
                         ))}
@@ -903,18 +891,18 @@ function OpportunityCard({ item }: { item: any }) {
                     <p className="text-foreground text-sm">{activeDetails.monetization_model}</p>
                     <Separator className="my-3" />
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-muted-foreground">{isEn ? "Suggested Price:" : isEs ? "Precio Sugerido:" : "Preço Sugerido:"}</span>
+                      <span className="text-muted-foreground">{t.opportunities.suggestedPriceLabel}</span>
                       <span className="font-bold text-green-500">{activeDetails.suggested_price?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
                     </div>
                     <div className="flex justify-between items-center text-sm mt-2">
-                      <span className="text-muted-foreground">{isEn ? "Potential Revenue:" : isEs ? "Ingresos Potenciales:" : "Potencial:"}</span>
+                      <span className="text-muted-foreground">{t.opportunities.potentialRevenueLabel}</span>
                       <span className="font-bold">{activeDetails.potential_revenue?.replace(/R\$\s*/gi, "$ ").replace(/BRL\s*/gi, "$ ")}</span>
                     </div>
 
                     <div className="mt-6">
                       <div className="text-xs font-bold text-zinc-400 mb-4 flex items-center gap-2">
                         <BarChart3 className="h-4 w-4 text-green-500" /> 
-                        {isEn ? "MRR Projection (12 Months)" : isEs ? "Proyección de MRR (12 Meses)" : "Projeção de MRR (12 Meses)"}
+                        {t.opportunities.mrrProjection12}
                       </div>
                       <div className="h-48 w-full">
                         <ResponsiveContainer width="100%" height="100%">
@@ -939,7 +927,7 @@ function OpportunityCard({ item }: { item: any }) {
               {/* 5. Calculadora de Viabilidade Financeira */}
               <div className="space-y-2">
                 <CollapsibleSectionHeader
-                  title={isEn ? "FINANCIAL VIABILITY CALCULATOR (SAAS)" : isEs ? "CALCULADORA DE VIABILIDAD FINANCIERA (SAAS)" : "CALCULADORA DE VIABILIDADE FINANCEIRA (SAAS)"}
+                  title={t.opportunities.financialViabilityCalc}
                   isOpen={showCalculator}
                   onToggle={() => setShowCalculator(!showCalculator)}
                   icon={<TrendingUp className="h-4 w-4 text-emerald-400" />}
@@ -947,18 +935,14 @@ function OpportunityCard({ item }: { item: any }) {
                 {showCalculator && (
                   <div className="bg-zinc-900/40 border border-white/5 p-5 rounded-xl space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
                   <p className="text-xs text-zinc-400 leading-relaxed">
-                    {isEn 
-                      ? "Simulate your SaaS financial viability in real time. Adjust parameters below to see revenue projections and acquisition goals." 
-                      : isEs 
-                      ? "Simule la viabilidad financiera de su SaaS en tiempo real. Modifique los parámetros para ver las proyecciones de facturación." 
-                      : "Simule a viabilidade financeira do seu SaaS em tempo real. Altere os parâmetros abaixo para ver as projeções de faturamento e metas de aquisição."}
+                    {t.opportunities.simulateFinancialDesc}
                   </p>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Inputs Column */}
                     <div className="space-y-4">
                       <h5 className="text-xs font-bold text-zinc-300 uppercase tracking-wide border-b border-white/5 pb-2">
-                        {isEn ? "Simulation Parameters" : isEs ? "Parámetros de Simulación" : "Parâmetros de Simulação"}
+                        {t.opportunities.simulationParams}
                       </h5>
                       
                       {/* Price input */}
@@ -966,7 +950,7 @@ function OpportunityCard({ item }: { item: any }) {
                         <div className="flex justify-between text-xs">
                           <label className="text-zinc-400 font-medium flex items-center gap-1">
                             <DollarSign className="h-3.5 w-3.5 text-emerald-400" />
-                            {isEn ? "Subscription Price (Monthly)" : isEs ? "Precio de Suscripción (Mensual)" : "Preço da Assinatura (Mensal)"}
+                            {t.opportunities.subPriceMonthly}
                           </label>
                           <span className="text-emerald-400 font-bold">${calcPrice}</span>
                         </div>
@@ -994,9 +978,9 @@ function OpportunityCard({ item }: { item: any }) {
                         <div className="flex justify-between text-xs">
                           <label className="text-zinc-400 font-medium flex items-center gap-1">
                             <Users className="h-3.5 w-3.5 text-blue-400" />
-                            {isEn ? "Traffic / Leads (Monthly)" : isEs ? "Tráfico / Leads (Mensual)" : "Tráfego / Leads (Mensal)"}
+                            {t.opportunities.trafficLeadsMonthly}
                           </label>
-                          <span className="text-blue-400 font-bold">{calcLeadsTarget.toLocaleString()} {isEn ? "visitors" : isEs ? "visitantes" : "visitantes"}</span>
+                          <span className="text-blue-400 font-bold">{calcLeadsTarget.toLocaleString()} {t.opportunities.visitorsLabel}</span>
                         </div>
                         <div className="flex gap-2">
                           <Input
@@ -1023,7 +1007,7 @@ function OpportunityCard({ item }: { item: any }) {
                         <div className="flex justify-between text-xs">
                           <label className="text-zinc-400 font-medium flex items-center gap-1">
                             <Percent className="h-3.5 w-3.5 text-purple-400" />
-                            {isEn ? "Conversion Rate" : isEs ? "Tasa de Conversión" : "Taxa de Conversão"}
+                            {t.opportunities.conversionRateLabel}
                           </label>
                           <span className="text-purple-400 font-bold">{calcConversion}%</span>
                         </div>
@@ -1054,7 +1038,7 @@ function OpportunityCard({ item }: { item: any }) {
                         <div className="flex justify-between text-xs">
                           <label className="text-zinc-400 font-medium flex items-center gap-1">
                             <HelpCircle className="h-3.5 w-3.5 text-red-400" />
-                            {isEn ? "Churn Rate (Monthly Cancel)" : isEs ? "Tasa de Churn (Cancelación Mensual)" : "Taxa de Churn (Cancelamento Mensal)"}
+                            {t.opportunities.churnRateLabel}
                           </label>
                           <span className="text-red-400 font-bold">{calcChurn}%</span>
                         </div>
@@ -1084,14 +1068,14 @@ function OpportunityCard({ item }: { item: any }) {
                     {/* Projections Column */}
                     <div className="space-y-4">
                       <h5 className="text-xs font-bold text-zinc-300 uppercase tracking-wide border-b border-white/5 pb-2">
-                        {isEn ? "Viability & Outreach Metrics" : isEs ? "Métricas de Viabilidad y Prospección" : "Métricas de Viabilidade & Prospecção"}
+                        {t.opportunities.viabilityOutreach}
                       </h5>
 
                       {/* Metrics cards grid */}
                       <div className="grid grid-cols-2 gap-3">
                         <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 space-y-1">
                           <span className="text-[10px] text-zinc-400 font-medium block">
-                            {isEn ? "New Customers/Mo" : isEs ? "Nuevos Clientes/Mes" : "Novos Clientes/Mês"}
+                            {t.opportunities.newCustomersMo}
                           </span>
                           <span className="text-base font-bold text-blue-400">
                             {Math.round(calcLeadsTarget * (calcConversion / 100))}
@@ -1110,7 +1094,7 @@ function OpportunityCard({ item }: { item: any }) {
                       <div className="p-4 bg-zinc-950/40 rounded-lg border border-emerald-500/20 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl -mr-8 -mt-8" />
                         <span className="text-[10px] text-zinc-400 font-medium block">
-                          {isEn ? "Projected Monthly Revenue (12 Months)" : isEs ? "Ingresos Recurrentes Proyectados (12 Meses)" : "Receita Recorrente Projetada (12 Meses)"}
+                          {t.opportunities.projectedMonthlyRev12}
                         </span>
                         <div className="flex items-baseline gap-1 mt-1">
                           <span className="text-2xl font-extrabold text-white">
@@ -1127,40 +1111,36 @@ function OpportunityCard({ item }: { item: any }) {
                             })()}
                           </span>
                           <span className="text-xs text-emerald-400 font-semibold">
-                            {isEn ? "/mo (MRR)" : isEs ? "/mes (MRR)" : "/mês (MRR)"}
+                            {t.opportunities.mrrLabel}
                           </span>
                         </div>
                         <p className="text-[10px] text-zinc-500 mt-2 leading-relaxed">
-                          {isEn 
-                            ? "Based on acquiring new customers monthly with compound retention." 
-                            : isEs 
-                            ? "Basado en adquirir nuevos clientes mensualmente con retención compuesta." 
-                            : "Baseado em adquirir novos clientes mensalmente com retenção composta."}
+                          {t.opportunities.basedOnAcquiring}
                         </p>
                       </div>
 
                       {/* Financial Goals / Targets list */}
                       <div className="space-y-2">
                         <span className="text-[10px] text-zinc-400 font-bold block uppercase tracking-wider">
-                          {isEn ? "Customers Needed Per Goal:" : isEs ? "Clientes Necesarios por Meta:" : "Clientes Necessários por Meta:"}
+                          {t.opportunities.customersNeededGoal}
                         </span>
                         <div className="space-y-1 text-xs">
                           <div className="flex justify-between items-center p-2 bg-zinc-950/20 rounded border border-white/5">
-                            <span className="text-zinc-400">{isEn ? "Goal $1k/mo:" : isEs ? "Meta $1k/mes:" : "Meta $1k/mês:"}</span>
+                            <span className="text-zinc-400">{t.opportunities.goal1kMo}</span>
                             <span className="font-bold text-white">
-                              {Math.ceil(1000 / calcPrice)} {isEn ? "customers" : isEs ? "clientes" : "clientes"}
+                              {Math.ceil(1000 / calcPrice)} {t.opportunities.customersLabel}
                             </span>
                           </div>
                           <div className="flex justify-between items-center p-2 bg-zinc-950/20 rounded border border-white/5">
-                            <span className="text-zinc-400">{isEn ? "Goal $5k/mo:" : isEs ? "Meta $5k/mes:" : "Meta $5k/mês:"}</span>
+                            <span className="text-zinc-400">{t.opportunities.goal5kMo}</span>
                             <span className="font-bold text-white">
-                              {Math.ceil(5000 / calcPrice)} {isEn ? "customers" : isEs ? "clientes" : "clientes"}
+                              {Math.ceil(5000 / calcPrice)} {t.opportunities.customersLabel}
                             </span>
                           </div>
                           <div className="flex justify-between items-center p-2 bg-zinc-950/20 rounded border border-white/5">
-                            <span className="text-zinc-400">{isEn ? "Goal $10k/mo:" : isEs ? "Meta $10k/mes:" : "Meta $10k/mês:"}</span>
+                            <span className="text-zinc-400">{t.opportunities.goal10kMo}</span>
                             <span className="font-bold text-white">
-                              {Math.ceil(10000 / calcPrice)} {isEn ? "customers" : isEs ? "clientes" : "clientes"}
+                              {Math.ceil(10000 / calcPrice)} {t.opportunities.customersLabel}
                             </span>
                           </div>
                         </div>
@@ -1189,10 +1169,10 @@ function OpportunityCard({ item }: { item: any }) {
                     <p className="text-foreground text-sm leading-relaxed">{activeDetails.mvp_features}</p>
                     <div className="flex flex-wrap gap-2 mt-4 text-xs">
                       <Badge variant="outline" className="bg-background">
-                        ⏱️ {isEn ? "Dev Time:" : isEs ? "Tiempo de Dev:" : "Tempo de Dev:"} {activeDetails.development_time}
+                        ⏱️ {t.opportunities.devTimeLabel} {activeDetails.development_time}
                       </Badge>
                       <Badge variant="outline" className="bg-background">
-                        🧠 {isEn ? "Difficulty:" : isEs ? "Dificultad:" : "Dificuldade:"} {
+                        🧠 {t.opportunities.difficultyLabel} {
                           isEn 
                             ? activeDetails.implementation_difficulty?.replace(/Médio/gi, "Medium").replace(/Fácil/gi, "Easy").replace(/Avançado/gi, "Advanced").replace(/Básico/gi, "Basic")
                             : isEs 
@@ -1223,7 +1203,7 @@ function OpportunityCard({ item }: { item: any }) {
                           className="bg-blue-600 hover:bg-blue-500 text-white cursor-pointer"
                         >
                           {generatingModule === 'tech' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Layers className="mr-2 h-4 w-4" />}
-                          {isEn ? "Discover Ideal Stack" : isEs ? "Descubrir Stack Ideal" : "Descobrir Stack Ideal"}
+                          {t.opportunities.discoverIdealStack}
                         </Button>
                       </div>
                     ) : (
@@ -1237,7 +1217,7 @@ function OpportunityCard({ item }: { item: any }) {
                             disabled={generatingModule === 'tech'}
                           >
                             {generatingModule === 'tech' ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : null}
-                            {isEn ? "Regenerate Stack ↗" : isEs ? "Regenerar Stack ↗" : "Refazer Stack ↗"}
+                            {t.opportunities.regenerateStack}
                           </Button>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
@@ -1279,7 +1259,7 @@ function OpportunityCard({ item }: { item: any }) {
                           className="bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer"
                         >
                           {generatingModule === 'sql' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Database className="mr-2 h-4 w-4" />}
-                          {isEn ? "Generate Supabase Tables" : isEs ? "Generar Tablas Supabase" : "Gerar Tabelas Supabase"}
+                          {t.opportunities.generateSupabaseTables}
                         </Button>
                       </div>
                     ) : (
@@ -1298,7 +1278,7 @@ function OpportunityCard({ item }: { item: any }) {
                                 setTimeout(() => setCopiedPrompt(null), 2000);
                               }}
                             >
-                              {copiedPrompt === 'sql' ? (isEn ? "Copied!" : isEs ? "¡Copiado!" : "Copiado!") : (isEn ? "Copy SQL" : isEs ? "Copiar SQL" : "Copiar SQL")}
+                              {copiedPrompt === 'sql' ? t.opportunities.copiedLabel : t.opportunities.copySql}
                             </Button>
                             <Button
                               variant="ghost"
@@ -1307,7 +1287,7 @@ function OpportunityCard({ item }: { item: any }) {
                               onClick={() => handleGeneratePremiumModule('sql')}
                               disabled={generatingModule === 'sql'}
                             >
-                              {generatingModule === 'sql' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : (isEn ? "Regenerate SQL ↗" : isEs ? "Regenerar SQL ↗" : "Refazer SQL ↗")}
+                              {generatingModule === 'sql' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : t.opportunities.regenerateSql}
                             </Button>
                           </div>
                         </div>
@@ -1338,14 +1318,10 @@ function OpportunityCard({ item }: { item: any }) {
                           className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
                         >
                           {generatingModule === 'cursor' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Bot className="mr-2 h-4 w-4" />}
-                          {isEn ? "Generate Magic .cursorrules" : isEs ? "Generar .cursorrules Mágico" : "Gerar .cursorrules Mágico"}
+                          {t.opportunities.generateMagicCursor}
                         </Button>
                         <p className="text-xs text-muted-foreground mt-2">
-                          {isEn 
-                            ? "Generates exact stack, style, and DB rules to paste into Cursor AI or v0.dev." 
-                            : isEs 
-                            ? "Genera las reglas exactas de stack, estilos y BD para Cursor AI o v0.dev." 
-                            : "Gera as regras exatas de stack, estilos e db para colar no Cursor AI ou v0.dev."}
+                          {t.opportunities.generatesExactStack}
                         </p>
                       </div>
                     ) : (
@@ -1357,7 +1333,7 @@ function OpportunityCard({ item }: { item: any }) {
                           onClick={() => copyToClipboard(typeof cursorRules === 'string' ? cursorRules : JSON.stringify(cursorRules, null, 2), 'cursor')}
                         >
                           {copiedPrompt === 'cursor' ? <CheckCircle2 className="h-4 w-4 mr-1 text-green-400" /> : <Copy className="h-4 w-4 mr-1" />}
-                          {isEn ? "Copy Rules" : isEs ? "Copiar Reglas" : "Copiar Regras"}
+                          {t.opportunities.copyRules}
                         </Button>
                         <pre className="text-[10px] text-emerald-400 bg-black p-4 rounded-lg overflow-x-auto max-h-[300px] whitespace-pre-wrap">
                           <code>{typeof cursorRules === 'string' ? cursorRules : JSON.stringify(cursorRules, null, 2)}</code>
@@ -1494,7 +1470,7 @@ ${t.blueprint.promptUniversalOutro}`}
                           className="bg-orange-600 hover:bg-orange-500 text-white cursor-pointer"
                         >
                           {generatingModule === 'gtm' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                          {isEn ? "Generate GTM Roadmap (AI)" : isEs ? "Generar Roadmap GTM (IA)" : "Gerar Roadmap GTM (IA)"}
+                          {t.opportunities.generateGtmRoadmap}
                         </Button>
                       </div>
                     ) : (
@@ -1502,7 +1478,7 @@ ${t.blueprint.promptUniversalOutro}`}
                         {activeDetails.gtm_roadmap.weeks?.map((week: any, i: number) => (
                           <div key={i} className="bg-zinc-950/50 p-3 rounded-lg border border-white/5">
                             <h4 className="text-sm font-bold text-orange-400 mb-2">
-                              {isEn ? "Week" : isEs ? "Semana" : "Semana"} {week.week}: {week.focus}
+                              {t.opportunities.weekLabel} {week.week}: {week.focus}
                             </h4>
                             <ul className="list-disc pl-5 text-xs text-zinc-300 space-y-1">
                               {week.actions?.map((action: string, j: number) => <li key={j}>{action}</li>)}
@@ -1524,7 +1500,7 @@ ${t.blueprint.promptUniversalOutro}`}
                   icon={<Megaphone className="h-4 w-4 text-purple-400" />}
                   badge={activeMarketingKit && Object.keys(activeMarketingKit).length > 0 && (
                     <Badge variant="secondary" className="bg-purple-500/10 text-purple-400 border-none text-[10px] px-1.5 h-4">
-                      {isEn ? "Ready" : isEs ? "Listo" : "Pronto"}
+                      {t.opportunities.readyLabel}
                     </Badge>
                   )}
                 />
@@ -1533,11 +1509,7 @@ ${t.blueprint.promptUniversalOutro}`}
                     {!activeMarketingKit || Object.keys(activeMarketingKit).length === 0 ? (
                       <div className="bg-primary/5 p-5 rounded-lg border border-primary/10 text-center space-y-4">
                         <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                          {isEn 
-                            ? "Struggling to sell your SaaS? Let AI generate ready-to-use Twitter/X threads, professional LinkedIn posts, short video scripts for TikTok/Reels, and cold sales emails." 
-                            : isEs 
-                            ? "¿Dificultad para vender su SaaS? Deje que la IA genere hilos de Twitter/X, publicaciones de LinkedIn, guiones de TikTok/Reels y correos de venta fría." 
-                            : "Dificuldade em vender seu SaaS? Deixe a IA gerar copys prontas em formato de thread do Twitter/X, posts profissionais do LinkedIn, roteiros de vídeos para TikTok/Reels e e-mails de vendas frios."}
+                          {t.opportunities.strugglingToSell}
                         </p>
                         <Button
                           onClick={handleGenerateMarketingKit}
@@ -1546,11 +1518,11 @@ ${t.blueprint.promptUniversalOutro}`}
                         >
                           {generatingKit ? (
                             <>
-                              <Loader2 className="h-4 w-4 animate-spin" /> {isEn ? "Generating Marketing Kit..." : isEs ? "Generando Kit de Marketing..." : "Gerando Kit de Marketing..."}
+                              <Loader2 className="h-4 w-4 animate-spin" /> {t.opportunities.generatingMarketingKit}
                             </>
                           ) : (
                             <>
-                              <Megaphone className="h-4 w-4 text-white" /> {isEn ? "Generate Marketing Kit (AI)" : isEs ? "Generar Kit de Marketing (IA)" : "Gerar Kit de Marketing (IA)"}
+                              <Megaphone className="h-4 w-4 text-white" /> {t.opportunities.generateMarketingKitAi}
                             </>
                           )}
                         </Button>
@@ -1577,7 +1549,7 @@ ${t.blueprint.promptUniversalOutro}`}
                               {tab === "facebook" && "Facebook"}
                               {tab === "instagram" && "Instagram"}
                               {tab === "google" && "Google Ads"}
-                              {tab === "email" && (isEn ? "Email" : isEs ? "Correo" : "E-mail")}
+                              {tab === "email" && t.opportunities.emailLabel}
                             </button>
                           ))}
                         </div>
@@ -1590,7 +1562,7 @@ ${t.blueprint.promptUniversalOutro}`}
                             <div className="space-y-4">
                               <div className="flex justify-between items-center pb-2 border-b border-white/5">
                                 <span className="text-xs font-semibold text-zinc-400">
-                                  {isEn ? "Twitter/X Thread Sequence" : isEs ? "Secuencia de Twitter/X (Thread)" : "Sequência do Twitter/X (Thread)"}
+                                  {t.opportunities.twitterThreadSeq}
                                 </span>
                                 <Button
                                   variant="ghost"
@@ -1598,7 +1570,7 @@ ${t.blueprint.promptUniversalOutro}`}
                                   className="text-xs font-bold text-primary hover:bg-primary/10 h-8 cursor-pointer"
                                   onClick={() => handleCopyMarketingText(activeMarketingKit.twitter_thread.join("\n\n"), "tw-all")}
                                 >
-                                  {copiedMarketing === "tw-all" ? (isEn ? "Copied!" : isEs ? "¡Copiado!" : "Copiado!") : (isEn ? "Copy Full Thread" : isEs ? "Copiar Hilo Completo" : "Copiar Thread Completa")}
+                                  {copiedMarketing === "tw-all" ? t.opportunities.copiedLabel : t.opportunities.copyFullThread}
                                 </Button>
                               </div>
                               <div className="space-y-3">
@@ -1625,7 +1597,7 @@ ${t.blueprint.promptUniversalOutro}`}
                             <div className="space-y-4">
                               <div className="flex justify-between items-center pb-2 border-b border-white/5">
                                 <span className="text-xs font-semibold text-zinc-400">
-                                  {isEn ? "LinkedIn Professional Post" : isEs ? "Publicación Profesional de LinkedIn" : "Postagem Profissional do LinkedIn"}
+                                  {t.opportunities.linkedinProfessionalPost}
                                 </span>
                                 <Button
                                   variant="ghost"
@@ -1633,7 +1605,7 @@ ${t.blueprint.promptUniversalOutro}`}
                                   className="text-xs font-bold text-primary hover:bg-primary/10 h-8 cursor-pointer"
                                   onClick={() => handleCopyMarketingText(activeMarketingKit.linkedin_post, "li")}
                                 >
-                                  {copiedMarketing === "li" ? (isEn ? "Copied!" : isEs ? "¡Copiado!" : "Copiado!") : (isEn ? "Copy Text" : isEs ? "Copiar Texto" : "Copiar Texto")}
+                                  {copiedMarketing === "li" ? t.opportunities.copiedLabel : t.opportunities.copyText}
                                 </Button>
                               </div>
                               <div className="p-4 bg-zinc-950/40 rounded-lg border border-white/5 max-h-[350px] overflow-y-auto pr-2">
@@ -1647,7 +1619,7 @@ ${t.blueprint.promptUniversalOutro}`}
                             <div className="space-y-4">
                               <div className="flex justify-between items-center pb-2 border-b border-white/5">
                                 <span className="text-xs font-semibold text-zinc-400">
-                                  {isEn ? "Short Video Script (TikTok/Reels)" : isEs ? "Guion de Video Corto (TikTok/Reels)" : "Roteiro de Vídeo Curto (TikTok/Reels)"}
+                                  {t.opportunities.shortVideoScript}
                                 </span>
                                 <Button
                                   variant="ghost"
@@ -1658,31 +1630,31 @@ ${t.blueprint.promptUniversalOutro}`}
                                     handleCopyMarketingText(fullScript, "tk");
                                   }}
                                 >
-                                  {copiedMarketing === "tk" ? (isEn ? "Copied!" : isEs ? "¡Copiado!" : "Copiado!") : (isEn ? "Copy Full Script" : isEs ? "Copiar Guion Completo" : "Copiar Roteiro Completo")}
+                                  {copiedMarketing === "tk" ? t.opportunities.copiedLabel : t.opportunities.copyFullScript}
                                 </Button>
                               </div>
                               <div className="space-y-3 text-xs">
                                 <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
                                   <span className="font-bold text-red-400 block mb-1">
-                                    {isEn ? "🧲 THE HOOK (First 3s):" : isEs ? "🧲 EL GANCHO (Primeros 3s):" : "🧲 O GANCHO (Primeiros 3s):"}
+                                    {t.opportunities.theHookFirst3s}
                                   </span>
                                   <p className="italic text-zinc-300">&ldquo;{activeMarketingKit.tiktok_script.hook}&rdquo;</p>
                                 </div>
                                 
                                 <div className="space-y-2">
                                   <span className="font-bold text-zinc-400 block">
-                                    {isEn ? "🎬 SCENES & NARRATIVE:" : isEs ? "🎬 ESCENAS Y NARRATIVA:" : "🎬 CENAS & NARRATIVA:"}
+                                    {t.opportunities.scenesAndNarrative}
                                   </span>
                                   {activeMarketingKit.tiktok_script.scenes.map((scene: any, idx: number) => (
                                     <div key={idx} className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 space-y-1">
                                       <div className="text-[10px] text-zinc-500 uppercase font-bold">
-                                        {isEn ? "Scene" : isEs ? "Escena" : "Cena"} {idx + 1}
+                                        {t.opportunities.sceneLabel} {idx + 1}
                                       </div>
                                       <div className="text-zinc-500 font-semibold text-xxs">
-                                        {isEn ? "Video:" : isEs ? "Video:" : "Vídeo:"} <span className="font-normal text-zinc-400 italic">[{scene.visual}]</span>
+                                        {t.opportunities.videoLabel} <span className="font-normal text-zinc-400 italic">[{scene.visual}]</span>
                                       </div>
                                       <div className="text-zinc-200">
-                                        {isEn ? "Audio (Voiceover):" : isEs ? "Audio (Voz en off):" : "Áudio (Falar):"} &ldquo;{scene.voiceover}&rdquo;
+                                        {t.opportunities.audioVoiceoverLabel} &ldquo;{scene.voiceover}&rdquo;
                                       </div>
                                     </div>
                                   ))}
@@ -1690,7 +1662,7 @@ ${t.blueprint.promptUniversalOutro}`}
 
                                 <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
                                   <span className="font-bold text-green-400 block mb-1">
-                                    {isEn ? "📢 CALL TO ACTION (CTA):" : isEs ? "📢 LLAMADA A LA ACCIÓN (CTA):" : "📢 CHAMADA PARA AÇÃO (CTA):"}
+                                    {t.opportunities.callToActionCta}
                                   </span>
                                   <p className="font-semibold text-zinc-300">{activeMarketingKit.tiktok_script.cta}</p>
                                 </div>
@@ -1703,7 +1675,7 @@ ${t.blueprint.promptUniversalOutro}`}
                             <div className="space-y-4">
                               <div className="flex justify-between items-center pb-2 border-b border-white/5">
                                 <span className="text-xs font-semibold text-zinc-400">
-                                  {isEn ? "Facebook Sponsored Ad" : isEs ? "Anuncio Patrocinado de Facebook" : "Anúncio Patrocinado do Facebook"}
+                                  {t.opportunities.fbSponsoredAd}
                                 </span>
                                 <Button
                                   variant="ghost"
@@ -1714,21 +1686,21 @@ ${t.blueprint.promptUniversalOutro}`}
                                     handleCopyMarketingText(adText, "fb");
                                   }}
                                 >
-                                  {copiedMarketing === "fb" ? (isEn ? "Copied!" : isEs ? "¡Copiado!" : "Copiado!") : (isEn ? "Copy Ad Text" : isEs ? "Copiar Texto de Anuncio" : "Copiar Anúncio")}
+                                  {copiedMarketing === "fb" ? t.opportunities.copiedLabel : t.opportunities.copyAdText}
                                 </Button>
                               </div>
                               <div className="space-y-3 text-xs">
                                 <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
-                                  <span className="font-bold text-blue-400 block mb-1">📢 {isEn ? "Headline:" : isEs ? "Título:" : "Título:"}</span>
+                                  <span className="font-bold text-blue-400 block mb-1">📢 {t.opportunities.headlineLabel}</span>
                                   <p className="font-semibold text-white">{activeMarketingKit.facebook_ad.headline}</p>
                                 </div>
                                 <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
-                                  <span className="font-bold text-zinc-400 block mb-1">📝 {isEn ? "Primary Text (Copy):" : isEs ? "Texto Principal (Copy):" : "Texto Principal (Copy):"}</span>
+                                  <span className="font-bold text-zinc-400 block mb-1">📝 {t.opportunities.primaryTextCopy}</span>
                                   <p className="text-zinc-300 leading-relaxed whitespace-pre-line">{activeMarketingKit.facebook_ad.primary_text}</p>
                                 </div>
                                 {activeMarketingKit.facebook_ad.target_interests && (
                                   <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
-                                    <span className="font-bold text-purple-400 block mb-1">🎯 {isEn ? "Targeting Interests:" : isEs ? "Intereses de Segmentación:" : "Interesses de Segmentação:"}</span>
+                                    <span className="font-bold text-purple-400 block mb-1">🎯 {t.opportunities.targetingInterests}</span>
                                     <div className="flex flex-wrap gap-1 mt-1">
                                       {activeMarketingKit.facebook_ad.target_interests.map((interest: string, idx: number) => (
                                         <Badge key={idx} variant="secondary" className="bg-purple-500/10 text-purple-300 text-[10px]">{interest}</Badge>
@@ -1745,7 +1717,7 @@ ${t.blueprint.promptUniversalOutro}`}
                             <div className="space-y-4">
                               <div className="flex justify-between items-center pb-2 border-b border-white/5">
                                 <span className="text-xs font-semibold text-zinc-400">
-                                  {isEn ? "Instagram Reels & Feed Ad" : isEs ? "Anuncio de Instagram Reels y Feed" : "Anúncio do Instagram Reels & Feed"}
+                                  {t.opportunities.igReelsFeedAd}
                                 </span>
                                 <Button
                                   variant="ghost"
@@ -1756,21 +1728,21 @@ ${t.blueprint.promptUniversalOutro}`}
                                     handleCopyMarketingText(igText, "ig");
                                   }}
                                 >
-                                  {copiedMarketing === "ig" ? (isEn ? "Copied!" : isEs ? "¡Copiado!" : "Copiado!") : (isEn ? "Copy Instagram Ad" : isEs ? "Copiar Anuncio de IG" : "Copiar Anúncio Instagram")}
+                                  {copiedMarketing === "ig" ? t.opportunities.copiedLabel : t.opportunities.copyIgAd}
                                 </Button>
                               </div>
                               <div className="space-y-3 text-xs">
                                 <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
-                                  <span className="font-bold text-pink-400 block mb-1">🧲 {isEn ? "Hook (First 3s):" : isEs ? "Gancho (Primeros 3s):" : "Gancho (Primeiros 3s):"}</span>
+                                  <span className="font-bold text-pink-400 block mb-1">🧲 {t.opportunities.hookFirst3s}</span>
                                   <p className="italic text-zinc-200">&ldquo;{activeMarketingKit.instagram_ad.hook}&rdquo;</p>
                                 </div>
                                 <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
-                                  <span className="font-bold text-zinc-400 block mb-1">✍️ {isEn ? "Post Caption:" : isEs ? "Leyenda del Post:" : "Legenda do Post:"}</span>
+                                  <span className="font-bold text-zinc-400 block mb-1">✍️ {t.opportunities.postCaption}</span>
                                   <p className="text-zinc-300 leading-relaxed whitespace-pre-line">{activeMarketingKit.instagram_ad.caption}</p>
                                 </div>
                                 {activeMarketingKit.instagram_ad.visual_direction && (
                                   <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
-                                    <span className="font-bold text-yellow-400 block mb-1">🎨 {isEn ? "Visual Direction:" : isEs ? "Dirección Visual:" : "Direção Visual:"}</span>
+                                    <span className="font-bold text-yellow-400 block mb-1">🎨 {t.opportunities.visualDirection}</span>
                                     <p className="text-zinc-400 italic">{activeMarketingKit.instagram_ad.visual_direction}</p>
                                   </div>
                                 )}
@@ -1783,7 +1755,7 @@ ${t.blueprint.promptUniversalOutro}`}
                             <div className="space-y-4">
                               <div className="flex justify-between items-center pb-2 border-b border-white/5">
                                 <span className="text-xs font-semibold text-zinc-400">
-                                  {isEn ? "Google Search Campaign Ads" : isEs ? "Anuncios de Búsqueda de Google" : "Anúncios de Busca do Google"}
+                                  {t.opportunities.googleSearchAds}
                                 </span>
                                 <Button
                                   variant="ghost"
@@ -1794,13 +1766,13 @@ ${t.blueprint.promptUniversalOutro}`}
                                     handleCopyMarketingText(gText, "gg");
                                   }}
                                 >
-                                  {copiedMarketing === "gg" ? (isEn ? "Copied!" : isEs ? "¡Copiado!" : "Copiado!") : (isEn ? "Copy Google Ad" : isEs ? "Copiar Anuncio de Google" : "Copiar Anúncios Google")}
+                                  {copiedMarketing === "gg" ? t.opportunities.copiedLabel : t.opportunities.copyGoogleAd}
                                 </Button>
                               </div>
                               <div className="space-y-3 text-xs">
                                 {activeMarketingKit.google_ad.headlines && (
                                   <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 space-y-1">
-                                    <span className="font-bold text-emerald-400 block">📌 {isEn ? "Headlines (Max 30 Chars):" : isEs ? "Títulos (Máx 30 Caracteres):" : "Títulos (Máx 30 Caracteres):"}</span>
+                                    <span className="font-bold text-emerald-400 block">📌 {t.opportunities.headlinesMax30}</span>
                                     {activeMarketingKit.google_ad.headlines.map((h: string, idx: number) => (
                                       <div key={idx} className="text-zinc-200 font-semibold">• {h}</div>
                                     ))}
@@ -1808,7 +1780,7 @@ ${t.blueprint.promptUniversalOutro}`}
                                 )}
                                 {activeMarketingKit.google_ad.descriptions && (
                                   <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5 space-y-1">
-                                    <span className="font-bold text-blue-400 block">📝 {isEn ? "Descriptions (Max 90 Chars):" : isEs ? "Descripciones (Máx 90 Caracteres):" : "Descrições (Máx 90 Caracteres):"}</span>
+                                    <span className="font-bold text-blue-400 block">📝 {t.opportunities.descriptionsMax90}</span>
                                     {activeMarketingKit.google_ad.descriptions.map((d: string, idx: number) => (
                                       <div key={idx} className="text-zinc-300">• {d}</div>
                                     ))}
@@ -1816,7 +1788,7 @@ ${t.blueprint.promptUniversalOutro}`}
                                 )}
                                 {activeMarketingKit.google_ad.keywords && (
                                   <div className="p-3 bg-zinc-950/40 rounded-lg border border-white/5">
-                                    <span className="font-bold text-yellow-400 block mb-1">🔑 {isEn ? "Recommended Keywords:" : isEs ? "Palabras Clave Recomendadas:" : "Palavras-Chave Recomendadas:"}</span>
+                                    <span className="font-bold text-yellow-400 block mb-1">🔑 {t.opportunities.recommendedKeywords}</span>
                                     <div className="flex flex-wrap gap-1 mt-1">
                                       {activeMarketingKit.google_ad.keywords.map((kw: string, idx: number) => (
                                         <Badge key={idx} variant="outline" className="text-[10px] text-yellow-300 border-yellow-500/20">{kw}</Badge>
@@ -1833,7 +1805,7 @@ ${t.blueprint.promptUniversalOutro}`}
                             <div className="space-y-4">
                               <div className="flex justify-between items-center pb-2 border-b border-white/5">
                                 <span className="text-xs font-semibold text-zinc-400">
-                                  {isEn ? "Cold Email Prospecting" : isEs ? "Email de Prospección Fría" : "E-mail de Prospecção Fria"}
+                                  {t.opportunities.coldEmailProspecting}
                                 </span>
                                 <Button
                                   variant="ghost"
@@ -1841,7 +1813,7 @@ ${t.blueprint.promptUniversalOutro}`}
                                   className="text-xs font-bold text-primary hover:bg-primary/10 h-8 cursor-pointer"
                                   onClick={() => handleCopyMarketingText(activeMarketingKit.cold_email, "em")}
                                 >
-                                  {copiedMarketing === "em" ? (isEn ? "Copied!" : isEs ? "¡Copiado!" : "Copiado!") : (isEn ? "Copy Email" : isEs ? "Copiar Email" : "Copiar E-mail")}
+                                  {copiedMarketing === "em" ? t.opportunities.copiedLabel : t.opportunities.copyEmail}
                                 </Button>
                               </div>
                               <div className="p-4 bg-zinc-950/40 rounded-lg border border-white/5 pr-2">
@@ -1861,11 +1833,11 @@ ${t.blueprint.promptUniversalOutro}`}
                           >
                             {generatingKit ? (
                               <>
-                                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> {isEn ? "Rebuilding..." : isEs ? "Reconstruyendo..." : "Remontando..."}
+                                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> {t.opportunities.rebuilding}
                               </>
                             ) : (
                               <>
-                                {isEn ? "Regenerate AI Copy ↗" : isEs ? "Regenerar Copy de IA ↗" : "Refazer Copys de IA ↗"}
+                                {t.opportunities.regenerateAiCopy}
                               </>
                             )}
                           </Button>
@@ -1894,7 +1866,7 @@ ${t.blueprint.promptUniversalOutro}`}
                           className="bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer"
                         >
                           {generatingModule === 'pitch' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Presentation className="mr-2 h-4 w-4" />}
-                          {isEn ? "Generate Pitch Slides (AI)" : isEs ? "Generar Diapositivas de Pitch (IA)" : "Gerar Slides do Pitch (IA)"}
+                          {t.opportunities.generatePitchSlides}
                         </Button>
                       </div>
                     ) : (
