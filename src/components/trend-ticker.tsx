@@ -83,7 +83,7 @@ export function TrendTicker() {
         <div
           key={trends.length} // re-anima quando os dados mudam
           className="flex gap-6 whitespace-nowrap"
-          style={{ animation: `ticker ${Math.max(20, trends.length * 4)}s linear infinite` }}
+          style={{ animation: `ticker ${Math.max(50, trends.length * 10)}s linear infinite` }}
         >
           {items.map((t, i) => (
             <span

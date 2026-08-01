@@ -25,7 +25,7 @@ export function MarketMarquee({ opportunities }: MarketMarqueeProps) {
           100% { transform: translateX(-50%); }
         }
         .animate-marquee {
-          animation: marquee 25s linear infinite;
+          animation: marquee 70s linear infinite;
         }
         .animate-marquee:hover {
           animation-play-state: paused;
