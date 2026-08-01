@@ -237,6 +237,57 @@ export default function DocsPage() {
         </div>
       </section>
 
+      {/* CAPÍTULO 4 */}
+      <section id="capitulo-4" className="space-y-6 scroll-mt-24 p-8 rounded-3xl bg-card/40 border border-border/50">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-extrabold uppercase">
+          {isEn ? "Chapter 4" : isEs ? "Capítulo 4" : "Capítulo 4"}
+        </div>
+        <h2 className="text-3xl font-extrabold text-foreground">
+          {isEn ? "Idea Generation & Bestseller Mining" : isEs ? "Generación de Ideas y Extracción de Bestsellers" : "Geração de Ideias & Mineração de Bestsellers"}
+        </h2>
+        <p className="text-muted-foreground leading-relaxed">
+          {isEn 
+            ? "How to extract gold from non-fiction books. We analyze reader reviews, Reddit discussions, and Amazon rating patterns to pinpoint unfulfilled digital user needs."
+            : isEs 
+            ? "Cómo extraer valor de libros de no ficción. Analizamos reseñas de lectores, discusiones en Reddit y calificaciones en Amazon para señalar necessidades digitales no resueltas."
+            : "Como extrair valor real de livros de não-ficção. Analisamos avaliações de leitores, discussões no Reddit e padrões da Amazon para encontrar lacunas de software reais."}
+        </p>
+      </section>
+
+      {/* CAPÍTULO 5 */}
+      <section id="capitulo-5" className="space-y-6 scroll-mt-24 p-8 rounded-3xl bg-card/40 border border-border/50">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-500 text-xs font-extrabold uppercase">
+          {isEn ? "Chapter 5" : isEs ? "Capítulo 5" : "Capítulo 5"}
+        </div>
+        <h2 className="text-3xl font-extrabold text-foreground">
+          {isEn ? "Scientific Validation & Pain-Point Extraction" : isEs ? "Validación Científica y Extracción de Problemas" : "Validação Científica & Extração de Dores"}
+        </h2>
+        <p className="text-muted-foreground leading-relaxed">
+          {isEn 
+            ? "Using AI sentiment analysis to categorize pain points into Severity score, Willingness-To-Pay (WTP), and Target Audience ICP."
+            : isEs 
+            ? "Uso de análisis de sentimiento con IA para categorizar problemas por Severidad, Disposición a Pagar (WTP) e ICP de Audiencia Objetiva."
+            : "Usando análise de sentimento com IA para categorizar dores em pontuação de Severidade, Disposição a Pagar (WTP) e ICP do Público-Alvo."}
+        </p>
+      </section>
+
+      {/* CAPÍTULO 6 */}
+      <section id="capitulo-6" className="space-y-6 scroll-mt-24 p-8 rounded-3xl bg-card/40 border border-border/50">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-500 text-xs font-extrabold uppercase">
+          {isEn ? "Chapter 6" : isEs ? "Capítulo 6" : "Capítulo 6"}
+        </div>
+        <h2 className="text-3xl font-extrabold text-foreground">
+          {isEn ? "Transforming Book Concepts into High-MRR SaaS" : isEs ? "Transformando Conceptos en SaaS de Alto MRR" : "Transformando Conceitos de Livros em SaaS de Alto MRR"}
+        </h2>
+        <p className="text-muted-foreground leading-relaxed">
+          {isEn 
+            ? "Converting theoretical frameworks from top authors into recurring subscription products, habit-forming workflows, and workflow automation."
+            : isEs 
+            ? "Convertir marcos teóricos de autores en productos de suscripción recurrente, hábitos diarios y automatización de flujos de trabajo."
+            : "Convertendo estruturas teóricas de autores em produtos de assinatura recorrente, hábitos diários e automação de fluxos de trabalho."}
+        </p>
+      </section>
+
       {/* CAPÍTULO 7 MENTORES */}
       <section id="capitulo-7" className="space-y-6 scroll-mt-24 p-8 rounded-3xl bg-card/40 border border-border/50">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-extrabold uppercase">
@@ -280,6 +331,74 @@ export default function DocsPage() {
             <div className="text-[10px] text-muted-foreground">Customer Obsession</div>
           </div>
         </div>
+      </section>
+
+      {/* CAPÍTULO 8 */}
+      <section id="capitulo-8" className="space-y-6 scroll-mt-24 p-8 rounded-3xl bg-card/40 border border-border/50">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 text-xs font-extrabold uppercase">
+          {isEn ? "Chapter 8" : isEs ? "Capítulo 8" : "Capítulo 8"}
+        </div>
+        <h2 className="text-3xl font-extrabold text-foreground">
+          {isEn ? "The 30-Day Execution Roadmap" : isEs ? "El Roadmap de Ejecución de 30 Días" : "O Roadmap de Execução de 30 Dias"}
+        </h2>
+        <p className="text-muted-foreground leading-relaxed">
+          {isEn 
+            ? "Week 1: Mining & Idea Selection. Week 2: Prototype & Advisory Board. Week 3: Pre-launch Landing Page. Week 4: First 10 Paying Customers."
+            : isEs 
+            ? "Semana 1: Minería y Selección. Semana 2: Prototipo y Mentores. Semana 3: Landing Page de Prelanzamiento. Semana 4: Primeros 10 Clientes Pagando."
+            : "Semana 1: Mineração e Escolha da Ideia. Semana 2: Prototipagem e Conselho de Mentores. Semana 3: Landing Page de Pré-lançamento. Semana 4: Primeiros 10 Clientes Pagantes."}
+        </p>
+      </section>
+
+      {/* CAPÍTULO 9 */}
+      <section id="capitulo-9" className="space-y-6 scroll-mt-24 p-8 rounded-3xl bg-card/40 border border-border/50">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-500 text-xs font-extrabold uppercase">
+          {isEn ? "Chapter 9" : isEs ? "Capítulo 9" : "Capítulo 9"}
+        </div>
+        <h2 className="text-3xl font-extrabold text-foreground">
+          {isEn ? "Prompts & Advanced AI Code Generation" : isEs ? "Prompts y Generación Avanzada de Código con IA" : "Prompts & Geração Avançada de Código com IA"}
+        </h2>
+        <p className="text-muted-foreground leading-relaxed">
+          {isEn 
+            ? "Master prompt engineering techniques to prompt Cursor AI, Bolt.new, or v0.dev directly using ViralBook's structured output."
+            : isEs 
+            ? "Técnicas avanzadas de prompt engineering para alimentar Cursor AI, Bolt.new o v0.dev usando los datos estruturados de ViralBook."
+            : "Técnicas avançadas de engenharia de prompt para guiar ferramentas como Cursor AI, Bolt.new ou v0.dev usando as saídas estruturadas do ViralBook."}
+        </p>
+      </section>
+
+      {/* CAPÍTULO 10 */}
+      <section id="capitulo-10" className="space-y-6 scroll-mt-24 p-8 rounded-3xl bg-card/40 border border-border/50">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 text-rose-500 text-xs font-extrabold uppercase">
+          {isEn ? "Chapter 10" : isEs ? "Capítulo 10" : "Capítulo 10"}
+        </div>
+        <h2 className="text-3xl font-extrabold text-foreground">
+          {isEn ? "Real Bestseller-to-SaaS Case Studies" : isEs ? "Estudios de Caso Reales: Bestseller a SaaS" : "Estudos de Caso Reais: De Bestseller a SaaS"}
+        </h2>
+        <p className="text-muted-foreground leading-relaxed">
+          {isEn 
+            ? "Case study 1: 'Atomic Habits' into habit-tracking micro-SaaS ($12k MRR). Case study 2: 'Deep Work' into distraction-blocking app."
+            : isEs 
+            ? "Estudio 1: 'Hábitos Atómicos' en micro-SaaS de seguimiento de hábitos ($12k MRR). Estudio 2: 'Trabajo Enfocado' en app bloqueadora."
+            : "Estudo 1: 'Hábitos Atômicos' em micro-SaaS de rastreamento de hábitos ($12k MRR). Estudo 2: 'Trabalho Focado' em aplicativo bloqueador de distrações."}
+        </p>
+      </section>
+
+      {/* CAPÍTULO 11 */}
+      <section id="capitulo-11" className="space-y-6 scroll-mt-24 p-8 rounded-3xl bg-card/40 border border-border/50">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-500/10 text-slate-500 text-xs font-extrabold uppercase">
+          {isEn ? "Chapter 11" : isEs ? "Capítulo 11" : "Capítulo 11"}
+        </div>
+        <h2 className="text-3xl font-extrabold text-foreground">
+          {isEn ? "Frequently Asked Questions & Limitations" : isEs ? "Preguntas Frecuentes y Limitaciones" : "FAQ & Limitações Frequentes"}
+        </h2>
+        <p className="text-muted-foreground leading-relaxed">
+          {isEn 
+            ? "Answers regarding copyright, book licensing (solving pain points does not violate copyright), AI token usage limits, and export capabilities."
+            : isEs 
+            ? "Respuestas sobre derechos de autor, licencias de libros (resolver problemas no infringe copyright), límites de tokens e integración."
+            : "Respostas sobre direitos autorais, licenças (resolver dores não viola direitos autorais), limites de uso de tokens de IA e exportações."}
+        </p>
       </section>
 
       {/* CAPÍTULO 12 & ROADMAP */}
