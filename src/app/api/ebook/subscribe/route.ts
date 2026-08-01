@@ -239,31 +239,39 @@ export async function POST(req: Request) {
 
     const supabase = createAdminClient();
 
-    // 1. Guardar lead no Supabase
+    // 1. Guardar lead no Supabase (sempre, independente do email)
     const { error: dbError } = await supabase
       .from('ebook_leads')
       .upsert({ email, name: name || '', sequence_day: 1, subscribed_at: new Date().toISOString() }, { onConflict: 'email' });
 
     if (dbError) {
       console.error('[eBook] Erro ao guardar lead:', dbError);
+      // Se nem o Supabase funciona, aí sim retorna erro
+      return NextResponse.json({ error: 'Erro ao registar. Tenta novamente.' }, { status: 500 });
     }
 
-    // 2. Enviar email de boas-vindas imediatamente
-    const resend = new Resend(process.env.RESEND_API_KEY || 're_placeholder');
-    const template = emailWelcome(name || '');
-    const { error: emailError } = await resend.emails.send({
-      from: 'ViralBook AI <onboarding@resend.dev>',
-      to: email,
-      subject: template.subject,
-      html: template.html,
-    });
+    // 2. Tentar enviar email (pode falhar sem domínio verificado — lead já está guardado)
+    try {
+      const resend = new Resend(process.env.RESEND_API_KEY || 're_placeholder');
+      const template = emailWelcome(name || '');
+      const { error: emailError } = await resend.emails.send({
+        from: 'ViralBook AI <onboarding@resend.dev>',
+        to: email,
+        subject: template.subject,
+        html: template.html,
+      });
 
-    if (emailError) {
-      console.error('[eBook] Erro ao enviar email:', emailError);
-      return NextResponse.json({ error: 'Erro ao enviar email.' }, { status: 500 });
+      if (emailError) {
+        // Log do erro mas NÃO bloqueia — lead já guardado no Supabase
+        console.warn('[eBook] Email não enviado (domínio não verificado?):', emailError.message);
+      } else {
+        console.log(`[eBook] Lead registado e email enviado para: ${email}`);
+      }
+    } catch (emailErr: any) {
+      console.warn('[eBook] Falha ao enviar email:', emailErr.message);
     }
 
-    console.log(`[eBook] Lead registado e email enviado para: ${email}`);
+    // Sempre retorna sucesso — o lead foi guardado
     return NextResponse.json({ success: true });
 
   } catch (error: any) {
