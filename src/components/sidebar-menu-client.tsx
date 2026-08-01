@@ -64,13 +64,18 @@ export function SidebarMenuClient() {
 
   return (
     <div className="space-y-6">
-      {/* Comece por Aqui & Dashboard */}
+      {/* Comece por Aqui & Dashboard & Manual */}
       <SidebarMenu className="gap-1.5">
         <SidebarLink
           href="/welcome"
           icon={PlayCircle}
           title={t.navigation.startHere}
           variant="welcome"
+        />
+        <SidebarLink
+          href="/docs"
+          icon={BookOpen}
+          title="Manual Oficial"
         />
         <SidebarLink
           href="/dashboard"

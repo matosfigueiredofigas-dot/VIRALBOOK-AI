@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Zap, Target, BookOpen, Lock, CheckCircle2, Eye, EyeOff, Loader2, Play, Clock } from "lucide-react";
+import { PricingSection } from "@/components/pricing-section";
 import { Button } from "@/components/ui/button";
 import { ContactModal } from "@/components/contact-modal";
 import { AuthModal } from "@/components/auth-modal";
@@ -275,155 +276,8 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Pricing Section */}
-        <section id="pricing" className="w-full py-24 md:py-32 px-4 md:px-6 relative">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-blue-500/5 dark:bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
-
-          <div className="max-w-5xl mx-auto text-center relative z-10">
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-foreground">
-              {t.landing.pricingTitle}
-            </h2>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              {t.landing.pricingSubtitle}
-            </p>
-
-            {/* Toggle USD / BRL / EUR */}
-            <div className="flex justify-center mb-12">
-              <div className="inline-flex p-1 bg-muted/50 backdrop-blur-md rounded-full border border-border/50 shadow-lg">
-                {[
-                  { code: 'USD', label: 'USD ($)' },
-                  { code: 'BRL', label: 'BRL (R$)' },
-                  { code: 'EUR', label: 'EUR (€)' }
-                ].map((c) => (
-                  <button
-                    key={c.code}
-                    onClick={() => setCurrency(c.code as 'USD' | 'BRL' | 'EUR')}
-                    className={`px-5 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
-                      currency === c.code
-                        ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-105'
-                        : 'text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    {c.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="max-w-4xl mx-auto text-left grid md:grid-cols-2 gap-8 items-stretch">
-              {/* Card 1: Basic */}
-              <div className="rounded-[32px] bg-card border border-border/50 relative flex flex-col justify-between shadow-lg transition-transform hover:-translate-y-1">
-                <div className="p-8 md:p-10 flex flex-col justify-between h-full">
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-2xl font-bold text-foreground">{t.landing.basicPlanTitle}</h3>
-                      <p className="text-sm text-muted-foreground mt-1">Basic Access</p>
-                    </div>
-                    
-                    <div className="py-4 border-y border-border/40 my-6">
-                      <span className="text-muted-foreground line-through text-md font-medium block">
-                        {getPrice('basic', 'original')}
-                      </span>
-                      <div className="flex items-baseline gap-2 mt-1">
-                        <span className="text-4xl font-extrabold text-foreground tracking-tight">
-                          {getPrice('basic', 'discount')}
-                        </span>
-                      </div>
-                    </div>
-
-                    <ul className="space-y-4">
-                      {[
-                        { active: true, text: 'Ebooks Radar & Signals Access' },
-                        { active: true, text: '50 manual searches / month' },
-                        { active: true, text: 'Global Trends view' },
-                        { active: true, text: 'Public Ideas Library access' },
-                        { active: false, text: 'Lean Canvas & AI Blueprints generation' },
-                        { active: false, text: 'AI CTO & 8 Mentors Chat' }
-                      ].map((item, i) => (
-                        <li key={i} className={`flex items-start gap-3 text-sm font-medium ${item.active ? 'text-muted-foreground' : 'text-muted-foreground/45 line-through'}`}>
-                          {item.active ? (
-                            <CheckCircle2 className="h-5 w-5 text-primary shrink-0 opacity-70" />
-                          ) : (
-                            <span className="text-muted-foreground/35 font-extrabold text-lg leading-none shrink-0 w-5 text-center">×</span>
-                          )}
-                          <span>{item.text}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="mt-10 pt-6 border-t border-border/50">
-                    <a 
-                      href={LEMON_SQUEEZY_CHECKOUT_URLS.basic[currency]}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group/button inline-flex shrink-0 items-center justify-center bg-muted text-foreground hover:bg-muted/80 w-full h-12 text-md font-bold rounded-xl border border-border/50 transition-colors"
-                    >
-                      {t.landing.buyNow}
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 2: Pro Master */}
-              <div className="p-[2px] rounded-[32px] bg-gradient-to-b from-primary via-primary/50 to-purple-600/30 relative group flex flex-col justify-between shadow-2xl scale-105 z-10">
-                <div className="absolute inset-0 bg-primary/10 blur-2xl rounded-[32px] -z-10 group-hover:bg-primary/25 transition-all duration-700"/>
-                <div className="bg-card/95 backdrop-blur-xl rounded-[30px] p-8 md:p-10 flex flex-col justify-between h-full border border-border/50">
-                  <div className="space-y-6">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">{t.landing.proPlanTitle}</h3>
-                        <p className="text-sm text-primary mt-1 font-semibold">Recommended - Full Access</p>
-                      </div>
-                    </div>
-                    
-                    <div className="py-4 border-y border-border/40 my-6">
-                      <span className="text-muted-foreground line-through text-md font-medium block">
-                        {getPrice('pro', 'original')}
-                      </span>
-                      <div className="flex items-baseline gap-2 mt-1">
-                        <span className="text-5xl font-extrabold text-foreground tracking-tight">
-                          {getPrice('pro', 'discount')}
-                        </span>
-                      </div>
-                    </div>
-
-                    <ul className="space-y-4">
-                      {[
-                        'All Basic features with UNLIMITED searches',
-                        'Unlimited Lean Canvas & AI Blueprints generation',
-                        'Direct Chat with AI CTO + 8 Mentors Board',
-                        'Complete Landing Pages & Funnels AI generator',
-                        <span key="timer" className="text-red-500 font-bold flex items-center gap-1.5"><Clock className="w-4 h-4 animate-pulse" /> {t.landing.limitedTimeOffer} {formatTime(timeLeft)}</span>
-                      ].map((item, i) => (
-                        <li key={i} className="flex items-start gap-3 text-muted-foreground text-sm font-medium">
-                          <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                          <div className={i === 0 ? "text-foreground font-bold" : ""}>{item}</div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="mt-10 pt-6 border-t border-border/50 space-y-3">
-                    <a 
-                      href={LEMON_SQUEEZY_CHECKOUT_URLS.pro[currency]}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/85 w-full h-12 text-md font-bold rounded-xl shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5"
-                    >
-                      {t.landing.buyNow}
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-12 flex items-center justify-center gap-2 text-sm text-muted-foreground font-medium">
-              <Lock className="h-4 w-4" />
-              <span>SSL Encryption</span>
-            </div>
-          </div>
-        </section>
+        {/* Pricing Section — componente completo com toggle mensal/anual, LTD e multi-moeda */}
+        <PricingSection />
       </main>
 
       <footer className="border-t border-border/50 bg-background pt-20 pb-12 px-6 lg:px-14">

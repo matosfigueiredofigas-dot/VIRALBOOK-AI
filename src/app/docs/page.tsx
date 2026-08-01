@@ -1,172 +1,327 @@
+"use client";
+
+import { useState } from "react";
+import { 
+  Sparkles, Search, ArrowRight, Printer, 
+  CheckCircle2, Rocket, Globe
+} from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/language-context";
+
 export default function DocsPage() {
+  const { language, setLanguage } = useLanguage();
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const isEn = language === "en";
+  const isEs = language === "es";
+
   return (
-    <div className="space-y-20 pb-32">
-      <section id="introducao" className="space-y-6 scroll-mt-24">
-        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">O Manual Definitivo do ViralBook AI</h1>
-        <p className="text-xl text-muted-foreground leading-relaxed">
-          Bem-vindo à documentação oficial do ViralBook AI. Se você está aqui, você tomou a decisão de parar de adivinhar o que o mercado quer e começou a construir soluções baseadas em dados concretos, necessidades humanas reais e inteligência artificial de ponta. 
-        </p>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          O desenvolvimento tradicional de SaaS (Software as a Service) ensina que você deve ter uma ideia brilhante no chuveiro, gastar seis meses programando, investir milhares de reais em anúncios e, só então, descobrir se alguém realmente quer comprar aquilo. Nós construímos o ViralBook AI para destruir essa metodologia antiquada. O nosso processo inverte a lógica: primeiro nós encontramos a dor pela qual as pessoas já estão pagando em outras mídias (como livros físicos e e-books), e depois transformamos essa dor em um software.
-        </p>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          Ao longo desta documentação, você entenderá profundamente não apenas "onde clicar", mas a engenharia mental e estratégica por trás de cada funcionalidade do sistema. Nós dissecamos o comportamento de compra humano e o conectamos com motores de Inteligência Artificial para gerar planos de negócios completos em segundos. 
-        </p>
-      </section>
-
-      <div className="w-full h-px bg-border/50"></div>
-
-      <section id="radar" className="space-y-6 scroll-mt-24">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">1. Radar de Livros Virais (A Base de Dados do Google Books)</h2>
-        
-        <h3 className="text-2xl font-semibold mt-8 text-foreground/90">A Filosofia da Dor Humana</h3>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          Por que livros? Esta é a primeira pergunta que as pessoas fazem. A resposta reside na psicologia da compra. As pessoas não compram livros (especialmente livros de não-ficção, autoajuda ou técnicos) porque querem ler; elas compram porque têm um problema tão agudo que estão dispostas a investir dinheiro e, mais importante, dezenas de horas do seu tempo na esperança de resolvê-lo. Se milhares de pessoas estão comprando livros sobre "Como organizar as finanças como freelancer", significa que existe uma dor monetizável aí. O software é apenas a evolução do livro: em vez de ensinar a pessoa a resolver, o software resolve por ela.
-        </p>
-
-        <h3 className="text-2xl font-semibold mt-8 text-foreground/90">Como a Busca Funciona Tecnicamente</h3>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          O nosso "Radar de E-books" se conecta diretamente aos servidores da API Oficial do Google Books. Esta não é uma busca genérica do Google; é uma busca indexada e otimizada pelo ISBN e catálogo de publicações mundiais. Quando você digita uma palavra-chave, o ViralBook faz uma requisição segura (utilizando a sua chave de API privada), filtrando os resultados para trazer os volumes mais relevantes e procurados. O algoritmo traz metadados preciosos: Título, Subtítulo (onde a dor geralmente se esconde), Autor, Sinopse completa e Categorias.
-        </p>
-
-        <h3 className="text-2xl font-semibold mt-8 text-foreground/90">A Arte de Pesquisar (Engenharia de Prompt Humana)</h3>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          Para extrair o máximo do Radar, você precisa desaprender a buscar por "soluções" e começar a buscar por "sintomas". Se você buscar por "Software de Gestão", o algoritmo trará livros chatos de faculdade de administração, e o SaaS gerado será genérico e saturado. 
-        </p>
-        <div className="bg-muted/50 p-6 rounded-2xl border border-border mt-4">
-          <h4 className="font-bold text-foreground mb-4 text-xl">✅ Exemplos de Buscas Ouro vs ❌ Buscas Saturadas</h4>
-          <ul className="space-y-4 text-muted-foreground text-lg">
-            <li><strong className="text-red-400">❌ Ruim:</strong> "Aplicativo de Dieta" (É a solução, e já está cheia de concorrência)</li>
-            <li><strong className="text-emerald-400">✅ Ouro:</strong> "Fome Emocional" ou "Como parar de comer doces à noite" (É a dor real)</li>
-            <li className="pt-2"><strong className="text-red-400">❌ Ruim:</strong> "Gestão de Tarefas"</li>
-            <li><strong className="text-emerald-400">✅ Ouro:</strong> "TDAH para adultos" ou "Procrastinação no home office"</li>
-            <li className="pt-2"><strong className="text-red-400">❌ Ruim:</strong> "Finanças"</li>
-            <li><strong className="text-emerald-400">✅ Ouro:</strong> "Saindo das dívidas" ou "Divórcio e dinheiro"</li>
-          </ul>
-        </div>
-        
-        <p className="text-lg text-muted-foreground leading-relaxed mt-6">
-          Ao pesquisar pela dor, os resultados da API do Google vão revelar livros incrivelmente nichados. Você verá a sinopse exata de como os autores tentam curar essa dor usando texto. É nesse momento que o cérebro do ViralBook AI entra em ação: ele vai ler a sinopse de um livro que ensina uma teoria e vai pensar "Como eu posso automatizar essa teoria transformando-a em um aplicativo prático?".
-        </p>
-      </section>
-
-      <div className="w-full h-px bg-border/50"></div>
-
-      <section id="oportunidades" className="space-y-6 scroll-mt-24">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">2. Gerador de Oportunidades SaaS (Motor Groq)</h2>
-        
-        <h3 className="text-2xl font-semibold mt-8 text-foreground/90">A Conexão Groq + IA Generativa</h3>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          Uma vez que você encontrou um livro interessante no Radar, você notará o botão "Transformar em Micro-SaaS". Este é o coração do sistema. Ao clicar, o ViralBook AI captura os metadados do livro e os empacota em um prompt altamente especializado. Esse pacote de dados é disparado para a LPU (Language Processing Unit) da Groq, utilizando os modelos open-source mais rápidos do mundo (como o Llama 3). 
-        </p>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          Nós escolhemos a Groq para essa arquitetura porque a velocidade de inferência (tokens por segundo) é astronômica. Em frações de segundo, a inteligência artificial absorve o contexto do livro, analisa as tendências de desenvolvimento web, mapeia a viabilidade econômica e cospe uma resposta formatada em JSON com um plano de negócios estruturado e um Lean Canvas completo.
-        </p>
-
-        <h3 className="text-2xl font-semibold mt-8 text-foreground/90">Decifrando as Métricas Geradas</h3>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          A IA não gera apenas uma ideia vaga; ela constrói uma arquitetura mental pronta para execução. Você precisa entender como ler o que ela gera:
-        </p>
-
-        <div className="space-y-6 mt-4">
-          <div className="pl-6 border-l-4 border-primary/50">
-            <h4 className="text-xl font-bold text-foreground">Score de Viralidade (Viral Opportunity Score)</h4>
-            <p className="text-lg text-muted-foreground mt-2">
-              Esta é uma pontuação de 0 a 100. A IA calcula a probabilidade de o software se vender sozinho por causa do seu alto "fator de compartilhamento" ou dor latente extrema. 
-              <br/><br/>
-              - <strong>80 a 100:</strong> Oceano Azul. Produto altamente visual ou que resolve uma dor tão urgente que os usuários imploraram por isso. Invista pesado.<br/>
-              - <strong>50 a 79:</strong> Produto sólido, mas vai exigir esforço de marketing de conteúdo, SEO ou tráfego pago para tracionar.<br/>
-              - <strong>Abaixo de 50:</strong> Cuidado. Geralmente nichos B2B complexos que exigem vendas enterprise demoradas e reuniões de zoom.
-            </p>
+    <div className="space-y-12 pb-24">
+      {/* HEADER PRINCIPAL DO MANUAL */}
+      <div className="rounded-3xl bg-gradient-to-br from-card via-card/80 to-primary/5 p-8 md:p-12 border border-border/50 shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 blur-3xl pointer-events-none rounded-full"></div>
+        <div className="relative z-10 space-y-6">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-extrabold uppercase tracking-wider">
+              <Sparkles className="h-3.5 w-3.5" /> 
+              {isEn ? "Official Manual v2.5 — Master Pro Edition" : isEs ? "Manual Oficial v2.5 — Edición Master Pro" : "Manual Oficial v2.5 — Edição Master Pro"}
+            </div>
+            
+            {/* Seletor de Idioma no Header do Manual */}
+            <div className="inline-flex p-1 bg-muted/60 rounded-xl border border-border/50 text-xs font-bold gap-1">
+              <button 
+                onClick={() => setLanguage('pt', true)} 
+                className={`px-2.5 py-1 rounded-lg transition-all ${language === 'pt' ? 'bg-primary text-primary-foreground shadow' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                🇵🇹 PT
+              </button>
+              <button 
+                onClick={() => setLanguage('en', true)} 
+                className={`px-2.5 py-1 rounded-lg transition-all ${language === 'en' ? 'bg-primary text-primary-foreground shadow' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                🇺🇸 EN
+              </button>
+              <button 
+                onClick={() => setLanguage('es', true)} 
+                className={`px-2.5 py-1 rounded-lg transition-all ${language === 'es' ? 'bg-primary text-primary-foreground shadow' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                🇪🇸 ES
+              </button>
+            </div>
           </div>
 
-          <div className="pl-6 border-l-4 border-primary/50">
-            <h4 className="text-xl font-bold text-foreground">Custo de Construção (Build Cost)</h4>
-            <p className="text-lg text-muted-foreground mt-2">
-              Como desenvolvedor ou empreendedor solo (Indie Hacker), seu tempo e caixa são limitados. 
-              <br/><br/>
-              - <strong>Baixo (Low):</strong> Pode ser construído com ferramentas No-Code (Bubble, FlutterFlow) ou scripts simples (Next.js + Vercel) em 1 a 2 fins de semana. Não requer treinar modelos complexos de IA ou integrações bancárias pesadas.<br/>
-              - <strong>Médio (Medium):</strong> Exige integrações de API terceiras, um banco de dados relacional (Supabase/PostgreSQL) bem estruturado e possivelmente processamento em background (jobs). Tempo estimado: 1 a 3 meses.<br/>
-              - <strong>Alto (High):</strong> Fuja disso se você for iniciante. Exige hardware proprietário, leis complexas (HIPAA, LGPD) ou criação de modelos massivos de IA do zero.
-            </p>
-          </div>
-
-          <div className="pl-6 border-l-4 border-primary/50">
-            <h4 className="text-xl font-bold text-foreground">O Lean Canvas (Modelo de Negócios enxuto)</h4>
-            <p className="text-lg text-muted-foreground mt-2">
-              A inteligência artificial estrutura nove blocos fundamentais para você não se perder: <em>Problema, Solução, Proposta de Valor, Vantagem Injusta, Segmentos de Cliente, Métricas Chave, Canais de Distribuição, Estrutura de Custos e Fluxo de Receita.</em>
-              A Vantagem Injusta (Unfair Advantage) é talvez o bloco mais vital que a IA vai te dar. Se a vantagem apontada for "somos mais baratos", descarte a ideia. O ViralBook vai te sugerir vantagens como "Processamento proprietário de áudio para ansiedade" ou "Efeito de rede fechado para nicho X".
-            </p>
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-foreground leading-[1.15]">
+            {isEn ? "OFFICIAL MANUAL FOR" : isEs ? "MANUAL OFICIAL DE" : "MANUAL OFICIAL DO"} <br />
+            <span className="bg-gradient-to-r from-blue-500 via-primary to-purple-500 bg-clip-text text-transparent">
+              VIRALBOOK AI
+            </span>
+          </h1>
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl leading-relaxed">
+            {isEn 
+              ? "The Definitive Guide to Identifying Opportunities, Validating Software Ideas, Consulting AI Mentors, and Building Successful Startups." 
+              : isEs 
+              ? "La Guía Definitiva para Identificar Oportunidades, Validar Ideas de Software, Consultar Mentores de IA y Construir Startups de Éxito." 
+              : "O Guia Definitivo para Identificar Oportunidades, Validar Ideias de Software, Consultar Mentores de IA e Construir Startups de Sucesso."}
+          </p>
+          
+          <div className="flex flex-wrap gap-4 pt-4">
+            <Button onClick={handlePrint} className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold rounded-xl h-11 px-6 shadow-lg shadow-primary/20">
+              <Printer className="mr-2 h-4 w-4" /> {isEn ? "Print / Save PDF" : isEs ? "Imprimir / Guardar PDF" : "Imprimir / Salvar em PDF"}
+            </Button>
+            <Link href="/dashboard">
+              <Button variant="outline" className="font-bold rounded-xl h-11 px-6 border-border/50">
+                <Rocket className="mr-2 h-4 w-4 text-primary" /> {isEn ? "Go to Platform" : isEs ? "Ir a la Plataforma" : "Ir para a Plataforma"}
+              </Button>
+            </Link>
           </div>
         </div>
+      </div>
+
+      {/* BARRA DE PESQUISA E STATUS */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-card border border-border/50">
+        <div className="relative w-full md:w-96">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder={isEn ? "Search by chapter or topic..." : isEs ? "Buscar por capítulo o tema..." : "Pesquisar por capítulo, ferramenta ou dúvida..."}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 text-sm bg-muted/50 rounded-xl border border-border/50 focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
+        <div className="text-xs font-semibold text-muted-foreground flex items-center gap-2">
+          <span>{isEn ? "12 Complete Chapters" : isEs ? "12 Capítulos Completos" : "12 Capítulos Completos"}</span>
+          <span>•</span>
+          <span className="flex items-center gap-1"><Globe className="h-3.5 w-3.5 text-primary" /> PT / EN / ES</span>
+        </div>
+      </div>
+
+      {/* PREFÁCIO & INTRODUÇÃO */}
+      <section id="prefacio" className="space-y-6 scroll-mt-24 p-8 rounded-3xl bg-card/40 border border-border/50">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-500 text-xs font-extrabold uppercase">
+          {isEn ? "Preface & Introduction" : isEs ? "Prefacio e Introducción" : "Prefácio & Introdução"}
+        </div>
+        <h2 className="text-3xl font-extrabold text-foreground">
+          {isEn ? "The Era of Reverse Engineering Validated Demands" : isEs ? "La Era de la Ingeniería Inversa de Demandas Validadas" : "A Era da Engenharia Inversa de Demandas Validadas"}
+        </h2>
+        <p className="text-muted-foreground leading-relaxed text-base">
+          {isEn 
+            ? "For decades, software entrepreneurship suffered from a chronic issue: founders spent months coding software based on assumptions, only to discover on launch day that nobody wanted to buy it."
+            : isEs
+            ? "Durante décadas, el emprendimiento de software sufrió un problema crónico: los fundadores pasaban meses programando basándose en suposiciones, solo para descubrir el día del lanzamiento que nadie quería comprarlo."
+            : "Durante décadas, o empreendedorismo de tecnologia sofreu com um problema crónico: fundadores gastavam meses codificando softwares baseados no puro achismo para descobrirem, no dia do lançamento, que ninguém queria comprar o produto."}
+        </p>
+        <p className="text-muted-foreground leading-relaxed text-base">
+          {isEn
+            ? "ViralBook AI reverses this logic. Instead of inventing an idea from scratch, we map viral books and bestsellers whose pain points are already validated by millions of paying readers, extracting the exact software solution needed."
+            : isEs
+            ? "ViralBook AI invierte esa lógica. En lugar de inventar una idea desde cero, mapeamos libros virales y bestsellers cuyos problemas ya fueron validados por millones de lectores, extrayendo la solución de software exacta."
+            : "O ViralBook AI inverte essa lógica. Em vez de inventar uma ideia do zero, nós mapeamos livros virais e bestsellers cujas dores já foram validadas por milhões de leitores pagantes e extraímos a lacuna exata de software necessária para resolver essa dor no dia a dia."}
+        </p>
       </section>
 
-      <div className="w-full h-px bg-border/50"></div>
-
-      <section id="favoritos" className="space-y-6 scroll-mt-24">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">3. O Cofre de Nichos (Favoritos e Banco de Dados)</h2>
+      {/* CAPÍTULO 1 */}
+      <section id="capitulo-1" className="space-y-6 scroll-mt-24 p-8 rounded-3xl bg-card/40 border border-border/50">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-extrabold uppercase">
+          {isEn ? "Chapter 1" : isEs ? "Capítulo 1" : "Capítulo 1"}
+        </div>
+        <h2 className="text-3xl font-extrabold text-foreground">
+          {isEn ? "History, Philosophy, and Methodology of ViralBook AI" : isEs ? "Historia, Filosofía y Metodología de ViralBook AI" : "A História, Filosofia e Metodologia do ViralBook AI"}
+        </h2>
         
-        <h3 className="text-2xl font-semibold mt-8 text-foreground/90">Persistência e Arquitetura Supabase</h3>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          No mundo das ideias, a pior coisa que pode acontecer é você gerar o próximo unicórnio na tela do seu computador, fechar a aba sem querer, e perder a ideia para sempre. É por isso que criamos um ecossistema persistente apoiado pelo Supabase (o gigante banco de dados relacional baseado em PostgreSQL).
-        </p>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          Quando a IA (Groq) cospe o resultado formatado no Dashboard, ele é lindo, mas ainda é volátil (está na memória RAM do seu navegador). No momento em que você clica no ícone de <strong>Coração (🤍)</strong>, uma engrenagem de backend é acionada: o sistema formata o JSON da IA, limpa os campos para as tipagens do banco de dados e executa uma query de inserção (INSERT) nas tabelas relacionais (`opportunities` e `user_favorites`).
-        </p>
-
-        <h3 className="text-2xl font-semibold mt-8 text-foreground/90">Autenticação Segura (Google OAuth)</h3>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          O Cofre de Nichos é altamente pessoal. Você não quer que seus concorrentes vejam quais nichos você está estudando. Para garantir proteção em nível empresarial, integramos o Supabase Auth com o protocolo OAuth do Google. 
-        </p>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          A rota protegida da página de Favoritos (`/favorites`) executa uma verificação Sever-Side Rendering (SSR). Isso significa que a verificação de segurança ocorre dentro do servidor, antes mesmo de a tela ser enviada para o seu navegador. Se um usuário anônimo tentar acessar a URL digitando-a diretamente no navegador, o servidor do Next.js intercepta a requisição, nega o acesso ao banco de dados e dispara um redirecionamento forçado (Redirect 301) para a página de Login. Seus dados estão criptografados e atrelados unicamente ao seu Session ID (Token JWT).
+        <p className="text-muted-foreground leading-relaxed">
+          {isEn 
+            ? "ViralBook AI was created to solve the bottleneck of modern entrepreneurship: the abundance of coding tools combined with a scarcity of ideas backed by proven market demand."
+            : isEs
+            ? "ViralBook AI nació para resolver el cuello de botella del emprendimiento moderno: la abundancia de herramientas de código combinada con la escasez de ideas validadas."
+            : "O ViralBook AI nasceu para resolver o gargalo do empreendedorismo moderno: a abundância de ferramentas de código aliada à escassez de ideias com demanda comprovada."}
         </p>
 
-        <h3 className="text-2xl font-semibold mt-8 text-foreground/90">Organização e Filtros Avançados</h3>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          Conforme você usa o Radar diariamente, é normal acumular 50, 100, 200 ideias no seu cofre. Navegar por isso manualmente se tornaria caótico. A aba de Favoritos não é apenas uma "lista", é um painel de gerenciamento.
-          Implementamos uma camada de filtros em tempo real. Você pode:
-        </p>
-        <ul className="list-disc pl-6 space-y-2 text-muted-foreground text-lg mt-4">
-          <li><strong>Busca Semântica:</strong> Digitar palavras-chave que pesquisam não apenas no título do SaaS, mas também na categoria do livro original e na descrição do problema resolvido.</li>
-          <li><strong>Filtro de Qualidade:</strong> O controle deslizante (Slider) permite que você oculte projetos medianos. Se você tem 100 ideias salvas, basta arrastar o slider de "Score de Viralidade Mínimo" para 85, e a tela piscará, mostrando apenas as pepitas de ouro (top 5% das suas ideias).</li>
-        </ul>
-        
-        <p className="text-lg text-muted-foreground leading-relaxed mt-6">
-          A união dessas três funcionalidades (Busca em Livros + Geração por LPU/Groq + Cofre Seguro no Supabase) é o que torna o ViralBook AI uma máquina implacável. Você não está mais limitado pela sua criatividade; você se tornou um caçador munido de algoritmos.
-        </p>
+        <div className="grid md:grid-cols-2 gap-6 my-6">
+          <div className="p-6 rounded-2xl bg-red-500/5 border border-red-500/10">
+            <h4 className="font-bold text-red-500 mb-2 flex items-center gap-2">❌ {isEn ? "Traditional Model (Guesswork)" : isEs ? "Modelo Tradicional (Suposiciones)" : "Modelo Tradicional (Achismo)"}</h4>
+            <ul className="text-sm text-muted-foreground space-y-2">
+              <li>• {isEn ? "Ideas based purely on founder intuition" : isEs ? "Ideas basadas puramente en la intuición" : "Ideia nascida da intuição individual do fundador"}</li>
+              <li>• {isEn ? "3 to 6 months of coding before testing" : isEs ? "3 a 6 meses de código antes de probar" : "3 a 6 meses de desenvolvimento antes de testar"}</li>
+              <li>• {isEn ? "Extremely high Customer Acquisition Cost (CAC)" : isEs ? "Costo de Adquisición (CAC) altísimo" : "Custo de Aquisição (CAC) altíssimo"}</li>
+              <li>• {isEn ? "Over 90% failure rate" : isEs ? "Más del 90% de tasa de fracaso" : "Mais de 90% de taxa de mortalidade"}</li>
+            </ul>
+          </div>
+          <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/10">
+            <h4 className="font-bold text-emerald-500 mb-2 flex items-center gap-2">🚀 {isEn ? "ViralBook AI Method (Validated Demand)" : isEs ? "Método ViralBook AI (Demanda Validada)" : "Método ViralBook AI (Demanda Validada)"}</h4>
+            <ul className="text-sm text-foreground font-medium space-y-2">
+              <li>• {isEn ? "Ideas anchored in bestsellers with millions of copies" : isEs ? "Ideas ancladas en bestsellers con millones de copias" : "Ideia ancorada em bestsellers com milhões de cópias"}</li>
+              <li>• {isEn ? "Market validation in 24 to 48 hours" : isEs ? "Validación de mercado en 24 a 48 horas" : "Validação de mercado em 24 a 48 horas"}</li>
+              <li>• {isEn ? "Qualified audience ready to buy" : isEs ? "Audiencia cualificada y lista para comprar" : "Audiência qualificada e pronta para comprar"}</li>
+              <li>• {isEn ? "Drastically reduced risk with blue oceans" : isEs ? "Riesgo reducido drásticamente con océanos azules" : "Risco drasticamente reduzido com oceanos azuis"}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="p-6 rounded-2xl bg-muted/50 border border-border/50 space-y-2">
+          <h4 className="font-bold text-foreground">📌 {isEn ? "Chapter 1 Summary" : isEs ? "Resumen del Capítulo 1" : "Resumo do Capítulo 1"}</h4>
+          <p className="text-sm text-muted-foreground">
+            {isEn 
+              ? "The 4-step methodology (Discovery, Validation, Advisory, Launch) ensures every project has technical feasibility and irresistible commercial appeal."
+              : isEs 
+              ? "La metodología de 4 pasos (Descubrimiento, Validación, Mentoría y Lanzamiento) garantiza viabilidad técnica y atractivo comercial."
+              : "A metodologia em 4 etapas (Descoberta, Validação, Mentoria e Lançamento) garante que cada projeto tenha viabilidade técnica e apelo comercial irresistível."}
+          </p>
+        </div>
       </section>
 
-      <div className="w-full h-px bg-border/50"></div>
-
-      <section id="escala-e-facebook" className="space-y-6 scroll-mt-24">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">4. Validação do Facebook, Biblioteca de Reutilização e Escala</h2>
+      {/* CAPÍTULO 2 */}
+      <section id="capitulo-2" className="space-y-6 scroll-mt-24 p-8 rounded-3xl bg-card/40 border border-border/50">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-extrabold uppercase">
+          {isEn ? "Chapter 2" : isEs ? "Capítulo 2" : "Capítulo 2"}
+        </div>
+        <h2 className="text-3xl font-extrabold text-foreground">
+          {isEn ? "Platform Architecture and Step-by-Step Navigation" : isEs ? "Arquitectura de la Plataforma y Navegación" : "Arquitetura da Plataforma e Navegação Passo a Passo"}
+        </h2>
         
-        <h3 className="text-2xl font-semibold mt-8 text-foreground/90">Validação Ampliada com Facebook Ads e Grupos</h3>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          Para enriquecer os sinais de demanda comercial do mercado, estendemos o motor de varredura de validação social para incluir métricas inteligentes do Facebook (Ads Library e Facebook Groups). 
-        </p>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          Diferente do Reddit, o Facebook não possui endpoints JSON públicos e simples. Criamos um agente inteligente que analisa o nicho e gera estimativas de saturação de campanhas de anúncios ativos e quantidade de grupos de discussão. Esses dados ajudam a identificar se o mercado já compra soluções (anúncios ativos) e onde seu público-alvo se reúne (grupos), facilitando sua estratégia de aquisição orgânica de clientes.
-        </p>
-
-        <h3 className="text-2xl font-semibold mt-8 text-foreground/90">A Biblioteca de Reutilização (Histórico)</h3>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          Adicionamos uma aba de <strong>Histórico & Biblioteca</strong> em `/library`. Ela funciona como uma estante virtual de livros que permite visualizar e reutilizar todas as análises de e-books e ideias de SaaS pré-calculadas e salvas no banco de dados.
-        </p>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          Com a nossa camada de <strong>cache de 7 dias</strong>, buscas por termos repetidos carregam instantaneamente a partir do banco de dados, sem realizar novas chamadas para as APIs e IA externas, protegendo e economizando seus créditos.
+        <p className="text-muted-foreground leading-relaxed">
+          {isEn 
+            ? "The interface is built in responsive Glassmorphism with support for 5 visual themes (Dark, Light, Tech AI, Cyberpunk, and Retro). The sidebar menu divides the journey into 3 startup maturity phases:"
+            : isEs 
+            ? "La interfaz está diseñada en Glassmorphism responsivo con soporte para 5 temas visuales (Dark, Light, Tech AI, Cyberpunk y Retro). El menú lateral divide el viaje en 3 fases de madurez:"
+            : "A interface foi projetada em Glassmorphism responsivo com suporte a 5 temas visuais (Dark, Light, Tech AI, Cyberpunk e Retro). O menu lateral divide a jornada nas 3 fases de maturidade da startup:"}
         </p>
 
-        <h3 className="text-2xl font-semibold mt-8 text-foreground/90">Proteções de Escopo e Performance (100.000+ Registros)</h3>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          Para garantir a integridade da aplicação em produção e suportar dezenas de milhares de usuários ativos sem explosão de custos:
-        </p>
-        <ul className="list-disc pl-6 space-y-2 text-muted-foreground text-lg mt-4">
-          <li><strong>Rate Limiting no Servidor:</strong> Cada usuário autenticado tem um limite de até <strong>10 pesquisas de radar a cada 24 horas</strong>. O Next.js gerencia esse controle de forma limpa através de consultas no próprio banco de dados, retornando o status HTTP 429 quando excedido.</li>
-          <li><strong>Resiliência de IA (Failover):</strong> Caso o Groq atinja limites de requisições por minuto (RPM) ou cota de tokens, o sistema detecta a falha e redireciona automaticamente para a API da OpenAI (modelo <code>gpt-4o-mini</code>) se uma chave estiver configurada no ambiente.</li>
-          <li><strong>Otimização de Índices (Postgres):</strong> Foram aplicados índices B-Tree nas colunas de busca (país, data de criação e ID do usuário) e índices <strong>GIN baseados em trigramas (pg_trgm)</strong> nas colunas de texto <code>saas_name</code> e <code>problem_solved</code>, mantendo buscas por texto rápidas e responsivas mesmo com mais de 100 mil registros no banco.</li>
-        </ul>
+        <div className="p-6 rounded-2xl bg-card border border-border/50 space-y-4">
+          <div className="flex items-center justify-between border-b border-border/40 pb-3">
+            <span className="font-bold text-primary text-sm">{isEn ? "Phase 1: Ideation" : isEs ? "Fase 1: Ideación" : "Fase 1: Ideação"}</span>
+            <span className="text-xs text-muted-foreground">Library (/library) & Radar (/radar)</span>
+          </div>
+          <div className="flex items-center justify-between border-b border-border/40 pb-3">
+            <span className="font-bold text-primary text-sm">{isEn ? "Phase 2: Validation" : isEs ? "Fase 2: Validación" : "Fase 2: Validação"}</span>
+            <span className="text-xs text-muted-foreground">Landing Pages (/landing-pages) & Advisors (/advisors)</span>
+          </div>
+          <div className="flex items-center justify-between pb-1">
+            <span className="font-bold text-primary text-sm">{isEn ? "Phase 3: Traction" : isEs ? "Fase 3: Tracción" : "Fase 3: Tração"}</span>
+            <span className="text-xs text-muted-foreground">Email Funnel (/email-funnel) & Showcase (/showcase)</span>
+          </div>
+        </div>
+      </section>
+
+      {/* CAPÍTULO 3 */}
+      <section id="capitulo-3" className="space-y-6 scroll-mt-24 p-8 rounded-3xl bg-card/40 border border-border/50">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-extrabold uppercase">
+          {isEn ? "Chapter 3" : isEs ? "Capítulo 3" : "Capítulo 3"}
+        </div>
+        <h2 className="text-3xl font-extrabold text-foreground">
+          {isEn ? "Exhaustive Guide to Features and Buttons" : isEs ? "Guía Detallada de Funcionalidades y Botones" : "Guia Exaustivo de Cada Funcionalidade e Botão"}
+        </h2>
+
+        <div className="space-y-4">
+          <div className="p-4 rounded-xl bg-muted/40 border border-border/50">
+            <h4 className="font-bold text-foreground text-base">1. Global Viral Book Radar (`/radar`)</h4>
+            <p className="text-xs text-muted-foreground mt-1">{isEn ? "Searches real-time Amazon & Google Books data. Includes the ⚡ Analyze with AI button." : isEs ? "Busca datos en tiempo real de Amazon/Google Books. Incluye el botón ⚡ Analizar con IA." : "Busca dados em tempo real da Amazon/Google Books por palavra-chave ou nicho. Inclui o botão ⚡ Analisar com IA."}</p>
+          </div>
+          <div className="p-4 rounded-xl bg-muted/40 border border-border/50">
+            <h4 className="font-bold text-foreground text-base">2. Opportunities Library (`/library`)</h4>
+            <p className="text-xs text-muted-foreground mt-1">{isEn ? "AI ideas catalog and generator. Grants direct access to Lean Canvas, Product Simulator, Advisors, and Landing Pages." : isEs ? "Catálogo y generador de ideas con IA. Da acceso a Lean Canvas, Simulador de Producto, Mentores y Landing Page." : "Catálogo e gerador de ideias com IA. Dá acesso direto aos botões de Lean Canvas, Simulador de Produto, Mentores e Landing Page."}</p>
+          </div>
+          <div className="p-4 rounded-xl bg-muted/40 border border-border/50">
+            <h4 className="font-bold text-foreground text-base">3. Lean Canvas & Product Simulator (`ProductSimulator`)</h4>
+            <p className="text-xs text-muted-foreground mt-1">{isEn ? "Renders UI visual prototype, classifies P0/P1/P2 features, and provides code prompts for Cursor/v0." : isEs ? "Renderiza el prototipo visual de la UI, clasifica funciones P0/P1/P2 y genera prompts para Cursor/v0." : "Renderiza o protótipo visual da UI, classifica funcionalidades em P0/P1/P2 e fornece prompts de código para editores como Cursor/v0."}</p>
+          </div>
+          <div className="p-4 rounded-xl bg-muted/40 border border-border/50">
+            <h4 className="font-bold text-foreground text-base">4. AI Advisory Board (`/advisors`)</h4>
+            <p className="text-xs text-muted-foreground mt-1">{isEn ? "Simulates executive meeting with 8 business legends, calculating the Board Score (0-100) and offering real-time voice chat (TTS)." : isEs ? "Simula una reunión ejecutiva con 8 leyendas de negocios, calcula el Board Score (0-100) y ofrece chat de voz (TTS)." : "Simula a reunião executiva com 8 lendas dos negócios, atribuindo a nota Board Score (0-100) e fornecendo chat em tempo real com voz (TTS)."}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* CAPÍTULO 7 MENTORES */}
+      <section id="capitulo-7" className="space-y-6 scroll-mt-24 p-8 rounded-3xl bg-card/40 border border-border/50">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-extrabold uppercase">
+          {isEn ? "Chapter 7" : isEs ? "Capítulo 7" : "Capítulo 7"}
+        </div>
+        <h2 className="text-3xl font-extrabold text-foreground">
+          {isEn ? "The Advisory Board of 8 Business Legends" : isEs ? "El Consejo Consultivo de 8 Leyendas de Negocios" : "O Conselho Consultivo das 8 Lendas dos Negócios"}
+        </h2>
+        
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="p-4 rounded-xl bg-card border border-border/50 text-center">
+            <div className="font-bold text-sm text-foreground">Paul Graham</div>
+            <div className="text-[10px] text-muted-foreground">Simplicity & PMF</div>
+          </div>
+          <div className="p-4 rounded-xl bg-card border border-border/50 text-center">
+            <div className="font-bold text-sm text-foreground">Steve Jobs</div>
+            <div className="text-[10px] text-muted-foreground">UX & Saying No</div>
+          </div>
+          <div className="p-4 rounded-xl bg-card border border-border/50 text-center">
+            <div className="font-bold text-sm text-foreground">Pieter Levels</div>
+            <div className="text-[10px] text-muted-foreground">Ship Fast (24h)</div>
+          </div>
+          <div className="p-4 rounded-xl bg-card border border-border/50 text-center">
+            <div className="font-bold text-sm text-foreground">Naval Ravikant</div>
+            <div className="text-[10px] text-muted-foreground">Code Leverage</div>
+          </div>
+          <div className="p-4 rounded-xl bg-card border border-border/50 text-center">
+            <div className="font-bold text-sm text-foreground">Elon Musk</div>
+            <div className="text-[10px] text-muted-foreground">First Principles</div>
+          </div>
+          <div className="p-4 rounded-xl bg-card border border-border/50 text-center">
+            <div className="font-bold text-sm text-foreground">Sam Altman</div>
+            <div className="text-[10px] text-muted-foreground">100x Scale & AI</div>
+          </div>
+          <div className="p-4 rounded-xl bg-card border border-border/50 text-center">
+            <div className="font-bold text-sm text-foreground">Mark Zuckerberg</div>
+            <div className="text-[10px] text-muted-foreground">Retention & Virality</div>
+          </div>
+          <div className="p-4 rounded-xl bg-card border border-border/50 text-center">
+            <div className="font-bold text-sm text-foreground">Jeff Bezos</div>
+            <div className="text-[10px] text-muted-foreground">Customer Obsession</div>
+          </div>
+        </div>
+      </section>
+
+      {/* CAPÍTULO 12 & ROADMAP */}
+      <section id="capitulo-12" className="space-y-6 scroll-mt-24 p-8 rounded-3xl bg-card/40 border border-border/50">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-extrabold uppercase">
+          {isEn ? "Chapter 12" : isEs ? "Capítulo 12" : "Capítulo 12"}
+        </div>
+        <h2 className="text-3xl font-extrabold text-foreground">
+          {isEn ? "The 30-Day Roadmap & Launch Readiness Checklist" : isEs ? "Roadmap de 30 Días y Lista de Verificación" : "O Roadmap de 30 Dias & Checklist de Prontidão"}
+        </h2>
+
+        <div className="p-6 rounded-2xl bg-card border border-border/50">
+          <h4 className="font-bold text-foreground mb-2">{isEn ? "30-Item Readiness Checklist Summary:" : isEs ? "Resumen de Lista de Verificación de 30 Puntos:" : "Checklist de Prontidão (30 Itens Resumidos):"}</h4>
+          <div className="grid md:grid-cols-2 gap-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" /> {isEn ? "Viral book selected on Radar" : isEs ? "Libro viral seleccionado en el Radar" : "Livro viral selecionado no Radar"}</div>
+            <div className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" /> {isEn ? "Board Score > 75/100" : isEs ? "Board Score > 75/100" : "Board Score dos Mentores > 75/100"}</div>
+            <div className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" /> {isEn ? "Landing Page generated & live" : isEs ? "Landing Page generada y publicada" : "Landing Page gerada e publicada"}</div>
+            <div className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" /> {isEn ? "50 waitlist subscribers" : isEs ? "50 inscritos en lista de espera" : "Lista de espera com 50 inscritos"}</div>
+            <div className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" /> {isEn ? "Code prompts copied to Cursor/v0" : isEs ? "Prompts de código copiados a Cursor/v0" : "Prompts copiados para o Cursor/v0"}</div>
+            <div className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" /> {isEn ? "Project submitted to Showcase" : isEs ? "Proyecto publicado en el Showcase" : "Projeto publicado no Showcase"}</div>
+          </div>
+        </div>
+
+        <div className="pt-6 border-t border-border/40 text-center space-y-4">
+          <h3 className="text-2xl font-extrabold text-foreground">
+            {isEn ? "Ready to Build Your Next Startup?" : isEs ? "¿Listo para Construir tu Próxima Startup?" : "Pronto para Construir sua Próxima Startup?"}
+          </h3>
+          <p className="text-muted-foreground text-sm max-w-xl mx-auto">
+            {isEn 
+              ? "Access the Global Radar now and take the first step towards turning a viral bestseller into a profitable digital business."
+              : isEs 
+              ? "Accede al Radar Global ahora y da el primer paso para convertir un bestseller viral en un negocio digital rentable."
+              : "Acesse o Radar Global agora mesmo e dê o primeiro passo para transformar um bestseller viral num negócio digital lucrativo."}
+          </p>
+          <div className="flex justify-center gap-4 pt-2">
+            <Link href="/radar">
+              <Button className="bg-primary text-primary-foreground font-bold rounded-xl h-12 px-8 shadow-lg shadow-primary/20">
+                {isEn ? "Access Book Radar" : isEs ? "Acceder al Radar" : "Acessar o Radar de Livros"} <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
       </section>
     </div>
   );
