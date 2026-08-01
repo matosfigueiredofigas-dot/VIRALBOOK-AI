@@ -248,7 +248,7 @@ export async function POST(req: Request) {
     }
 
     // 2. Enviar email de boas-vindas imediatamente
-    const resend = getSendClient();
+    const resend = new Resend(process.env.RESEND_API_KEY || 're_placeholder');
     const template = emailWelcome(name || '');
     const { error: emailError } = await resend.emails.send({
       from: 'ViralBook AI <onboarding@resend.dev>',
