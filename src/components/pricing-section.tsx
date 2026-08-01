@@ -5,42 +5,39 @@ import { CheckCircle2, Clock, Lock, Zap, Crown, Star, ArrowRight, Infinity } fro
 import { useLanguage } from "@/contexts/language-context";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Dual Payment Processor Strategy:
-//   🇧🇷 BRL  → Hotmart   (melhor conversão no Brasil: Pix, boleto, afiliados)
-//   🇺🇸 USD  → LemonSqueezy (global: cartão internacional, Apple Pay)
-//   🇪🇺 EUR  → LemonSqueezy (Europa)
+// 100% Hotmart — BRL, USD e EUR
+// Pix | Boleto | Cartão Internacional | PayPal
+// Deteta automaticamente a moeda e idioma do comprador
 // ─────────────────────────────────────────────────────────────────────────────
 const CHECKOUT_URLS = {
   basic: {
     monthly: {
-      // LemonSqueezy — USD & EUR
-      USD: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BASIC_USD_URL    || "https://viralbook.lemonsqueezy.com/checkout/buy/basic-usd",
-      EUR: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BASIC_EUR_URL    || "https://viralbook.lemonsqueezy.com/checkout/buy/basic-eur",
-      // Hotmart — BRL
-      BRL: process.env.NEXT_PUBLIC_HOTMART_BASIC_BRL_URL          || "https://pay.hotmart.com/BASIC_BRL_ID",
+      BRL: process.env.NEXT_PUBLIC_HOTMART_BASIC_BRL_URL     || "https://pay.hotmart.com/BASIC_BRL",
+      USD: process.env.NEXT_PUBLIC_HOTMART_BASIC_USD_URL     || "https://pay.hotmart.com/BASIC_USD",
+      EUR: process.env.NEXT_PUBLIC_HOTMART_BASIC_EUR_URL     || "https://pay.hotmart.com/BASIC_EUR",
     },
     annual: {
-      USD: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BASIC_ANNUAL_USD_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/basic-annual-usd",
-      EUR: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BASIC_ANNUAL_EUR_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/basic-annual-eur",
-      BRL: process.env.NEXT_PUBLIC_HOTMART_BASIC_ANNUAL_BRL_URL       || "https://pay.hotmart.com/BASIC_ANNUAL_BRL_ID",
+      BRL: process.env.NEXT_PUBLIC_HOTMART_BASIC_ANNUAL_BRL_URL || "https://pay.hotmart.com/BASIC_ANNUAL_BRL",
+      USD: process.env.NEXT_PUBLIC_HOTMART_BASIC_ANNUAL_USD_URL || "https://pay.hotmart.com/BASIC_ANNUAL_USD",
+      EUR: process.env.NEXT_PUBLIC_HOTMART_BASIC_ANNUAL_EUR_URL || "https://pay.hotmart.com/BASIC_ANNUAL_EUR",
     },
   },
   pro: {
     monthly: {
-      USD: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_PRO_USD_URL     || "https://viralbook.lemonsqueezy.com/checkout/buy/pro-usd",
-      EUR: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_PRO_EUR_URL     || "https://viralbook.lemonsqueezy.com/checkout/buy/pro-eur",
-      BRL: process.env.NEXT_PUBLIC_HOTMART_PRO_BRL_URL           || "https://pay.hotmart.com/PRO_BRL_ID",
+      BRL: process.env.NEXT_PUBLIC_HOTMART_PRO_BRL_URL       || "https://pay.hotmart.com/PRO_BRL",
+      USD: process.env.NEXT_PUBLIC_HOTMART_PRO_USD_URL       || "https://pay.hotmart.com/PRO_USD",
+      EUR: process.env.NEXT_PUBLIC_HOTMART_PRO_EUR_URL       || "https://pay.hotmart.com/PRO_EUR",
     },
     annual: {
-      USD: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_PRO_ANNUAL_USD_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/pro-annual-usd",
-      EUR: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_PRO_ANNUAL_EUR_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/pro-annual-eur",
-      BRL: process.env.NEXT_PUBLIC_HOTMART_PRO_ANNUAL_BRL_URL        || "https://pay.hotmart.com/PRO_ANNUAL_BRL_ID",
+      BRL: process.env.NEXT_PUBLIC_HOTMART_PRO_ANNUAL_BRL_URL || "https://pay.hotmart.com/PRO_ANNUAL_BRL",
+      USD: process.env.NEXT_PUBLIC_HOTMART_PRO_ANNUAL_USD_URL || "https://pay.hotmart.com/PRO_ANNUAL_USD",
+      EUR: process.env.NEXT_PUBLIC_HOTMART_PRO_ANNUAL_EUR_URL || "https://pay.hotmart.com/PRO_ANNUAL_EUR",
     },
   },
   lifetime: {
-    USD: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_LIFETIME_USD_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/lifetime-usd",
-    EUR: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_LIFETIME_EUR_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/lifetime-eur",
-    BRL: process.env.NEXT_PUBLIC_HOTMART_LIFETIME_BRL_URL       || "https://pay.hotmart.com/LIFETIME_BRL_ID",
+    BRL: process.env.NEXT_PUBLIC_HOTMART_LIFETIME_BRL_URL    || "https://pay.hotmart.com/LIFETIME_BRL",
+    USD: process.env.NEXT_PUBLIC_HOTMART_LIFETIME_USD_URL    || "https://pay.hotmart.com/LIFETIME_USD",
+    EUR: process.env.NEXT_PUBLIC_HOTMART_LIFETIME_EUR_URL    || "https://pay.hotmart.com/LIFETIME_EUR",
   },
 };
 
@@ -98,9 +95,8 @@ export function PricingSection() {
 
   const getLifetimeUrl = () => CHECKOUT_URLS.lifetime[currency];
 
-  // Identifica qual processador está ativo para a moeda selecionada
-  const activeProcessor = currency === 'BRL' ? 'Hotmart' : 'LemonSqueezy';
-  const processorColor  = currency === 'BRL' ? 'text-orange-500' : 'text-blue-500';
+  // Hotmart é o processador único para todas as moedas
+  const processorColor = 'text-orange-500';
 
   const basicFeatures = [
     { active: true,  text: isEn ? 'Ebooks Radar & Signals Access' : isEs ? 'Acceso al Radar de Ebooks y Señales' : 'Acesso ao Radar de Ebooks & Sinais' },
@@ -186,12 +182,9 @@ export function PricingSection() {
               </button>
             ))}
           </div>
-          {/* Badge a mostrar qual processador está ativo */}
-          <p className={`text-[11px] font-semibold flex items-center gap-1.5 ${processorColor}`}>
-            {currency === 'BRL'
-              ? '🔥 Checkout via Hotmart — Pix & Boleto disponíveis'
-              : '🔒 Checkout via LemonSqueezy — Cartão internacional'
-            }
+          {/* Badge — Hotmart para todas as moedas */}
+          <p className="text-[11px] font-semibold flex items-center gap-1.5 text-orange-500">
+            🔥 {isEn ? 'Secure checkout via Hotmart — Pix, Boleto & International Card' : isEs ? 'Pago seguro via Hotmart — Pix, Boleto y Tarjeta Internacional' : 'Checkout seguro via Hotmart — Pix, Boleto & Cartão Internacional'}
           </p>
         </div>
 
@@ -424,16 +417,17 @@ export function PricingSection() {
           </div>
         </div>
 
-        {/* SSL + Processadores */}
+        {/* SSL + Hotmart */}
         <div className="flex flex-col items-center gap-2 pt-4">
           <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground font-medium">
             <Lock className="h-4 w-4" />
-            <span>SSL Encryption · {isEn ? '30-day guarantee' : isEs ? 'Garantía 30 días' : 'Garantia 30 dias'}</span>
+            <span>SSL Encryption · Hotmart · {isEn ? '30-day guarantee' : isEs ? 'Garantía 30 días' : 'Garantia 30 dias'}</span>
           </div>
           <p className="text-xs text-muted-foreground/60 font-medium">
-            🇧🇷 BRL via <span className="text-orange-500 font-bold">Hotmart</span>
+            🔥 {isEn ? 'All currencies processed by' : isEs ? 'Todas las monedas procesadas por' : 'Todas as moedas processadas pela'}{' '}
+            <span className="text-orange-500 font-bold">Hotmart</span>
             {' · '}
-            🌍 USD/EUR via <span className="text-blue-500 font-bold">LemonSqueezy</span>
+            {isEn ? 'Pix · Boleto · Card · PayPal' : isEs ? 'Pix · Boleto · Tarjeta · PayPal' : 'Pix · Boleto · Cartão · PayPal'}
           </p>
         </div>
       </div>
