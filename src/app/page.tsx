@@ -85,27 +85,27 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Header Simples */}
-      <header className="px-6 lg:px-14 h-24 flex items-center justify-between border-b border-border/40 backdrop-blur-md fixed w-full top-0 z-50">
+      <header className="px-6 lg:px-12 h-16 md:h-20 flex items-center justify-between border-b border-border/40 backdrop-blur-md fixed w-full top-0 z-50">
         <div className="flex items-center gap-3">
-          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/20">
-            <Zap className="h-8 w-8 text-white" />
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-md shadow-primary/20">
+            <Zap className="h-5 w-5 text-white" />
           </div>
-          <span className="font-extrabold text-3xl md:text-4xl tracking-tight text-foreground">ViralBook AI</span>
+          <span className="font-extrabold text-xl md:text-2xl tracking-tight text-foreground">ViralBook AI</span>
         </div>
         <nav className="flex items-center gap-4 sm:gap-6">
-          <Link href="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
+          <Link href="#features" className="text-xs md:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
             {t.landing.featuresNav}
           </Link>
-          <Link href="#pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
+          <Link href="#pricing" className="text-xs md:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
             {t.landing.pricingNav}
           </Link>
-          <Link href="/docs" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
+          <Link href="/docs" className="text-xs md:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
             {t.landing.docsNav}
           </Link>
           <div className="h-4 w-px bg-border hidden sm:block" />
           <button
             onClick={() => openAuth("login")}
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center px-4 py-2 rounded-full hover:bg-muted border border-border/50 cursor-pointer"
+            className="text-xs md:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center px-3.5 py-1.5 rounded-full hover:bg-muted border border-border/50 cursor-pointer"
           >
             {t.landing.restrictedAccess}
           </button>
@@ -114,52 +114,52 @@ export default function LandingPage() {
         </nav>
       </header>
 
-      <main className="flex-1 pt-24">
+      <main className="flex-1 pt-16 md:pt-20">
         {/* Hero Section */}
-        <section className="w-full py-24 md:py-32 lg:py-40 xl:py-48 flex flex-col items-center justify-center text-center px-4 md:px-6 relative overflow-hidden">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-blue-500/15 dark:bg-blue-500/20 blur-[120px] rounded-full pointer-events-none" />
+        <section className="w-full py-10 md:py-16 lg:py-20 flex flex-col items-center justify-center text-center px-4 md:px-6 relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-blue-500/15 dark:bg-blue-500/20 blur-[100px] rounded-full pointer-events-none" />
           
-          <div className="space-y-6 max-w-4xl relative z-10">
-            <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-4 animate-pulse">
+          <div className="space-y-5 max-w-4xl relative z-10">
+            <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1 text-xs md:text-sm font-medium text-primary mb-2 animate-pulse">
               {t.landing.heroBadge}
             </div>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground drop-shadow-sm leading-[1.1]">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground drop-shadow-sm leading-[1.15]">
               {t.landing.heroTitlePrefix} <br className="hidden md:block"/>
               <span className="bg-gradient-to-r from-blue-400 via-primary to-purple-500 bg-clip-text text-transparent">
                 {t.landing.heroTitleHighlight}
               </span>
             </h1>
-            <p className="mx-auto max-w-[800px] text-foreground/95 md:text-2xl/relaxed font-medium mt-8 px-6 py-4 rounded-2xl bg-muted/30 border border-border/50 backdrop-blur-md shadow-inner">
+            <p className="mx-auto max-w-[750px] text-foreground/90 text-sm md:text-lg/relaxed font-medium mt-5 px-5 py-3 rounded-2xl bg-muted/30 border border-border/50 backdrop-blur-md shadow-inner">
               {t.landing.heroSubtitle1}<span className="bg-gradient-to-r from-blue-400 to-primary bg-clip-text text-transparent font-extrabold">{t.landing.heroSubtitle2}</span>{t.landing.heroSubtitle3}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center mt-6">
               <button 
                 onClick={() => openAuth("signup")}
-                className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/80 h-14 px-8 text-lg font-bold rounded-full shadow-[0_0_40px_-10px_rgba(59,130,246,0.6)] transition-all hover:scale-105 hover:shadow-[0_0_60px_-15px_rgba(59,130,246,0.8)] cursor-pointer"
+                className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/80 h-12 px-6 md:px-7 text-sm md:text-base font-bold rounded-full shadow-[0_0_30px_-5px_rgba(59,130,246,0.5)] transition-all hover:scale-105 hover:shadow-[0_0_45px_-10px_rgba(59,130,246,0.7)] cursor-pointer"
               >
-                {t.landing.heroCtaPrimary} <ArrowRight className="ml-2 h-5 w-5" />
+                {t.landing.heroCtaPrimary} <ArrowRight className="ml-2 h-4 w-4" />
               </button>
               <Link 
                 href="#demo" 
-                className="group/button inline-flex shrink-0 items-center justify-center bg-blue-600/10 hover:bg-blue-600/20 text-blue-600 dark:text-blue-400 h-14 px-8 text-lg font-bold rounded-full border border-blue-500/30 transition-all hover:scale-105"
+                className="group/button inline-flex shrink-0 items-center justify-center bg-blue-600/10 hover:bg-blue-600/20 text-blue-600 dark:text-blue-400 h-12 px-6 text-sm md:text-base font-bold rounded-full border border-blue-500/30 transition-all hover:scale-105"
               >
-                <Play className="mr-2 h-5 w-5 fill-current" /> {t.landing.demoBtn}
+                <Play className="mr-2 h-4 w-4 fill-current" /> {t.landing.demoBtn}
               </Link>
               <Link 
                 href="#pricing" 
-                className="group/button inline-flex shrink-0 items-center justify-center bg-muted text-foreground hover:bg-muted/80 h-14 px-8 text-lg font-bold rounded-full border border-border/50 transition-all hover:scale-105"
+                className="group/button inline-flex shrink-0 items-center justify-center bg-muted text-foreground hover:bg-muted/80 h-12 px-6 text-sm md:text-base font-bold rounded-full border border-border/50 transition-all hover:scale-105"
               >
                 {t.landing.heroCtaSecondary}
               </Link>
             </div>
             
             {/* Trust Badges */}
-            <div className="mt-16 pt-8 border-t border-border/40 flex flex-col items-center">
-              <p className="text-sm font-medium text-muted-foreground mb-6 uppercase tracking-widest">{t.landing.techBadge}</p>
-              <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-                <div className="flex items-center gap-2 font-bold text-xl"><Zap className="h-6 w-6"/> Groq AI</div>
-                <div className="flex items-center gap-2 font-bold text-xl"><BookOpen className="h-6 w-6"/> Google Books</div>
-                <div className="flex items-center gap-2 font-bold text-xl"><Lock className="h-6 w-6"/> Supabase</div>
+            <div className="mt-10 pt-6 border-t border-border/40 flex flex-col items-center">
+              <p className="text-xs font-semibold text-muted-foreground mb-4 uppercase tracking-widest">{t.landing.techBadge}</p>
+              <div className="flex flex-wrap justify-center gap-6 md:gap-12 opacity-60 hover:opacity-100 transition-all duration-300">
+                <div className="flex items-center gap-2 font-bold text-sm md:text-base"><Zap className="h-4 w-4 text-primary"/> Groq AI</div>
+                <div className="flex items-center gap-2 font-bold text-sm md:text-base"><BookOpen className="h-4 w-4 text-primary"/> Google Books</div>
+                <div className="flex items-center gap-2 font-bold text-sm md:text-base"><Lock className="h-4 w-4 text-primary"/> Supabase</div>
               </div>
             </div>
           </div>
