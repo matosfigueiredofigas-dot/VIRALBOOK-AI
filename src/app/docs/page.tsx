@@ -83,22 +83,110 @@ export default function DocsPage() {
       </div>
 
       {/* BARRA DE PESQUISA E STATUS */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-card border border-border/50">
-        <div className="relative w-full md:w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder={isEn ? "Search by chapter or topic..." : isEs ? "Buscar por capítulo o tema..." : "Pesquisar por capítulo, ferramenta ou dúvida..."}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-sm bg-muted/50 rounded-xl border border-border/50 focus:outline-none focus:ring-2 focus:ring-primary"
-          />
+      <div className="p-4 md:p-6 rounded-2xl bg-card border border-border/50 space-y-4">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2 w-full md:w-auto flex-1 max-w-xl">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              <input
+                type="text"
+                placeholder={isEn ? "Search by chapter, tool or question..." : isEs ? "Buscar por capítulo, herramienta o duda..." : "Pesquisar por capítulo, ferramenta ou dúvida..."}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    const q = searchTerm.trim().toLowerCase();
+                    if (!q) return;
+                    const match = [
+                      { id: "prefacio", title: "prefacio introducao" },
+                      { id: "capitulo-1", title: "capitulo 1 historia filosofia metodologia" },
+                      { id: "capitulo-2", title: "capitulo 2 arquitetura navegacao" },
+                      { id: "capitulo-3", title: "capitulo 3 guia botoes funcionalidades radar biblioteca canvas mentores" },
+                      { id: "capitulo-4", title: "capitulo 4 geracao ideias mineracao bestseller" },
+                      { id: "capitulo-5", title: "capitulo 5 validacao cientifica dores" },
+                      { id: "capitulo-6", title: "capitulo 6 saas mrr conceitos" },
+                      { id: "capitulo-7", title: "capitulo 7 conselho 8 mentores paul graham jobs levels" },
+                      { id: "capitulo-8", title: "capitulo 8 30 dias roadmap execucao" },
+                      { id: "capitulo-9", title: "capitulo 9 prompts ia codigo cursor v0" },
+                      { id: "capitulo-10", title: "capitulo 10 estudos caso atomic habits deep work" },
+                      { id: "capitulo-11", title: "capitulo 11 faq limitacoes copyright tokens" },
+                      { id: "capitulo-12", title: "capitulo 12 checklist prontidao lancamento" },
+                    ].find(m => m.title.includes(q) || m.id.includes(q));
+                    if (match) {
+                      document.getElementById(match.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }
+                }}
+                className="w-full pl-9 pr-4 py-2.5 text-sm bg-muted/50 rounded-xl border border-border/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+              />
+            </div>
+            <Button
+              onClick={() => {
+                const q = searchTerm.trim().toLowerCase();
+                if (!q) return;
+                const match = [
+                  { id: "prefacio", title: "prefacio introducao" },
+                  { id: "capitulo-1", title: "capitulo 1 historia filosofia metodologia" },
+                  { id: "capitulo-2", title: "capitulo 2 arquitetura navegacao" },
+                  { id: "capitulo-3", title: "capitulo 3 guia botoes funcionalidades radar biblioteca canvas mentores" },
+                  { id: "capitulo-4", title: "capitulo 4 geracao ideias mineracao bestseller" },
+                  { id: "capitulo-5", title: "capitulo 5 validacao cientifica dores" },
+                  { id: "capitulo-6", title: "capitulo 6 saas mrr conceitos" },
+                  { id: "capitulo-7", title: "capitulo 7 conselho 8 mentores paul graham jobs levels" },
+                  { id: "capitulo-8", title: "capitulo 8 30 dias roadmap execucao" },
+                  { id: "capitulo-9", title: "capitulo 9 prompts ia codigo cursor v0" },
+                  { id: "capitulo-10", title: "capitulo 10 estudos caso atomic habits deep work" },
+                  { id: "capitulo-11", title: "capitulo 11 faq limitacoes copyright tokens" },
+                  { id: "capitulo-12", title: "capitulo 12 checklist prontidao lancamento" },
+                ].find(m => m.title.includes(q) || m.id.includes(q));
+                if (match) {
+                  document.getElementById(match.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
+              className="bg-primary text-primary-foreground font-bold rounded-xl h-10 px-5 shrink-0 hover:bg-primary/90 transition-all flex items-center gap-2 shadow-md shadow-primary/20"
+            >
+              <Search className="h-4 w-4" />
+              {isEn ? "Search" : isEs ? "Buscar" : "Procurar"}
+            </Button>
+          </div>
+
+          <div className="text-xs font-semibold text-muted-foreground flex items-center gap-2 shrink-0">
+            <span>{isEn ? "12 Complete Chapters" : isEs ? "12 Capítulos Completos" : "12 Capítulos Completos"}</span>
+            <span>•</span>
+            <span className="flex items-center gap-1"><Globe className="h-3.5 w-3.5 text-primary" /> PT / EN / ES</span>
+          </div>
         </div>
-        <div className="text-xs font-semibold text-muted-foreground flex items-center gap-2">
-          <span>{isEn ? "12 Complete Chapters" : isEs ? "12 Capítulos Completos" : "12 Capítulos Completos"}</span>
-          <span>•</span>
-          <span className="flex items-center gap-1"><Globe className="h-3.5 w-3.5 text-primary" /> PT / EN / ES</span>
-        </div>
+
+        {searchTerm.trim() && (
+          <div className="pt-2 border-t border-border/30 flex flex-wrap gap-2 items-center">
+            <span className="text-xs text-muted-foreground font-medium">{isEn ? "Jump to:" : isEs ? "Ir a:" : "Ir para:"}</span>
+            {[
+              { id: "prefacio", label: "Prefácio" },
+              { id: "capitulo-1", label: "Cap. 1 - História" },
+              { id: "capitulo-2", label: "Cap. 2 - Arquitetura" },
+              { id: "capitulo-3", label: "Cap. 3 - Módulos & Botões" },
+              { id: "capitulo-4", label: "Cap. 4 - Mineração" },
+              { id: "capitulo-5", label: "Cap. 5 - Validação" },
+              { id: "capitulo-6", label: "Cap. 6 - SaaS MRR" },
+              { id: "capitulo-7", label: "Cap. 7 - 8 Mentores" },
+              { id: "capitulo-8", label: "Cap. 8 - Roadmap 30D" },
+              { id: "capitulo-9", label: "Cap. 9 - Prompts IA" },
+              { id: "capitulo-10", label: "Cap. 10 - Estudos Caso" },
+              { id: "capitulo-11", label: "Cap. 11 - FAQ" },
+              { id: "capitulo-12", label: "Cap. 12 - Checklist" },
+            ]
+              .filter(item => item.label.toLowerCase().includes(searchTerm.toLowerCase()) || item.id.includes(searchTerm.toLowerCase()))
+              .map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                  className="px-2.5 py-1 rounded-lg bg-primary/10 text-primary text-xs font-bold hover:bg-primary/20 transition-colors"
+                >
+                  {item.label}
+                </button>
+              ))}
+          </div>
+        )}
       </div>
 
       {/* PREFÁCIO & INTRODUÇÃO */}
