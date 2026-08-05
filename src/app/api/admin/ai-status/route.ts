@@ -52,6 +52,9 @@ async function testGemini(apiKey: string): Promise<{ ok: boolean; latency: numbe
     );
     const latency = Date.now() - start;
     if (!res.ok) {
+      if (res.status === 429) {
+        return { ok: true, latency, error: ' (Limite Temporário)' };
+      }
       return { ok: false, latency, error: `HTTP ${res.status}` };
     }
     return { ok: true, latency };

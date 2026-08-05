@@ -53,7 +53,8 @@ export async function GET() {
           }
         );
         geminiLatency = Date.now() - startGemini;
-        geminiStatus = res.ok ? 'healthy' : 'degraded';
+        // Se responder 200 OK ou 429 (Rate Limit), a chave é válida e a API está ativa!
+        geminiStatus = (res.ok || res.status === 429) ? 'healthy' : 'degraded';
       }
     } catch (e) {
       geminiStatus = 'offline';
