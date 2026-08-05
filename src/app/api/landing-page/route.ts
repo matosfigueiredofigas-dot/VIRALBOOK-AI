@@ -1,12 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { createAdminClient } from '@/utils/supabase/admin';
-import Groq from 'groq-sdk';
-
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || 'placeholder_key',
-});
-
+import { generateWithFallback } from '@/lib/ai-generate';
 function slugify(text: string): string {
   if (!text) return `saas-${Math.random().toString(36).substring(2, 7)}`;
   return text
@@ -210,27 +205,21 @@ Você deve gerar e retornar estritamente um JSON no seguinte formato:
 
 IMPORTANTE: Responda APENAS o JSON válido. Não adicione saudações ou explicações.`;
 
-      const models = ['llama-3.3-70b-versatile', 'mixtral-8x7b-32768', 'llama-3.1-8b-instant'];
-
-      for (const model of models) {
-        try {
-          console.log(`[Landing Page Gen] Tentando modelo: ${model}`);
-          const chatCompletion = await groq.chat.completions.create({
-            messages: [{ role: 'user', content: systemPrompt }],
-            model: model,
-            temperature: 0.7,
-            response_format: { type: 'json_object' }
-          });
-
-          const reply = chatCompletion.choices[0]?.message?.content || '';
-          if (reply) {
-            data = JSON.parse(reply);
-            console.log(`[Landing Page Gen] Gerado com sucesso usando: ${model}`);
-            break;
-          }
-        } catch (err: any) {
-          console.warn(`[Landing Page Gen] Aviso com modelo ${model}:`, err.message || err);
+      try {
+        console.log(`[Landing Page Gen] Tentando geração com fallback...`);
+        const reply = await generateWithFallback({
+          messages: [{ role: 'user', content: systemPrompt }],
+          model: 'llama-3.3-70b-versatile',
+          temperature: 0.7,
+          response_format: { type: 'json_object' }
+        });
+        
+        if (reply) {
+          data = JSON.parse(reply);
+          console.log(`[Landing Page Gen] Gerado com sucesso`);
         }
+      } catch (err: any) {
+        console.warn(`[Landing Page Gen] Falha total no gerador:`, err.message || err);
       }
     }
 

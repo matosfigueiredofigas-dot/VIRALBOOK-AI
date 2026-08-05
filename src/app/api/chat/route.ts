@@ -1,10 +1,5 @@
 import { NextResponse } from 'next/server';
-import Groq from 'groq-sdk';
-
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || 'placeholder_key',
-});
-
+import { generateWithFallback } from '@/lib/ai-generate';
 export async function POST(req: Request) {
   try {
     const { messages, contextText, language = 'pt' } = await req.json();
@@ -36,35 +31,14 @@ Dê respostas curtas, práticas e diretas ao ponto. Se o usuário pedir código 
     // Monta o payload final
     const payloadMessages = [systemPrompt, ...messages];
 
-    // Fila de contingência para o chat: 1º Llama 70B, 2º Mixtral, 3º Llama 8B
-    const models = ['llama-3.3-70b-versatile', 'mixtral-8x7b-32768', 'llama-3.1-8b-instant'];
-    let reply = "";
-    let lastError: any = null;
+    // Chama a função centralizada que tenta o Groq e faz fallback para o Gemini 1.5 Flash
+    const reply = await generateWithFallback({
+      messages: payloadMessages as any,
+      model: 'llama-3.3-70b-versatile',
+      temperature: 0.7,
+      max_tokens: 1500,
+    });
 
-    for (const model of models) {
-      try {
-        console.log(`[Chat API] Tentando modelo: ${model}`);
-        const chatCompletion = await groq.chat.completions.create({
-          messages: payloadMessages as any,
-          model: model,
-          temperature: 0.7,
-          max_tokens: 1500,
-        });
-
-        reply = chatCompletion.choices[0]?.message?.content || "";
-        if (reply) {
-          console.log(`[Chat API] Resposta gerada com sucesso usando: ${model}`);
-          break;
-        }
-      } catch (error: any) {
-        console.warn(`[Chat API] Falha com o modelo ${model}. Tentando backup... Erro:`, error.message || error);
-        lastError = error;
-      }
-    }
-
-    if (!reply) {
-      throw new Error(`Falha crítica: Todos os modelos de chat falharam. Último erro: ${lastError?.message || lastError}`);
-    }
 
     return NextResponse.json({ reply });
 

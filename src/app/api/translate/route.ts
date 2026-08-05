@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-import { Groq } from 'groq-sdk';
-
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || 'placeholder_key' });
+import { generateWithFallback } from '@/lib/ai-generate';
 
 export async function POST(request: Request) {
   try {
@@ -23,7 +21,7 @@ CRITICAL INSTRUCTIONS:
 - Translate user-facing descriptions, features, weaknesses, advantages, post copies, pitch slide contents, and pain point text smoothly into natural ${langName}.
 - Return ONLY valid JSON in format: { "translatedPayload": ... }`;
 
-      const completion = await groq.chat.completions.create({
+      const content = await generateWithFallback({
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: JSON.stringify(payload) }
@@ -33,7 +31,6 @@ CRITICAL INSTRUCTIONS:
         temperature: 0.1,
       });
 
-      const content = completion.choices[0]?.message?.content || '{}';
       const parsed = JSON.parse(content);
 
       return NextResponse.json({
@@ -48,7 +45,7 @@ CRITICAL INSTRUCTIONS:
 
     const systemPrompt = `You are a high-speed professional translator. Translate all human-readable text string values in the provided JSON array to ${langName}. Preserve the exact JSON structure and object keys. Return ONLY valid JSON in format: { "translatedItems": [...] }`;
 
-    const completion = await groq.chat.completions.create({
+    const content = await generateWithFallback({
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: JSON.stringify(items) }
@@ -58,7 +55,6 @@ CRITICAL INSTRUCTIONS:
       temperature: 0.1,
     });
 
-    const content = completion.choices[0]?.message?.content || '{}';
     const parsed = JSON.parse(content);
 
     return NextResponse.json({
