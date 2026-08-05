@@ -435,6 +435,14 @@ export function AdminPanelClient({ initialOpps }: { initialOpps: Opp[] }) {
             <span className="text-foreground">{health ? `${health.services.groq.latency}ms` : <Loader2 className="h-3 w-3 animate-spin inline" />}</span>
           </div>
 
+          {/* Gemini AI Status */}
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/50 border border-border/30 shadow-sm">
+            <span className={`h-2 w-2 rounded-full ${health?.services.gemini?.status === 'healthy' ? 'bg-green-500 shadow-[0_0_8px_#22c55e]' : 'bg-yellow-500'} animate-ping duration-1000 absolute`} />
+            <span className={`h-2 w-2 rounded-full ${health?.services.gemini?.status === 'healthy' ? 'bg-green-500 shadow-[0_0_8px_#22c55e]' : 'bg-yellow-500'}`} />
+            <span className="text-muted-foreground text-xxs">Gemini 2.0:</span>
+            <span className="text-foreground">{health?.services.gemini ? `${health.services.gemini.latency}ms` : <Loader2 className="h-3 w-3 animate-spin inline" />}</span>
+          </div>
+
           {/* Google Books Status */}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/50 border border-border/30 shadow-sm">
             <span className={`h-2 w-2 rounded-full ${health?.services.googleBooks.status === 'healthy' ? 'bg-green-500 shadow-[0_0_8px_#22c55e]' : 'bg-yellow-500'} animate-ping duration-1000 absolute`} />

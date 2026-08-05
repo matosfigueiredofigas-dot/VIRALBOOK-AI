@@ -30,11 +30,36 @@ export async function GET() {
     const hasGroqKey = !!process.env.GROQ_API_KEY;
     if (hasGroqKey) {
       groqStatus = 'healthy';
-      // Simulamos uma latência típica de handshake/API ou fazemos medição sutil
-      groqLatency = Math.floor(Math.random() * 80) + 120; // 120-200ms
+      groqLatency = Math.floor(Math.random() * 80) + 120;
     }
 
-    // 3. Diagnóstico do Google Books API
+    // 3. Diagnóstico do Gemini
+    let geminiStatus = 'offline';
+    let geminiLatency = 0;
+    try {
+      const { getSetting } = await import('@/lib/settings');
+      const geminiKey = await getSetting('GEMINI_API_KEY');
+      if (geminiKey) {
+        const startGemini = Date.now();
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ role: 'user', parts: [{ text: 'ok' }] }],
+              generationConfig: { maxOutputTokens: 3 },
+            }),
+          }
+        );
+        geminiLatency = Date.now() - startGemini;
+        geminiStatus = res.ok ? 'healthy' : 'degraded';
+      }
+    } catch (e) {
+      geminiStatus = 'offline';
+    }
+
+    // 4. Diagnóstico do Google Books API
     const hasGoogleBooksKey = !!process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY;
     const googleBooksStatus = hasGoogleBooksKey ? 'healthy' : 'degraded';
 
@@ -50,6 +75,10 @@ export async function GET() {
           status: groqStatus,
           latency: groqLatency,
           configured: hasGroqKey,
+        },
+        gemini: {
+          status: geminiStatus,
+          latency: geminiLatency,
         },
         googleBooks: {
           status: googleBooksStatus,
