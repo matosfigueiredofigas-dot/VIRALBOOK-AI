@@ -77,7 +77,7 @@ export async function generateWithFallback(options: GenerateOptions): Promise<st
       throw new Error("GEMINI_API_KEY não configurada");
     }
 
-    console.log(`[AI Fallback] Recorrendo ao Gemini (gemini-1.5-flash)...`);
+    console.log(`[AI Fallback] Recorrendo ao Gemini (gemini-2.0-flash)...`);
     
     const { contents, systemInstruction } = formatMessagesForGemini(messages);
     
@@ -97,7 +97,7 @@ export async function generateWithFallback(options: GenerateOptions): Promise<st
       payload.generationConfig.responseMimeType = 'application/json';
     }
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
