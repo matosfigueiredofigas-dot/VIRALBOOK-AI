@@ -1,6 +1,7 @@
 import { Resend } from 'resend';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { NextResponse } from 'next/server';
+import { getSetting } from '@/lib/settings';
 
 // ── Templates de email ────────────────────────────────────────────────────────
 const DOMAIN = 'https://viralbook-ai.vercel.app';
@@ -252,7 +253,8 @@ export async function POST(req: Request) {
 
     // 2. Tentar enviar email (pode falhar sem domínio verificado — lead já está guardado)
     try {
-      const resend = new Resend(process.env.RESEND_API_KEY || 're_placeholder');
+      const resendKey = await getSetting('RESEND_API_KEY');
+      const resend = new Resend(resendKey || 're_placeholder');
       const template = emailWelcome(name || '');
       const { error: emailError } = await resend.emails.send({
         from: 'ViralBook AI <onboarding@resend.dev>',

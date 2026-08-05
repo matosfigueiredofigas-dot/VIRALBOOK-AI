@@ -1,8 +1,5 @@
 import Groq from 'groq-sdk';
-
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || 'placeholder_key',
-});
+import { getSetting } from '@/lib/settings';
 
 type Message = { role: string; content: string };
 
@@ -47,6 +44,13 @@ export async function generateWithFallback(options: GenerateOptions): Promise<st
 
   // 1. Tentar com Groq
   try {
+    const groqKey = await getSetting('GROQ_API_KEY');
+    if (!groqKey) {
+      throw new Error("GROQ_API_KEY não configurada na base de dados nem no .env");
+    }
+
+    const groq = new Groq({ apiKey: groqKey });
+
     console.log(`[AI Fallback] Tentando Groq com modelo: ${model}...`);
     const completion = await groq.chat.completions.create({
       messages: messages as any,
@@ -68,9 +72,9 @@ export async function generateWithFallback(options: GenerateOptions): Promise<st
 
   // 2. Tentar com Gemini (Fallback 1)
   try {
-    const geminiKey = process.env.GEMINI_API_KEY;
+    const geminiKey = await getSetting('GEMINI_API_KEY');
     if (!geminiKey) {
-      throw new Error("GEMINI_API_KEY não configurada no .env");
+      throw new Error("GEMINI_API_KEY não configurada");
     }
 
     console.log(`[AI Fallback] Recorrendo ao Gemini (gemini-1.5-flash)...`);

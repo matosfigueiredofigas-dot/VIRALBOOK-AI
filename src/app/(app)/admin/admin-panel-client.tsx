@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { 
   Users, Crown, Zap, Mail, Trash2, CheckCircle2, ShieldAlert, Loader2,
   Brain, Activity, CreditCard, TrendingUp, Plus, Check, X, ShieldCheck,
-  AlertCircle, ArrowUpRight, Database, Sparkles, RefreshCw, FileText
+  AlertCircle, ArrowUpRight, Database, Sparkles, RefreshCw, FileText, Key
 } from "lucide-react";
+import { ApiKeysManager } from "@/components/admin/api-keys-manager";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/contexts/language-context";
 
@@ -49,7 +50,7 @@ interface HealthStatus {
 
 export function AdminPanelClient({ initialOpps }: { initialOpps: Opp[] }) {
   const { t } = useLanguage();
-  const [activeTab, setActiveTab] = useState<"overview" | "users" | "contacts" | "opps" | "transactions" | "copilot" | "matrices">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "users" | "contacts" | "opps" | "transactions" | "copilot" | "matrices" | "apikeys">("overview");
   const [users, setUsers] = useState<Profile[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [opps, setOpps] = useState<Opp[]>(initialOpps);
@@ -462,6 +463,7 @@ export function AdminPanelClient({ initialOpps }: { initialOpps: Opp[] }) {
           { id: "transactions", label: "Aprovação PIX", icon: CreditCard },
           { id: "copilot", label: "AI Admin Copilot", icon: Brain },
           { id: "matrices", label: `Gerenciar Matrizes (${matrices.length})`, icon: Database },
+          { id: "apikeys", label: "Gestão de APIs", icon: Key },
           { id: "contacts", label: "Suporte", icon: Mail },
           { id: "opps", label: "Moderação", icon: ShieldAlert },
         ].map((tab) => (
@@ -1323,6 +1325,19 @@ export function AdminPanelClient({ initialOpps }: { initialOpps: Opp[] }) {
                   </div>
                 </div>
               </div>
+            )}
+
+            {/* 🆕 TAB 8: GESTÃO DE APIS */}
+            {activeTab === "apikeys" && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="bg-black/20 border border-white/5 rounded-xl p-6"
+              >
+                <ApiKeysManager />
+              </motion.div>
             )}
           </motion.div>
         )}

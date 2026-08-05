@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { createAdminClient } from '@/utils/supabase/admin'
+import { getSetting } from '@/lib/settings'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Hotmart Webhook Handler
@@ -13,7 +14,7 @@ import { createAdminClient } from '@/utils/supabase/admin'
 //   PURCHASE_CHARGEBACK→ desativa is_premium = false
 // ─────────────────────────────────────────────────────────────────────────────
 
-const HOTMART_TOKEN = process.env.HOTMART_WEBHOOK_TOKEN || ''
+
 
 // Eventos que ATIVAM acesso premium
 const APPROVE_EVENTS = ['PURCHASE_APPROVED', 'PURCHASE_COMPLETE']
@@ -28,8 +29,9 @@ export async function POST(req: Request) {
     // ── 1. Verificar token de autenticação da Hotmart ──────────────────────
     // A Hotmart envia o token no header "hottok"
     const hottok = req.headers.get('hottok') || ''
+    const hotmartToken = await getSetting('HOTMART_WEBHOOK_TOKEN')
 
-    if (HOTMART_TOKEN && hottok !== HOTMART_TOKEN) {
+    if (hotmartToken && hottok !== hotmartToken) {
       console.error('[Hotmart Webhook] Token inválido.')
       return NextResponse.json({ error: 'Token inválido.' }, { status: 401 })
     }
