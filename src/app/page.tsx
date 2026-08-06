@@ -230,7 +230,7 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="max-w-6xl mx-auto">
-            <VideoDemo />
+            <VideoDemo onOpenAuth={openAuth} />
           </div>
         </section>
 
