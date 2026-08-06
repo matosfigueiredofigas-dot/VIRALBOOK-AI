@@ -23,8 +23,8 @@ export function BookSearcher() {
   const [scanningId, setScanningId] = useState<string | null>(null)
   const [scannedKeywords, setScannedKeywords] = useState<Record<string, string[]>>({})
   
-  // Filtros Avançados alinhados com o eBook
-  const [showFilters, setShowFilters] = useState(false)
+  // Filtros Avançados alinhados com o eBook (Aberto por padrão)
+  const [showFilters, setShowFilters] = useState(true)
   const [minRating, setMinRating] = useState<string>("4.1")
   const [minSales, setMinSales] = useState<string>("50k")
   const [maxAgeYears, setMaxAgeYears] = useState<string>("5")
