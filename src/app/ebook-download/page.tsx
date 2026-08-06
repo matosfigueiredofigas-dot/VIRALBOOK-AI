@@ -46,7 +46,7 @@ export default function EbookDownloadPage() {
         }
       `}</style>
 
-      {/* Header (Escondido no PDF/Impressão) */}
+      {/* Header Sticky (Escondido no PDF/Impressão) */}
       <header className="px-6 py-5 flex items-center justify-between border-b border-border/40 sticky top-0 z-50 bg-background/80 backdrop-blur-md no-print">
         <Link href="/" className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
@@ -58,7 +58,7 @@ export default function EbookDownloadPage() {
           <a href="/Livros_Que_Valem_Milhoes_ViralBook_AI.pdf" download="Livros_Que_Valem_Milhoes_ViralBook_AI.pdf">
             <Button variant="outline" className="text-xs font-bold rounded-xl h-9 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10">
               <Download className="mr-2 h-3.5 w-3.5" />
-              {isEn ? "Download PDF File" : isEs ? "Descargar Archivo PDF" : "Descarregar Ficheiro PDF"}
+              {isEn ? "Download PDF (Master Edition)" : isEs ? "Descargar PDF (Edición Master)" : "Descarregar PDF (Edição Master)"}
             </Button>
           </a>
           <Button onClick={handlePrint} variant="ghost" className="text-xs font-bold rounded-xl h-9">
@@ -77,12 +77,12 @@ export default function EbookDownloadPage() {
       {/* Main Container */}
       <main className="flex-1 max-w-4xl mx-auto px-6 py-12 space-y-12 print:py-0 print:px-0">
         
-        {/* Banner do eBook */}
+        {/* Banner do eBook Master */}
         <div className="rounded-3xl bg-gradient-to-br from-card via-card/90 to-primary/10 p-8 md:p-12 border border-border/50 shadow-2xl relative overflow-hidden text-center md:text-left space-y-6 print:border-none print:shadow-none print:p-0 print:bg-none">
           <div className="absolute top-0 right-0 w-80 h-80 bg-primary/10 blur-3xl rounded-full pointer-events-none no-print" />
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-extrabold uppercase no-print">
             <Sparkles className="h-3.5 w-3.5" />
-            {isEn ? "Official eBook — Complete Edition 2025" : isEs ? "eBook Oficial — Edición Completa 2025" : "eBook Oficial — Edição Completa 2025"}
+            Edição Master Ampliada · 4.600+ Palavras · Guia Oficial 2025
           </div>
 
           <h1 className="text-3xl md:text-5xl font-black tracking-tight text-foreground leading-[1.15] print:text-3xl print:text-black">
@@ -97,19 +97,19 @@ export default function EbookDownloadPage() {
           </p>
 
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl leading-relaxed italic border-l-4 border-primary pl-4 py-1 print:text-black print:border-black">
-            "Os melhores produtos de software não nascem de ideias geniais. Nascem de dores reais, já validadas por milhões de leitores."
+            "Os melhores produtos de software não nascem de ideias geniais inventadas no vácuo. Nascem de dores profundas e reais, já validadas por milhões de leitores."
           </p>
 
           <div className="flex flex-wrap gap-4 pt-2 justify-center md:justify-start no-print">
             <a href="/Livros_Que_Valem_Milhoes_ViralBook_AI.pdf" download="Livros_Que_Valem_Milhoes_ViralBook_AI.pdf">
-              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl h-11 px-6 shadow-lg shadow-emerald-600/20">
-                <Download className="mr-2 h-4 w-4" />
-                {isEn ? "Download PDF (PDF File)" : isEs ? "Descargar PDF (Archivo PDF)" : "Descarregar Ficheiro PDF (.pdf)"}
+              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl h-12 px-7 shadow-lg shadow-emerald-600/20 text-sm">
+                <Download className="mr-2.5 h-5 w-5" />
+                Descarregar Ficheiro PDF Completo (.pdf)
               </Button>
             </a>
-            <Button onClick={handlePrint} variant="outline" className="font-bold rounded-xl h-11 px-6">
+            <Button onClick={handlePrint} variant="outline" className="font-bold rounded-xl h-12 px-6 text-sm">
               <Printer className="mr-2 h-4 w-4" />
-              {isEn ? "Print / Save as PDF" : isEs ? "Imprimir / Guardar como PDF" : "Imprimir / Guardar como PDF"}
+              Imprimir / Guardar em PDF (Nativo)
             </Button>
           </div>
         </div>
@@ -119,13 +119,13 @@ export default function EbookDownloadPage() {
           <span className="text-xs font-extrabold text-primary uppercase tracking-wider print:text-black">Prefácio</span>
           <h2 className="text-2xl font-black text-foreground print:text-black">O Paradoxo do Empreendedor Moderno</h2>
           <p className="text-muted-foreground leading-relaxed text-sm print:text-black">
-            Nunca foi tão fácil construir software. Nunca foi tão difícil saber <strong>o que</strong> construir.
+            Estamos a viver a era mais fascinante e ao mesmo tempo mais perigosa da história do desenvolvimento de software. Nunca foi tão fácil construir uma aplicação web, um Micro SaaS ou uma extensão. Com ferramentas no-code, editores inteligentes como Cursor e IA generativa, qualquer pessoa consegue transformar uma ideia num produto funcional em 24 a 72 horas.
           </p>
           <p className="text-muted-foreground leading-relaxed text-sm print:text-black">
-            Com ferramentas no-code, IA e editores modernos, qualquer pessoa consegue ter um MVP funcional em 24 a 72 horas. O código deixou de ser a barreira. A barreira agora é a <strong>ideia certa com procura confirmada</strong>.
+            No entanto, esta democratização criou um paradoxo devastador: <strong>Nunca foi tão fácil construir software. Mas nunca foi tão difícil saber O QUE construir.</strong> A barreira técnica ruiu; a nova barreira crítica é a validação real da procura de mercado.
           </p>
           <p className="text-muted-foreground leading-relaxed text-sm print:text-black">
-            Enquanto milhões de empreendedores digitais perdem meses a imaginar "qual será o próximo grande produto", os leitores de todo o mundo já estão a pagar para aprender a resolver os mesmos problemas através de livros. Este ebook ensina-lhe a ler essa realidade ao contrário: a transformar a sabedoria dos bestsellers em oportunidades de software validadas, antes de escrever uma única linha de código.
+            Diariamente, milhares de empreendedores passam semanas fechados nos seus quartos a desenvolver produtos que ninguém quer comprar. A metodologia <strong>ViralBook AI</strong> inverte esta lógica por completo: não invente a dor. Encontre a dor onde ela já foi paga por milhões de leitores.
           </p>
         </article>
 
@@ -135,55 +135,53 @@ export default function EbookDownloadPage() {
           <h2 className="text-2xl font-black text-foreground print:text-black">O Mercado de Livros É o Maior Teste de Mercado do Mundo</h2>
           
           <div className="space-y-4 text-sm text-muted-foreground print:text-black">
-            <h3 className="text-lg font-bold text-foreground print:text-black">1.1 Um Número Que Muda Tudo</h3>
+            <h3 className="text-lg font-bold text-foreground print:text-black">1.1 A Psicologia da Compra de Não-Ficção</h3>
             <p>
-              A Amazon vende mais de <strong>300 milhões de livros por ano</strong>. Cada livro comprado é um voto. Uma declaração pública de que alguém tem um problema suficientemente doloroso para pagar para o resolver.
+              A Amazon vende mais de <strong>300 milhões de livros por ano</strong>. Quando um consumidor paga $15 a $30 por um livro de não-ficção, ele não está a comprar papel. Ele está a admitir explicitamente que tem um problema doloroso e a pagar por uma solução.
             </p>
             <p>
-              Quando <em>Atomic Habits</em> de James Clear vendeu mais de 15 milhões de cópias, não foi porque as pessoas adoram ler. Foi porque 15 milhões de pessoas têm um problema real com a criação de hábitos e estão dispostas a pagar para o resolver. Essa dor existe, está validada e é massiva.
+              Quando <em>Atomic Habits</em> de James Clear vendeu mais de 15 milhões de cópias, não foi porque as pessoas adoram ler. Foi porque 15 milhões de pessoas têm um problema com hábitos e pagaram para o resolver. Essa dor está validada e é massiva.
+            </p>
+
+            <h3 className="text-lg font-bold text-foreground print:text-black">1.2 O Volume de Dados Oculto na Amazon e Kindle</h3>
+            <p>
+              Dentro da Amazon existem fontes de dados valiosas: os <strong>Highlights do Kindle</strong> (revelam o momento Eureca!), os <strong>Reviews de 3 Estrelas</strong> (a maior fonte de queixas operacionais e desejos de ferramentas) e as seções de perguntas dos leitores.
             </p>
           </div>
 
           <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 space-y-2 print:border-black print:bg-none">
-            <h4 className="font-bold text-foreground text-sm print:text-black">Fórmula Base do ViralBook AI:</h4>
+            <h4 className="font-bold text-foreground text-sm print:text-black">Fórmula Base da Oportunidade:</h4>
             <code className="text-xs font-bold text-primary block print:text-black">
-              Livro Viral + Dor Identificada + Lacuna de Software = Oportunidade de Micro SaaS
+              Valor do SaaS = (Dor Validada pelo Livro) × (Automação do Processo) × (Economia de Tempo)
             </code>
-          </div>
-
-          <div className="space-y-3 text-sm text-muted-foreground print:text-black">
-            <h3 className="text-lg font-bold text-foreground print:text-black">1.2 O Que os Bestsellers Revelam Sobre o Mercado</h3>
-            <p><strong>1. A dor é universal:</strong> Um bestseller indica um mercado massivo que transcende geografias e perfis.</p>
-            <p><strong>2. O cliente já está educado:</strong> O leitor já conhece o problema e já pagou uma vez por uma solução conceitual.</p>
-            <p><strong>3. O timing é agora:</strong> Os livros ficam virais quando o tema está no auge de interesse público.</p>
           </div>
         </article>
 
         {/* CAPÍTULO 2 */}
         <article className="p-8 rounded-3xl bg-card/50 border border-border/50 space-y-6 print:border-none print-break-before">
           <span className="text-xs font-extrabold text-primary uppercase tracking-wider print:text-black">Capítulo 2</span>
-          <h2 className="text-2xl font-black text-foreground print:text-black">Os 7 Sinais Que Indicam Que Um Livro Esconde Um Software Milionário</h2>
+          <h2 className="text-2xl font-black text-foreground print:text-black">Os 7 Sinais que Indicam um Livro com Potencial Milionário</h2>
           
           <div className="grid md:grid-cols-2 gap-4">
             <div className="p-4 rounded-xl bg-muted/40 border border-border/40 space-y-1 print:border-black">
               <h4 className="font-bold text-foreground text-sm print:text-black">1. Processo Repetitivo</h4>
-              <p className="text-xs text-muted-foreground print:text-black">O livro descreve rotinas diárias ou semanais (ex: GTD de David Allen, que gerou o Todoist).</p>
+              <p className="text-xs text-muted-foreground print:text-black">Rotinas diárias ou semanais que geram fadiga manual no leitor (ex: método GTD de David Allen).</p>
             </div>
             <div className="p-4 rounded-xl bg-muted/40 border border-border/40 space-y-1 print:border-black">
-              <h4 className="font-bold text-foreground text-sm print:text-black">2. Listas, Tabelas e Checklists</h4>
-              <p className="text-xs text-muted-foreground print:text-black">O leitor tem de preencher folhas no papel (ex: The ONE Thing, que gerou o Forest).</p>
+              <h4 className="font-bold text-foreground text-sm print:text-black">2. Tabelas e Checklists</h4>
+              <p className="text-xs text-muted-foreground print:text-black">Abundância de tabelas e listas impressas que clamam por uma interface digital.</p>
             </div>
             <div className="p-4 rounded-xl bg-muted/40 border border-border/40 space-y-1 print:border-black">
               <h4 className="font-bold text-foreground text-sm print:text-black">3. Problema Crónico</h4>
-              <p className="text-xs text-muted-foreground print:text-black">Procrastinação ou finanças não se resolvem uma vez. Exigem software com subscrição recorrente.</p>
+              <p className="text-xs text-muted-foreground print:text-black">Dores recorrentes (como finanças ou procrastinação) geram subscrições SaaS de baixo churn.</p>
             </div>
             <div className="p-4 rounded-xl bg-muted/40 border border-border/40 space-y-1 print:border-black">
-              <h4 className="font-bold text-foreground text-sm print:text-black">4. Comunidade Ativa Online</h4>
-              <p className="text-xs text-muted-foreground print:text-black">Subreddits e fóruns repletos de leitores a partilhar folhas de Excel manuais.</p>
+              <h4 className="font-bold text-foreground text-sm print:text-black">4. Comunidades Ativas Online</h4>
+              <p className="text-xs text-muted-foreground print:text-black">Subreddits e fóruns discutindo como aplicar os métodos do livro na prática cotidiana.</p>
             </div>
             <div className="p-4 rounded-xl bg-muted/40 border border-border/40 space-y-1 print:border-black">
-              <h4 className="font-bold text-foreground text-sm print:text-black">5. Reviews de 3 Estrelas na Amazon</h4>
-              <p className="text-xs text-muted-foreground print:text-black">Leitores a reclamar: "Ótimo conceito, mas falta uma ferramenta prática para acompanhar o progresso".</p>
+              <h4 className="font-bold text-foreground text-sm print:text-black">5. Reviews de 3 Estrelas</h4>
+              <p className="text-xs text-muted-foreground print:text-black">Leituras exigentes reclamando da falta de ferramentas práticas de acompanhamento.</p>
             </div>
             <div className="p-4 rounded-xl bg-muted/40 border border-border/40 space-y-1 print:border-black">
               <h4 className="font-bold text-foreground text-sm print:text-black">6. Categorias de Alta Intenção</h4>
@@ -191,32 +189,32 @@ export default function EbookDownloadPage() {
             </div>
           </div>
           <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 space-y-1 print:border-black">
-            <h4 className="font-bold text-foreground text-sm print:text-black">7. O Autor Não Tem Software Próprio</h4>
-            <p className="text-xs text-muted-foreground print:text-black">O autor resolveu o problema no papel; você resolve-o com tecnologia. Lacuna imediata.</p>
+            <h4 className="font-bold text-foreground text-sm print:text-black">7. Autor sem Software Próprio</h4>
+            <p className="text-xs text-muted-foreground print:text-black">O autor resolveu o problema intelectualmente; você resolve-o tecnologicamente.</p>
           </div>
         </article>
 
         {/* CAPÍTULO 3 */}
         <article className="p-8 rounded-3xl bg-card/50 border border-border/50 space-y-6 print:border-none print-break-before">
           <span className="text-xs font-extrabold text-primary uppercase tracking-wider print:text-black">Capítulo 3</span>
-          <h2 className="text-2xl font-black text-foreground print:text-black">O Método de 4 Passos: Da Prateleira ao SaaS</h2>
+          <h2 className="text-2xl font-black text-foreground print:text-black">O Método de 4 Passos: Da Prateleira ao SaaS em 48h</h2>
           
           <div className="space-y-4 text-sm text-muted-foreground print:text-black">
             <div className="p-4 rounded-xl bg-muted/30 border border-border/30">
-              <h3 className="font-bold text-foreground text-base mb-1 print:text-black">Passo 1: Descoberta</h3>
-              <p>Filtre livros com +50.000 cópias vendidas nos últimos 5 anos com avaliação superior a 4.2 estrelas.</p>
+              <h3 className="font-bold text-foreground text-base mb-1 print:text-black">Passo 1: Descoberta Estruturada</h3>
+              <p>Filtre livros com +50.000 cópias vendidas, avaliação entre 4.1 e 4.7 e publicação nos últimos 5 anos.</p>
             </div>
             <div className="p-4 rounded-xl bg-muted/30 border border-border/30">
               <h3 className="font-bold text-foreground text-base mb-1 print:text-black">Passo 2: Análise da Lacuna</h3>
-              <p>Leia os highlights do Kindle e mine os comentários de 3 estrelas para compilar as queixas operacionais.</p>
+              <p>Mapeie os highlights do Kindle e reviews de 3 estrelas para formular a tese de dor do produto.</p>
             </div>
             <div className="p-4 rounded-xl bg-muted/30 border border-border/30">
-              <h3 className="font-bold text-foreground text-base mb-1 print:text-black">Passo 3: Conceção do MVP Mínimo</h3>
-              <p>Aplique a Regra de Ouro: o seu MVP resolve <strong>apenas uma dor central (P0)</strong> com máxima simplicidade.</p>
+              <h3 className="font-bold text-foreground text-base mb-1 print:text-black">Passo 3: MVP com Regra P0</h3>
+              <p>Foque o seu protótipo em resolver <strong>apenas 1 dor central</strong> com velocidade e simplicidade extrema.</p>
             </div>
             <div className="p-4 rounded-xl bg-muted/30 border border-border/30">
               <h3 className="font-bold text-foreground text-base mb-1 print:text-black">Passo 4: Validação em 48 Horas</h3>
-              <p>Lance uma Landing Page com lista de espera. Se conseguir 50 inscrições em 48h, avance para a construção!</p>
+              <p>Publique uma Landing Page de lista de espera nas comunidades. Se alcançar +50 inscrições, avance!</p>
             </div>
           </div>
         </article>
@@ -224,27 +222,27 @@ export default function EbookDownloadPage() {
         {/* CAPÍTULO 4 */}
         <article className="p-8 rounded-3xl bg-card/50 border border-border/50 space-y-4 print:border-none print-break-before">
           <span className="text-xs font-extrabold text-primary uppercase tracking-wider print:text-black">Capítulo 4</span>
-          <h2 className="text-2xl font-black text-foreground print:text-black">5 Casos Reais: Livros que se Tornaram Startups de Sucesso</h2>
+          <h2 className="text-2xl font-black text-foreground print:text-black">5 Casos Reais: De Livros a Startups de Sucesso</h2>
           <ul className="space-y-3 text-sm text-muted-foreground print:text-black">
             <li className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 print:text-black" />
-              <strong className="text-foreground print:text-black">Getting Things Done</strong> → Todoist ($500M+ em avaliação)
+              <strong className="text-foreground print:text-black">Getting Things Done</strong> (David Allen) → Todoist & Things3 ($500M+ em valor)
             </li>
             <li className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 print:text-black" />
-              <strong className="text-foreground print:text-black">The 4-Hour Work Week</strong> → Zapier ($5B+ em avaliação)
+              <strong className="text-foreground print:text-black">The 4-Hour Work Week</strong> (Tim Ferriss) → Zapier ($5B+ em valor)
             </li>
             <li className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 print:text-black" />
-              <strong className="text-foreground print:text-black">You Are a Badass at Making Money</strong> → YNAB ($100M+ ARR)
+              <strong className="text-foreground print:text-black">You Are a Badass at Money</strong> (Jen Sincero) → YNAB ($100M+ ARR)
             </li>
             <li className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 print:text-black" />
-              <strong className="text-foreground print:text-black">Deep Work</strong> → Freedom App ($10M+ ARR)
+              <strong className="text-foreground print:text-black">Deep Work</strong> (Cal Newport) → Freedom App & Forest ($10M+ ARR)
             </li>
             <li className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 print:text-black" />
-              <strong className="text-foreground print:text-black">The Lean Startup</strong> → Mixpanel ($865M em avaliação)
+              <strong className="text-foreground print:text-black">The Lean Startup</strong> (Eric Ries) → Mixpanel & Hotjar ($865M em valor)
             </li>
           </ul>
         </article>
@@ -254,14 +252,14 @@ export default function EbookDownloadPage() {
           <span className="text-xs font-extrabold text-primary uppercase tracking-wider print:text-black">Capítulo 5 & 6</span>
           <h2 className="text-2xl font-black text-foreground print:text-black">Os 3 Erros Fatais & O Plano de Ação de 48 Horas</h2>
           <div className="space-y-3 text-sm text-muted-foreground print:text-black">
-            <p><strong>Erro 1:</strong> Construir antes de vender. A sequência certa é: Dor → Validar → Vender → Construir.</p>
+            <p><strong>Erro 1:</strong> Construir antes de vender. A sequência correta é: Dor → Validar → Vender → Construir.</p>
             <p><strong>Erro 2:</strong> Tentar resolver todas as dores do livro de uma só vez no MVP.</p>
             <p><strong>Erro 3:</strong> Não falar com as comunidades de leitores antes de programar.</p>
           </div>
           <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 space-y-1 print:border-black">
             <h4 className="font-bold text-emerald-400 text-sm print:text-black">Plano de 48 Horas com o ViralBook AI:</h4>
             <p className="text-xs text-muted-foreground print:text-black">
-              Horas 0-2 (Radar) → Horas 2-4 (Análise da Dor) → Horas 4-8 (MVP & Lean Canvas) → Horas 8-24 (Landing Page) → Horas 24-48 (50 inscritos de validação).
+              Sábado de Manhã (Descoberta) → Sábado à Tarde (Análise da Dor) → Sábado à Noite (Landing Page) → Domingo (Divulgação & 50 Leads).
             </p>
           </div>
         </article>
@@ -269,25 +267,21 @@ export default function EbookDownloadPage() {
         {/* CTA final no fim da leitura */}
         <div className="p-8 rounded-3xl bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-primary/30 text-center space-y-4 no-print">
           <h3 className="text-2xl font-extrabold text-foreground">
-            {isEn ? "Ready to Automate This Entire Method?" : isEs ? "¿Listo para Automatizar Todo el Método?" : "Pronto para Automatizar Todo Este Método?"}
+            Pronto para Automatizar Todo Este Método?
           </h3>
           <p className="text-sm text-muted-foreground max-w-lg mx-auto">
-            {isEn
-              ? "ViralBook AI automates book mining, Lean Canvas generation, 8-Mentor advisory, and Landing Page deployment."
-              : isEs
-              ? "ViralBook AI automatiza la minería de libros, geração de Lean Canvas, mentoría y criação de Landing Pages."
-              : "O ViralBook AI automatiza a mineração de livros, geração de Lean Canvas, mentoria de 8 mentores e criação de Landing Pages."}
+            O ViralBook AI automatiza a mineração de livros, geração de Lean Canvas, mentoria de 8 mentores e criação de Landing Pages.
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             <a href="/Livros_Que_Valem_Milhoes_ViralBook_AI.pdf" download="Livros_Que_Valem_Milhoes_ViralBook_AI.pdf">
               <Button variant="outline" className="font-bold rounded-xl h-12 px-6 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10">
                 <Download className="mr-2 h-4 w-4" />
-                Descarregar Ficheiro PDF (.pdf)
+                Descarregar Ficheiro PDF Master (.pdf)
               </Button>
             </a>
             <Link href="/dashboard">
               <Button className="bg-primary text-primary-foreground font-bold rounded-xl h-12 px-8 shadow-lg shadow-primary/20">
-                {isEn ? "Access Platform Now" : isEs ? "Acceder a Plataforma Ahora" : "Aceder à Plataforma Agora"}
+                Aceder à Plataforma Agora
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
