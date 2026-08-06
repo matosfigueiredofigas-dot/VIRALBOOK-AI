@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Zap, Target, BookOpen, Lock, CheckCircle2, Eye, EyeOff, Loader2, Play, Clock } from "lucide-react";
+import { ArrowRight, Zap, Target, BookOpen, Lock, CheckCircle2, Eye, EyeOff, Loader2, Sparkles, Clock } from "lucide-react";
 import { PricingSection } from "@/components/pricing-section";
 import { Button } from "@/components/ui/button";
 import { ContactModal } from "@/components/contact-modal";
@@ -13,19 +13,6 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageToggle } from "@/components/language-toggle";
 import { VideoDemo } from "@/components/video-demo";
 import { useLanguage } from "@/contexts/language-context";
-
-const LEMON_SQUEEZY_CHECKOUT_URLS = {
-  basic: {
-    USD: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BASIC_USD_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_USD_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-usd-id",
-    BRL: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BASIC_BRL_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BRL_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-brl-id",
-    EUR: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BASIC_EUR_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_EUR_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-eur-id"
-  },
-  pro: {
-    USD: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_PRO_USD_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_USD_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-usd-id",
-    BRL: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_PRO_BRL_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_BRL_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-brl-id",
-    EUR: process.env.NEXT_PUBLIC_LEMON_SQUEEZY_PRO_EUR_URL || process.env.NEXT_PUBLIC_LEMON_SQUEEZY_EUR_URL || "https://viralbook.lemonsqueezy.com/checkout/buy/your-eur-id"
-  }
-};
 
 export default function LandingPage() {
   const router = useRouter();
@@ -49,38 +36,6 @@ export default function LandingPage() {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
-
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const s = (seconds % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
-  };
-
-  const getPrice = (tier: 'basic' | 'pro', type: 'original' | 'discount') => {
-    if (tier === 'basic') {
-      if (type === 'original') {
-        if (currency === 'USD') return '$ 29';
-        if (currency === 'EUR') return '29 €';
-        return 'R$ 147';
-      } else {
-        if (currency === 'USD') return '$ 9';
-        if (currency === 'EUR') return '9 €';
-        return 'R$ 47';
-      }
-    }
-    if (tier === 'pro') {
-      if (type === 'original') {
-        if (currency === 'USD') return '$ 69';
-        if (currency === 'EUR') return '69 €';
-        return 'R$ 397';
-      } else {
-        if (currency === 'USD') return '$ 19';
-        if (currency === 'EUR') return '19 €';
-        return 'R$ 97';
-      }
-    }
-    return '';
-  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -135,16 +90,10 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center mt-6">
               <button 
                 onClick={() => openAuth("signup")}
-                className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/80 h-12 px-6 md:px-7 text-sm md:text-base font-bold rounded-full shadow-[0_0_30px_-5px_rgba(59,130,246,0.5)] transition-all hover:scale-105 hover:shadow-[0_0_45px_-10px_rgba(59,130,246,0.7)] cursor-pointer"
+                className="group/button inline-flex shrink-0 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/80 h-12 px-7 text-sm md:text-base font-bold rounded-full shadow-[0_0_30px_-5px_rgba(59,130,246,0.5)] transition-all hover:scale-105 hover:shadow-[0_0_45px_-10px_rgba(59,130,246,0.7)] cursor-pointer"
               >
                 {t.landing.heroCtaPrimary} <ArrowRight className="ml-2 h-4 w-4" />
               </button>
-              <Link 
-                href="#demo" 
-                className="group/button inline-flex shrink-0 items-center justify-center bg-blue-600/10 hover:bg-blue-600/20 text-blue-600 dark:text-blue-400 h-12 px-6 text-sm md:text-base font-bold rounded-full border border-blue-500/30 transition-all hover:scale-105"
-              >
-                <Play className="mr-2 h-4 w-4 fill-current" /> {t.landing.demoBtn}
-              </Link>
               <Link 
                 href="#pricing" 
                 className="group/button inline-flex shrink-0 items-center justify-center bg-muted text-foreground hover:bg-muted/80 h-12 px-6 text-sm md:text-base font-bold rounded-full border border-border/50 transition-all hover:scale-105"
@@ -205,22 +154,13 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-
-          <div className="mt-12 text-center relative z-10">
-            <Link 
-              href="#demo"
-              className="inline-flex items-center justify-center bg-blue-600 text-white hover:bg-blue-700 h-12 px-8 text-base font-bold rounded-full shadow-lg shadow-blue-500/25 transition-all hover:scale-105"
-            >
-              <Play className="mr-2 h-4 w-4 fill-current" /> {t.landing.demoBtn}
-            </Link>
-          </div>
         </section>
 
         {/* Interactive Demo Simulator Section */}
         <section id="demo" className="w-full py-20 bg-background border-t border-border/50 px-4 md:px-6 relative">
           <div className="max-w-6xl mx-auto text-center mb-12 space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-1.5 text-xs font-extrabold text-blue-500 uppercase tracking-wider">
-              <Play className="h-3.5 w-3.5 fill-current" /> {t.landing.demoBadge}
+              <Sparkles className="h-3.5 w-3.5 text-yellow-400" /> Workflow do ViralBook AI
             </div>
             <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground">
               {t.landing.demoTitle}
@@ -276,65 +216,9 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Pricing Section — componente completo com toggle mensal/anual, LTD e multi-moeda */}
+        {/* Pricing Section */}
         <PricingSection />
       </main>
-
-      <footer className="border-t border-border/50 bg-background pt-20 pb-12 px-6 lg:px-14">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-16">
-          <div className="md:col-span-1 space-y-4">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
-                <Zap className="h-4 w-4 text-white" />
-              </div>
-              <span className="font-bold text-xl tracking-tight text-foreground">ViralBook AI</span>
-            </div>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              ViralBook AI
-            </p>
-          </div>
-          
-          <div>
-            <h4 className="font-bold text-foreground mb-6 uppercase text-sm tracking-wider">Nav</h4>
-            <ul className="space-y-4 text-sm text-muted-foreground">
-              <li><Link href="#features" className="hover:text-primary transition-colors">{t.landing.featuresNav}</Link></li>
-              <li><Link href="#pricing" className="hover:text-primary transition-colors">{t.landing.pricingNav}</Link></li>
-              <li><Link href="/docs" className="hover:text-primary transition-colors">{t.landing.docsNav}</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-bold text-foreground mb-6 uppercase text-sm tracking-wider">{isEn ? "Legal" : isEs ? "Legal" : "Legal"}</h4>
-            <ul className="space-y-4 text-sm text-muted-foreground">
-              <li><Link href="/terms" className="hover:text-primary transition-colors">{isEn ? "Terms of Use" : isEs ? "Términos de Uso" : "Termos de Uso"}</Link></li>
-              <li><Link href="/privacy" className="hover:text-primary transition-colors">{isEn ? "Privacy Policy" : isEs ? "Política de Privacidad" : "Política de Privacidade"}</Link></li>
-              <li><button onClick={() => openAuth("login")} className="hover:text-primary transition-colors text-left cursor-pointer">{t.landing.restrictedAccess}</button></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-bold text-foreground mb-6 uppercase text-sm tracking-wider">{isEn ? "Contact" : isEs ? "Contacto" : "Contato"}</h4>
-            <ul className="space-y-4 text-sm text-muted-foreground">
-              <li><ContactModal /></li>
-              <li><a href="mailto:suporte@viralbook.ai" className="hover:text-primary transition-colors font-medium text-foreground">suporte@viralbook.ai</a></li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} ViralBook AI. All rights reserved.</p>
-        </div>
-      </footer>
-
-      <AnimatePresence>
-        {isAuthOpen && (
-          <AuthModal
-            isOpen={isAuthOpen}
-            onClose={() => setIsAuthOpen(false)}
-            initialTab={authTab}
-          />
-        )}
-      </AnimatePresence>
     </div>
   );
 }
