@@ -77,40 +77,62 @@ export default function EbookDownloadPage() {
       {/* Main Container */}
       <main className="flex-1 max-w-4xl mx-auto px-6 py-12 space-y-12 print:py-0 print:px-0">
         
-        {/* Banner do eBook Master */}
-        <div className="rounded-3xl bg-gradient-to-br from-card via-card/90 to-primary/10 p-8 md:p-12 border border-border/50 shadow-2xl relative overflow-hidden text-center md:text-left space-y-6 print:border-none print:shadow-none print:p-0 print:bg-none">
+        {/* Banner do eBook Master com Capa Cinematográfica */}
+        <div className="rounded-3xl bg-gradient-to-br from-card via-card/90 to-primary/10 p-8 md:p-12 border border-border/50 shadow-2xl relative overflow-hidden space-y-6 print:border-none print:shadow-none print:p-0 print:bg-none">
           <div className="absolute top-0 right-0 w-80 h-80 bg-primary/10 blur-3xl rounded-full pointer-events-none no-print" />
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-extrabold uppercase no-print">
-            <Sparkles className="h-3.5 w-3.5" />
-            Edição Master Ampliada · 4.600+ Palavras · Guia Oficial 2025
-          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8 items-center">
+            <div className="md:col-span-2 space-y-5 text-center md:text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-extrabold uppercase no-print">
+                <Sparkles className="h-3.5 w-3.5" />
+                Edição Master Ampliada · Capa Cinematográfica 3D · Guia 2025
+              </div>
 
-          <h1 className="text-3xl md:text-5xl font-black tracking-tight text-foreground leading-[1.15] print:text-3xl print:text-black">
-            LIVROS QUE VALEM MILHÕES <br />
-            <span className="bg-gradient-to-r from-blue-500 via-primary to-purple-500 bg-clip-text text-transparent print:text-black print:bg-none">
-              Como Extrair Ideias de Software de Bestsellers e Construir um Micro SaaS Lucrativo
-            </span>
-          </h1>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-foreground leading-[1.15] print:text-3xl print:text-black">
+                LIVROS QUE VALEM MILHÕES <br />
+                <span className="bg-gradient-to-r from-blue-500 via-primary to-purple-500 bg-clip-text text-transparent print:text-black print:bg-none">
+                  Como Extrair Ideias de Software de Bestsellers
+                </span>
+              </h1>
 
-          <p className="text-sm font-semibold text-muted-foreground print:text-black">
-            Por ViralBook AI · Edição Digital Exclusiva (2025)
-          </p>
+              <p className="text-sm font-semibold text-muted-foreground print:text-black">
+                Por ViralBook AI · Edição Digital Exclusiva (2025)
+              </p>
 
-          <p className="text-base md:text-lg text-muted-foreground max-w-2xl leading-relaxed italic border-l-4 border-primary pl-4 py-1 print:text-black print:border-black">
-            "Os melhores produtos de software não nascem de ideias geniais inventadas no vácuo. Nascem de dores profundas e reais, já validadas por milhões de leitores."
-          </p>
+              <p className="text-sm md:text-base text-muted-foreground leading-relaxed italic border-l-4 border-primary pl-4 py-1 print:text-black print:border-black">
+                "Os melhores produtos de software não nascem de ideias geniais inventadas no vácuo. Nascem de dores profundas e reais, já validadas por milhões de leitores."
+              </p>
 
-          <div className="flex flex-wrap gap-4 pt-2 justify-center md:justify-start no-print">
-            <a href="/Livros_Que_Valem_Milhoes_ViralBook_AI.pdf" download="Livros_Que_Valem_Milhoes_ViralBook_AI.pdf">
-              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl h-12 px-7 shadow-lg shadow-emerald-600/20 text-sm">
-                <Download className="mr-2.5 h-5 w-5" />
-                Descarregar Ficheiro PDF Completo (.pdf)
-              </Button>
-            </a>
-            <Button onClick={handlePrint} variant="outline" className="font-bold rounded-xl h-12 px-6 text-sm">
-              <Printer className="mr-2 h-4 w-4" />
-              Imprimir / Guardar em PDF (Nativo)
-            </Button>
+              <div className="flex flex-wrap gap-4 pt-2 justify-center md:justify-start no-print">
+                <a href="/Livros_Que_Valem_Milhoes_ViralBook_AI.pdf" download="Livros_Que_Valem_Milhoes_ViralBook_AI.pdf">
+                  <Button className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl h-12 px-7 shadow-lg shadow-emerald-600/20 text-sm">
+                    <Download className="mr-2.5 h-5 w-5" />
+                    Descarregar Ficheiro PDF Completo (.pdf)
+                  </Button>
+                </a>
+                <Button onClick={handlePrint} variant="outline" className="font-bold rounded-xl h-12 px-6 text-sm">
+                  <Printer className="mr-2 h-4 w-4" />
+                  Imprimir / Guardar em PDF
+                </Button>
+              </div>
+            </div>
+
+            {/* Imagem de Capa Cinematográfica (Mockup 3D) */}
+            <div className="no-print flex justify-center">
+              <div className="relative group rounded-2xl overflow-hidden shadow-2xl border border-white/20 transition-transform duration-500 hover:scale-105 max-w-[220px]">
+                <img
+                  src="/viralbook_ebook_cover.jpg"
+                  alt="Capa Oficial VIRALBOOK AI — Livros que Valem Milhões"
+                  className="w-full h-auto object-cover rounded-2xl"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                  <span className="text-xs font-bold text-white flex items-center gap-1">
+                    <Sparkles className="h-3 w-3 text-yellow-400" />
+                    Edição Master em PDF
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

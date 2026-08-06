@@ -3,22 +3,27 @@ from fpdf import FPDF
 
 class PDF(FPDF):
     def header(self):
-        self.set_font("Helvetica", "B", 8)
-        self.set_text_color(120, 120, 120)
-        self.cell(0, 10, "VIRALBOOK AI  |  LIVROS QUE VALEM MILHÕES", border=0, new_x="LMARGIN", new_y="NEXT", align="R")
-        self.set_draw_color(220, 220, 220)
-        self.line(10, 18, 200, 18)
-        self.ln(5)
+        # Esconde o cabeçalho na Capa (Página 1)
+        if self.page_no() > 1:
+            self.set_font("Helvetica", "B", 8)
+            self.set_text_color(120, 120, 120)
+            self.cell(0, 10, "VIRALBOOK AI  |  LIVROS QUE VALEM MILHÕES", border=0, new_x="LMARGIN", new_y="NEXT", align="R")
+            self.set_draw_color(220, 220, 220)
+            self.line(10, 18, 200, 18)
+            self.ln(5)
 
     def footer(self):
-        self.set_y(-15)
-        self.set_font("Helvetica", "I", 8)
-        self.set_text_color(150, 150, 150)
-        self.cell(0, 10, f"Página {self.page_no()}/{{nb}}  ·  viralbook-ai.vercel.app", align="C")
+        # Esconde o rodapé na Capa (Página 1)
+        if self.page_no() > 1:
+            self.set_y(-15)
+            self.set_font("Helvetica", "I", 8)
+            self.set_text_color(150, 150, 150)
+            self.cell(0, 10, f"Página {self.page_no()}/{{nb}}  ·  viralbook-ai.vercel.app", align="C")
 
 def create_ebook_pdf():
     md_path = r"C:\Users\HP\.gemini\antigravity\brain\29ad5b6a-38d7-4bcb-8333-69df03805fd0\LIVROS_QUE_VALEM_MILHOES.md"
     out_path = r"c:\Users\HP\Desktop\VIRALBOOK AI\viralbook-ai\public\Livros_Que_Valem_Milhoes_ViralBook_AI.pdf"
+    cover_img_path = r"c:\Users\HP\Desktop\VIRALBOOK AI\viralbook-ai\public\viralbook_ebook_cover.jpg"
 
     with open(md_path, "r", encoding="utf-8") as f:
         lines = f.readlines()
@@ -26,26 +31,37 @@ def create_ebook_pdf():
     pdf = PDF(orientation="P", unit="mm", format="A4")
     pdf.alias_nb_pages()
     pdf.set_auto_page_break(auto=True, margin=20)
+    
+    # ── PÁGINA 1: CAPA CINEMATOGRÁFICA ───────────────────────────────────────
+    pdf.add_page()
+    if os.path.exists(cover_img_path):
+        # Imagem de capa ocupando a página inteira
+        pdf.image(cover_img_path, x=0, y=0, w=210, h=297)
+    else:
+        pdf.set_fill_color(15, 23, 42)
+        pdf.rect(0, 0, 210, 297, "F")
+
+    # ── PÁGINA 2: INÍCIO DO LIVRO ─────────────────────────────────────────────
     pdf.add_page()
     pdf.set_left_margin(15)
     pdf.set_right_margin(15)
 
-    # Title Banner / Cover Header
-    pdf.ln(10)
+    # Banner de Título
+    pdf.ln(5)
     pdf.set_fill_color(37, 99, 235) # Primary Blue
     pdf.set_text_color(255, 255, 255)
-    pdf.set_font("Helvetica", "B", 22)
-    pdf.multi_cell(0, 14, "LIVROS QUE VALEM MILHÕES", align="C", fill=True)
+    pdf.set_font("Helvetica", "B", 20)
+    pdf.multi_cell(0, 12, "LIVROS QUE VALEM MILHÕES", align="C", fill=True)
     pdf.ln(2)
     pdf.set_fill_color(30, 41, 59)
-    pdf.set_font("Helvetica", "B", 12)
-    pdf.multi_cell(0, 10, "Como Extrair Ideias de Software de Bestsellers e Construir um Micro SaaS Lucrativo", align="C", fill=True)
+    pdf.set_font("Helvetica", "B", 11)
+    pdf.multi_cell(0, 8, "Como Extrair Ideias de Software de Bestsellers e Construir um Micro SaaS Lucrativo", align="C", fill=True)
     
-    pdf.ln(6)
+    pdf.ln(4)
     pdf.set_text_color(100, 100, 100)
-    pdf.set_font("Helvetica", "I", 10)
-    pdf.cell(0, 8, "Por ViralBook AI  ·  Edição Digital Exclusiva (2025)", align="C", new_x="LMARGIN", new_y="NEXT")
-    pdf.ln(8)
+    pdf.set_font("Helvetica", "I", 9)
+    pdf.cell(0, 6, "Por ViralBook AI  ·  Edição Master Exclusiva (2025)", align="C", new_x="LMARGIN", new_y="NEXT")
+    pdf.ln(6)
 
     def clean(text: str) -> str:
         replacements = {
@@ -112,7 +128,7 @@ def create_ebook_pdf():
             pdf.ln(1.5)
 
     pdf.output(out_path)
-    print(f"PDF gerado com sucesso em: {out_path}")
+    print(f"PDF com capa cinematográfica gerado com sucesso em: {out_path}")
 
 if __name__ == "__main__":
     create_ebook_pdf()

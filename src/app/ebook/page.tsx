@@ -125,15 +125,24 @@ export default function EbookPage() {
                 </div>
               </div>
 
-              {/* Lista de benefícios */}
-              <ul className="space-y-3 pt-2">
-                {benefits.map((b, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground font-medium">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    {b}
-                  </li>
-                ))}
-              </ul>
+              {/* Mockup da Capa 3D Cinematográfica */}
+              <div className="pt-4 flex items-center gap-6">
+                <div className="relative group rounded-2xl overflow-hidden shadow-2xl border border-white/20 max-w-[140px] shrink-0">
+                  <img
+                    src="/viralbook_ebook_cover.jpg"
+                    alt="Capa Oficial VIRALBOOK AI — Livros que Valem Milhões"
+                    className="w-full h-auto object-cover rounded-2xl"
+                  />
+                </div>
+                <ul className="space-y-2.5">
+                  {benefits.map((b, i) => (
+                    <li key={i} className="flex items-start gap-2 text-xs md:text-sm text-muted-foreground font-medium">
+                      <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
             {/* Formulário */}
