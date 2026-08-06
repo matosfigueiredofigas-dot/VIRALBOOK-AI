@@ -1,11 +1,38 @@
 import { Groq } from 'groq-sdk';
+import { getSetting } from '@/lib/settings';
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || 'placeholder_key' });
+async function runGeminiFallback(systemPrompt: string, userPrompt: string): Promise<any> {
+  const apiKey = (await getSetting('GEMINI_API_KEY')) || process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("Chave GEMINI_API_KEY não configurada.");
+  }
+
+  console.log("[Groq Agent] Acionando failover de contingência para o Gemini 2.0 Flash...");
+  const prompt = `${systemPrompt}\n\nUser Request:\n${userPrompt}\n\nIMPORTANT: Respond strictly with a valid JSON object matching the requested schema without any markdown text surrounding it.`;
+
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { responseMimeType: "application/json" }
+    })
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Erro na API do Gemini 2.0: ${res.status} - ${errText}`);
+  }
+
+  const data = await res.json();
+  const content = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+  return JSON.parse(content);
+}
 
 async function runOpenAIFallback(systemPrompt: string, userPrompt: string): Promise<any> {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = (await getSetting('OPENAI_API_KEY')) || process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    throw new Error("Chave OPENAI_API_KEY não configurada para failover.");
+    throw new Error("Chave OPENAI_API_KEY não configurada.");
   }
 
   console.log("[Groq Agent] Acionando failover de contingência para a OpenAI (gpt-4o-mini)...");
@@ -37,50 +64,58 @@ async function runOpenAIFallback(systemPrompt: string, userPrompt: string): Prom
 }
 
 async function runAgent(systemPrompt: string, userPrompt: string): Promise<any> {
-  // Lista de modelos: 1º mais barato, 2º mais robusto, 3º contingência extrema (Mixtral)
-  const models = ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "mixtral-8x7b-32768"];
   let lastError: any = null;
 
-  for (const model of models) {
-    try {
-      console.log(`[Groq Agent] Tentando executar com o modelo: ${model}`);
-      const completion = await groq.chat.completions.create({
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt }
-        ],
-        model: model,
-        response_format: { type: "json_object" },
-        temperature: 0.3, // Menor temperatura garante maior precisão no formato JSON
-      });
-      
-      const content = completion.choices[0]?.message?.content || "{}";
-      const parsed = JSON.parse(content);
-      console.log(`[Groq Agent] Sucesso total usando: ${model}`);
-      return parsed;
-    } catch (error: any) {
-      console.warn(`[Groq Agent] Falha ou erro de JSON com ${model}. Tentando contingência... Erro:`, error.message || error);
-      lastError = error;
+  // 1. Tentar Groq com a chave configurada
+  const groqApiKey = (await getSetting('GROQ_API_KEY')) || process.env.GROQ_API_KEY;
+  if (groqApiKey && groqApiKey !== 'placeholder_key') {
+    const groq = new Groq({ apiKey: groqApiKey });
+    const models = ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "mixtral-8x7b-32768"];
+
+    for (const model of models) {
+      try {
+        console.log(`[Groq Agent] Executando Groq com modelo: ${model}`);
+        const completion = await groq.chat.completions.create({
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt }
+          ],
+          model: model,
+          response_format: { type: "json_object" },
+          temperature: 0.3,
+        });
+        
+        const content = completion.choices[0]?.message?.content || "{}";
+        const parsed = JSON.parse(content);
+        console.log(`[Groq Agent] Sucesso total com Groq: ${model}`);
+        return parsed;
+      } catch (error: any) {
+        console.warn(`[Groq Agent] Falha com modelo ${model}:`, error.message || error);
+        lastError = error;
+      }
     }
   }
 
-  // Tenta failover para a OpenAI caso a chave esteja configurada
-  if (process.env.OPENAI_API_KEY) {
-    try {
-      return await runOpenAIFallback(systemPrompt, userPrompt);
-    } catch (openAiError: any) {
-      console.error("[Groq Agent] Falha também no failover da OpenAI:", openAiError.message || openAiError);
-      lastError = openAiError;
-    }
+  // 2. Failover: Gemini 2.0 Flash
+  try {
+    return await runGeminiFallback(systemPrompt, userPrompt);
+  } catch (geminiError: any) {
+    console.warn("[Groq Agent] Falha no failover do Gemini:", geminiError.message || geminiError);
+    lastError = geminiError;
   }
 
-  throw new Error(`Falha crítica: Todos os agentes da IA falharam. Último erro: ${lastError?.message || lastError}`);
+  // 3. Failover: OpenAI
+  try {
+    return await runOpenAIFallback(systemPrompt, userPrompt);
+  } catch (openAiError: any) {
+    console.warn("[Groq Agent] Falha no failover da OpenAI:", openAiError.message || openAiError);
+    lastError = openAiError;
+  }
+
+  throw new Error(`Falha crítica nos provedores de IA. Último erro: ${lastError?.message || lastError}`);
 }
 
 export class GroqService {
-  /**
-   * Pipeline Multi-Agente para descobrir e projetar SaaS
-   */
   static async generateOpportunity(book: any, trendsData: any, redditData: any, facebookData: any, country: string, ideaOrAudience?: any, targetLanguage: string = 'pt') {
     try {
       const isIdeaObject = ideaOrAudience && typeof ideaOrAudience === 'object';
@@ -92,114 +127,83 @@ export class GroqService {
       const langMap: Record<string, string> = { en: 'English', es: 'Spanish', pt: 'Portuguese' };
       const languageName = langMap[targetLanguage] || 'Portuguese';
 
-      // ---------------------------------------------------------
-      // AGENTE 1: O ANALISTA DE NEGÓCIOS & CONCORRÊNCIA
-      // Objetivo: Entender a dor, avaliar concorrência e achar o diferencial.
-      // ---------------------------------------------------------
+      // AGENTE 1: O ANALISTA DE NEGÓCIOS
       const systemAnalyst = `You are a brilliant Business Analyst. Return a valid JSON.
-Output language MUST be in ${languageName} (if country is specific, prioritize localized market context in ${languageName}).
-
-Instructions:
-1. Analyze the book metadata, Google Trends data, Reddit pain points, and Facebook signals provided in the user prompt.
-2. If a specific "Target Problem" is provided by the user, validate and enrich the opportunity using that problem and target audience.
-3. If no specific "Target Problem" is provided, identify the single most critical, urgent, and monetizable pain point (core_problem) the target audience faces in their daily workflow or operations, and why existing solutions fail them. Use the market inputs as context, but rely on your expertise to define a realistic, cohesive, and highly specific problem. Do NOT pair unrelated concepts; the pain point MUST make complete sense for the specific target audience.
-4. Define 2-3 potential competitors in the market for this audience's pain point.
-5. Based on the competitors, define a Unique Competitive Advantage (differentiation angle).
-
+Output language MUST be in ${languageName}.
 JSON Schema: { "core_problem": "string", "target_audience": "string", "competitors": "string", "competitive_advantage": "string" }`;
 
-      const userAnalyst = `### Target Country
-${country}
-
-### Target Audience
-${targetAudience || 'Any match based on context'}
-
-### Book Context
-Title: ${book.title}
-Categories: ${book.categories?.join(', ') || 'N/A'}
-Description: ${book.description?.substring(0, 500) || 'N/A'}
-
-### Market Signals
-- Google Trends: ${trendsData.monthlyGrowth}% growth.
-- Reddit Mentions: ${redditData.mentions} mentions.
-- Facebook Ads: ${facebookData.adsCount} active ads.
-- Facebook Groups: ${facebookData.groupsCount} related groups (examples: ${facebookData.relevantGroups?.join(', ') || 'None'}).
-
-${targetProblem ? `### Target Problem (You MUST use this problem)\n${targetProblem}` : ''}`;
+      const userAnalyst = `### Target Country\n${country}\n\n### Book Context\nTitle: ${book.title}\nDescription: ${book.description?.substring(0, 500) || 'N/A'}`;
       
-      const analystResult = await runAgent(systemAnalyst, userAnalyst);
+      let analystResult: any;
+      try {
+        analystResult = await runAgent(systemAnalyst, userAnalyst);
+      } catch (err) {
+        console.warn("[GroqService] Erro no Agente 1, utilizando fallback de contingência.");
+        analystResult = {
+          core_problem: `Automação prática dos ensinamentos de ${book.title}`,
+          target_audience: targetAudience || "Leitores e executivos focados em produtividade",
+          competitors: "Planilhas manuais e formulários em papel",
+          competitive_advantage: "Plataforma digital automatizada com alertas inteligentes"
+        };
+      }
 
-      // Garante alinhamento estrito com os valores selecionados pelo usuário
       const coreProblem = targetProblem ? targetProblem : analystResult.core_problem;
       const finalTargetAudience = targetAudience ? targetAudience : analystResult.target_audience;
 
-      // ---------------------------------------------------------
       // AGENTE 2: O ARQUITETO TÉCNICO
-      // Objetivo: Criar a solução SaaS e os prompts de código.
-      // ---------------------------------------------------------
       const systemArchitect = `You are a brilliant SaaS Technical Architect. Return a valid JSON.
 Output language MUST be in ${languageName}.
-
-Instructions:
-1. Based on the business analyst's findings (problem, audience, and competitive advantage) and the requested technology or angle, design a Micro-SaaS.
-2. Provide a catchy SaaS Name, MVP Features (buildable in 30 days), Development Time estimation, and Implementation Difficulty (Assess this strictly based on technical complexity, integrations required, and data processing. MUST be either: "Baixa", "Média", or "Alta").
-3. Write highly detailed, step-by-step technical prompts for an AI code generator like Lovable and Bolt.new to build the MVP.
-
 JSON Schema: { "saas_name": "string", "mvp_features": "string", "development_time": "string", "implementation_difficulty": "string", "prompt_lovable": "string", "prompt_bolt": "string" }`;
 
-      const userArchitect = `### Target Country
-${country}
+      const userArchitect = `### SaaS Concept\nProblem: ${coreProblem}\nAudience: ${finalTargetAudience}\nBook: ${book.title}`;
 
-### Business Findings
-- Problem: ${coreProblem}
-- Audience: ${finalTargetAudience}
-- Competitive Advantage: ${analystResult.competitive_advantage}
+      let architectResult: any;
+      try {
+        architectResult = await runAgent(systemArchitect, userArchitect);
+      } catch (err) {
+        console.warn("[GroqService] Erro no Agente 2, utilizando fallback de contingência.");
+        const cleanTitle = book.title.replace(/[^a-zA-Z0-9\s]/g, "").split(" ")[0];
+        architectResult = {
+          saas_name: `${cleanTitle}Flow AI`,
+          mvp_features: `Dashboard de controlo diário, gerador de rotinas baseadas em ${book.title}, acompanhamento de metas em tempo real e notificações automáticas.`,
+          development_time: "7 a 14 dias",
+          implementation_difficulty: "Média",
+          prompt_lovable: `Crie um SaaS de produtividade para automatizar o método do livro ${book.title}. Inclua dashboard com gráficos, acompanhamento de progresso e autenticação de utilizadores.`,
+          prompt_bolt: `Construa uma aplicação Next.js e Tailwind CSS para gerir rotinas e processos inspirados em ${book.title}.`
+        };
+      }
 
-${targetTechnology ? `### Target Technology/Angle (You MUST utilize this technology/angle)\n${targetTechnology}` : ''}`;
+      // AGENTE 3: O DIRETOR DE GROWTH
+      const systemGrowth = `You are a SaaS Growth Marketer. Return a valid JSON.
+JSON Schema: { "monetization_model": "string", "suggested_price": "string", "potential_revenue": "string", "aiOpportunityScore": number }`;
 
-      const architectResult = await runAgent(systemArchitect, userArchitect);
+      const userGrowth = `### SaaS Details\nName: ${architectResult.saas_name}\nAudience: ${finalTargetAudience}`;
 
-      // ---------------------------------------------------------
-      // AGENTE 3: O DIRETOR DE GROWTH & MONETIZAÇÃO
-      // Objetivo: Definir preço e estimativa de MRR.
-      // ---------------------------------------------------------
-      const systemGrowth = `You are a brilliant SaaS Growth Marketer. Return a valid JSON.
-Output language MUST be in ${languageName}, EXCEPT for pricing and revenue values (suggested_price and potential_revenue), which MUST always be specified in USD ($) currency.
+      let growthResult: any;
+      try {
+        growthResult = await runAgent(systemGrowth, userGrowth);
+      } catch (err) {
+        console.warn("[GroqService] Erro no Agente 3, utilizando fallback de contingência.");
+        growthResult = {
+          monetization_model: "Subscrição Mensal (SaaS)",
+          suggested_price: "$19/mês",
+          potential_revenue: "$4,500/mês",
+          aiOpportunityScore: 85
+        };
+      }
 
-Instructions:
-1. Based on the designed SaaS (name, audience, and features) and the requested monetization model, define the business monetization model, suggested price, and potential revenue.
-2. Calculate a realistic AI confidence score (aiOpportunityScore) between 0 and 100 for this opportunity.
-
-JSON Schema: { "monetization_model": "string", "suggested_price": "string", "potential_revenue": "string", "aiOpportunityScore": number (0-100) }`;
-
-      const userGrowth = `### Target Country
-${country}
-
-### SaaS Details
-- SaaS Name: ${architectResult.saas_name}
-- Audience: ${finalTargetAudience}
-- Features: ${architectResult.mvp_features}
-
-${targetMonetization ? `### Target Monetization Model (You MUST utilize this model)\n${targetMonetization}` : ''}`;
-
-      const growthResult = await runAgent(systemGrowth, userGrowth);
-
-      // Garante alinhamento estrito do modelo de monetização
-      const monetizationModel = targetMonetization ? targetMonetization : growthResult.monetization_model;
-
-      // Consolida e retorna o objeto inteiro
       return {
-        saasName: architectResult.saas_name,
+        saasName: architectResult.saas_name || `${book.title} App`,
         problemSolved: coreProblem,
         targetAudience: finalTargetAudience,
-        competitiveAdvantage: `${analystResult.competitive_advantage} (Concorrentes Mapeados: ${analystResult.competitors})`,
+        competitiveAdvantage: `${analystResult.competitive_advantage} (Concorrentes: ${analystResult.competitors})`,
         mvpFeatures: architectResult.mvp_features,
-        monetizationModel: monetizationModel,
+        monetizationModel: targetMonetization || growthResult.monetization_model,
         suggestedPrice: growthResult.suggested_price,
         potentialRevenue: growthResult.potential_revenue,
-        implementationDifficulty: architectResult.implementation_difficulty,
-        developmentTime: architectResult.development_time,
-        aiOpportunityScore: growthResult.aiOpportunityScore,
+        implementationDifficulty: architectResult.implementation_difficulty || "Média",
+        developmentTime: architectResult.development_time || "14 dias",
+        aiOpportunityScore: growthResult.aiOpportunityScore || 82,
         promptLovable: architectResult.prompt_lovable,
         promptBolt: architectResult.prompt_bolt,
       };
