@@ -85,13 +85,13 @@ export default function EbookDownloadPage() {
             <div className="md:col-span-2 space-y-5 text-center md:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-extrabold uppercase no-print">
                 <Sparkles className="h-3.5 w-3.5" />
-                Edição Master Ampliada · Capa Cinematográfica 3D · Guia 2025
+                Edição Master Cinematográfica · 4.600+ Palavras · Guia Oficial 2025
               </div>
 
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-foreground leading-[1.15] print:text-3xl print:text-black">
                 LIVROS QUE VALEM MILHÕES <br />
                 <span className="bg-gradient-to-r from-blue-500 via-primary to-purple-500 bg-clip-text text-transparent print:text-black print:bg-none">
-                  Como Extrair Ideias de Software de Bestsellers
+                  O Manifesto para Extrair Softwares de Bestsellers
                 </span>
               </h1>
 
@@ -100,7 +100,7 @@ export default function EbookDownloadPage() {
               </p>
 
               <p className="text-sm md:text-base text-muted-foreground leading-relaxed italic border-l-4 border-primary pl-4 py-1 print:text-black print:border-black">
-                "Os melhores produtos de software não nascem de ideias geniais inventadas no vácuo. Nascem de dores profundas e reais, já validadas por milhões de leitores."
+                "Não construas na escuridão da tua mente. Olha para a tela da realidade: a dor já foi escrita, o público já pagou, e a cena está pronta para a tua entrada."
               </p>
 
               <div className="flex flex-wrap gap-4 pt-2 justify-center md:justify-start no-print">
@@ -117,7 +117,7 @@ export default function EbookDownloadPage() {
               </div>
             </div>
 
-            {/* Imagem de Capa Cinematográfica (Mockup 3D) */}
+            {/* Imagem de Capa Cinematográfica 3D */}
             <div className="no-print flex justify-center">
               <div className="relative group rounded-2xl overflow-hidden shadow-2xl border border-white/20 transition-transform duration-500 hover:scale-105 max-w-[220px]">
                 <img
@@ -136,115 +136,101 @@ export default function EbookDownloadPage() {
           </div>
         </div>
 
-        {/* PREFÁCIO */}
+        {/* ACTO I */}
         <article className="p-8 rounded-3xl bg-card/50 border border-border/50 space-y-4 print:border-none">
-          <span className="text-xs font-extrabold text-primary uppercase tracking-wider print:text-black">Prefácio</span>
-          <h2 className="text-2xl font-black text-foreground print:text-black">O Paradoxo do Empreendedor Moderno</h2>
-          <p className="text-muted-foreground leading-relaxed text-sm print:text-black">
-            Estamos a viver a era mais fascinante e ao mesmo tempo mais perigosa da história do desenvolvimento de software. Nunca foi tão fácil construir uma aplicação web, um Micro SaaS ou uma extensão. Com ferramentas no-code, editores inteligentes como Cursor e IA generativa, qualquer pessoa consegue transformar uma ideia num produto funcional em 24 a 72 horas.
-          </p>
-          <p className="text-muted-foreground leading-relaxed text-sm print:text-black">
-            No entanto, esta democratização criou um paradoxo devastador: <strong>Nunca foi tão fácil construir software. Mas nunca foi tão difícil saber O QUE construir.</strong> A barreira técnica ruiu; a nova barreira crítica é a validação real da procura de mercado.
-          </p>
-          <p className="text-muted-foreground leading-relaxed text-sm print:text-black">
-            Diariamente, milhares de empreendedores passam semanas fechados nos seus quartos a desenvolver produtos que ninguém quer comprar. A metodologia <strong>ViralBook AI</strong> inverte esta lógica por completo: não invente a dor. Encontre a dor onde ela já foi paga por milhões de leitores.
-          </p>
-        </article>
-
-        {/* CAPÍTULO 1 */}
-        <article className="p-8 rounded-3xl bg-card/50 border border-border/50 space-y-6 print:border-none print-break-before">
-          <span className="text-xs font-extrabold text-primary uppercase tracking-wider print:text-black">Capítulo 1</span>
-          <h2 className="text-2xl font-black text-foreground print:text-black">O Mercado de Livros É o Maior Teste de Mercado do Mundo</h2>
+          <span className="text-xs font-extrabold text-primary uppercase tracking-wider print:text-black">Acto I</span>
+          <h2 className="text-2xl font-black text-foreground print:text-black">O Paradoxo da Tela em Branco</h2>
           
-          <div className="space-y-4 text-sm text-muted-foreground print:text-black">
-            <h3 className="text-lg font-bold text-foreground print:text-black">1.1 A Psicologia da Compra de Não-Ficção</h3>
-            <p>
-              A Amazon vende mais de <strong>300 milhões de livros por ano</strong>. Quando um consumidor paga $15 a $30 por um livro de não-ficção, ele não está a comprar papel. Ele está a admitir explicitamente que tem um problema doloroso e a pagar por uma solução.
-            </p>
-            <p>
-              Quando <em>Atomic Habits</em> de James Clear vendeu mais de 15 milhões de cópias, não foi porque as pessoas adoram ler. Foi porque 15 milhões de pessoas têm um problema com hábitos e pagaram para o resolver. Essa dor está validada e é massiva.
-            </p>
-
-            <h3 className="text-lg font-bold text-foreground print:text-black">1.2 O Volume de Dados Oculto na Amazon e Kindle</h3>
-            <p>
-              Dentro da Amazon existem fontes de dados valiosas: os <strong>Highlights do Kindle</strong> (revelam o momento Eureca!), os <strong>Reviews de 3 Estrelas</strong> (a maior fonte de queixas operacionais e desejos de ferramentas) e as seções de perguntas dos leitores.
-            </p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 space-y-2 print:border-black print:bg-none">
-            <h4 className="font-bold text-foreground text-sm print:text-black">Fórmula Base da Oportunidade:</h4>
+          <h3 className="text-lg font-bold text-foreground print:text-black mt-4">Cena 1: A Ilusão da Criação</h3>
+          <p className="text-muted-foreground leading-relaxed text-sm print:text-black">
+            Corta para a meia-noite. Uma sala escura. A única luz vem de um monitor de 27 polegadas que projeta um brilho azul no rosto de um programador. As suas mãos voam pelo teclado mecânico. Na tela, linhas de código TypeScript ganham vida numa harmonia perfeita.
+          </p>
+          <p className="text-muted-foreground leading-relaxed text-sm print:text-black">
+            Durante três meses, este foi o seu ritual. Dias sem dormir, fins de semana sacrificados. Ele construiu uma catedral tecnológica: painel com gráficos, autenticação biométrica e base de dados impecável. Chega o momento do lançamento: ele clica em "Publicar". Espera. Uma hora. Duas horas. Seis horas. <strong>Nenhum registo. Nenhuma venda. Apenas um silêncio ensurdecedor.</strong>
+          </p>
+          
+          <h3 className="text-lg font-bold text-foreground print:text-black mt-4">Cena 2: A Revolução das Ferramentas vs A Escassez da Verdade</h3>
+          <p className="text-muted-foreground leading-relaxed text-sm print:text-black">
+            Nunca foi tão rápido construir software. O código deixou de ser a fortaleza inacessível. Com editores neurais como Cursor e motores de IA, qualquer pessoa consegue ter um MVP funcional em 24 a 72 horas.
+          </p>
+          <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 space-y-1 print:border-black">
             <code className="text-xs font-bold text-primary block print:text-black">
-              Valor do SaaS = (Dor Validada pelo Livro) × (Automação do Processo) × (Economia de Tempo)
+              FACILIDADE DE CÓDIGO ──&gt; EXCESSO DE PRODUTOS ──&gt; ESCASSEZ DE ATENÇÃO
             </code>
           </div>
+
+          <h3 className="text-lg font-bold text-foreground print:text-black mt-4">Cena 3: A Inversão da Lógica</h3>
+          <p className="text-muted-foreground leading-relaxed text-sm print:text-black">
+            Enquanto os fundadores passam meses a adivinhar o que o mercado quer, os consumidores de todo o planeta já estão a declarar as suas maiores dores não resolvidas — através de <strong>livros bestsellers</strong>. Quando um leitor paga por um livro de não-ficção, ele está a votar com o seu próprio dinheiro num problema real.
+          </p>
         </article>
 
-        {/* CAPÍTULO 2 */}
+        {/* ACTO II */}
         <article className="p-8 rounded-3xl bg-card/50 border border-border/50 space-y-6 print:border-none print-break-before">
-          <span className="text-xs font-extrabold text-primary uppercase tracking-wider print:text-black">Capítulo 2</span>
-          <h2 className="text-2xl font-black text-foreground print:text-black">Os 7 Sinais que Indicam um Livro com Potencial Milionário</h2>
+          <span className="text-xs font-extrabold text-primary uppercase tracking-wider print:text-black">Acto II</span>
+          <h2 className="text-2xl font-black text-foreground print:text-black">As 7 Pistas Ocultas nas Prateleiras</h2>
           
           <div className="grid md:grid-cols-2 gap-4">
             <div className="p-4 rounded-xl bg-muted/40 border border-border/40 space-y-1 print:border-black">
-              <h4 className="font-bold text-foreground text-sm print:text-black">1. Processo Repetitivo</h4>
-              <p className="text-xs text-muted-foreground print:text-black">Rotinas diárias ou semanais que geram fadiga manual no leitor (ex: método GTD de David Allen).</p>
+              <h4 className="font-bold text-foreground text-sm print:text-black">Pista 1: O Ciclo Infinito (Processos Repetitivos)</h4>
+              <p className="text-xs text-muted-foreground print:text-black">Métodos que exigem rotinas diárias/semanais geram fadiga manual no papel. O software automatiza e lembra no segundo exato.</p>
             </div>
             <div className="p-4 rounded-xl bg-muted/40 border border-border/40 space-y-1 print:border-black">
-              <h4 className="font-bold text-foreground text-sm print:text-black">2. Tabelas e Checklists</h4>
-              <p className="text-xs text-muted-foreground print:text-black">Abundância de tabelas e listas impressas que clamam por uma interface digital.</p>
+              <h4 className="font-bold text-foreground text-sm print:text-black">Pista 2: O Mapa de Papel (Tabelas e Checklists)</h4>
+              <p className="text-xs text-muted-foreground print:text-black">Cada tabela ou matriz desenhada num livro é uma Interface de Utilizador (UI) disfarçada a clamar por código.</p>
             </div>
             <div className="p-4 rounded-xl bg-muted/40 border border-border/40 space-y-1 print:border-black">
-              <h4 className="font-bold text-foreground text-sm print:text-black">3. Problema Crónico</h4>
-              <p className="text-xs text-muted-foreground print:text-black">Dores recorrentes (como finanças ou procrastinação) geram subscrições SaaS de baixo churn.</p>
+              <h4 className="font-bold text-foreground text-sm print:text-black">Pista 3: A Ferida Crónica (Dor Recorrente = SaaS)</h4>
+              <p className="text-xs text-muted-foreground print:text-black">Dores crónicas (como finanças ou ansiedade de tempo) criam subscrições recorrentes de baixo churn.</p>
             </div>
             <div className="p-4 rounded-xl bg-muted/40 border border-border/40 space-y-1 print:border-black">
-              <h4 className="font-bold text-foreground text-sm print:text-black">4. Comunidades Ativas Online</h4>
-              <p className="text-xs text-muted-foreground print:text-black">Subreddits e fóruns discutindo como aplicar os métodos do livro na prática cotidiana.</p>
+              <h4 className="font-bold text-foreground text-sm print:text-black">Pista 4: As Tribos Famintas (Reddit & Fóruns)</h4>
+              <p className="text-xs text-muted-foreground print:text-black">Subreddits onde milhares de leitores partilham planilhas manuais e perguntam por apps automáticas.</p>
             </div>
             <div className="p-4 rounded-xl bg-muted/40 border border-border/40 space-y-1 print:border-black">
-              <h4 className="font-bold text-foreground text-sm print:text-black">5. Reviews de 3 Estrelas</h4>
-              <p className="text-xs text-muted-foreground print:text-black">Leituras exigentes reclamando da falta de ferramentas práticas de acompanhamento.</p>
+              <h4 className="font-bold text-foreground text-sm print:text-black">Pista 5: O Grito nos Reviews de 3 Estrelas</h4>
+              <p className="text-xs text-muted-foreground print:text-black">Leitores apaixonados pelo conceito que reclamam da falta de ferramentas práticas. Briefing de produto gratuito!</p>
             </div>
             <div className="p-4 rounded-xl bg-muted/40 border border-border/40 space-y-1 print:border-black">
-              <h4 className="font-bold text-foreground text-sm print:text-black">6. Categorias de Alta Intenção</h4>
-              <p className="text-xs text-muted-foreground print:text-black">Produtividade, Negócios, Finanças Pessoais, Saúde e Desenvolvimento Pessoal.</p>
+              <h4 className="font-bold text-foreground text-sm print:text-black">Pista 6: Os Territórios de Ouro</h4>
+              <p className="text-xs text-muted-foreground print:text-black">Produtividade, Negócios & Vendas, Finanças Pessoais, Saúde & Biohacking.</p>
             </div>
           </div>
           <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 space-y-1 print:border-black">
-            <h4 className="font-bold text-foreground text-sm print:text-black">7. Autor sem Software Próprio</h4>
-            <p className="text-xs text-muted-foreground print:text-black">O autor resolveu o problema intelectualmente; você resolve-o tecnologicamente.</p>
+            <h4 className="font-bold text-foreground text-sm print:text-black">Pista 7: O Trono Vazio (Autor sem Software Próprio)</h4>
+            <p className="text-xs text-muted-foreground print:text-black">Se o bestseller vendeu 500k cópias e o autor não tem software, a porta está totalmente aberta para si.</p>
           </div>
         </article>
 
-        {/* CAPÍTULO 3 */}
+        {/* ACTO III */}
         <article className="p-8 rounded-3xl bg-card/50 border border-border/50 space-y-6 print:border-none print-break-before">
-          <span className="text-xs font-extrabold text-primary uppercase tracking-wider print:text-black">Capítulo 3</span>
-          <h2 className="text-2xl font-black text-foreground print:text-black">O Método de 4 Passos: Da Prateleira ao SaaS em 48h</h2>
+          <span className="text-xs font-extrabold text-primary uppercase tracking-wider print:text-black">Acto III</span>
+          <h2 className="text-2xl font-black text-foreground print:text-black">O Protocolo de 48 Horas: Da Prateleira ao SaaS</h2>
           
           <div className="space-y-4 text-sm text-muted-foreground print:text-black">
             <div className="p-4 rounded-xl bg-muted/30 border border-border/30">
-              <h3 className="font-bold text-foreground text-base mb-1 print:text-black">Passo 1: Descoberta Estruturada</h3>
-              <p>Filtre livros com +50.000 cópias vendidas, avaliação entre 4.1 e 4.7 e publicação nos últimos 5 anos.</p>
+              <h3 className="font-bold text-foreground text-base mb-1 print:text-black">Fase 1: Mineração de Bestsellers no ViralBook AI</h3>
+              <p>Aceda a 🔗 <strong>viralbook-ai.vercel.app/radar</strong>. Digite o nome de um livro ou nicho (ex: <em>Atomic Habits</em>) e clique nos <strong>🎯 Filtros de Mineração (Livro)</strong>. A IA calcula o Score e analisa a oportunidade.</p>
             </div>
             <div className="p-4 rounded-xl bg-muted/30 border border-border/30">
-              <h3 className="font-bold text-foreground text-base mb-1 print:text-black">Passo 2: Análise da Lacuna</h3>
-              <p>Mapeie os highlights do Kindle e reviews de 3 estrelas para formular a tese de dor do produto.</p>
+              <h3 className="font-bold text-foreground text-base mb-1 print:text-black">Fase 2: Radiografia de Dores & Reviews de 3★</h3>
+              <p>Abra o modal de <strong>🔍 Radiografia de Dores</strong> no Radar para extrair as queixas principais dos leitores de 3 estrelas e os destaques do Kindle.</p>
             </div>
             <div className="p-4 rounded-xl bg-muted/30 border border-border/30">
-              <h3 className="font-bold text-foreground text-base mb-1 print:text-black">Passo 3: MVP com Regra P0</h3>
-              <p>Foque o seu protótipo em resolver <strong>apenas 1 dor central</strong> com velocidade e simplicidade extrema.</p>
+              <h3 className="font-bold text-foreground text-base mb-1 print:text-black">Fase 3: MVP com Regra P0 (Funcionalidade Única)</h3>
+              <p>Construa apenas a funcionalidade sem a qual o produto perde o sentido (P0). Deixe relatórios e definições para a v2.0.</p>
             </div>
             <div className="p-4 rounded-xl bg-muted/30 border border-border/30">
-              <h3 className="font-bold text-foreground text-base mb-1 print:text-black">Passo 4: Validação em 48 Horas</h3>
-              <p>Publique uma Landing Page de lista de espera nas comunidades. Se alcançar +50 inscrições, avance!</p>
+              <h3 className="font-bold text-foreground text-base mb-1 print:text-black">Fase 4: Validação em 48 Horas</h3>
+              <p>Publique uma Landing Page de lista de espera gerada pela IA. Se alcançar +50 inscrições em 48h, avance com confiança!</p>
             </div>
           </div>
         </article>
 
-        {/* CAPÍTULO 4 */}
+        {/* ACTO IV */}
         <article className="p-8 rounded-3xl bg-card/50 border border-border/50 space-y-4 print:border-none print-break-before">
-          <span className="text-xs font-extrabold text-primary uppercase tracking-wider print:text-black">Capítulo 4</span>
-          <h2 className="text-2xl font-black text-foreground print:text-black">5 Casos Reais: De Livros a Startups de Sucesso</h2>
+          <span className="text-xs font-extrabold text-primary uppercase tracking-wider print:text-black">Acto IV</span>
+          <h2 className="text-2xl font-black text-foreground print:text-black">Histórias de Sucesso Blockbuster</h2>
           <ul className="space-y-3 text-sm text-muted-foreground print:text-black">
             <li className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 print:text-black" />
@@ -269,19 +255,19 @@ export default function EbookDownloadPage() {
           </ul>
         </article>
 
-        {/* CAPÍTULO 5 & 6 */}
+        {/* ACTO V & VI */}
         <article className="p-8 rounded-3xl bg-card/50 border border-border/50 space-y-4 print:border-none print-break-before">
-          <span className="text-xs font-extrabold text-primary uppercase tracking-wider print:text-black">Capítulo 5 & 6</span>
-          <h2 className="text-2xl font-black text-foreground print:text-black">Os 3 Erros Fatais & O Plano de Ação de 48 Horas</h2>
+          <span className="text-xs font-extrabold text-primary uppercase tracking-wider print:text-black">Acto V & VI</span>
+          <h2 className="text-2xl font-black text-foreground print:text-black">Os 3 Erros Fatais & O Roteiro das 48 Horas</h2>
           <div className="space-y-3 text-sm text-muted-foreground print:text-black">
-            <p><strong>Erro 1:</strong> Construir antes de vender. A sequência correta é: Dor → Validar → Vender → Construir.</p>
-            <p><strong>Erro 2:</strong> Tentar resolver todas as dores do livro de uma só vez no MVP.</p>
-            <p><strong>Erro 3:</strong> Não falar com as comunidades de leitores antes de programar.</p>
+            <p><strong>Erro 1 (O Código Cego):</strong> Programar durante meses antes de vender. Valide primeiro!</p>
+            <p><strong>Erro 2 (O Monstro das 100 Funcionalidades):</strong> Tentar colocar o livro inteiro numa só versão.</p>
+            <p><strong>Erro 3 (O Silêncio da Torre de Marfim):</strong> Desenvolver sem ouvir os subreddits e fóruns do livro.</p>
           </div>
           <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 space-y-1 print:border-black">
-            <h4 className="font-bold text-emerald-400 text-sm print:text-black">Plano de 48 Horas com o ViralBook AI:</h4>
+            <h4 className="font-bold text-emerald-400 text-sm print:text-black">Roteiro de Execução de Fim de Semana:</h4>
             <p className="text-xs text-muted-foreground print:text-black">
-              Sábado de Manhã (Descoberta) → Sábado à Tarde (Análise da Dor) → Sábado à Noite (Landing Page) → Domingo (Divulgação & 50 Leads).
+              Sábado de Manhã (Radar & Filtros) → Sábado à Tarde (Radiografia de Dores) → Sábado à Noite (Landing Page) → Domingo (Divulgação & 50 Leads).
             </p>
           </div>
         </article>
