@@ -1,15 +1,7 @@
-import { getCachedUser } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
 import { DocsSidebar } from "@/components/docs/docs-sidebar";
 import { DocsHeader } from "@/components/docs/docs-header";
 
 export default async function DocsLayout({ children }: { children: React.ReactNode }) {
-  const user = await getCachedUser();
-
-  if (!user) {
-    redirect("/login");
-  }
-
   return (
     <div className="flex min-h-screen bg-background">
       {/* Sidebar Lateral reativa para a Documentação */}
