@@ -219,6 +219,7 @@ export default function LandingPage() {
         {/* Pricing Section */}
         <PricingSection />
       </main>
+      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} initialTab={authTab} />
     </div>
   );
 }
