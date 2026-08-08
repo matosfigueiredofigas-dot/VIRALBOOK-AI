@@ -99,9 +99,7 @@ export function CanvasClient({ opportunity: initialOpp, metrics, initialLeads }:
               {t.blueprint.translatingCanvas}
             </span>
           )}
-          <p className="text-xs text-muted-foreground hidden lg:block">
-            {t.blueprint.printTip}
-          </p>
+
           <a href={`/teardown/${opp.id}`} className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-3.5 py-2 rounded-lg text-xs transition-colors flex items-center gap-1.5">
             📊 {t.blueprint.marketDossier}
           </a>
