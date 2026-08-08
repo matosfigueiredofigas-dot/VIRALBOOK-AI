@@ -151,6 +151,9 @@ export function AuthModal({ isOpen, onClose, initialTab = "login" }: AuthModalPr
         provider: "google",
         options: {
           redirectTo: `${window.location.origin}/api/auth/callback`,
+          queryParams: {
+            prompt: 'select_account',
+          },
         },
       });
 
