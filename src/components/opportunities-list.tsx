@@ -537,8 +537,8 @@ function OpportunityCard({ item }: { item: any }) {
           <SheetTrigger render={<Button className="flex-1 bg-primary/10 text-primary hover:bg-primary/20" />}>
             {t.opportunities.detailsAndPrompts} <Sparkles className="ml-2 h-4 w-4" />
           </SheetTrigger>
-          <SheetContent className={`w-full overflow-y-auto transition-all duration-300 ${isExpanded ? "!max-w-[90vw]" : "!max-w-xl"}`}>
-            <SheetHeader className="mb-6 relative pr-12">
+          <SheetContent className={`w-full flex flex-col h-full overflow-hidden transition-all duration-300 p-0 ${isExpanded ? "!max-w-[90vw]" : "!max-w-xl"}`}>
+            <SheetHeader className="relative pr-12 shrink-0 border-b border-border/50 bg-background/95 backdrop-blur-md z-10 pt-6 pb-4 px-6">
               <button 
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="absolute top-0 right-8 p-2 rounded-md hover:bg-muted text-muted-foreground transition-colors"
@@ -597,6 +597,7 @@ function OpportunityCard({ item }: { item: any }) {
               </SheetDescription>
             </SheetHeader>
             
+            <div className="flex-1 overflow-y-auto p-6 pt-2 space-y-4">
             {loadingDetails ? (
               <div className="flex flex-col items-center justify-center py-20 gap-3 text-muted-foreground">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -1895,6 +1896,7 @@ ${t.blueprint.promptUniversalOutro}`}
                 <p className="text-sm font-medium">{t.opportunities.loadingDetails}</p>
               </div>
             )}
+            </div>
           </SheetContent>
         </Sheet>
         <Button 
