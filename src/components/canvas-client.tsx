@@ -82,10 +82,10 @@ export function CanvasClient({ opportunity: initialOpp, metrics, initialLeads }:
   }, [language, initialOpp]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-8 font-sans print:bg-white print:text-black">
+    <div className="min-h-screen bg-background text-foreground font-sans print:bg-white print:text-black flex flex-col">
       
       {/* Controles apenas na tela (escondidos na impressão) */}
-      <div className="print:hidden flex flex-wrap justify-between items-center mb-8 border-b border-border/50 pb-4 pt-8 -mt-8 px-8 -mx-8 gap-4 sticky top-0 z-50 bg-background/95 backdrop-blur-md shadow-sm">
+      <div className="print:hidden flex flex-wrap justify-between items-center border-b border-border/50 p-4 gap-4 sticky top-0 z-[100] bg-background/95 backdrop-blur-md shadow-sm">
         <button
           onClick={handleBack}
           className="flex items-center gap-2 text-primary hover:underline font-medium cursor-pointer bg-transparent border-0 p-0"
@@ -125,16 +125,17 @@ export function CanvasClient({ opportunity: initialOpp, metrics, initialLeads }:
         </div>
       </div>
 
-      {/* Cabeçalho do Canvas */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-extrabold uppercase tracking-tight text-foreground print:text-black">{opp.saas_name}</h1>
-        <p className="text-lg text-muted-foreground print:text-gray-600">
-          {t.blueprint.canvasSubtitle}
-        </p>
-        <div className="mt-2 text-xs text-gray-400 font-mono">
-          {t.blueprint.generatedBy} | {t.blueprint.score} {opp.viral_opportunity_score} | {t.blueprint.country} {opp.country}
+      <div className="p-8 pt-6 flex-1">
+        {/* Cabeçalho do Canvas */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-extrabold uppercase tracking-tight text-foreground print:text-black">{opp.saas_name}</h1>
+          <p className="text-lg text-muted-foreground print:text-gray-600">
+            {t.blueprint.canvasSubtitle}
+          </p>
+          <div className="mt-2 text-xs text-gray-400 font-mono">
+            {t.blueprint.generatedBy} | {t.blueprint.score} {opp.viral_opportunity_score} | {t.blueprint.country} {opp.country}
+          </div>
         </div>
-      </div>
 
       {/* Grid do Lean Canvas (Estilo Tradicional) */}
       <div className="border-2 border-border print:border-black grid grid-cols-1 md:grid-cols-5 md:grid-rows-3 gap-0 min-h-[600px] text-sm bg-card/30 backdrop-blur-md rounded-xl overflow-hidden print:bg-white print:rounded-none">
@@ -241,6 +242,7 @@ export function CanvasClient({ opportunity: initialOpp, metrics, initialLeads }:
       </div>
 
       <LaunchpadManager opportunity={opp} initialLeads={initialLeads || []} />
+      </div>
 
     </div>
   );
