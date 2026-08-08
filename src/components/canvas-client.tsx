@@ -85,7 +85,7 @@ export function CanvasClient({ opportunity: initialOpp, metrics, initialLeads }:
     <div className="min-h-screen bg-background text-foreground font-sans print:bg-white print:text-black flex flex-col">
       
       {/* Controles apenas na tela (escondidos na impressão) */}
-      <div className="print:hidden flex flex-wrap justify-between items-center border-b border-border/50 p-4 gap-4 sticky top-0 z-[100] bg-background/95 backdrop-blur-md shadow-sm">
+      <div className="print:hidden flex flex-wrap justify-between items-center border-b border-border/50 pb-4 pt-4 gap-4 sticky top-6 md:top-8 z-[100] bg-background/95 backdrop-blur-md shadow-sm -mt-6 md:-mt-8 -mx-6 md:-mx-8 px-6 md:px-8 mb-6">
         <button
           onClick={handleBack}
           className="flex items-center gap-2 text-primary hover:underline font-medium cursor-pointer bg-transparent border-0 p-0"
