@@ -63,7 +63,7 @@ export function DocsSidebar() {
   return (
     <aside className="w-72 border-r border-border/50 bg-card/60 backdrop-blur-xl hidden md:flex flex-col sticky top-0 h-screen">
       <div className="h-20 flex items-center px-6 border-b border-border/50 shrink-0 gap-3">
-        <Link href="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/20">
             <Zap className="h-5 w-5 text-white" />
           </div>
@@ -106,9 +106,9 @@ export function DocsSidebar() {
       </div>
 
       <div className="p-4 border-t border-border/50 space-y-2">
-        <Link href="/dashboard" className="flex items-center justify-center gap-2 w-full py-2.5 bg-primary text-primary-foreground rounded-xl text-xs font-bold hover:bg-primary/90 transition-all shadow-md">
-          <LayoutDashboard className="h-4 w-4" />
-          {isEn ? "Back to Dashboard" : isEs ? "Volver al Dashboard" : "Voltar ao Dashboard"}
+        <Link href="/" className="flex items-center justify-center gap-2 w-full py-2.5 bg-primary text-primary-foreground rounded-xl text-xs font-bold hover:bg-primary/90 transition-all shadow-md">
+          <BookOpen className="h-4 w-4" />
+          {isEn ? "Back to Home" : isEs ? "Volver al Inicio" : "Voltar ao Início"}
         </Link>
       </div>
     </aside>

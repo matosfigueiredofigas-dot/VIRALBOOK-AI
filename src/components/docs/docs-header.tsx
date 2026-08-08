@@ -58,7 +58,7 @@ export function DocsHeader() {
       {/* Barra principal */}
       <div className="h-16 flex items-center justify-between px-6">
         <div className="flex items-center gap-3">
-          <Link href="/dashboard" className="md:hidden flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-foreground">
+          <Link href="/" className="md:hidden flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-foreground">
             <ArrowLeft className="h-4 w-4" />
             {isEn ? "Back" : isEs ? "Volver" : "Voltar"}
           </Link>
