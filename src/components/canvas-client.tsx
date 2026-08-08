@@ -81,6 +81,7 @@ export function CanvasClient({ opportunity: initialOpp, metrics, initialLeads }:
     return () => { isMounted = false; };
   }, [language, initialOpp]);
 
+  return (
     <div className="flex flex-col h-[calc(100svh-4rem-3rem)] md:h-[calc(100svh-4rem-4rem)] bg-background text-foreground font-sans print:h-auto print:bg-white print:text-black">
       
       {/* Controles e Cabeçalho Fixos (Não Rolam) */}
