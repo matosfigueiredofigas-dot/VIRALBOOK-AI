@@ -123,9 +123,9 @@ export function CanvasClient({ opportunity: initialOpp, metrics, initialLeads }:
           </div>
         </div>
 
-        <div className="p-6 md:p-8 pt-6">
+        <div className="px-6 md:px-8 pt-0 pb-6 md:pb-8">
           {/* Cabeçalho do Canvas */}
-          <div className="mb-6">
+          <div className="mb-6 mt-4">
             <h1 className="text-3xl font-extrabold uppercase tracking-tight text-foreground print:text-black">{opp.saas_name}</h1>
             <p className="text-lg text-muted-foreground print:text-gray-600">
               {t.blueprint.canvasSubtitle}
