@@ -55,7 +55,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cou
     : 0;
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
       {/* Client Header & Stats */}
       <DashboardHeader
         country={country}

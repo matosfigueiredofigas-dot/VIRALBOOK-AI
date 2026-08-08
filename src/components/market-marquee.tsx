@@ -21,7 +21,7 @@ export function MarketMarquee({ opportunities }: MarketMarqueeProps) {
   if (!opportunities || opportunities.length === 0) return null;
 
   return (
-    <div className="w-full mb-6">
+    <div className="w-full">
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes marquee {
           0% { transform: translateX(0%); }

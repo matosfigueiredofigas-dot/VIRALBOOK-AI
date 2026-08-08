@@ -47,7 +47,7 @@ export function AdvancedFilters() {
   }
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 p-4 bg-muted/30 border border-border/50 rounded-xl mb-6 items-center">
+    <div className="flex flex-col sm:flex-row gap-4 p-4 bg-muted/30 border border-border/50 rounded-xl items-center">
       <div className="flex items-center gap-2 w-full sm:w-auto flex-1 relative">
         <Search className="h-4 w-4 absolute left-3 text-muted-foreground" />
         <Input 
