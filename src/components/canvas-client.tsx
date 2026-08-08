@@ -86,41 +86,33 @@ export function CanvasClient({ opportunity: initialOpp, metrics, initialLeads }:
       
       <div className="-mt-6 md:-mt-8 -mx-6 md:-mx-8">
         {/* Controles apenas na tela (escondidos na impressão) */}
-        <div className="print:hidden flex flex-wrap justify-between items-center border-b border-border/50 px-6 md:px-8 py-4 gap-4 sticky top-0 z-[100] bg-background/95 backdrop-blur-md shadow-sm">
-          <button
-            onClick={handleBack}
-            className="flex items-center gap-2 text-primary hover:underline font-medium cursor-pointer bg-transparent border-0 p-0"
-          >
-            <ArrowLeft className="h-4 w-4" /> {t.blueprint.back}
-          </button>
-          <div className="flex flex-wrap items-center gap-3">
-            {isTranslating && (
-              <span className="flex items-center gap-1.5 text-xs text-primary font-semibold animate-pulse bg-primary/10 px-3 py-1.5 rounded-full border border-primary/20">
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                {t.blueprint.translatingCanvas}
-              </span>
-            )}
-            <a href={`/teardown/${opp.id}`} className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-3.5 py-2 rounded-lg text-xs transition-colors flex items-center gap-1.5">
-              📊 {t.blueprint.marketDossier}
-            </a>
-            <a href={`/hunter/${opp.id}`} className="bg-rose-600 hover:bg-rose-700 text-white font-medium px-3.5 py-2 rounded-lg text-xs transition-colors flex items-center gap-1.5">
-              🎯 {t.blueprint.hunterLeads}
-            </a>
-            <a href={`/ads/${opp.id}`} className="bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600 text-white font-medium px-3.5 py-2 rounded-lg text-xs transition-colors flex items-center gap-1.5 shadow-sm">
-              📢 {t.blueprint.adsCampaigns}
-            </a>
-            <a href={`/advisors?oppId=${opp.id}`} className="bg-zinc-900 hover:bg-black text-white font-medium px-3.5 py-2 rounded-lg text-xs transition-colors flex items-center gap-1.5">
-              🎓 {t.common.advisors}
-            </a>
-            <a href={`/email-funnel?oppId=${opp.id}`} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-3.5 py-2 rounded-lg text-xs transition-colors flex items-center gap-1.5 shadow-sm">
-              📧 {t.blueprint.emailsLaunch}
-            </a>
-            <a href="#launchpad" className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-3.5 py-2 rounded-lg text-xs transition-colors flex items-center gap-1.5 shadow-sm">
-              🚀 {t.blueprint.launchpad}
-            </a>
-            <LivePreviewModal opportunity={opp} />
-            <PrintButton />
-          </div>
+        <div className="print:hidden flex flex-wrap items-center border-b border-border/50 px-6 md:px-8 py-3 gap-3 sticky top-0 z-[100] bg-background/95 backdrop-blur-md shadow-sm">
+          {isTranslating && (
+            <span className="flex items-center gap-1.5 text-xs text-primary font-semibold animate-pulse bg-primary/10 px-3 py-1.5 rounded-full border border-primary/20">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              {t.blueprint.translatingCanvas}
+            </span>
+          )}
+          <a href={`/teardown/${opp.id}`} className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-3.5 py-2 rounded-lg text-xs transition-colors flex items-center gap-1.5">
+            📊 {t.blueprint.marketDossier}
+          </a>
+          <a href={`/hunter/${opp.id}`} className="bg-rose-600 hover:bg-rose-700 text-white font-medium px-3.5 py-2 rounded-lg text-xs transition-colors flex items-center gap-1.5">
+            🎯 {t.blueprint.hunterLeads}
+          </a>
+          <a href={`/ads/${opp.id}`} className="bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600 text-white font-medium px-3.5 py-2 rounded-lg text-xs transition-colors flex items-center gap-1.5 shadow-sm">
+            📢 {t.blueprint.adsCampaigns}
+          </a>
+          <a href={`/advisors?oppId=${opp.id}`} className="bg-zinc-900 hover:bg-black text-white font-medium px-3.5 py-2 rounded-lg text-xs transition-colors flex items-center gap-1.5">
+            🎓 {t.common.advisors}
+          </a>
+          <a href={`/email-funnel?oppId=${opp.id}`} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-3.5 py-2 rounded-lg text-xs transition-colors flex items-center gap-1.5 shadow-sm">
+            📧 {t.blueprint.emailsLaunch}
+          </a>
+          <a href="#launchpad" className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-3.5 py-2 rounded-lg text-xs transition-colors flex items-center gap-1.5 shadow-sm">
+            🚀 {t.blueprint.launchpad}
+          </a>
+          <LivePreviewModal opportunity={opp} />
+          <PrintButton />
         </div>
 
         <div className="px-6 md:px-8 pt-0 pb-6 md:pb-8">
