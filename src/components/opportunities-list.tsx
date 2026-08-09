@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import { Search, Loader2, Sparkles, Copy, CheckCircle2, TrendingUp, Heart, Share2, FileText, Bell, LayoutGrid, List, MessageSquare, Users, Trash2, Globe, Megaphone, DollarSign, Percent, HelpCircle, X, ChevronDown, ChevronUp, BarChart3, Database, Layers, Crosshair, Presentation, Bot } from "lucide-react";
+import { Search, Loader2, Sparkles, Copy, CheckCircle2, TrendingUp, Heart, Share2, FileText, Bell, LayoutGrid, List, MessageSquare, Users, Trash2, Globe, Megaphone, DollarSign, Percent, HelpCircle, X, ChevronDown, ChevronUp, BarChart3, Database, Layers, Crosshair, Presentation, Bot, Maximize2, Minimize2 } from "lucide-react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
@@ -541,10 +541,10 @@ function OpportunityCard({ item }: { item: any }) {
             <SheetHeader className="relative pr-12 shrink-0 border-b border-border/50 bg-background/95 backdrop-blur-md z-10 pt-6 pb-4 px-6">
               <button 
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="absolute top-0 right-8 p-2 rounded-md hover:bg-muted text-muted-foreground transition-colors"
+                className="absolute top-3 right-12 p-1.5 rounded-md hover:bg-muted text-muted-foreground transition-colors"
                 title={isExpanded ? t.opportunities.restoreSize : t.opportunities.maximize}
               >
-                {isExpanded ? "🗗" : "🗖"}
+                {isExpanded ? <Minimize2 className="h-5 w-5" /> : <Maximize2 className="h-5 w-5" />}
               </button>
               <SheetTitle className="text-2xl font-extrabold text-primary flex flex-col sm:flex-row sm:items-center gap-4 flex-wrap">
                 {item.saas_name}
