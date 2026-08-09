@@ -13,6 +13,7 @@ import { ShareButton } from "@/components/share-button";
 import { UserNav } from "@/components/user-nav";
 import { Suspense } from "react";
 import { TutorialProvider } from "@/components/tutorial-provider";
+import { GlobalAssistantWidget } from "@/components/global-assistant-widget";
 import { createClient, getCachedUser } from "@/utils/supabase/server";
 import { checkAdmin } from "@/utils/supabase/admin";
 import { redirect } from "next/navigation";
@@ -85,6 +86,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </div>
         </main>
       </SidebarProvider>
+      <GlobalAssistantWidget />
       <TutorialProvider />
     </TooltipProvider>
   );
