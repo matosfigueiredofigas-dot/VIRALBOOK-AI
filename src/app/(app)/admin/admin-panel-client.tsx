@@ -44,6 +44,7 @@ interface HealthStatus {
   services: {
     supabase: { status: string; latency: number };
     groq: { status: string; latency: number; configured: boolean };
+    gemini?: { status: string; latency: number };
     googleBooks: { status: string; latency: number };
   };
 }
