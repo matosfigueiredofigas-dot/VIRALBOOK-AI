@@ -151,17 +151,111 @@ export function GlobalAssistantWidget() {
       setMessages((prev) => [...prev, assistantMessage]);
       saveMessage("assistant", data.reply);
 
-      // AÇÃO AGENTIC: Navegação automática
-      if (data.auto_navigate_to) {
+      // AÇÃO AGENTIC: Auto-Builder Chain
+      if (data.trigger_auto_builder) {
+        executeAutoBuilderSequence(data.trigger_auto_builder);
+      } else if (data.auto_navigate_to) {
         setTimeout(() => {
           router.push(data.auto_navigate_to);
-        }, 1500); // 1.5s delay para o utilizador ler a mensagem antes de saltar
+        }, 1500); 
       }
 
     } catch (error) {
       console.error(error);
       const errorMsg = isEn ? "Oops, I lost connection to the server." : (isEs ? "Uy, perdí la conexión." : "Oops, perdi a ligação.");
       setMessages((prev) => [...prev, { role: "assistant", content: errorMsg }]);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function executeAutoBuilderSequence(keyword: string) {
+    setIsLoading(true);
+    let currentStatus = isEn ? "Starting radar..." : "A iniciar o radar...";
+    
+    // Add a status message that we will update
+    const statusMsgId = Date.now().toString();
+    setMessages(prev => [...prev, { 
+      role: "assistant", 
+      content: `🚀 **Auto-Builder Ativado:**\n\n⏳ A analisar mercado e criar SaaS para: "${keyword}"...` 
+    }]);
+
+    try {
+      // 1. Radar
+      const radarRes = await fetch("/api/radar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ keyword, country: 'ALL', targetLanguage: language })
+      });
+      const radarData = await radarRes.json();
+      
+      if (!radarRes.ok || !radarData.data?.id) throw new Error("Falha no Radar");
+      const oppId = radarData.data.id;
+      const saasName = radarData.data.saas_name || "Startup AI";
+      const problem = radarData.data.pain_points?.[0] || "Otimização de rotinas";
+      const audience = radarData.data.target_audience?.[0] || "Público Geral";
+      const features = radarData.data.features || ["Automação", "Dashboard"];
+
+      setMessages(prev => {
+        const newArr = [...prev];
+        newArr[newArr.length - 1].content = `🚀 **Auto-Builder Ativado:**\n\n✅ Ideia gerada: ${saasName}\n⏳ A construir Landing Page...`;
+        return newArr;
+      });
+
+      // 2. Landing Page
+      await fetch("/api/opportunities/launchpad", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          opportunityId: oppId, 
+          saasName, problem, audience, features: features.join(", "),
+          language 
+        })
+      });
+
+      setMessages(prev => {
+        const newArr = [...prev];
+        newArr[newArr.length - 1].content = `🚀 **Auto-Builder Ativado:**\n\n✅ Landing Page construída\n⏳ A escrever campanhas de anúncios...`;
+        return newArr;
+      });
+
+      // 3. Ads
+      await fetch("/api/opportunities/ads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ opportunityId: oppId, language })
+      });
+
+      setMessages(prev => {
+        const newArr = [...prev];
+        newArr[newArr.length - 1].content = `🚀 **Auto-Builder Ativado:**\n\n✅ Anúncios prontos\n⏳ A gerar Email Funnel...`;
+        return newArr;
+      });
+
+      // 4. Emails
+      await fetch("/api/opportunities/email-funnel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ opportunityId: oppId, language })
+      });
+
+      setMessages(prev => {
+        const newArr = [...prev];
+        newArr[newArr.length - 1].content = `🚀 **Auto-Builder Concluído!** 🎉\n\nO seu Micro-SaaS **${saasName}** foi construído com sucesso. A redirecionar para os resultados...`;
+        return newArr;
+      });
+
+      setTimeout(() => {
+        router.push(`/favorites`);
+      }, 2500);
+
+    } catch (error) {
+      console.error("Auto builder error", error);
+      setMessages(prev => {
+        const newArr = [...prev];
+        newArr[newArr.length - 1].content = `❌ Erro no Auto-Builder. Não foi possível concluir a operação de forma automática. Tente fazer a pesquisa pelo menu Radar.`;
+        return newArr;
+      });
     } finally {
       setIsLoading(false);
     }
