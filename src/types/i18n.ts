@@ -98,6 +98,16 @@ export interface Translations {
     demoBadge: string;
     demoTitle: string;
     demoSubtitle: string;
+    testimonialsTitle: string;
+    testimonialsSubtitle: string;
+    testimonials: { quote: string; name: string; role: string; }[];
+    faqTitle: string;
+    faqSubtitle: string;
+    faqItems: { q: string; a: string; }[];
+    footerCopyright: string;
+    footerSupport: string;
+    footerPolicies: string;
+    footerTerms: string;
   };
   auth: {
     loginTitle: string;

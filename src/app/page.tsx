@@ -218,7 +218,82 @@ export default function LandingPage() {
 
         {/* Pricing Section */}
         <PricingSection />
+
+        {/* Testimonials Section */}
+        <section className="w-full py-24 bg-muted/10 border-t border-border/50 px-4 md:px-6 relative">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16 space-y-4">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{t.landing.testimonialsTitle}</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{t.landing.testimonialsSubtitle}</p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-6">
+              {t.landing.testimonials.map((testi, i) => (
+                <div key={i} className="p-8 rounded-3xl glass-card relative flex flex-col justify-between">
+                  <div className="text-yellow-500 mb-6 text-sm flex gap-1">
+                    {'★★★★★'.split('').map((star, j) => <span key={j}>{star}</span>)}
+                  </div>
+                  <p className="text-muted-foreground italic mb-8 flex-1 leading-relaxed">"{testi.quote}"</p>
+                  <div className="flex items-center gap-4">
+                    <img src={`https://i.pravatar.cc/150?img=${i * 10 + 12}`} alt={testi.name} className="w-12 h-12 rounded-full border-2 border-border/50" />
+                    <div>
+                      <div className="font-bold text-foreground text-sm">{testi.name}</div>
+                      <div className="text-xs text-muted-foreground">{testi.role}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="w-full py-24 bg-background border-t border-border/50 px-4 md:px-6 relative">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-16 space-y-4">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{t.landing.faqTitle}</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{t.landing.faqSubtitle}</p>
+            </div>
+            <div className="space-y-4">
+              {t.landing.faqItems.map((faq, i) => (
+                <div key={i} className="p-6 rounded-2xl border border-border/50 bg-muted/20 hover:bg-muted/40 transition-colors">
+                  <h3 className="text-lg font-bold text-foreground mb-3">{faq.q}</h3>
+                  <p className="text-muted-foreground leading-relaxed text-sm md:text-base">{faq.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
       </main>
+
+      {/* Corporate Footer */}
+      <footer className="w-full py-12 px-6 bg-muted/20 border-t border-border/50 mt-auto">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
+              <Zap className="h-4 w-4 text-white" />
+            </div>
+            <span className="font-bold text-lg text-foreground">ViralBook AI</span>
+          </div>
+          
+          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8 text-sm font-medium text-muted-foreground">
+            <Link href="#features" className="hover:text-foreground transition-colors">{t.landing.featuresNav}</Link>
+            <Link href="#pricing" className="hover:text-foreground transition-colors">{t.landing.pricingNav}</Link>
+            <Link href="/privacy" className="hover:text-foreground transition-colors">{t.landing.footerPolicies}</Link>
+            <Link href="/terms" className="hover:text-foreground transition-colors">{t.landing.footerTerms}</Link>
+            <a href={`mailto:${t.landing.footerSupport}`} className="hover:text-foreground transition-colors flex items-center gap-2">
+              ✉️ {t.landing.footerSupport}
+            </a>
+          </div>
+        </div>
+        <div className="max-w-6xl mx-auto mt-12 pt-8 border-t border-border/40 text-center text-sm text-muted-foreground/60 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p>{t.landing.footerCopyright}</p>
+          <div className="flex gap-4 text-lg">
+            <a href="#" className="hover:text-foreground transition-colors"><i className="fa-brands fa-twitter"></i></a>
+            <a href="#" className="hover:text-foreground transition-colors"><i className="fa-brands fa-linkedin"></i></a>
+          </div>
+        </div>
+      </footer>
+
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} initialTab={authTab} />
     </div>
   );

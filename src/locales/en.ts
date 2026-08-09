@@ -107,6 +107,25 @@ export const en: Translations = {
     discountTimer: 'LIMITED TIME OFFER',
     limitedTimeOffer: 'Exclusive discount expires in:',
     buyNow: 'Get Access Now',
+    testimonialsTitle: 'What Micro-SaaS builders are saying',
+    testimonialsSubtitle: 'Founders from all over the world are using ViralBook AI to launch businesses.',
+    testimonials: [
+      { quote: "Thanks to ViralBook AI, I found a market pain in an obscure niche. We built the MVP in a week and already have $2k MRR.", name: "James M.", role: "Solo Founder" },
+      { quote: "I used to waste months trying to validate ideas. Now the Auto-Builder generates the Canvas and Landing Page in one click. It's absurd.", name: "Sarah V.", role: "Product Manager" },
+      { quote: "The integration with Reddit and Google Books data is brilliant. I will never build a product based on guesswork again.", name: "John C.", role: "Indie Hacker" }
+    ],
+    faqTitle: 'Frequently Asked Questions',
+    faqSubtitle: 'Everything you need to know about ViralBook AI.',
+    faqItems: [
+      { q: "What exactly is ViralBook AI?", a: "It's a market intelligence platform that analyzes viral book trends and communities like Reddit to identify real pain points, helping you build SaaS and apps that people actually want to buy." },
+      { q: "Do I need to know how to code to use the tool?", a: "No! ViralBook AI generates the Business Plan (Lean Canvas), Landing Page Copy, Emails, and even Ads. If you can't code, you can use our exported prompts for tools like Bubble, FlutterFlow, v0.dev, or Cursor." },
+      { q: "Where does the trend data come from?", a: "We cross-reference real-time data from the Google Books API, Google Trends, Reddit, and Facebook Ad Libraries to ensure ideas have social traction before showing them." },
+      { q: "Can I cancel at any time?", a: "Yes. You can cancel or pause your subscription at any time directly in your settings panel, hassle-free." }
+    ],
+    footerCopyright: '© 2026 ViralBook AI. All rights reserved.',
+    footerSupport: 'suporte@viralbook.ai',
+    footerPolicies: 'Privacy Policy',
+    footerTerms: 'Terms of Service',
   },
   auth: {
     loginTitle: 'ViralBook AI',

@@ -107,6 +107,25 @@ export const pt: Translations = {
     discountTimer: 'OFERTA DE TEMPO LIMITADO',
     limitedTimeOffer: 'Desconto exclusivo expira em:',
     buyNow: 'Obter Acesso Agora',
+    testimonialsTitle: 'O que dizem os construtores de Micro-SaaS',
+    testimonialsSubtitle: 'Fundadores de todo o mundo estão a usar o ViralBook AI para lançar negócios.',
+    testimonials: [
+      { quote: "Graças ao ViralBook AI, encontrei uma dor de mercado num nicho obscuro. Construímos o MVP numa semana e já temos $2k MRR.", name: "Tiago M.", role: "Solo Founder" },
+      { quote: "Antes eu perdia meses a tentar validar ideias. Agora o Auto-Builder gera-me o Canvas e a Landing Page num clique. É absurdo.", name: "Carolina V.", role: "Product Manager" },
+      { quote: "A integração com dados do Reddit e Google Books é brilhante. Nunca mais vou criar um produto com base no 'achismo'.", name: "João C.", role: "Indie Hacker" }
+    ],
+    faqTitle: 'Perguntas Frequentes',
+    faqSubtitle: 'Tudo o que precisa de saber sobre o ViralBook AI.',
+    faqItems: [
+      { q: "O que é exatamente o ViralBook AI?", a: "É uma plataforma de inteligência de mercado que analisa tendências de livros virais e comunidades como o Reddit para identificar dores reais, ajudando-o a construir SaaS e aplicações que as pessoas realmente querem comprar." },
+      { q: "Preciso saber programar para usar a ferramenta?", a: "Não! O ViralBook AI gera o Plano de Negócios (Lean Canvas), a Copy da Landing Page, os E-mails e até Anúncios. Se não souber programar, pode usar os nossos prompts exportados para ferramentas como o Bubble, FlutterFlow, v0.dev ou Cursor." },
+      { q: "De onde vêm os dados das tendências?", a: "Cruzamos dados em tempo real da Google Books API, Google Trends, Reddit e bibliotecas de anúncios do Facebook para garantir que as ideias têm tração social antes de as mostrar." },
+      { q: "Posso cancelar a qualquer momento?", a: "Sim. Pode cancelar ou pausar a sua subscrição a qualquer altura diretamente no seu painel de definições, sem complicações." }
+    ],
+    footerCopyright: '© 2026 ViralBook AI. Todos os direitos reservados.',
+    footerSupport: 'suporte@viralbook.ai',
+    footerPolicies: 'Políticas de Privacidade',
+    footerTerms: 'Termos de Serviço',
   },
   auth: {
     loginTitle: 'ViralBook AI',
