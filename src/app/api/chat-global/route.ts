@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { generateWithFallback } from '@/lib/ai-generate';
+import { createClient } from '@/utils/supabase/server';
 
 export async function POST(req: Request) {
   try {
@@ -15,38 +16,59 @@ export async function POST(req: Request) {
 
     const targetLang = language === 'en' ? 'English' : language === 'es' ? 'Spanish' : 'Portuguese (Brazil)';
 
+    // DB X-RAY (Buscar dados do utilizador)
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    let dbContext = "O utilizador não está autenticado ou não tem ideias salvas.";
+    if (user) {
+      const { data: opportunities } = await supabase
+        .from('opportunities')
+        .select('title, nicho, saas_name')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+        
+      if (opportunities && opportunities.length > 0) {
+        dbContext = "O utilizador tem as seguintes ideias salvas nos seus Favoritos:\n" + 
+          opportunities.map(o => `- ${o.saas_name || o.title} (Nicho: ${o.nicho})`).join("\n");
+      } else {
+        dbContext = "O utilizador ainda não salvou nenhuma oportunidade/ideia.";
+      }
+    }
+
     const systemPrompt = {
       role: 'system',
       content: `Você é o "ViralBot", o Assistente Virtual e Guia Especialista Oficial da plataforma "ViralBook AI".
 O usuário está utilizando a plataforma neste momento, e o URL em que ele se encontra é: ${url}
 
+**RAIO-X DA BASE DE DADOS DO UTILIZADOR:**
+${dbContext}
+Pode usar esta informação proativamente. Por exemplo, se ele perguntar o que fazer a seguir, sugira trabalhar numa das ideias que ele já guardou.
+
 **O QUE O UTILIZADOR ESTÁ A VER NESTE MOMENTO (TEXTO DA TELA):**
-Abaixo está o texto literal de tudo o que está visível no ecrã do utilizador neste exato momento. Use este contexto para entender o que ele está a ver, descrever o ecrã para ele se ele pedir, ou analisar o conteúdo (ex: avaliar uma Landing Page gerada, ler os detalhes de uma ideia no dashboard, etc).
 <screen_text>
 ${pageContent || "Nenhum texto detetado na tela no momento."}
 </screen_text>
 
+**FORMATO DE RESPOSTA OBRIGATÓRIO:**
+Você deve responder SEMPRE em formato JSON válido e estrito. O JSON deve ter a seguinte estrutura:
+{
+  "reply": "Sua resposta de texto formatada com Markdown. Sempre no idioma ${targetLang}.",
+  "auto_navigate_to": "/url-a-navegar", // OPCIONAL. Só inclua se o usuário pedir para ser levado a alguma página ou ferramenta (ex: "/favorites", "/email-funnel", "/radar", "/landing-pages"). Se não for para navegar, retorne null.
+  "suggested_actions": [ // OPCIONAL. Array com até 3 botões rápidos que o utilizador pode clicar.
+    { "label": "Título do Botão", "url": "/url-para-ir" }
+  ]
+}
+
 **CONHECIMENTO DA PLATAFORMA VIRALBOOK AI E SEUS BOTÕES:**
-O ViralBook AI é uma plataforma de inteligência de mercado para analisar livros/tendências e transformá-los em Software (SaaS). 
-Como Assistente, tem de saber exatamente onde o utilizador deve clicar:
+O ViralBook AI analisa livros/tendências para criar Micro-SaaS.
+- **Fase 1:** Ebooks Radar (/radar) e Biblioteca de Ideias (/library).
+- **Favoritos Salvos (/favorites):** Onde ficam guardadas as ideias geradas.
+- **Fase 2:** Lean Canvas (/canvas), Landing Pages (/landing-pages), Conselho de Mentores (/advisors).
+- **Fase 3:** Automação de E-mails (/email-funnel), Ad Factory Pro (/ads).
 
-- **Menu Lateral (Sidebar):** Onde o utilizador navega por todas as fases do método.
-- **Fase 1: Ideação**
-  - **Ebooks Radar (/radar):** Tem uma barra de pesquisa. O utilizador pesquisa o título de um livro e clica no botão com o ícone de "Scanner/Brilho" ou "Analisar/Transformar em SaaS" para extrair a dor do livro e gerar uma ideia de negócio.
-  - **Biblioteca de Ideias (/library):** O utilizador vê cards com nichos. Pode clicar para ver detalhes ou guardar nos "Favoritos".
-- **Minha Conta: Favoritos Salvos (/favorites):** Onde ficam guardadas as ideias geradas. Em cada "Oportunidade" salva, o utilizador tem vários **Botões de Ação** (Lean Canvas, Landing Page, Ad Factory, Mentores, etc.) para trabalhar essa ideia específica.
-- **Fase 2: Validação & Ferramentas de Oportunidades**
-  - **Lean Canvas (/canvas):** O utilizador entra através de uma ideia salva. Tem botões para "Gerar Canvas", "Exportar", e abas para ver Problema, Solução, Monetização.
-  - **Landing Pages (/landing-pages):** Tem botões para "Gerar Landing Page" e depois permite pré-visualizar a página de vendas do SaaS.
-  - **Conselho de Mentores (/advisors):** Mostra cards de especialistas em IA (ex: Mentor de Vendas, CTO). O utilizador clica no card do mentor para abrir um Chat focado nessa área.
-- **Fase 3: Tração & Vendas**
-  - **Automação de E-mails (/email-funnel):** Tem o botão "Gerar Sequência" e botões de "Copiar" (ícone de cópia) em cada e-mail gerado.
-  - **Ad Factory Pro (/ads):** O utilizador seleciona a plataforma no topo (Botões de Abas: "Facebook" ou "TikTok"). Depois pode clicar no botão "Copiar AD" em cada anúncio gerado.
-
-Sua missão é atuar como suporte, guia de usabilidade e consultor de marketing digital. Se o utilizador não souber o que fazer, indique os cliques exatos (ex: "Vá ao Menu Lateral > Favoritos Salvos > Clique no botão 'Lean Canvas' no card da sua ideia").
-
-CRITICAL INSTRUCTION: Respond ALL questions and advice STRICTLY in the following language: **${targetLang}**.
-Dê respostas calorosas, encorajadoras, curtas e super práticas.`
+CRITICAL INSTRUCTION: Respond ALL questions strictly in JSON format as defined above. Dê respostas calorosas e super práticas.`
     };
 
     const payloadMessages = [systemPrompt, ...messages];
@@ -54,11 +76,21 @@ Dê respostas calorosas, encorajadoras, curtas e super práticas.`
     const reply = await generateWithFallback({
       messages: payloadMessages as any,
       model: 'llama-3.3-70b-versatile',
-      temperature: 0.7,
-      max_tokens: 1000,
+      temperature: 0.5,
+      max_tokens: 1500,
+      response_format: { type: "json_object" }
     });
+    
+    // Garantir que a resposta da IA está estruturada
+    let jsonReply;
+    try {
+      jsonReply = JSON.parse(reply);
+    } catch (e) {
+      console.warn("Failed to parse JSON from AI, wrapping in default structure:", reply);
+      jsonReply = { reply: reply };
+    }
 
-    return NextResponse.json({ reply });
+    return NextResponse.json(jsonReply);
 
   } catch (error: any) {
     console.error('Erro na rota de Chat AI Global:', error);
