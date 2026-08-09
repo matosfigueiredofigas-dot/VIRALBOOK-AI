@@ -268,7 +268,7 @@ export function GlobalAssistantWidget() {
       {/* Floating Action Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-[0_0_20px_rgba(99,102,241,0.4)] bg-gradient-to-r from-indigo-600 to-fuchsia-600 text-white hover:scale-110 transition-transform duration-300 flex items-center justify-center \${isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
+        className={`fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-[0_0_20px_rgba(99,102,241,0.4)] bg-gradient-to-r from-indigo-600 to-fuchsia-600 text-white hover:scale-110 transition-transform duration-300 flex items-center justify-center ${isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
         aria-label="Abrir Assistente Virtual"
       >
         <Sparkles className="h-6 w-6" />
@@ -308,8 +308,8 @@ export function GlobalAssistantWidget() {
             {/* Mensagens */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth">
               {messages.map((msg, i) => (
-                <div key={i} className={`flex flex-col \${msg.role === "user" ? "items-end" : "items-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
-                  <div className={`max-w-[85%] rounded-2xl px-4 py-3 \${
+                <div key={i} className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+                  <div className={`max-w-[85%] rounded-2xl px-4 py-3 ${
                     msg.role === "user" 
                       ? "bg-primary text-primary-foreground rounded-br-sm shadow-md" 
                       : "bg-muted/50 border border-border/50 text-foreground rounded-bl-sm"
