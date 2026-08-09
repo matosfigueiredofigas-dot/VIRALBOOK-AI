@@ -58,12 +58,16 @@ export function GlobalAssistantWidget() {
     try {
       const currentMessages = [...messages, userMessage];
 
+      // Capturar o texto da página atual de forma segura (limitado a 5000 caracteres para não estourar o limite de tokens)
+      const pageContent = document.body.innerText.slice(0, 5000);
+
       const res = await fetch("/api/chat-global", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: currentMessages,
           url: window.location.href,
+          pageContent,
           language
         }),
       });

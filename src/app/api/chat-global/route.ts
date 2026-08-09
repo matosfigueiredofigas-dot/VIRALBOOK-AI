@@ -3,7 +3,7 @@ import { generateWithFallback } from '@/lib/ai-generate';
 
 export async function POST(req: Request) {
   try {
-    const { messages, url, language = 'pt' } = await req.json();
+    const { messages, url, pageContent, language = 'pt' } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: 'Mensagens inválidas' }, { status: 400 });
@@ -19,6 +19,12 @@ export async function POST(req: Request) {
       role: 'system',
       content: `Você é o "ViralBot", o Assistente Virtual e Guia Especialista Oficial da plataforma "ViralBook AI".
 O usuário está utilizando a plataforma neste momento, e o URL em que ele se encontra é: ${url}
+
+**O QUE O UTILIZADOR ESTÁ A VER NESTE MOMENTO (TEXTO DA TELA):**
+Abaixo está o texto literal de tudo o que está visível no ecrã do utilizador neste exato momento. Use este contexto para entender o que ele está a ver, descrever o ecrã para ele se ele pedir, ou analisar o conteúdo (ex: avaliar uma Landing Page gerada, ler os detalhes de uma ideia no dashboard, etc).
+<screen_text>
+${pageContent || "Nenhum texto detetado na tela no momento."}
+</screen_text>
 
 **CONHECIMENTO DA PLATAFORMA VIRALBOOK AI E SEUS BOTÕES:**
 O ViralBook AI é uma plataforma de inteligência de mercado para analisar livros/tendências e transformá-los em Software (SaaS). 
