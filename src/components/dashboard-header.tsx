@@ -14,7 +14,7 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ country, time, totalOpps, avgScore }: DashboardHeaderProps) {
   const { t, language } = useLanguage();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const countryLabel = country === 'ALL' ? t.dash.allCountries : country;
   
