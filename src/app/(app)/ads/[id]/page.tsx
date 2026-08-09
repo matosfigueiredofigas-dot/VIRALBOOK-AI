@@ -26,7 +26,7 @@ export default async function AdsPage(props: { params: Promise<{ id: string }> }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-black">
+    <div className="min-h-screen w-full flex-1">
       <AdsDashboard opportunity={opportunity} />
     </div>
   )
