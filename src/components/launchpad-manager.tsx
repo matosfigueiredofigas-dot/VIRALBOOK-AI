@@ -96,14 +96,14 @@ export function LaunchpadManager({ opportunity, initialLeads }: LaunchpadManager
   const isEs = language === 'es';
 
   return (
-    <div id="launchpad" className="mt-12 border-t border-gray-200 pt-12 print:hidden scroll-mt-24">
+    <div id="launchpad" className="mt-12 border-t border-border pt-12 print:hidden scroll-mt-24">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <div>
-          <h2 className="text-3xl font-extrabold flex items-center gap-3 text-gray-900">
+          <h2 className="text-3xl font-extrabold flex items-center gap-3 text-foreground">
             <Rocket className="h-8 w-8 text-indigo-600" />
             1-Click Launchpad
           </h2>
-          <p className="text-gray-600 mt-1">
+          <p className="text-muted-foreground mt-1">
             {isEn 
               ? "Publish your Landing Page instantly and track Leads in real-time." 
               : isEs 
@@ -113,9 +113,9 @@ export function LaunchpadManager({ opportunity, initialLeads }: LaunchpadManager
         </div>
 
         {!slug && (
-          <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-xl border">
+          <div className="flex items-center gap-4 bg-muted/50 p-2 rounded-xl border border-border">
             <div className="flex items-center gap-2 pl-2">
-              <Palette className="h-4 w-4 text-gray-500" />
+              <Palette className="h-4 w-4 text-muted-foreground" />
               <select 
                 value={theme} 
                 onChange={(e) => setTheme(e.target.value)}
@@ -143,9 +143,9 @@ export function LaunchpadManager({ opportunity, initialLeads }: LaunchpadManager
           {/* Painel Esquerdo: Iframe e Ações */}
           <div className="xl:col-span-2 flex flex-col gap-6">
             
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+            <div className="bg-card border border-border rounded-2xl p-6 shadow-sm flex flex-col gap-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-lg text-emerald-600 flex items-center gap-2">
+                <h3 className="font-bold text-lg text-emerald-500 flex items-center gap-2">
                   <div className="h-2.5 w-2.5 bg-emerald-500 rounded-full animate-pulse" />
                   Status: Online
                 </h3>
@@ -153,7 +153,7 @@ export function LaunchpadManager({ opportunity, initialLeads }: LaunchpadManager
                   <select 
                     value={theme} 
                     onChange={(e) => setTheme(e.target.value)}
-                    className="bg-gray-100 border border-gray-200 rounded-lg px-2 py-1.5 text-xs font-medium focus:outline-none"
+                    className="bg-muted border border-border rounded-lg px-2 py-1.5 text-xs font-medium focus:outline-none text-foreground"
                   >
                     <option value="cyberpunk">Cyberpunk</option>
                     <option value="minimalist">Minimalista</option>
@@ -165,17 +165,17 @@ export function LaunchpadManager({ opportunity, initialLeads }: LaunchpadManager
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-xl border border-gray-200">
+              <div className="flex items-center gap-2 bg-muted/30 p-1.5 rounded-xl border border-border">
                 <a 
                   href={`/p/${slug}`} 
                   target="_blank" 
                   rel="noreferrer"
-                  className="flex-1 bg-white border border-gray-200 py-2 px-3 text-sm font-mono text-indigo-600 hover:underline truncate rounded-lg"
+                  className="flex-1 bg-background border border-border py-2 px-3 text-sm font-mono text-indigo-500 hover:underline truncate rounded-lg"
                 >
                   {typeof window !== 'undefined' ? window.location.origin : ''}/p/{slug}
                 </a>
-                <Button variant="ghost" size="icon" onClick={handleCopy} className="text-gray-500 hover:text-indigo-600">
-                  {copied ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4" />}
+                <Button variant="ghost" size="icon" onClick={handleCopy} className="text-muted-foreground hover:text-indigo-500">
+                  {copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
                 </Button>
                 <a href={`/p/${slug}`} target="_blank" rel="noreferrer" className="flex shrink-0">
                   <Button variant="default" className="bg-black text-white hover:bg-gray-800 rounded-lg">
@@ -185,14 +185,14 @@ export function LaunchpadManager({ opportunity, initialLeads }: LaunchpadManager
               </div>
 
               {/* Iframe Live Preview */}
-              <div className="relative mt-2 border border-gray-200 rounded-xl overflow-hidden bg-gray-100 aspect-video shadow-inner flex flex-col">
-                <div className="bg-gray-200/50 border-b border-gray-200 h-8 flex items-center px-4 gap-2 shrink-0">
+              <div className="relative mt-2 border border-border rounded-xl overflow-hidden bg-muted aspect-video shadow-inner flex flex-col">
+                <div className="bg-muted-foreground/10 border-b border-border h-8 flex items-center px-4 gap-2 shrink-0">
                   <div className="flex gap-1.5">
                     <div className="h-2.5 w-2.5 rounded-full bg-red-400"></div>
                     <div className="h-2.5 w-2.5 rounded-full bg-amber-400"></div>
                     <div className="h-2.5 w-2.5 rounded-full bg-green-400"></div>
                   </div>
-                  <div className="ml-4 text-[10px] text-gray-400 font-mono flex-1 text-center pr-10 truncate">
+                  <div className="ml-4 text-[10px] text-muted-foreground/70 font-mono flex-1 text-center pr-10 truncate">
                     {typeof window !== 'undefined' ? window.location.host : ''}/p/{slug}
                   </div>
                 </div>
@@ -211,26 +211,26 @@ export function LaunchpadManager({ opportunity, initialLeads }: LaunchpadManager
             
             {/* Analytics Grid */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+              <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-500">Visitas</span>
+                  <span className="text-sm font-medium text-muted-foreground">Visitas</span>
                   <Eye className="h-4 w-4 text-blue-500" />
                 </div>
-                <div className="text-3xl font-black text-gray-900">{views}</div>
+                <div className="text-3xl font-black text-card-foreground">{views}</div>
               </div>
-              <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+              <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-500">Conversão</span>
+                  <span className="text-sm font-medium text-muted-foreground">Conversão</span>
                   <TrendingUp className="h-4 w-4 text-emerald-500" />
                 </div>
-                <div className="text-3xl font-black text-gray-900">{conversionRate}%</div>
+                <div className="text-3xl font-black text-card-foreground">{conversionRate}%</div>
               </div>
             </div>
 
             {/* Leads List */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col flex-1 max-h-[500px]">
-              <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-4">
-                <h3 className="font-bold text-lg flex items-center gap-2 text-gray-900">
+            <div className="bg-card border border-border rounded-2xl p-6 shadow-sm flex flex-col flex-1 max-h-[500px]">
+              <div className="flex items-center justify-between mb-4 border-b border-border pb-4">
+                <h3 className="font-bold text-lg flex items-center gap-2 text-card-foreground">
                   <Users className="h-5 w-5 text-indigo-500" /> 
                   Leads ({leadsCount})
                 </h3>
@@ -239,29 +239,29 @@ export function LaunchpadManager({ opportunity, initialLeads }: LaunchpadManager
                   size="sm" 
                   onClick={handleExportCSV}
                   disabled={leadsCount === 0}
-                  className="text-xs h-8 gap-1.5 border-gray-200"
+                  className="text-xs h-8 gap-1.5 border-border"
                 >
                   <Download className="h-3 w-3" /> Exportar CSV
                 </Button>
               </div>
               
               {leadsCount === 0 ? (
-                <div className="flex-1 flex flex-col items-center justify-center text-center p-6 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-                  <Users className="h-8 w-8 text-gray-300 mb-2" />
-                  <p className="text-sm text-gray-500 font-medium">Nenhum lead capturado</p>
-                  <p className="text-xs text-gray-400 mt-1">Divulgue o seu link para começar.</p>
+                <div className="flex-1 flex flex-col items-center justify-center text-center p-6 bg-muted/30 rounded-xl border border-dashed border-border">
+                  <Users className="h-8 w-8 text-muted-foreground/30 mb-2" />
+                  <p className="text-sm text-muted-foreground font-medium">Nenhum lead capturado</p>
+                  <p className="text-xs text-muted-foreground/70 mt-1">Divulgue o seu link para começar.</p>
                 </div>
               ) : (
                 <div className="overflow-y-auto flex-1 pr-2 custom-scrollbar space-y-2">
                   {initialLeads.map(lead => (
-                    <div key={lead.id} className="flex justify-between items-center p-3 bg-gray-50 border border-gray-100 rounded-lg hover:border-gray-200 transition-colors">
+                    <div key={lead.id} className="flex justify-between items-center p-3 bg-muted/30 border border-border rounded-lg hover:border-border/80 transition-colors">
                       <div className="flex items-center gap-3 overflow-hidden">
-                        <div className="h-8 w-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs shrink-0">
+                        <div className="h-8 w-8 rounded-full bg-indigo-500/20 text-indigo-500 flex items-center justify-center font-bold text-xs shrink-0">
                           {lead.email.charAt(0).toUpperCase()}
                         </div>
-                        <span className="font-medium text-sm text-gray-700 truncate">{lead.email}</span>
+                        <span className="font-medium text-sm text-foreground/90 truncate">{lead.email}</span>
                       </div>
-                      <span className="text-[10px] font-medium text-gray-400 whitespace-nowrap ml-2">
+                      <span className="text-[10px] font-medium text-muted-foreground whitespace-nowrap ml-2">
                         {new Date(lead.created_at).toLocaleDateString('pt-BR')}
                       </span>
                     </div>
